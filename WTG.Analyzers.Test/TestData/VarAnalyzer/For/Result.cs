@@ -6,4 +6,11 @@
 		{
 		}
 	}
+
+	public void ForLoopWithoutLocal(Type type)
+	{
+		for (; type.IsArray; type = GetElementType(type))
+		{
+		}
+	}
 }

@@ -31,6 +31,13 @@ public class Bob
 		}
 	}
 
+	public void NonStandardEnumerator(IDictionary dictionary)
+	{
+		foreach (DictionaryEntry item in dictionary) // can't translate this so don't suggest it
+		{
+		}
+	}
+
 	public void AmbigiousItemType(AmbigiousCollection values)
 	{
 		foreach (int value in values) // can't translate this so don't suggest it
@@ -38,6 +45,13 @@ public class Bob
 		}
 
 		foreach (double value in values) // can't translate this so don't suggest it
+		{
+		}
+	}
+
+	public void MissingTypeInfo(UnknownType values)
+	{
+		foreach (string value in values) // we don't have sufficient information to say if this can be converted.
 		{
 		}
 	}

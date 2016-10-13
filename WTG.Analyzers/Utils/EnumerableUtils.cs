@@ -54,13 +54,13 @@ namespace WTG.Analyzers.Utils
 			return suggestedType;
 		}
 
-		static ITypeSymbol GetElementTypeFromEnumeratorType(ITypeSymbol retType)
+		static ITypeSymbol GetElementTypeFromEnumeratorType(ITypeSymbol enumeratorType)
 		{
-			while (true)
+			do
 			{
 				ITypeSymbol itemType = null;
 
-				foreach (var member in retType.GetMembers())
+				foreach (var member in enumeratorType.GetMembers())
 				{
 					if (member.IsImplicitlyDeclared) continue;
 
@@ -81,13 +81,12 @@ namespace WTG.Analyzers.Utils
 				{
 					return itemType;
 				}
-				else if (retType == null)
-				{
-					return null;
-				}
 
-				retType = retType.BaseType;
+				enumeratorType = enumeratorType.BaseType;
 			}
+			while (enumeratorType != null);
+
+			return null;
 		}
 
 		static ITypeSymbol GetElementTypeFromEnumerableInterface(ITypeSymbol type)

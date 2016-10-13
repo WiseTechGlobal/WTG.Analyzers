@@ -58,8 +58,7 @@ namespace WTG.Analyzers
 
 		sealed class Visitor : CSharpSyntaxVisitor<Candidate>
 		{
-			public static Visitor Instance => instance;
-			static readonly Visitor instance = new Visitor();
+			public static Visitor Instance { get; } = new Visitor();
 
 			public override Candidate VisitForEachStatement(ForEachStatementSyntax node)
 			{
@@ -78,6 +77,11 @@ namespace WTG.Analyzers
 
 			public override Candidate VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
 			{
+				if (node.IsConst)
+				{
+					return null;
+				}
+
 				return ExtractFromVariableDecl(node.Declaration);
 			}
 
@@ -88,7 +92,7 @@ namespace WTG.Analyzers
 
 			static Candidate ExtractFromVariableDecl(VariableDeclarationSyntax decl)
 			{
-				if (!decl.Type.IsVar && decl.Variables.Count == 1)
+				if (decl != null && !decl.Type.IsVar && decl.Variables.Count == 1)
 				{
 					var exp = decl.Variables[0].Initializer?.Value;
 

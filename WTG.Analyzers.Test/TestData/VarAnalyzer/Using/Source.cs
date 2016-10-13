@@ -17,6 +17,13 @@ public class Bob
 		{
 		}
 	}
+
+	public void UsingWithoutLocal()
+	{
+		using (new Context())
+		{
+		}
+	}
 }
 
 class Context : IDisposable

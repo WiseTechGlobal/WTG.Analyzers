@@ -68,7 +68,7 @@ namespace WTG.Analyzers
 		static bool IsConfigureAwait(SemanticModel semanticModel, InvocationExpressionSyntax invoke)
 		{
 			var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(invoke).Symbol;
-			return symbol.IsMatch("mscorlib", "System.Threading.Tasks.Task", nameof(Task.ConfigureAwait));
+			return symbol != null && symbol.IsMatch("mscorlib", "System.Threading.Tasks.Task", nameof(Task.ConfigureAwait));
 		}
 
 		static IMethodSymbol GetInvokeMethod(INamedTypeSymbol delegateType)
