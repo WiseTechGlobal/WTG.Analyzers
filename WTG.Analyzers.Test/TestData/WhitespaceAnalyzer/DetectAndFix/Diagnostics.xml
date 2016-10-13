@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG1003" message="You have meaningless whitespace on the end of the line, remove it." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (3,17-20)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (8,11-15)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (10,1-2)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (11,14-17)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (14,2-3)</location>
+	</diagnostic>
+</diagnostics>

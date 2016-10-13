@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG2001" message="ConfigureAwait(false) in async void methods leads to numerous problems, and since true is the default, just don't call ConfigureAwait from an async void method." severity="Error">
+	<diagnostic>
+		<location>Test0.cs: (11,34-56)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (12,34-55)</location>
+	</diagnostic>
+</diagnostics>

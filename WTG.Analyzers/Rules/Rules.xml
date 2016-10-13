@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<rules xmlns="http://cargowise.com/glow/2016/09/10/Rules.xsd">
+	<!--
+	Note: This solution should only contain rules that apply company wide and are not product specific.
+	Product specific rules should be placed in a separate solution under that product's TFS project.
+
+	Eg.
+		Enterprise -> $/Dev/Common/Tools/EnterpriseAnalyzers/...
+		Glow -> $/Glow/DotNet/Tools/GlowAnalyzers/...
+	-->
+	<category name="CodingConvention">
+		<rule id="WTG1001" name="DoNotUseThePrivateKeyword" severity="Hidden">
+			<title>Do not use the 'private' keyword.</title>
+			<message>Our coding convention is to leave out the private keyword and let it default to private.</message>
+			<description>Remove the 'private' keyword.</description>
+			<tag>Unnecessary</tag>
+		</rule>
+		<rule id="WTG1002" name="UseVarWherePossible" severity="Hidden">
+			<title>Use the 'var' keyword instead of an explicit type where possible.</title>
+			<message>The compiler is able to correctly identify which type to use here, so replace the explicit type with var.</message>
+			<description>Replace with the 'var' keyword.</description>
+			<tag>Unnecessary</tag>
+		</rule>
+		<rule id="WTG1003" name="DoNotLeaveWhitespaceOnTheEndOfTheLine" severity="Info">
+			<title>Do not leave whitespace on the end of the line.</title>
+			<message>You have meaningless whitespace on the end of the line, remove it.</message>
+			<description>Remove whitespace from the end of the line.</description>
+			<tag>Unnecessary</tag>
+		</rule>
+	</category>
+	<category name="Correctness">
+		<rule id="WTG2001" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">
+			<title>Do not use ConfigureAwait from an async void method.</title>
+			<message>ConfigureAwait(false) in async void methods leads to numerous problems, and since true is the default, just don't call ConfigureAwait from an async void method.</message>
+			<description>Remove the ConfigureAwait call, or return Task.</description>
+		</rule>
+	</category>
+</rules>

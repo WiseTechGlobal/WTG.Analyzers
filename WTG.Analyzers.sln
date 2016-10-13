@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers", "WTG.Analyzers\WTG.Analyzers.csproj", "{3F266F98-2F7B-4067-B267-50275AD261AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers.Test", "WTG.Analyzers.Test\WTG.Analyzers.Test.csproj", "{38871ADE-9AA7-4894-9A8B-580596C17F83}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F266F98-2F7B-4067-B267-50275AD261AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F266F98-2F7B-4067-B267-50275AD261AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F266F98-2F7B-4067-B267-50275AD261AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F266F98-2F7B-4067-B267-50275AD261AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38871ADE-9AA7-4894-9A8B-580596C17F83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38871ADE-9AA7-4894-9A8B-580596C17F83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38871ADE-9AA7-4894-9A8B-580596C17F83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38871ADE-9AA7-4894-9A8B-580596C17F83}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://tfs.wtg.zone:8080/tfs/cargowise
+		SccProjectUniqueName0 = WTGAnalyzers\\WTG.Analyzers.csproj
+		SccProjectName0 = WTGAnalyzers
+		SccAuxPath0 = http://tfs.wtg.zone:8080/tfs/cargowise
+		SccLocalPath0 = WTGAnalyzers
+		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName1 = WTGAnalyzers.Test\\WTG.Analyzers.Test.csproj
+		SccProjectName1 = WTGAnalyzers.Test
+		SccAuxPath1 = http://tfs.wtg.zone:8080/tfs/cargowise
+		SccLocalPath1 = WTGAnalyzers.Test
+		SccProvider1 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+	EndGlobalSection
+EndGlobal

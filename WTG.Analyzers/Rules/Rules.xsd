@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+	id="Rulse"
+	targetNamespace="http://cargowise.com/glow/2016/09/10/Rules.xsd"
+	elementFormDefault="qualified"
+	xmlns="http://cargowise.com/glow/2016/09/10/Rules.xsd"
+	xmlns:mstns="http://cargowise.com/glow/2016/09/10/Rules.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	>
+	<xs:simpleType name="severityType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Error" />
+			<xs:enumeration value="Warning" />
+			<xs:enumeration value="Info" />
+			<xs:enumeration value="Hidden" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tagType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Unnecessary" />
+			<xs:enumeration value="EditAndContinue" />
+			<xs:enumeration value="Build" />
+			<xs:enumeration value="Compiler" />
+			<xs:enumeration value="Telemetry" />
+			<xs:enumeration value="NotConfigurable" />
+			<xs:enumeration value="AnalyzerException" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="ruleType">
+		<xs:sequence>
+			<xs:element name="title" type="xs:string" />
+			<xs:element name="message" type="xs:string" />
+			<xs:element name="description" type="xs:string" />
+			<xs:element name="tag" type="tagType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:token" use="optional" />
+		<xs:attribute name="name" type="xs:token" use="required" />
+		<xs:attribute name="severity" type="severityType" use="optional" />
+	</xs:complexType>
+	
+	<xs:complexType name="categoryType">
+		<xs:sequence>
+			<xs:element name="rule" type="ruleType" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:token" use="required" />
+	</xs:complexType>
+
+	<xs:element name="rules">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="category" type="categoryType" minOccurs="1" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
