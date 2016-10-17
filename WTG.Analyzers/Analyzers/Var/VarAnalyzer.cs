@@ -18,16 +18,28 @@ namespace WTG.Analyzers
 
 		public override void Initialize(AnalysisContext context)
 		{
+			context.RegisterCompilationStartAction(CompilationStart);
+		}
+
+		static void CompilationStart(CompilationStartAnalysisContext context)
+		{
+			var cache = new FileDetailCache();
+
 			context.RegisterSyntaxNodeAction(
-				Analyze,
+				c => Analyze(c, cache),
 				SyntaxKind.LocalDeclarationStatement,
 				SyntaxKind.ForStatement,
 				SyntaxKind.ForEachStatement,
 				SyntaxKind.UsingStatement);
 		}
 
-		void Analyze(SyntaxNodeAnalysisContext context)
+		static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache)
 		{
+			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
+			{
+				return;
+			}
+
 			var candidate = Visitor.Instance.Visit(context.Node);
 
 			if (candidate != null)

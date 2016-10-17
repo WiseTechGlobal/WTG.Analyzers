@@ -55,7 +55,9 @@
       <DependentUpon>Rules.tt</DependentUpon>
     </Compile>
     <Compile Include="Utils\EnumerableUtils.cs" />
+    <Compile Include="Utils\FileDetailCache.cs" />
     <Compile Include="Utils\SymbolExtensions.cs" />
+    <Compile Include="Utils\SyntaxTreeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Diagnostic.nuspec">

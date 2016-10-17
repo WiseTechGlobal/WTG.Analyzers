@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
@@ -15,11 +16,22 @@ namespace WTG.Analyzers
 
 		public override void Initialize(AnalysisContext context)
 		{
-			context.RegisterSyntaxNodeAction(Analyze, ModifierExtractionVisitor.SupportedSyntaxKinds);
+			context.RegisterCompilationStartAction(CompilationStart);
 		}
 
-		void Analyze(SyntaxNodeAnalysisContext context)
+		static void CompilationStart(CompilationStartAnalysisContext context)
 		{
+			var cache = new FileDetailCache();
+			context.RegisterSyntaxNodeAction(c => Analyze(c, cache), ModifierExtractionVisitor.SupportedSyntaxKinds);
+		}
+
+		static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache)
+		{
+			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
+			{
+				return;
+			}
+
 			var list = ModifierExtractionVisitor.Instance.Visit(context.Node);
 
 			foreach (var modifier in list)

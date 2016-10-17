@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<diagnostics id="WTG2001" message="ConfigureAwait(false) in async void methods leads to numerous problems, and since true is the default, just don't call ConfigureAwait from an async void method." severity="Error">
+<diagnostics id="WTG2001" message="ConfigureAwait(false) may result in the async method resuming on a non-deterministic thread, and if an exception is then thrown, it will likely be unhandled and result in process termination." severity="Error">
 	<diagnostic>
 		<location>Test0.cs: (11,34-56)</location>
 	</diagnostic>

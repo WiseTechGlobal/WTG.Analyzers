@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
@@ -20,6 +21,11 @@ namespace WTG.Analyzers
 
 		static void Analyze(SyntaxTreeAnalysisContext context)
 		{
+			if (context.Tree.IsGenerated(context.CancellationToken))
+			{
+				return;
+			}
+
 			var root = context.Tree.GetRoot(context.CancellationToken);
 
 			foreach (var trivia in root.DescendantTrivia())

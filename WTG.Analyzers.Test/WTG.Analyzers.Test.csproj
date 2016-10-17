@@ -100,6 +100,12 @@
     <Compile Include="Helpers\DiagnosticResult.cs" />
     <Compile Include="Helpers\DiagnosticUtils.cs" />
     <Compile Include="Helpers\ModelUtils.cs" />
+    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\IgnoreGenerated\Source.cs" />
+    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\IgnoreGenerated\Result.cs" />
+    <EmbeddedResource Include="TestData\VisibilityAnalyzer\IgnoreGenerated\Source.cs" />
+    <EmbeddedResource Include="TestData\VisibilityAnalyzer\IgnoreGenerated\Result.cs" />
+    <EmbeddedResource Include="TestData\VarAnalyzer\IgnoreGenerated\Source.cs" />
+    <EmbeddedResource Include="TestData\VarAnalyzer\IgnoreGenerated\Result.cs" />
     <EmbeddedResource Include="TestData\VarAnalyzer\Using\Source.cs" />
     <EmbeddedResource Include="TestData\VarAnalyzer\Using\Result.cs" />
     <EmbeddedResource Include="TestData\VarAnalyzer\For\Source.cs" />
@@ -165,6 +171,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestData\AsyncAnalyzer\DontCrash\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\VarAnalyzer\IgnoreGenerated\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\VisibilityAnalyzer\IgnoreGenerated\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\IgnoreGenerated\Diagnostics.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -54,7 +54,7 @@ namespace WTG.Analyzers
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
 			"Do not use ConfigureAwait from an async void method.",
-			"ConfigureAwait(false) in async void methods leads to numerous problems, and since true is the default, just don't call ConfigureAwait from an async void method.",
+			"ConfigureAwait(false) may result in the async method resuming on a non-deterministic thread, and if an exception is then thrown, it will likely be unhandled and result in process termination.",
 			CorrectnessCategory,
 			DiagnosticSeverity.Error,
 			isEnabledByDefault: true,
@@ -85,7 +85,7 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
-		/// ConfigureAwait(false) in async void methods leads to numerous problems, and since true is the default, just don't call ConfigureAwait from an async void method.
+		/// ConfigureAwait(false) may result in the async method resuming on a non-deterministic thread, and if an exception is then thrown, it will likely be unhandled and result in process termination.
 		/// </summary>
 		public static Diagnostic CreateDoNotConfigureAwaitFromAsyncVoidDiagnostic(Location location)
 		{

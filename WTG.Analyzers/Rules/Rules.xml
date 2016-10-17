@@ -31,7 +31,7 @@
 	<category name="Correctness">
 		<rule id="WTG2001" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">
 			<title>Do not use ConfigureAwait from an async void method.</title>
-			<message>ConfigureAwait(false) in async void methods leads to numerous problems, and since true is the default, just don't call ConfigureAwait from an async void method.</message>
+			<message>ConfigureAwait(false) may result in the async method resuming on a non-deterministic thread, and if an exception is then thrown, it will likely be unhandled and result in process termination.</message>
 			<description>Remove the ConfigureAwait call, or return Task.</description>
 		</rule>
 	</category>

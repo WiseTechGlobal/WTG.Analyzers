@@ -4,5 +4,5 @@ using System.Reflection;
 [assembly: AssemblyProduct("WTGAnalyzers")]
 [assembly: AssemblyCopyright("Copyright © WiseTech Global 2016")]
 
-[assembly: AssemblyVersion("1.0.0.1")]
-[assembly: AssemblyFileVersion("1.0.0.1")]
+[assembly: AssemblyVersion("1.0.0.2")]
+[assembly: AssemblyFileVersion("1.0.0.2")]
