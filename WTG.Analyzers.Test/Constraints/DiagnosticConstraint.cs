@@ -96,11 +96,13 @@ namespace WTG.Analyzers.Test.Constraints
 				while (commonLength < expected.Locations.Length - 1)
 				{
 					yield return new Difference(nameof(actual.AdditionalLocations) + "[" + commonLength + "]", null);
+					commonLength++;
 				}
 
 				while (commonLength < actual.AdditionalLocations.Count)
 				{
 					yield return new Difference(nameof(actual.AdditionalLocations) + "[" + commonLength + "]", actual.AdditionalLocations[commonLength]);
+					commonLength++;
 				}
 			}
 		}

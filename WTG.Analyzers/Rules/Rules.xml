@@ -27,6 +27,12 @@
 			<description>Remove whitespace from the end of the line.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="WTG1004" name="IndentWithTabsRatherThanSpaces" severity="Info">
+			<title>Indent with tabs rather than spaces.</title>
+			<message>Our coding convention is to use tabs, not spaces, you may need to fix your settings.</message>
+			<description>Replace the leading spaces with tabs.</description>
+			<tag>Unnecessary</tag>
+		</rule>
 	</category>
 	<category name="Correctness">
 		<rule id="WTG2001" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">

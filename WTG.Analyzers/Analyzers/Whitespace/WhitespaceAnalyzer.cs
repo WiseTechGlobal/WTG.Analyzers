@@ -1,4 +1,7 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -12,6 +15,7 @@ namespace WTG.Analyzers
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(new[]
 		{
 			Rules.DoNotLeaveWhitespaceOnTheEndOfTheLineRule,
+			Rules.IndentWithTabsRatherThanSpacesRule,
 		});
 
 		public override void Initialize(AnalysisContext context)
@@ -27,6 +31,7 @@ namespace WTG.Analyzers
 			}
 
 			var root = context.Tree.GetRoot(context.CancellationToken);
+			List<Location> brokenIndentation = null;
 
 			foreach (var trivia in root.DescendantTrivia())
 			{
@@ -39,6 +44,30 @@ namespace WTG.Analyzers
 						context.ReportDiagnostic(Rules.CreateDoNotLeaveWhitespaceOnTheEndOfTheLineDiagnostic(preceedingTrivia.GetLocation()));
 					}
 				}
+				else if (trivia.IsKind(SyntaxKind.WhitespaceTrivia))
+				{
+					var location = trivia.GetLocation();
+
+					if (location.GetLineSpan().StartLinePosition.Character == 0 &&
+						!acceptableLeadingWhitespace.IsMatch(trivia.ToString()))
+					{
+						if (brokenIndentation == null)
+						{
+							brokenIndentation = new List<Location>();
+						}
+
+						brokenIndentation.Add(location);
+					}
+				}
+			}
+
+			if (brokenIndentation != null)
+			{
+				context.ReportDiagnostic(
+					Diagnostic.Create(
+						Rules.IndentWithTabsRatherThanSpacesRule,
+						brokenIndentation[0],
+						brokenIndentation.Skip(1)));
 			}
 		}
 
@@ -69,5 +98,9 @@ namespace WTG.Analyzers
 			preceedingTrivia = default(SyntaxTrivia);
 			return false;
 		}
+
+		// Must consist of one or more tab followed by up to 3 spaces.
+		// (sometimes visual studio likes to add a few spaces to spaces to align with something on the previous line.)
+		static readonly Regex acceptableLeadingWhitespace = new Regex(@"^\t+[ ]{0,3}$", RegexOptions.ExplicitCapture);
 	}
 }

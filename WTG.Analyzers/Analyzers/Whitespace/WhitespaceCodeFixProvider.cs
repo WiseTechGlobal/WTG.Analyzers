@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace WTG.Analyzers
 {
@@ -14,7 +15,12 @@ namespace WTG.Analyzers
 	{
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
-			get { return ImmutableArray.Create(Rules.DoNotLeaveWhitespaceOnTheEndOfTheLineDiagnosticID); }
+			get
+			{
+				return ImmutableArray.Create(
+					Rules.DoNotLeaveWhitespaceOnTheEndOfTheLineDiagnosticID,
+					Rules.IndentWithTabsRatherThanSpacesDiagnosticID);
+			}
 		}
 
 		public sealed override FixAllProvider GetFixAllProvider()
@@ -26,27 +32,64 @@ namespace WTG.Analyzers
 		{
 			var diagnostic = context.Diagnostics.First();
 
-			context.RegisterCodeFix(
-				CodeAction.Create(
-					title: "Remove trailing whitespace.",
-					createChangedDocument: c => Fix(context.Document, diagnostic, c),
-					equivalenceKey: "RemoveTrailingWhitespace"),
-				diagnostic);
+			switch (diagnostic.Id)
+			{
+				case Rules.DoNotLeaveWhitespaceOnTheEndOfTheLineDiagnosticID:
+					context.RegisterCodeFix(
+						CodeAction.Create(
+							title: "Remove trailing whitespace.",
+							createChangedDocument: c => FixTrailingWhitespace(context.Document, diagnostic, c),
+							equivalenceKey: "RemoveTrailingWhitespace"),
+						diagnostic);
+					break;
+
+				case Rules.IndentWithTabsRatherThanSpacesDiagnosticID:
+					context.RegisterCodeFix(
+						CodeAction.Create(
+							title: "Replace spaces with tabs.",
+							createChangedDocument: c => FixLeadingWhitespace(context.Document, diagnostic, c),
+							equivalenceKey: "ReplaceSpacesWithTabs"),
+						diagnostic);
+					break;
+			}
 
 			return Task.FromResult<object>(null);
 		}
 
-		static async Task<Document> Fix(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		static async Task<Document> FixTrailingWhitespace(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-			var diagnosticSpan = diagnostic.Location.SourceSpan;
-			var trivia = root.FindTrivia(diagnosticSpan.Start);
+			var trivia = FindTrivia(root, diagnostic.Location);
 			var token = trivia.Token;
 
 			return document.WithSyntaxRoot(
 				root.ReplaceToken(
 					token,
 					RemoveTrivia(token, trivia)));
+		}
+
+		static async Task<Document> FixLeadingWhitespace(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		{
+			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var triviaList = new SyntaxTrivia[diagnostic.AdditionalLocations.Count + 1];
+			triviaList[0] = FindTrivia(root, diagnostic.Location);
+
+			for (var i = 0; i < diagnostic.AdditionalLocations.Count; i++)
+			{
+				triviaList[i + 1] = FindTrivia(root, diagnostic.AdditionalLocations[i]);
+			}
+
+			return document.WithSyntaxRoot(
+				root.ReplaceTrivia(
+					triviaList,
+					RewriteIndentingUsingTabs));
+		}
+
+		static SyntaxTrivia FindTrivia(SyntaxNode root, Location location)
+		{
+			var diagnosticSpan = location.SourceSpan;
+			var trivia = root.FindTrivia(diagnosticSpan.Start);
+			return trivia;
 		}
 
 		static SyntaxToken RemoveTrivia(SyntaxToken token, SyntaxTrivia trivia)
@@ -67,5 +110,67 @@ namespace WTG.Analyzers
 
 			return token;
 		}
+
+		static SyntaxTrivia RewriteIndentingUsingTabs(SyntaxTrivia originalTrivia, SyntaxTrivia targetTrivia)
+		{
+			return SyntaxFactory.Whitespace(StringFromIndentColumn(CalculateColumn(originalTrivia.ToString())));
+		}
+
+		static int CalculateColumn(string text)
+		{
+			var column = 0;
+
+			for (var i = 0; i < text.Length; i++)
+			{
+				if (text[i] == '\t')
+				{
+					// Round up to the nearest multiple of AssumedTabSize.
+					column = (column + AssumedTabSize);
+					column = column - (column % AssumedTabSize);
+				}
+				else
+				{
+					column++;
+				}
+			}
+
+			return column;
+		}
+
+		static string StringFromIndentColumn(int column)
+		{
+			var tabCount = column / AssumedTabSize;
+			var spaceCount = column % AssumedTabSize;
+
+			var tabString = tabCount < cachedTabStrings.Length ? cachedTabStrings[tabCount] : new string('\t', tabCount);
+
+			if (spaceCount == 0)
+			{
+				return tabString;
+			}
+
+			return tabString + cachedSpaceStrings[spaceCount];
+		}
+
+		const int AssumedTabSize = 4;
+
+		static string[] cachedTabStrings =
+		{
+			string.Empty,
+			"\t",
+			"\t\t",
+			"\t\t\t",
+			"\t\t\t\t",
+			"\t\t\t\t\t",
+			"\t\t\t\t\t\t",
+		};
+
+		static string[] cachedSpaceStrings = new string[AssumedTabSize]
+		{
+			string.Empty,
+			" ",
+			"  ",
+			"   ",
+		};
 	}
 }

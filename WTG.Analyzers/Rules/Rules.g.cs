@@ -10,6 +10,7 @@ namespace WTG.Analyzers
 		public const string DoNotUseThePrivateKeywordDiagnosticID = "WTG1001";
 		public const string UseVarWherePossibleDiagnosticID = "WTG1002";
 		public const string DoNotLeaveWhitespaceOnTheEndOfTheLineDiagnosticID = "WTG1003";
+		public const string IndentWithTabsRatherThanSpacesDiagnosticID = "WTG1004";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 
 		public static readonly DiagnosticDescriptor DoNotUseThePrivateKeywordRule = new DiagnosticDescriptor(
@@ -51,6 +52,19 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor IndentWithTabsRatherThanSpacesRule = new DiagnosticDescriptor(
+			IndentWithTabsRatherThanSpacesDiagnosticID,
+			"Indent with tabs rather than spaces.",
+			"Our coding convention is to use tabs, not spaces, you may need to fix your settings.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Replace the leading spaces with tabs.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
 			"Do not use ConfigureAwait from an async void method.",
@@ -82,6 +96,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDoNotLeaveWhitespaceOnTheEndOfTheLineDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DoNotLeaveWhitespaceOnTheEndOfTheLineRule, location);
+		}
+
+		/// <summary>
+		/// Our coding convention is to use tabs, not spaces, you may need to fix your settings.
+		/// </summary>
+		public static Diagnostic CreateIndentWithTabsRatherThanSpacesDiagnostic(Location location)
+		{
+			return Diagnostic.Create(IndentWithTabsRatherThanSpacesRule, location);
 		}
 
 		/// <summary>
