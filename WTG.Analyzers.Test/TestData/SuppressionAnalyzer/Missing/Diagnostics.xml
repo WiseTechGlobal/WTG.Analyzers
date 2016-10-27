@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3001" severity="Info">
+	<diagnostic message="Encountered a code analysis suppression for the non-existent namespace 'Test.Namespace'. Remove or update it.">
+		<location>Test0.cs: (1,1-140)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent type 'Test.Namespace.TestClass'. Remove or update it.">
+		<location>Test0.cs: (2,1-145)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#Method()'. Remove or update it.">
+		<location>Test0.cs: (3,1-157)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#Property'. Remove or update it.">
+		<location>Test0.cs: (4,1-157)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#field'. Remove or update it.">
+		<location>Test0.cs: (5,1-154)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent type 'Test.Namespace.TestClass+NestedClass'. Remove or update it.">
+		<location>Test0.cs: (6,1-157)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#.cctor()'. Remove or update it.">
+		<location>Test0.cs: (7,1-157)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#.ctor()'. Remove or update it.">
+		<location>Test0.cs: (8,1-156)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#GenericMethod`2(Func`2&lt;!!0,!!1&gt;,!!0)'. Remove or update it.">
+		<location>Test0.cs: (9,1-185)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#Test.Namespace.TestInterface`1&lt;System.Int32&gt;.InterfaceMember'. Remove or update it.">
+		<location>Test0.cs: (10,1-209)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent type 'Test.Namespace.TestInterface`1'. Remove or update it.">
+		<location>Test0.cs: (11,1-151)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#ByRef(System.String&amp;)'. Remove or update it.">
+		<location>Test0.cs: (12,1-170)</location>
+	</diagnostic>
+</diagnostics>

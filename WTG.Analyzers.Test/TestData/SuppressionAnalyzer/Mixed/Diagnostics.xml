@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3001" severity="Info">
+	<diagnostic message="Encountered a code analysis suppression for the non-existent namespace 'Missing1'. Remove or update it.">
+		<location>Test0.cs: (4,2-91)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent namespace 'Missing2'. Remove or update it.">
+		<location>Test0.cs: (5,2-91)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent namespace 'Missing'. Remove or update it.">
+		<location>Test0.cs: (8,12-100)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent namespace 'Missing'. Remove or update it.">
+		<location>Test0.cs: (12,2-90)</location>
+	</diagnostic>
+</diagnostics>

@@ -41,6 +41,9 @@
     <Compile Include="Analyzers\Async\AsyncAnalyzer.cs" />
     <Compile Include="Analyzers\Async\AsyncCodeFixProvider.cs" />
     <Compile Include="Analyzers\Async\IsAsyncVoidMethodVisitor.cs" />
+    <Compile Include="Analyzers\Suppression\SuppressionAnalyzer.cs" />
+    <Compile Include="Analyzers\Suppression\SuppressionCodeFixProvider.cs" />
+    <Compile Include="Analyzers\Suppression\SuppressionTargetLookup.cs" />
     <Compile Include="Analyzers\Var\VarAnalyzer.cs" />
     <Compile Include="Analyzers\Var\VarCodeFixProvider.cs" />
     <Compile Include="Analyzers\Visibility\ModifierExtractionVisitor.cs" />
@@ -54,8 +57,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Rules.tt</DependentUpon>
     </Compile>
+    <Compile Include="Utils\AttributeUtils.cs" />
     <Compile Include="Utils\EnumerableUtils.cs" />
     <Compile Include="Utils\FileDetailCache.cs" />
+    <Compile Include="Utils\ExpressionSyntaxExtensions.cs" />
     <Compile Include="Utils\SymbolExtensions.cs" />
     <Compile Include="Utils\SyntaxTreeExtensions.cs" />
   </ItemGroup>

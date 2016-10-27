@@ -7,11 +7,13 @@ namespace WTG.Analyzers
 	{
 		public const string CodingConventionCategory = "CodingConvention";
 		public const string CorrectnessCategory = "Correctness";
+		public const string DecruftificationCategory = "Decruftification";
 		public const string DoNotUseThePrivateKeywordDiagnosticID = "WTG1001";
 		public const string UseVarWherePossibleDiagnosticID = "WTG1002";
 		public const string DoNotLeaveWhitespaceOnTheEndOfTheLineDiagnosticID = "WTG1003";
 		public const string IndentWithTabsRatherThanSpacesDiagnosticID = "WTG1004";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
+		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 
 		public static readonly DiagnosticDescriptor DoNotUseThePrivateKeywordRule = new DiagnosticDescriptor(
 			DoNotUseThePrivateKeywordDiagnosticID,
@@ -74,6 +76,20 @@ namespace WTG.Analyzers
 			isEnabledByDefault: true,
 			description: "Remove the ConfigureAwait call, or return Task.");
 
+		public static readonly DiagnosticDescriptor RemovedOrphanedSuppressionsRule = new DiagnosticDescriptor(
+			RemovedOrphanedSuppressionsDiagnosticID,
+			"Remove orphaned suppressions.",
+			"Encountered a code analysis suppression for the non-existent {0} '{1}'. Remove or update it.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "If you change or remove a type or member that had a code analysis suppression against it, be sure to remove any orphaned suppression attributes. This is usually easier to maintain if the suppression attributes are applied directly to the type/member rather than applied to the assembly in a GlobalSuppressions.cs file.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+				WellKnownDiagnosticTags.NotConfigurable,
+			});
+
 		/// <summary>
 		/// Our coding convention is to leave out the private keyword and let it default to private.
 		/// </summary>
@@ -112,6 +128,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDoNotConfigureAwaitFromAsyncVoidDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DoNotConfigureAwaitFromAsyncVoidRule, location);
+		}
+
+		/// <summary>
+		/// Encountered a code analysis suppression for the non-existent {targetKind} '{targetName}'. Remove or update it.
+		/// </summary>
+		public static Diagnostic CreateRemovedOrphanedSuppressionsDiagnostic(Location location, object targetKind, object targetName)
+		{
+			return Diagnostic.Create(RemovedOrphanedSuppressionsRule, location, targetKind, targetName);
 		}
 	}
 }

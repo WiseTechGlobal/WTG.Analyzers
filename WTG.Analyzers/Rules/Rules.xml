@@ -41,4 +41,12 @@
 			<description>Remove the ConfigureAwait call, or return Task.</description>
 		</rule>
 	</category>
+	<category name="Decruftification">
+		<rule id="WTG3001" name="RemovedOrphanedSuppressions" severity="Info">
+			<title>Remove orphaned suppressions.</title>
+			<message>Encountered a code analysis suppression for the non-existent {targetKind} '{targetName}'. Remove or update it.</message>
+			<description>If you change or remove a type or member that had a code analysis suppression against it, be sure to remove any orphaned suppression attributes. This is usually easier to maintain if the suppression attributes are applied directly to the type/member rather than applied to the assembly in a GlobalSuppressions.cs file.</description>
+			<tag>Unnecessary</tag>
+		</rule>
+	</category>
 </rules>
