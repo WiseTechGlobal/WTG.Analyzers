@@ -10,6 +10,11 @@ namespace WTG.Analyzers.Utils
 		// (foreach does not require the enumerable to implement IEnumerable<>)
 		public static ITypeSymbol GetElementType(ITypeSymbol enumerableType)
 		{
+			if (enumerableType.Kind == SymbolKind.ArrayType)
+			{
+				return ((IArrayTypeSymbol)enumerableType).ElementType;
+			}
+
 			return GetExplicitElementType(enumerableType) ?? GetImplicitElementType(enumerableType);
 		}
 

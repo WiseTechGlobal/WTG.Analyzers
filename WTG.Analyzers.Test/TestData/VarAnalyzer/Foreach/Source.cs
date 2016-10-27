@@ -24,6 +24,13 @@ public class Bob
 		}
 	}
 
+	public void Array(int[] values)
+	{
+		foreach (int value in values)
+		{
+		}
+	}
+
 	public void NonGenericForeachLoopAsNonObject(IEnumerable values)
 	{
 		foreach (int value in values) // can't translate this so don't suggest it
