@@ -101,6 +101,6 @@ namespace WTG.Analyzers
 
 		// Must consist of one or more tab followed by up to 3 spaces.
 		// (sometimes visual studio likes to add a few spaces to spaces to align with something on the previous line.)
-		static readonly Regex acceptableLeadingWhitespace = new Regex(@"^\t+[ ]{0,3}$", RegexOptions.ExplicitCapture);
+		static readonly Regex acceptableLeadingWhitespace = new Regex(@"^\t*[ ]{0,3}$", RegexOptions.ExplicitCapture);
 	}
 }

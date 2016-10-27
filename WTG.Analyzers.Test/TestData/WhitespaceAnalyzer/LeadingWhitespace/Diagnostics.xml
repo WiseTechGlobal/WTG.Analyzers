@@ -9,8 +9,9 @@
 		<location>Test0.cs: (11,1-5)</location>
 		<location>Test0.cs: (12,1-5)</location>
 		<location>Test0.cs: (13,1-9)</location>
-		<location>Test0.cs: (14,1-19)</location>
-		<location>Test0.cs: (15,1-19)</location>
-		<location>Test0.cs: (16,1-5)</location>
+		<location>Test0.cs: (17,1-9)</location>
+		<location>Test0.cs: (18,1-19)</location>
+		<location>Test0.cs: (19,1-19)</location>
+		<location>Test0.cs: (20,1-5)</location>
 	</diagnostic>
 </diagnostics>
