@@ -87,7 +87,6 @@ namespace WTG.Analyzers
 			customTags: new[]
 			{
 				WellKnownDiagnosticTags.Unnecessary,
-				WellKnownDiagnosticTags.NotConfigurable,
 			});
 
 		/// <summary>
