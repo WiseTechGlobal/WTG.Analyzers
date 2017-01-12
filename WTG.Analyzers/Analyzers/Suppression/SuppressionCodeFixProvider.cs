@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
@@ -60,73 +59,7 @@ namespace WTG.Analyzers
 				}
 			}
 
-			return RemoveNodeWithSaneTriviaHandling(root, node);
-		}
-
-		static SyntaxNode RemoveNodeWithSaneTriviaHandling(SyntaxNode root, SyntaxNode nodeToRemove)
-		{
-			var leading = nodeToRemove.GetLeadingTrivia();
-			var lastLeadingNewLineIndex = -1;
-			var lastLeadingNonWhitespaceIndex = -1;
-
-			for (var i = 0; i < leading.Count; i++)
-			{
-				var kind = leading[i].Kind();
-
-				switch (kind)
-				{
-					case SyntaxKind.WhitespaceTrivia:
-						break;
-
-					case SyntaxKind.EndOfLineTrivia:
-						lastLeadingNewLineIndex = i;
-						goto default;
-
-					default:
-						lastLeadingNonWhitespaceIndex = i;
-						break;
-				}
-			}
-
-			var trailing = nodeToRemove.GetTrailingTrivia();
-			var firstTrailingNewLineIndex = -1;
-			var firstTrailingNonWhitespaceIndex = -1;
-
-			for (var i = trailing.Count - 1; i >= 0; i--)
-			{
-				var kind = trailing[i].Kind();
-
-				switch (kind)
-				{
-					case SyntaxKind.WhitespaceTrivia:
-						break;
-
-					case SyntaxKind.EndOfLineTrivia:
-						firstTrailingNewLineIndex = i;
-						goto default;
-
-					default:
-						firstTrailingNonWhitespaceIndex = i;
-						break;
-				}
-			}
-
-			return root.RemoveNode(nodeToRemove, SyntaxRemoveOptions.KeepNoTrivia);
-		}
-
-		static IEnumerable<T> ConcatSafe<T>(IEnumerable<T> x, IEnumerable<T> y)
-		{
-			if (x == null)
-			{
-				return y;
-			}
-
-			if (y == null)
-			{
-				return x;
-			}
-
-			return x.Concat(y);
+			return root.RemoveNode(node, SyntaxRemoveOptions.KeepNoTrivia);
 		}
 	}
 }
