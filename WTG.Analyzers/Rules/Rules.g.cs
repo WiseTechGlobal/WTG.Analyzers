@@ -12,6 +12,7 @@ namespace WTG.Analyzers
 		public const string UseVarWherePossibleDiagnosticID = "WTG1002";
 		public const string DoNotLeaveWhitespaceOnTheEndOfTheLineDiagnosticID = "WTG1003";
 		public const string IndentWithTabsRatherThanSpacesDiagnosticID = "WTG1004";
+		public const string UseConsistentLineEndingsDiagnosticID = "WTG1005";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 
@@ -67,6 +68,15 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor UseConsistentLineEndingsRule = new DiagnosticDescriptor(
+			UseConsistentLineEndingsDiagnosticID,
+			"Use consistent line endings.",
+			"All line endings should be using CRLF, this issue usually occures when copying code from another source.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Replace the line ending character sequence with CRLF.");
+
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
 			"Do not use ConfigureAwait from an async void method.",
@@ -119,6 +129,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateIndentWithTabsRatherThanSpacesDiagnostic(Location location)
 		{
 			return Diagnostic.Create(IndentWithTabsRatherThanSpacesRule, location);
+		}
+
+		/// <summary>
+		/// All line endings should be using CRLF, this issue usually occures when copying code from another source.
+		/// </summary>
+		public static Diagnostic CreateUseConsistentLineEndingsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(UseConsistentLineEndingsRule, location);
 		}
 
 		/// <summary>

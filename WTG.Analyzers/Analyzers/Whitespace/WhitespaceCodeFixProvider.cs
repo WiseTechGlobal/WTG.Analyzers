@@ -19,7 +19,8 @@ namespace WTG.Analyzers
 			{
 				return ImmutableArray.Create(
 					Rules.DoNotLeaveWhitespaceOnTheEndOfTheLineDiagnosticID,
-					Rules.IndentWithTabsRatherThanSpacesDiagnosticID);
+					Rules.IndentWithTabsRatherThanSpacesDiagnosticID,
+					Rules.UseConsistentLineEndingsDiagnosticID);
 			}
 		}
 
@@ -49,6 +50,15 @@ namespace WTG.Analyzers
 							title: "Replace spaces with tabs.",
 							createChangedDocument: c => FixLeadingWhitespace(context.Document, diagnostic, c),
 							equivalenceKey: "ReplaceSpacesWithTabs"),
+						diagnostic);
+					break;
+
+				case Rules.UseConsistentLineEndingsDiagnosticID:
+					context.RegisterCodeFix(
+						CodeAction.Create(
+							title: "Replace with CRLF.",
+							createChangedDocument: c => FixLineEndings(context.Document, diagnostic, c),
+							equivalenceKey: "FixLineEnding"),
 						diagnostic);
 					break;
 			}
@@ -83,6 +93,17 @@ namespace WTG.Analyzers
 				root.ReplaceTrivia(
 					triviaList,
 					RewriteIndentingUsingTabs));
+		}
+
+		static async Task<Document> FixLineEndings(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		{
+			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var trivia = FindTrivia(root, diagnostic.Location);
+
+			return document.WithSyntaxRoot(
+				root.ReplaceTrivia(
+					trivia,
+					SyntaxFactory.CarriageReturnLineFeed));
 		}
 
 		static SyntaxTrivia FindTrivia(SyntaxNode root, Location location)

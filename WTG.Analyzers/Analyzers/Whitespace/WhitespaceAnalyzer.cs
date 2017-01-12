@@ -16,6 +16,7 @@ namespace WTG.Analyzers
 		{
 			Rules.DoNotLeaveWhitespaceOnTheEndOfTheLineRule,
 			Rules.IndentWithTabsRatherThanSpacesRule,
+			Rules.UseConsistentLineEndingsRule,
 		});
 
 		public override void Initialize(AnalysisContext context)
@@ -42,6 +43,11 @@ namespace WTG.Analyzers
 					if (TryGetPreceedingTrivia(trivia, out preceedingTrivia) && preceedingTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
 					{
 						context.ReportDiagnostic(Rules.CreateDoNotLeaveWhitespaceOnTheEndOfTheLineDiagnostic(preceedingTrivia.GetLocation()));
+					}
+
+					if (trivia.ToString() != "\r\n")
+					{
+						context.ReportDiagnostic(Rules.CreateUseConsistentLineEndingsDiagnostic(trivia.GetLocation()));
 					}
 				}
 				else if (trivia.IsKind(SyntaxKind.WhitespaceTrivia))
