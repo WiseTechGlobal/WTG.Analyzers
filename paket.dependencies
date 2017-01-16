@@ -1,0 +1,35 @@
+
+# All packages come from the public NuGet Gallery
+source https://api.nuget.org/v3/index.json
+
+# Use a local cache in case a package gets deleted from the Gallery,
+# or in case we lose our internet connection.
+# NOTE: DAT Build Servers never have access to the Gallery.
+cache \\sydco-sdts-2.wtg.zone\ThirdParty\NuGet-PaketCache
+
+# This filters out extra supporting libraries from .NET Core that
+# we don't care about (yet).
+framework: net45
+
+# This is our list of packages.
+# If you know what you're doing, manually add an entry.
+# If you don't, use "paket.exe add nuget<package> --no-install".
+# Use "paket.exe update --no-install" to update paket.lock.
+# Use "paket.exe restore" to update the package cache above
+#
+# DO NOT UPDATE paket.lock BY HAND!
+#
+
+nuget NUnit
+nuget Microsoft.CodeAnalysis.Analyzers
+
+nuget Microsoft.CodeAnalysis 1.1
+nuget Microsoft.CodeAnalysis.Common 1.1
+nuget Microsoft.CodeAnalysis.CSharp 1.1
+nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.1
+nuget Microsoft.CodeAnalysis.Workspaces.Common 1.1
+
+nuget Microsoft.Composition 1.0.27
+
+nuget System.Reflection.Metadata 1.1
+nuget System.Collections.Immutable 1.1.37
