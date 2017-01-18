@@ -23,13 +23,13 @@ framework: net45
 nuget NUnit
 nuget Microsoft.CodeAnalysis.Analyzers
 
-nuget Microsoft.CodeAnalysis 1.1
-nuget Microsoft.CodeAnalysis.Common 1.1
-nuget Microsoft.CodeAnalysis.CSharp 1.1
-nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.1
-nuget Microsoft.CodeAnalysis.Workspaces.Common 1.1
+nuget Microsoft.CodeAnalysis 1.2
+nuget Microsoft.CodeAnalysis.Common 1.2
+nuget Microsoft.CodeAnalysis.CSharp 1.2
+nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2
+nuget Microsoft.CodeAnalysis.Workspaces.Common 1.2
 
 nuget Microsoft.Composition 1.0.27
 
-nuget System.Reflection.Metadata 1.1
+nuget System.Reflection.Metadata 1.2
 nuget System.Collections.Immutable 1.1.37
