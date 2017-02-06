@@ -2,7 +2,7 @@
 
 namespace WTG.Analyzers.Utils
 {
-	internal static class SymbolExtensions
+	public static class SymbolExtensions
 	{
 		public static bool IsMatch(this IMethodSymbol methodSymbol, string assemblyName, string fullTypeName, string methodName)
 		{

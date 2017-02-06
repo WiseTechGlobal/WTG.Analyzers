@@ -1,5 +1,3 @@
 ﻿using System.Reflection;
-using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("WTGAnalyzers.Test")]
-[assembly: ComVisible(false)]
+[assembly: AssemblyTitle("WTG Analyzers Test")]

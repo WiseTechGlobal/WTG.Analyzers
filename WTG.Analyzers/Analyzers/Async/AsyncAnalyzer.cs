@@ -13,10 +13,8 @@ namespace WTG.Analyzers
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed partial class AsyncAnalyzer : DiagnosticAnalyzer
 	{
-		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(new[]
-		{
-			Rules.DoNotConfigureAwaitFromAsyncVoidRule,
-		});
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+			Rules.DoNotConfigureAwaitFromAsyncVoidRule);
 
 		public override void Initialize(AnalysisContext context)
 		{

@@ -12,10 +12,8 @@ namespace WTG.Analyzers
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed class SuppressionAnalyzer : DiagnosticAnalyzer
 	{
-		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(new[]
-		{
-			Rules.RemovedOrphanedSuppressionsRule,
-		});
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+			Rules.RemovedOrphanedSuppressionsRule);
 
 		public override void Initialize(AnalysisContext context)
 		{
@@ -110,8 +108,8 @@ namespace WTG.Analyzers
 			string scopeStr;
 			string targetStr;
 
-			if (att.GetPropertyValue(nameof(SuppressMessageAttribute.Scope)).TryGetStringValue(out scopeStr) &&
-				att.GetPropertyValue(nameof(SuppressMessageAttribute.Target)).TryGetStringValue(out targetStr))
+			if (TryGetStringValue(att.GetPropertyValue(nameof(SuppressMessageAttribute.Scope)), out scopeStr) &&
+				TryGetStringValue(att.GetPropertyValue(nameof(SuppressMessageAttribute.Target)), out targetStr))
 			{
 				scope = TranslateScope(scopeStr);
 
@@ -124,6 +122,20 @@ namespace WTG.Analyzers
 
 			scope = SuppressionScope.Unknown;
 			target = null;
+			return false;
+		}
+
+		static bool TryGetStringValue(ExpressionSyntax expression, out string value)
+		{
+			var literal = expression as LiteralExpressionSyntax;
+
+			if (literal != null)
+			{
+				value = (string)literal.Token.Value;
+				return true;
+			}
+
+			value = null;
 			return false;
 		}
 

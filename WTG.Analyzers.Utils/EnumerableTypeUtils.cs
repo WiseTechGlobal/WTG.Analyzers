@@ -4,10 +4,12 @@ using Microsoft.CodeAnalysis;
 
 namespace WTG.Analyzers.Utils
 {
-	internal static class EnumerableUtils
+	public static class EnumerableTypeUtils
 	{
-		// get the element type from an enumerable using the same logic as foreach
-		// (foreach does not require the enumerable to implement IEnumerable<>)
+		/// <summary>
+		/// Get the element type from an enumerable using the same logic as foreach
+		/// (foreach does not require the enumerable to implement IEnumerable<>)
+		/// </summary>
 		public static ITypeSymbol GetElementType(ITypeSymbol enumerableType)
 		{
 			if (enumerableType.Kind == SymbolKind.ArrayType)

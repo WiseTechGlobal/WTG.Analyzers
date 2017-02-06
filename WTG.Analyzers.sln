@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers", "WTG.Analyz
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers.Test", "WTG.Analyzers.Test\WTG.Analyzers.Test.csproj", "{38871ADE-9AA7-4894-9A8B-580596C17F83}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers.TestFramework", "WTG.Analyzers.TestFramework\WTG.Analyzers.TestFramework.csproj", "{93AE1162-CB3B-49F8-BF69-40F9799E8924}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers.Utils", "WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj", "{E0567771-3F8B-4185-B31A-324F95C58EB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers.Utils.Test", "WTG.Analyzers.Utils.Test\WTG.Analyzers.Utils.Test.csproj", "{5E3F903C-A085-4D4A-930E-E82BCB6782C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,24 +26,39 @@ Global
 		{38871ADE-9AA7-4894-9A8B-580596C17F83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{38871ADE-9AA7-4894-9A8B-580596C17F83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38871ADE-9AA7-4894-9A8B-580596C17F83}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38871ADE-9AA7-4894-9A8B-580596C17F83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93AE1162-CB3B-49F8-BF69-40F9799E8924}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93AE1162-CB3B-49F8-BF69-40F9799E8924}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93AE1162-CB3B-49F8-BF69-40F9799E8924}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0567771-3F8B-4185-B31A-324F95C58EB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0567771-3F8B-4185-B31A-324F95C58EB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0567771-3F8B-4185-B31A-324F95C58EB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0567771-3F8B-4185-B31A-324F95C58EB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E3F903C-A085-4D4A-930E-E82BCB6782C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E3F903C-A085-4D4A-930E-E82BCB6782C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E3F903C-A085-4D4A-930E-E82BCB6782C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 2
+		SccNumberOfProjects = 6
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = http://tfs.wtg.zone:8080/tfs/cargowise
-		SccProjectUniqueName0 = WTGAnalyzers\\WTG.Analyzers.csproj
-		SccProjectName0 = WTGAnalyzers
-		SccAuxPath0 = http://tfs.wtg.zone:8080/tfs/cargowise
-		SccLocalPath0 = WTGAnalyzers
-		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName1 = WTGAnalyzers.Test\\WTG.Analyzers.Test.csproj
-		SccProjectName1 = WTGAnalyzers.Test
-		SccAuxPath1 = http://tfs.wtg.zone:8080/tfs/cargowise
-		SccLocalPath1 = WTGAnalyzers.Test
-		SccProvider1 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = WTG.Analyzers\\WTG.Analyzers.csproj
+		SccProjectName1 = WTG.Analyzers
+		SccLocalPath1 = WTG.Analyzers
+		SccProjectUniqueName2 = WTG.Analyzers.Test\\WTG.Analyzers.Test.csproj
+		SccProjectName2 = WTG.Analyzers.Test
+		SccLocalPath2 = WTG.Analyzers.Test
+		SccProjectUniqueName3 = WTG.Analyzers.TestFramework\\WTG.Analyzers.TestFramework.csproj
+		SccProjectName3 = WTG.Analyzers.TestFramework
+		SccLocalPath3 = WTG.Analyzers.TestFramework
+		SccProjectUniqueName4 = WTG.Analyzers.Utils\\WTG.Analyzers.Utils.csproj
+		SccProjectName4 = WTG.Analyzers.Utils
+		SccLocalPath4 = WTG.Analyzers.Utils
+		SccProjectUniqueName5 = WTG.Analyzers.Utils.Test\\WTG.Analyzers.Utils.Test.csproj
+		SccProjectName5 = WTG.Analyzers.Utils.Test
+		SccLocalPath5 = WTG.Analyzers.Utils.Test
 	EndGlobalSection
 EndGlobal

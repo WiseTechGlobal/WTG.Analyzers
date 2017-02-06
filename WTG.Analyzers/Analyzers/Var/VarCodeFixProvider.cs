@@ -14,15 +14,10 @@ namespace WTG.Analyzers
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(VarCodeFixProvider)), Shared]
 	public sealed class VarCodeFixProvider : CodeFixProvider
 	{
-		public override ImmutableArray<string> FixableDiagnosticIds
-		{
-			get { return ImmutableArray.Create(Rules.UseVarWherePossibleDiagnosticID); }
-		}
+		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+			Rules.UseVarWherePossibleDiagnosticID);
 
-		public sealed override FixAllProvider GetFixAllProvider()
-		{
-			return WellKnownFixAllProviders.BatchFixer;
-		}
+		public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
 		public override Task RegisterCodeFixesAsync(CodeFixContext context)
 		{

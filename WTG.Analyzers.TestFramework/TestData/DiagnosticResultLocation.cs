@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace WTG.Analyzers.Test.Helpers
+namespace WTG.Analyzers.TestFramework
 {
-	public struct DiagnosticResultLocation
+	public class DiagnosticResultLocation
 	{
 		public DiagnosticResultLocation(string path, int startLine, int startColumn, int endLine, int endColumn)
 		{
@@ -49,7 +49,7 @@ namespace WTG.Analyzers.Test.Helpers
 			return Format(Path, StartLine, StartColumn, EndLine, EndColumn);
 		}
 
-		public static string Format(string path, int startLine, int startColumn, int endLine, int endColumn)
+		static string Format(string path, int startLine, int startColumn, int endLine, int endColumn)
 		{
 			if (startLine != endLine)
 			{

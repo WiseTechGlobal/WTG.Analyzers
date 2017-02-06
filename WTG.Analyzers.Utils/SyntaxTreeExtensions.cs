@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace WTG.Analyzers.Utils
 {
-	internal static class SyntaxTreeExtensions
+	public static class SyntaxTreeExtensions
 	{
 		public static bool IsGenerated(this SyntaxTree tree, CancellationToken token)
 		{

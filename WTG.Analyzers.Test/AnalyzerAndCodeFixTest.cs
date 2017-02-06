@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
-using WTG.Analyzers.Test.Constraints;
-using WTG.Analyzers.Test.Helpers;
+using WTG.Analyzers.TestFramework;
 
 namespace WTG.Analyzers.Test
 {
@@ -34,26 +32,17 @@ namespace WTG.Analyzers.Test
 			var test = @"";
 
 			var analyzer = new TAnalyzer();
-			var diagnostics = await DiagnosticUtils.GetSortedDiagnosticsAsync(analyzer, test).ConfigureAwait(false);
-			Assert.That(diagnostics, Is.Empty);
+			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, test).ConfigureAwait(false);
+			Assert.That(diagnostics, IsDiagnostic.Empty);
 		}
 
 		[Test]
-		public async Task RunTest([ValueSource(nameof(SampleNames))] string sampleName)
+		public async Task RunTest([ValueSource(nameof(Samples))] SampleDataSet data)
 		{
-			var data = SampleDataSet.GetSampleData(typeof(TAnalyzer).Name, sampleName);
 			var analyzer = new TAnalyzer();
-			var actual = await DiagnosticUtils.GetSortedDiagnosticsAsync(analyzer, data.Source).ConfigureAwait(false);
-			var expected = data.Diagnostics;
+			var actual = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, data.Source).ConfigureAwait(false);
 
-			var count = Math.Min(actual.Length, expected.Length);
-
-			for (var i = 0; i < count; i++)
-			{
-				Assert.That(actual[i], IsDiagnostic.EqualTo(expected[i]), "Diagnostic[{0}]", i);
-			}
-
-			Assert.That(actual.Length, Is.EqualTo(expected.Length));
+			Assert.That(actual, IsDiagnostic.EqualTo(data.Diagnostics));
 
 			var fixer = new CodeFixer(analyzer, new TCodeFix());
 			await fixer.VerifyFixAsync(data.Source, data.Result).ConfigureAwait(false);
@@ -61,7 +50,8 @@ namespace WTG.Analyzers.Test
 
 		#region Implementation
 
-		static IEnumerable<string> SampleNames => SampleDataSet.GetSampleNames(typeof(TAnalyzer).Name);
+		const string TestDataPrefix = "WTG.Analyzers.Test.TestData.";
+		static IEnumerable<SampleDataSet> Samples => SampleDataSet.GetSamples(typeof(AnalyzerAndCodeFixTest<,>).Assembly, TestDataPrefix + typeof(TAnalyzer).Name + ".");
 
 		#endregion
 	}

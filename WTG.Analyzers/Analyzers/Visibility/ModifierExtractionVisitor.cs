@@ -9,8 +9,8 @@ namespace WTG.Analyzers
 	internal sealed partial class ModifierExtractionVisitor : CSharpSyntaxVisitor<SyntaxTokenList>
 	{
 		public static ModifierExtractionVisitor Instance { get; } = new ModifierExtractionVisitor();
-		public static ImmutableArray<SyntaxKind> SupportedSyntaxKinds { get; } = ImmutableArray.Create(new[]
-		{
+
+		public static ImmutableArray<SyntaxKind> SupportedSyntaxKinds { get; } = ImmutableArray.Create(
 			SyntaxKind.ClassDeclaration,
 			SyntaxKind.ConstructorDeclaration,
 			SyntaxKind.ConversionOperatorDeclaration,
@@ -26,8 +26,7 @@ namespace WTG.Analyzers
 			SyntaxKind.MethodDeclaration,
 			SyntaxKind.OperatorDeclaration,
 			SyntaxKind.PropertyDeclaration,
-			SyntaxKind.StructDeclaration,
-		});
+			SyntaxKind.StructDeclaration);
 
 		ModifierExtractionVisitor()
 		{

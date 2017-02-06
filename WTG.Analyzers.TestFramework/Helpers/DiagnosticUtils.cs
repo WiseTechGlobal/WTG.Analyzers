@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace WTG.Analyzers.Test.Helpers
+namespace WTG.Analyzers.TestFramework
 {
-	public abstract partial class DiagnosticUtils
+	public static partial class DiagnosticUtils
 	{
-		public static async Task<Diagnostic[]> GetSortedDiagnosticsAsync(DiagnosticAnalyzer analyzer, params string[] sources)
+		public static async Task<Diagnostic[]> GetDiagnosticsAsync(DiagnosticAnalyzer analyzer, params string[] sources)
 		{
-			return await GetSortedDiagnosticsAsync(analyzer, ModelUtils.GetDocuments(sources)).ConfigureAwait(false);
+			return await GetDiagnosticsAsync(analyzer, ModelUtils.GetDocuments(sources)).ConfigureAwait(false);
 		}
 
-		public static async Task<Diagnostic[]> GetSortedDiagnosticsAsync(DiagnosticAnalyzer analyzer, Document[] documents)
+		public static async Task<Diagnostic[]> GetDiagnosticsAsync(DiagnosticAnalyzer analyzer, Document[] documents)
 		{
 			var ids = new HashSet<string>(analyzer.SupportedDiagnostics.Select(x => x.Id));
 			ids.Add("AD0001"); // <-- Analyzer threw exception.
@@ -55,12 +55,7 @@ namespace WTG.Analyzers.Test.Helpers
 				}
 			}
 
-			return SortDiagnostics(diagnostics);
-		}
-
-		static Diagnostic[] SortDiagnostics(IEnumerable<Diagnostic> diagnostics)
-		{
-			return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
+			return diagnostics.ToArray();
 		}
 	}
 }

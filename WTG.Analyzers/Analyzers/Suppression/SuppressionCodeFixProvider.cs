@@ -14,15 +14,10 @@ namespace WTG.Analyzers
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SuppressionCodeFixProvider)), Shared]
 	public sealed class SuppressionCodeFixProvider : CodeFixProvider
 	{
-		public override ImmutableArray<string> FixableDiagnosticIds
-		{
-			get { return ImmutableArray.Create(Rules.RemovedOrphanedSuppressionsDiagnosticID); }
-		}
+		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+			Rules.RemovedOrphanedSuppressionsDiagnosticID);
 
-		public sealed override FixAllProvider GetFixAllProvider()
-		{
-			return WellKnownFixAllProviders.BatchFixer;
-		}
+		public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
 		public override Task RegisterCodeFixesAsync(CodeFixContext context)
 		{

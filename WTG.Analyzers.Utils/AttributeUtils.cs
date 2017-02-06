@@ -2,7 +2,7 @@
 
 namespace WTG.Analyzers.Utils
 {
-	internal static class AttributeUtils
+	public static class AttributeUtils
 	{
 		public static ExpressionSyntax GetArgumentValue(this AttributeSyntax att, int index)
 		{

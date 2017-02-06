@@ -11,10 +11,8 @@ namespace WTG.Analyzers
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed class VarAnalyzer : DiagnosticAnalyzer
 	{
-		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(new[]
-		{
-			Rules.UseVarWherePossibleRule,
-		});
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+			Rules.UseVarWherePossibleRule);
 
 		public override void Initialize(AnalysisContext context)
 		{
@@ -52,7 +50,7 @@ namespace WTG.Analyzers
 				{
 					if (candidate.Unwrap)
 					{
-						expressionType = EnumerableUtils.GetElementType(expressionType);
+						expressionType = EnumerableTypeUtils.GetElementType(expressionType);
 
 						if (typeSymbol == null)
 						{

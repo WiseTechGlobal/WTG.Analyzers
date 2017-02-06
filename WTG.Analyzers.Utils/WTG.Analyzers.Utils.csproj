@@ -5,16 +5,16 @@
     <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3F266F98-2F7B-4067-B267-50275AD261AA}</ProjectGuid>
+    <ProjectGuid>{E0567771-3F8B-4185-B31A-324F95C58EB1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WTG.Analyzers</RootNamespace>
-    <AssemblyName>WTG.Analyzers</AssemblyName>
+    <RootNamespace>WTG.Analyzers.Utils</RootNamespace>
+    <AssemblyName>WTG.Analyzers.Utils</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
@@ -26,42 +26,17 @@
     <Optimize>false</Optimize>
     <OutputPath>..\bin</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Analyzers\Async\AsyncAnalyzer.cs" />
-    <Compile Include="Analyzers\Async\AsyncCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Async\IsAsyncVoidMethodVisitor.cs" />
-    <Compile Include="Analyzers\Suppression\SuppressionAnalyzer.cs" />
-    <Compile Include="Analyzers\Suppression\SuppressionCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Suppression\SuppressionTargetLookup.cs" />
-    <Compile Include="Analyzers\Var\VarAnalyzer.cs" />
-    <Compile Include="Analyzers\Var\VarCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Visibility\ModifierExtractionVisitor.cs" />
-    <Compile Include="Analyzers\Visibility\VisibilityAnalyzer.cs" />
-    <Compile Include="Analyzers\Visibility\VisibilityCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Whitespace\WhitespaceCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Whitespace\WhitespaceAnalyzer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rules\Rules.g.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Rules.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Rules\Rules.xsd">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
@@ -100,22 +75,17 @@
     <Reference Include="System.Reflection.Metadata">
       <HintPath>..\packages\System.Reflection.Metadata\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
     </Reference>
-    <ProjectReference Include="..\WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj">
-      <Project>{e0567771-3f8b-4185-b31a-324f95c58eb1}</Project>
-      <Name>WTG.Analyzers.Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Rules\Rules.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Rules.g.cs</LastGenOutput>
-    </Content>
-    <Content Include="Rules\Rules.xml">
-      <SubType>Designer</SubType>
-    </Content>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AttributeUtils.cs" />
+    <Compile Include="EnumerableTypeUtils.cs" />
+    <Compile Include="FileDetailCache.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SymbolExtensions.cs" />
+    <Compile Include="SyntaxTreeExtensions.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\v4.6\Microsoft.Portable.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

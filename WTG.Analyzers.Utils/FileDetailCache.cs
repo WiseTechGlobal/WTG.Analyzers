@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 
 namespace WTG.Analyzers.Utils
 {
-	internal sealed class FileDetailCache
+	public sealed class FileDetailCache
 	{
 		public bool IsGenerated(SyntaxTree tree, CancellationToken token)
 		{

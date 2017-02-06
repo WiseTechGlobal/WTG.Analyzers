@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
 using NUnit.Framework;
 
-namespace WTG.Analyzers.Test.Helpers
+namespace WTG.Analyzers.TestFramework
 {
 	public sealed class CodeFixer
 	{
@@ -33,12 +33,12 @@ namespace WTG.Analyzers.Test.Helpers
 
 		async Task<Document> FixDocumentAsync(Document document)
 		{
-			var analyzerDiagnostics = await DiagnosticUtils.GetSortedDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false);
+			var analyzerDiagnostics = await DiagnosticUtils.GetDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false);
 			var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document).ConfigureAwait(false);
 			var attempts = analyzerDiagnostics.Length;
 
 			// keep applying fixes until all the problems go away (assuming an upper bound of one fix per issue.)
-			for (int i = 0; i < attempts; ++i)
+			for (var i = 0; i < attempts; ++i)
 			{
 				var actions = await RequestFixes(document, analyzerDiagnostics).ConfigureAwait(false);
 				var actionToRun = actions.FirstOrDefault();
@@ -50,7 +50,7 @@ namespace WTG.Analyzers.Test.Helpers
 
 				document = await ApplyFixAsync(document, actionToRun).ConfigureAwait(false);
 
-				analyzerDiagnostics = await DiagnosticUtils.GetSortedDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false);
+				analyzerDiagnostics = await DiagnosticUtils.GetDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false);
 
 				var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document).ConfigureAwait(false));
 
@@ -101,8 +101,8 @@ namespace WTG.Analyzers.Test.Helpers
 			var oldArray = diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
 			var newArray = newDiagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
 
-			int oldIndex = 0;
-			int newIndex = 0;
+			var oldIndex = 0;
+			var newIndex = 0;
 
 			while (newIndex < newArray.Length)
 			{

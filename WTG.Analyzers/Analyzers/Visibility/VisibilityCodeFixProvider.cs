@@ -14,15 +14,10 @@ namespace WTG.Analyzers
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(VisibilityCodeFixProvider)), Shared]
 	public sealed class VisibilityCodeFixProvider : CodeFixProvider
 	{
-		public sealed override ImmutableArray<string> FixableDiagnosticIds
-		{
-			get { return ImmutableArray.Create(Rules.DoNotUseThePrivateKeywordDiagnosticID); }
-		}
+		public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+			Rules.DoNotUseThePrivateKeywordDiagnosticID);
 
-		public sealed override FixAllProvider GetFixAllProvider()
-		{
-			return WellKnownFixAllProviders.BatchFixer;
-		}
+		public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
 		public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
 		{
@@ -40,7 +35,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> Fix(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var editor = await DocumentEditor.CreateAsync(document);
+			var editor = await DocumentEditor.CreateAsync(document).ConfigureAwait(false);
 			var root = editor.OriginalRoot;
 
 			var token = TokenFromDiagnostic(root, diagnostic);

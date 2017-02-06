@@ -12,12 +12,10 @@ namespace WTG.Analyzers
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed class WhitespaceAnalyzer : DiagnosticAnalyzer
 	{
-		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(new[]
-		{
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
 			Rules.DoNotLeaveWhitespaceOnTheEndOfTheLineRule,
 			Rules.IndentWithTabsRatherThanSpacesRule,
-			Rules.UseConsistentLineEndingsRule,
-		});
+			Rules.UseConsistentLineEndingsRule);
 
 		public override void Initialize(AnalysisContext context)
 		{

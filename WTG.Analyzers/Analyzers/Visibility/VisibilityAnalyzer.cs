@@ -9,10 +9,8 @@ namespace WTG.Analyzers
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed partial class VisibilityAnalyzer : DiagnosticAnalyzer
 	{
-		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(new[]
-		{
-			Rules.DoNotUseThePrivateKeywordRule,
-		});
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+			Rules.DoNotUseThePrivateKeywordRule);
 
 		public override void Initialize(AnalysisContext context)
 		{

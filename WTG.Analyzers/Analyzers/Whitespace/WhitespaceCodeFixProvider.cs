@@ -13,21 +13,12 @@ namespace WTG.Analyzers
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(WhitespaceCodeFixProvider)), Shared]
 	public sealed class WhitespaceCodeFixProvider : CodeFixProvider
 	{
-		public sealed override ImmutableArray<string> FixableDiagnosticIds
-		{
-			get
-			{
-				return ImmutableArray.Create(
-					Rules.DoNotLeaveWhitespaceOnTheEndOfTheLineDiagnosticID,
-					Rules.IndentWithTabsRatherThanSpacesDiagnosticID,
-					Rules.UseConsistentLineEndingsDiagnosticID);
-			}
-		}
+		public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+			Rules.DoNotLeaveWhitespaceOnTheEndOfTheLineDiagnosticID,
+			Rules.IndentWithTabsRatherThanSpacesDiagnosticID,
+			Rules.UseConsistentLineEndingsDiagnosticID);
 
-		public sealed override FixAllProvider GetFixAllProvider()
-		{
-			return WellKnownFixAllProviders.BatchFixer;
-		}
+		public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
 		public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
 		{

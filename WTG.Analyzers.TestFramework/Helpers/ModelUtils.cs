@@ -1,12 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
-using NUnit.Framework;
 
-namespace WTG.Analyzers.Test.Helpers
+namespace WTG.Analyzers.TestFramework
 {
-	static class ModelUtils
+	public static class ModelUtils
 	{
 		public static Document CreateDocument(string source)
 		{
@@ -17,7 +17,12 @@ namespace WTG.Analyzers.Test.Helpers
 		{
 			var project = CreateProject(sources);
 			var documents = project.Documents.ToArray();
-			Assert.That(documents.Length, Is.EqualTo(sources.Length), "The number of Documents created did not match the number of sources provided.");
+
+			if (documents.Length != sources.Length)
+			{
+				throw new InvalidOperationException("The number of Documents created did not match the number of sources provided.");
+			}
+
 			return documents;
 		}
 

@@ -3,54 +3,84 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
-using NUnit.Framework;
-using WTG.Analyzers.Test.Helpers;
 
-namespace WTG.Analyzers.Test
+namespace WTG.Analyzers.TestFramework
 {
-	internal sealed class SampleDataSet
+	public sealed class SampleDataSet
 	{
-		SampleDataSet(string source, string result, DiagnosticResult[] diagnostics)
+		SampleDataSet(string name, string source, string result, ImmutableArray<DiagnosticResult> diagnostics)
 		{
+			Name = name;
 			Source = source;
 			Result = result;
-			Diagnostics = ImmutableArray.Create(diagnostics);
+			Diagnostics = diagnostics;
 		}
 
+		public string Name { get; }
 		public string Source { get; }
 		public string Result { get; }
 		public ImmutableArray<DiagnosticResult> Diagnostics { get; }
 
-		public static IEnumerable<string> GetSampleNames(string analyzerName)
-		{
-			var prefix = TestDataPrefix + analyzerName + ".";
+		public override string ToString() => Name;
 
-			return Enumerable.Distinct(
-				from name in typeof(SampleDataSet).Assembly.GetManifestResourceNames()
+		public static ImmutableArray<SampleDataSet> GetSamples(Assembly assembly, string prefix)
+		{
+			if (assembly == null)
+			{
+				throw new ArgumentNullException(nameof(assembly));
+			}
+
+			var tmp =
+				from name in assembly.GetManifestResourceNames()
 				where name.StartsWith(prefix)
 				let index = name.IndexOf('.', prefix.Length)
 				where index >= 0
-				select name.Substring(prefix.Length, index - prefix.Length));
+				let sampleName = name.Substring(prefix.Length, index - prefix.Length)
+				group new KeyValuePair<string, string>(name.Substring(index + 1), name) by sampleName into g
+				select GetSampleData(assembly, g.Key, g);
+
+			return tmp.ToImmutableArray();
 		}
 
-		public static SampleDataSet GetSampleData(string analyzerName, string sampleName)
+		static SampleDataSet GetSampleData(Assembly assembly, string name, IEnumerable<KeyValuePair<string, string>> resourceNames)
 		{
-			var prefix = TestDataPrefix + analyzerName + "." + sampleName + ".";
+			string source = null;
+			string result = null;
+			ImmutableArray<DiagnosticResult> diagnostics = ImmutableArray<DiagnosticResult>.Empty;
 
-			return new SampleDataSet(
-				LoadResource(prefix + "Source.cs"),
-				LoadResource(prefix + "Result.cs"),
-				LoadResults(prefix + "Diagnostics.xml"));
-		}
-
-		static string LoadResource(string name)
-		{
-			using (var stream = typeof(SampleDataSet).Assembly.GetManifestResourceStream(name))
+			foreach (var pair in resourceNames)
 			{
-				Assert.That(stream, Is.Not.Null);
+				switch (pair.Key)
+				{
+					case "Source.cs":
+						source = LoadResource(assembly, pair.Value);
+						break;
+
+					case "Result.cs":
+						result = LoadResource(assembly, pair.Value);
+						break;
+
+					case "Diagnostics.xml":
+						diagnostics = LoadResults(assembly, pair.Value);
+						break;
+				}
+			}
+
+			return new SampleDataSet(name, source ?? string.Empty, result ?? string.Empty, diagnostics);
+		}
+
+		static string LoadResource(Assembly assembly, string name)
+		{
+			using (var stream = assembly.GetManifestResourceStream(name))
+			{
+				if (stream == null)
+				{
+					return null;
+				}
 
 				using (var reader = new StreamReader(stream))
 				{
@@ -59,11 +89,17 @@ namespace WTG.Analyzers.Test
 			}
 		}
 
-		static DiagnosticResult[] LoadResults(string name)
+		static ImmutableArray<DiagnosticResult> LoadResults(Assembly assembly, string name)
 		{
-			var text = LoadResource(name);
+			var text = LoadResource(assembly, name);
+
+			if (text == null)
+			{
+				return ImmutableArray<DiagnosticResult>.Empty;
+			}
+
 			var root = XElement.Parse(text);
-			return root.Descendants("diagnostic").Select(LoadResult).ToArray();
+			return root.Descendants("diagnostic").Select(LoadResult).ToImmutableArray();
 		}
 
 		static DiagnosticResult LoadResult(XElement element)
@@ -72,7 +108,7 @@ namespace WTG.Analyzers.Test
 				GetStringValue(element, "id"),
 				GetEnumValue<DiagnosticSeverity>(element, "severity"),
 				GetStringValue(element, "message"),
-				element.Elements("location").Select(LoadLocation).ToArray());
+				element.Elements("location").Select(LoadLocation).ToImmutableArray());
 		}
 
 		static T GetEnumValue<T>(XElement element, string name)
@@ -119,7 +155,5 @@ namespace WTG.Analyzers.Test
 				endLine,
 				endColumn);
 		}
-
-		const string TestDataPrefix = "WTG.Analyzers.Test.TestData.";
 	}
 }
