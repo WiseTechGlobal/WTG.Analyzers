@@ -51,7 +51,7 @@ namespace WTG.Analyzers
 
 		public override SyntaxTokenList DefaultVisit(SyntaxNode node)
 		{
-			throw new ArgumentException();
+			throw new ArgumentException("Unsupported SyntaxNode type: " + node.Kind(), nameof(node));
 		}
 	}
 }

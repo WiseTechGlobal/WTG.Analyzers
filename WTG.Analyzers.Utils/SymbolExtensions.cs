@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+using Microsoft.CodeAnalysis;
 
 namespace WTG.Analyzers.Utils
 {
@@ -24,7 +25,7 @@ namespace WTG.Analyzers.Utils
 					break;
 				}
 
-				if (string.Compare(symbol.MetadataName, 0, fullName, index + 1, length - index - 1) != 0)
+				if (string.Compare(symbol.MetadataName, 0, fullName, index + 1, length - index - 1, StringComparison.Ordinal) != 0)
 				{
 					return false;
 				}
@@ -52,7 +53,7 @@ namespace WTG.Analyzers.Utils
 					break;
 				}
 
-				if (string.Compare(symbol.MetadataName, 0, fullName, index + 1, length - index - 1) != 0)
+				if (string.Compare(symbol.MetadataName, 0, fullName, index + 1, length - index - 1, StringComparison.Ordinal) != 0)
 				{
 					return false;
 				}
@@ -68,7 +69,7 @@ namespace WTG.Analyzers.Utils
 				symbol = ns;
 			}
 
-			if (string.Compare(symbol.MetadataName, 0, fullName, 0, length) != 0)
+			if (string.Compare(symbol.MetadataName, 0, fullName, 0, length, StringComparison.Ordinal) != 0)
 			{
 				return false;
 			}

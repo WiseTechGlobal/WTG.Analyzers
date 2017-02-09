@@ -1,0 +1,26 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<BranchRootDirectory>$(MSBuildThisFileDirectory)..</BranchRootDirectory>
+		<BranchBuildSettingsDirectory>$(BranchRootDirectory)\BuildSettings\</BranchBuildSettingsDirectory>
+		<BranchPackagesDirectory>$(BranchRootDirectory)\packages</BranchPackagesDirectory>
+
+		<IsTestProject Condition="$(MSBuildProjectFile.Contains('.Test.'))">True</IsTestProject>
+		<IsTestProject Condition="$(MSBuildProjectFile.Contains('.TestFramework.'))">True</IsTestProject>
+		<CheckForOverflowUnderflow Condition="'$(CheckForOverflowUnderflow)' == ''">true</CheckForOverflowUnderflow>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<RunCodeAnalysis>true</RunCodeAnalysis>
+		<CodeAnalysisRuleSet>$(BranchBuildSettingsDirectory)\CodeAnalysis.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
+	<PropertyGroup  Condition="'$(IsTestProject)' == 'True'">
+		<CodeAnalysisRuleSet>$(BranchBuildSettingsDirectory)\CodeAnalysis.Test.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Analyzer Include="$(BranchPackagesDirectory)\StyleCop.Analyzers\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
+		<Analyzer Include="$(BranchPackagesDirectory)\StyleCop.Analyzers\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+		<Analyzer Include="$(BranchPackagesDirectory)\StyleCop.Analyzers\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+	</ItemGroup>
+</Project>

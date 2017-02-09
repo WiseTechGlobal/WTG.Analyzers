@@ -11,7 +11,8 @@ using Microsoft.CodeAnalysis.Editing;
 
 namespace WTG.Analyzers
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(VisibilityCodeFixProvider)), Shared]
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(VisibilityCodeFixProvider))]
+	[Shared]
 	public sealed class VisibilityCodeFixProvider : CodeFixProvider
 	{
 		public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
@@ -35,9 +36,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> Fix(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var editor = await DocumentEditor.CreateAsync(document).ConfigureAwait(false);
-			var root = editor.OriginalRoot;
-
+			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var token = TokenFromDiagnostic(root, diagnostic);
 			var nextToken = token.GetNextToken();
 

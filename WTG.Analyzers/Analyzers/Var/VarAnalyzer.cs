@@ -120,8 +120,15 @@ namespace WTG.Analyzers
 		{
 			public Candidate(TypeSyntax type, ExpressionSyntax valueSource, bool unwrap)
 			{
-				if (type == null) throw new ArgumentNullException(nameof(type));
-				if (valueSource == null) throw new ArgumentNullException(nameof(valueSource));
+				if (type == null)
+				{
+					throw new ArgumentNullException(nameof(type));
+				}
+
+				if (valueSource == null)
+				{
+					throw new ArgumentNullException(nameof(valueSource));
+				}
 
 				Type = type;
 				ValueSource = valueSource;

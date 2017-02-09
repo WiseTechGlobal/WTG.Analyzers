@@ -81,10 +81,18 @@ using System.Threading.Tasks;
 		ITypeSymbol GetType(string source)
 		{
 			var syntax = SyntaxFactory.ParseTypeName(source);
-			if (syntax == null) throw new ArgumentException("Parse fail: " + source);
+
+			if (syntax == null)
+			{
+				throw new ArgumentException("Parse fail: " + source);
+			}
 
 			var info = semanticModel.GetSpeculativeSymbolInfo(pos, syntax, SpeculativeBindingOption.BindAsTypeOrNamespace);
-			if (info.Symbol == null) throw new ArgumentException("Semantic fail: " + info.CandidateReason + ": " + source);
+
+			if (info.Symbol == null)
+			{
+				throw new ArgumentException("Semantic fail: " + info.CandidateReason + ": " + source);
+			}
 
 			return (ITypeSymbol)info.Symbol;
 		}
@@ -92,10 +100,18 @@ using System.Threading.Tasks;
 		ISymbol GetExpressionSymbol(string source)
 		{
 			var syntax = SyntaxFactory.ParseExpression(source);
-			if (syntax == null) throw new ArgumentException("Parse fail: " + source);
+
+			if (syntax == null)
+			{
+				throw new ArgumentException("Parse fail: " + source);
+			}
 
 			var info = semanticModel.GetSpeculativeSymbolInfo(pos, syntax, SpeculativeBindingOption.BindAsExpression);
-			if (info.Symbol == null) throw new ArgumentException("Semantic fail: " + info.CandidateReason + ": " + source);
+
+			if (info.Symbol == null)
+			{
+				throw new ArgumentException("Semantic fail: " + info.CandidateReason + ": " + source);
+			}
 
 			return info.Symbol;
 		}

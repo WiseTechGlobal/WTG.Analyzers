@@ -94,9 +94,6 @@ namespace WTG.Analyzers
 
 			if (index >= 0)
 			{
-				var childNameStart = index + 1;
-				var childNameLength = length - index - 1;
-
 				return FindChildrenMatchingSubstring(
 					EnumerateMatchingTypes(id, index),
 					SymbolKind.NamedType,
@@ -202,7 +199,7 @@ namespace WTG.Analyzers
 
 			return tmp != null
 				&& tmp.Length == length
-				&& string.Compare(tmp, 0, name, offset, length) == 0;
+				&& string.Compare(tmp, 0, name, offset, length, StringComparison.Ordinal) == 0;
 		}
 
 		static void WriteScope(StringBuilder builder, INamespaceSymbol symbol)
@@ -325,31 +322,24 @@ namespace WTG.Analyzers
 
 		static void WriteType(StringBuilder builder, ITypeSymbol type)
 		{
-			var namedType = type as INamedTypeSymbol;
-
-			if (namedType != null)
+			switch (type.Kind)
 			{
-				WriteType(builder, namedType);
-				return;
+				case SymbolKind.ErrorType:
+				case SymbolKind.NamedType:
+					WriteType(builder, (INamedTypeSymbol)type);
+					break;
+
+				case SymbolKind.ArrayType:
+					WriteType(builder, (IArrayTypeSymbol)type);
+					break;
+
+				case SymbolKind.TypeParameter:
+					WriteType(builder, (ITypeParameterSymbol)type);
+					break;
+
+				default:
+					throw new ArgumentException("Unrecognised symbol type: " + type.Kind, nameof(type));
 			}
-
-			var arrayType = type as IArrayTypeSymbol;
-
-			if (arrayType != null)
-			{
-				WriteType(builder, arrayType);
-				return;
-			}
-
-			var typeParamType = type as ITypeParameterSymbol;
-
-			if (typeParamType != null)
-			{
-				WriteType(builder, typeParamType);
-				return;
-			}
-
-			throw new ArgumentException();
 		}
 
 		static void WriteType(StringBuilder builder, INamedTypeSymbol type)

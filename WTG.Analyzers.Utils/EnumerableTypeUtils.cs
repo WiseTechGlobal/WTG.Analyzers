@@ -69,7 +69,10 @@ namespace WTG.Analyzers.Utils
 
 				foreach (var member in enumeratorType.GetMembers())
 				{
-					if (member.IsImplicitlyDeclared) continue;
+					if (member.IsImplicitlyDeclared)
+					{
+						continue;
+					}
 
 					var property = member as IPropertySymbol;
 

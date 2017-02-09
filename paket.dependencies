@@ -21,6 +21,7 @@ framework: net45
 #
 
 nuget NUnit
+nuget stylecop.analyzers
 nuget Microsoft.CodeAnalysis.Analyzers
 
 nuget Microsoft.CodeAnalysis 1.2

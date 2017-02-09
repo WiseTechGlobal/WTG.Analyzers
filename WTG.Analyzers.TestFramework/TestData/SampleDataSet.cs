@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -36,7 +37,7 @@ namespace WTG.Analyzers.TestFramework
 
 			var tmp =
 				from name in assembly.GetManifestResourceNames()
-				where name.StartsWith(prefix)
+				where name.StartsWith(prefix, StringComparison.Ordinal)
 				let index = name.IndexOf('.', prefix.Length)
 				where index >= 0
 				let sampleName = name.Substring(prefix.Length, index - prefix.Length)
@@ -139,14 +140,14 @@ namespace WTG.Analyzers.TestFramework
 			const string Pattern = @"(?<path>[a-z0-9.]+):\s*\((?<startLine>[0-9]+),\s*(?<startColumn>[0-9]+)(\)\s*-\s*\((?<endLine>[0-9]+),\s*(?<endColumn>[0-9]+)|(-(?<endColumn>[0-9]+))?)\)";
 			var match = Regex.Match(element.Value, Pattern, RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase);
 
-			var startLine = int.Parse(match.Groups["startLine"].Value);
-			var startColumn = int.Parse(match.Groups["startColumn"].Value);
+			var startLine = int.Parse(match.Groups["startLine"].Value, CultureInfo.InvariantCulture);
+			var startColumn = int.Parse(match.Groups["startColumn"].Value, CultureInfo.InvariantCulture);
 
 			var endLineGroup = match.Groups["endLine"];
 			var endColumnGroup = match.Groups["endColumn"];
 
-			var endLine = endLineGroup.Success ? int.Parse(endLineGroup.Value) : startLine;
-			var endColumn = endColumnGroup.Success ? int.Parse(endColumnGroup.Value) : startColumn;
+			var endLine = endLineGroup.Success ? int.Parse(endLineGroup.Value, CultureInfo.InvariantCulture) : startLine;
+			var endColumn = endColumnGroup.Success ? int.Parse(endColumnGroup.Value, CultureInfo.InvariantCulture) : startColumn;
 
 			return new DiagnosticResultLocation(
 				match.Groups["path"].Value,

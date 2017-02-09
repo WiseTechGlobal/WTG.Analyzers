@@ -116,7 +116,7 @@ namespace WTG.Analyzers.TestFramework
 				}
 			}
 
-			void Write(MessageWriter writer, DiagnosticResult diagnostic)
+			static void Write(MessageWriter writer, DiagnosticResult diagnostic)
 			{
 				if (diagnostic.Locations.Length > 0)
 				{

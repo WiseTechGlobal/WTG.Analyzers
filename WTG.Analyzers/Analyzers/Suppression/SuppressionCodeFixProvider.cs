@@ -11,7 +11,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace WTG.Analyzers
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SuppressionCodeFixProvider)), Shared]
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SuppressionCodeFixProvider))]
+	[Shared]
 	public sealed class SuppressionCodeFixProvider : CodeFixProvider
 	{
 		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
@@ -33,7 +34,7 @@ namespace WTG.Analyzers
 			return Task.FromResult<object>(null);
 		}
 
-		async static Task<Document> RemoveSuppresson(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		static async Task<Document> RemoveSuppresson(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.Location.SourceSpan;

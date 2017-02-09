@@ -29,10 +29,8 @@ namespace WTG.Analyzers.Test
 		[Test]
 		public async Task NoErrorOnEmptyInput()
 		{
-			var test = @"";
-
 			var analyzer = new TAnalyzer();
-			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, test).ConfigureAwait(false);
+			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, string.Empty).ConfigureAwait(false);
 			Assert.That(diagnostics, IsDiagnostic.Empty);
 		}
 

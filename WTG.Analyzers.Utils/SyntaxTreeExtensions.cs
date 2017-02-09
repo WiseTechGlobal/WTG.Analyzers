@@ -24,7 +24,7 @@ namespace WTG.Analyzers.Utils
 		static bool FilenameLooksGenerated(string filename)
 		{
 			return filename != null
-				&& (filename.EndsWith(".g.cs") || filename.EndsWith(".Designer.cs"));
+				&& (filename.EndsWith(".g.cs", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".Designer.cs", StringComparison.OrdinalIgnoreCase));
 		}
 
 		static bool ContainsGeneratedCodeComment(this SyntaxTree tree, CancellationToken token)

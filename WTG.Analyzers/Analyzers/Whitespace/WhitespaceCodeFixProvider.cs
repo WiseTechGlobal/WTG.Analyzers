@@ -10,7 +10,8 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace WTG.Analyzers
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(WhitespaceCodeFixProvider)), Shared]
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(WhitespaceCodeFixProvider))]
+	[Shared]
 	public sealed class WhitespaceCodeFixProvider : CodeFixProvider
 	{
 		public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(

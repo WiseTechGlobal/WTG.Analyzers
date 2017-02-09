@@ -24,6 +24,7 @@ NUGET
       Microsoft.Composition (>= 1.0.27)
     Microsoft.Composition (1.0.27)
     NUnit (3.6)
+    StyleCop.Analyzers (1.0)
     System.Collections.Immutable (1.1.37)
     System.Reflection.Metadata (1.2)
       System.Collections.Immutable (>= 1.1.37)

@@ -6,7 +6,7 @@ namespace WTG.Analyzers
 {
 	partial class AsyncAnalyzer
 	{
-		sealed partial class IsAsyncVoidMethodVisitor: CSharpSyntaxVisitor<bool?>
+		sealed partial class IsAsyncVoidMethodVisitor : CSharpSyntaxVisitor<bool?>
 		{
 			public IsAsyncVoidMethodVisitor(SemanticModel model)
 			{

@@ -84,7 +84,8 @@ namespace WTG.Analyzers.TestFramework
 			var newCompilerDiagnostics = GetNewDiagnostics(existingCompilerDiagnostics, compilerDiagnostics);
 			var tree = await document.GetSyntaxRootAsync().ConfigureAwait(false);
 
-			Assert.Fail("Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
+			Assert.Fail(
+				"Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
 				string.Join("\r\n", newCompilerDiagnostics.Select(d => d.ToString())),
 				tree.ToFullString());
 		}
