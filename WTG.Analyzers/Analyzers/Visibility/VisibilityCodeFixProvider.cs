@@ -7,7 +7,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Editing;
 
 namespace WTG.Analyzers
 {
@@ -16,7 +15,8 @@ namespace WTG.Analyzers
 	public sealed class VisibilityCodeFixProvider : CodeFixProvider
 	{
 		public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-			Rules.DoNotUseThePrivateKeywordDiagnosticID);
+			Rules.DoNotUseThePrivateKeywordDiagnosticID,
+			Rules.DoNotUseTheInternalKeywordForTopLevelTypesDiagnosticID);
 
 		public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
@@ -24,17 +24,31 @@ namespace WTG.Analyzers
 		{
 			var diagnostic = context.Diagnostics.First();
 
-			context.RegisterCodeFix(
-				CodeAction.Create(
-					title: "Remove private",
-					createChangedDocument: c => Fix(context.Document, diagnostic, c),
-					equivalenceKey: "RemovePrivate"),
-				diagnostic);
+			switch (diagnostic.Id)
+			{
+				case Rules.DoNotUseThePrivateKeywordDiagnosticID:
+					context.RegisterCodeFix(
+						CodeAction.Create(
+							title: "Remove 'private' visibility modifier",
+							createChangedDocument: c => RemoveKeyword(context.Document, diagnostic, c),
+							equivalenceKey: "RemovePrivate"),
+						diagnostic);
+					break;
+
+				case Rules.DoNotUseTheInternalKeywordForTopLevelTypesDiagnosticID:
+					context.RegisterCodeFix(
+						CodeAction.Create(
+							title: "Remove 'internal' visibility modifier",
+							createChangedDocument: c => RemoveKeyword(context.Document, diagnostic, c),
+							equivalenceKey: "RemoveInternal"),
+						diagnostic);
+					break;
+			}
 
 			return Task.FromResult<object>(null);
 		}
 
-		static async Task<Document> Fix(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		static async Task<Document> RemoveKeyword(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var token = TokenFromDiagnostic(root, diagnostic);
@@ -44,7 +58,9 @@ namespace WTG.Analyzers
 				new[] { token, nextToken },
 				(original, current) =>
 				{
-					if (original.IsKind(SyntaxKind.PrivateKeyword))
+					var kind = original.Kind();
+
+					if (kind == SyntaxKind.PrivateKeyword || kind == SyntaxKind.InternalKeyword)
 					{
 						return SyntaxFactory.Token(SyntaxKind.None);
 					}

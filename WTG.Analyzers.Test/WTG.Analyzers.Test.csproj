@@ -78,6 +78,10 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Source.cs" />
+    <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Result.cs" />
+    <EmbeddedResource Include="TestData\VisibilityAnalyzer\TopLevelInternal\Source.cs" />
+    <EmbeddedResource Include="TestData\VisibilityAnalyzer\TopLevelInternal\Result.cs" />
     <EmbeddedResource Include="TestData\SuppressionAnalyzer\Mixed\Source.cs" />
     <EmbeddedResource Include="TestData\SuppressionAnalyzer\Mixed\Result.cs" />
     <EmbeddedResource Include="TestData\SuppressionAnalyzer\Found\Source.cs" />
@@ -183,6 +187,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestData\SuppressionAnalyzer\Mixed\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\VisibilityAnalyzer\TopLevelInternal\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Diagnostics.xml" />
   </ItemGroup>
   <Import Project="..\BuildSettings\DotNetBefore.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

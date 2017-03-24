@@ -17,6 +17,7 @@ namespace WTG.Analyzers
 
 		public override void Initialize(AnalysisContext context)
 		{
+			context.EnableConcurrentExecution();
 			context.RegisterSyntaxNodeAction(Analyze, SyntaxKind.CompilationUnit);
 		}
 

@@ -13,13 +13,14 @@ namespace WTG.Analyzers
 		public const string DoNotLeaveWhitespaceOnTheEndOfTheLineDiagnosticID = "WTG1003";
 		public const string IndentWithTabsRatherThanSpacesDiagnosticID = "WTG1004";
 		public const string UseConsistentLineEndingsDiagnosticID = "WTG1005";
+		public const string DoNotUseTheInternalKeywordForTopLevelTypesDiagnosticID = "WTG1006";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 
 		public static readonly DiagnosticDescriptor DoNotUseThePrivateKeywordRule = new DiagnosticDescriptor(
 			DoNotUseThePrivateKeywordDiagnosticID,
 			"Do not use the 'private' keyword.",
-			"Our coding convention is to leave out the private keyword and let it default to private.",
+			"Our convention is to omit the 'private' modifier where it is already the default.",
 			CodingConventionCategory,
 			DiagnosticSeverity.Hidden,
 			isEnabledByDefault: true,
@@ -77,6 +78,19 @@ namespace WTG.Analyzers
 			isEnabledByDefault: true,
 			description: "Replace the line ending character sequence with CRLF.");
 
+		public static readonly DiagnosticDescriptor DoNotUseTheInternalKeywordForTopLevelTypesRule = new DiagnosticDescriptor(
+			DoNotUseTheInternalKeywordForTopLevelTypesDiagnosticID,
+			"Do not use the 'internal' keyword for non-nested type definitions.",
+			"Our convention is to omit the 'internal' modifier on types where it is already the default.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Hidden,
+			isEnabledByDefault: true,
+			description: "Remove the 'internal' keyword.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
 			"Do not use ConfigureAwait from an async void method.",
@@ -100,7 +114,7 @@ namespace WTG.Analyzers
 			});
 
 		/// <summary>
-		/// Our coding convention is to leave out the private keyword and let it default to private.
+		/// Our convention is to omit the 'private' modifier where it is already the default.
 		/// </summary>
 		public static Diagnostic CreateDoNotUseThePrivateKeywordDiagnostic(Location location)
 		{
@@ -137,6 +151,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateUseConsistentLineEndingsDiagnostic(Location location)
 		{
 			return Diagnostic.Create(UseConsistentLineEndingsRule, location);
+		}
+
+		/// <summary>
+		/// Our convention is to omit the 'internal' modifier on types where it is already the default.
+		/// </summary>
+		public static Diagnostic CreateDoNotUseTheInternalKeywordForTopLevelTypesDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DoNotUseTheInternalKeywordForTopLevelTypesRule, location);
 		}
 
 		/// <summary>

@@ -13,13 +13,18 @@
 using Microsoft.CodeAnalysis;
 
 <#
+var root = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), "Rules.xml"));
+var prefix = root.Attribute("prefix").Value;
+
 var rules = Enumerable.ToArray(
-	from categoryNode in XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), "Rules.xml")).Elements(ns + "category")
+	from categoryNode in root.Elements(ns + "category")
 	let category = categoryNode.Attribute("name").Value
+	let categoryID = int.Parse(categoryNode.Attribute("id").Value)
 	from ruleNode in categoryNode.Elements(ns + "rule")
+	let ruleID = ruleNode.Attribute("id").Value
 	select new
 	{
-		ID = ruleNode.Attribute("id")?.Value ?? ruleNode.Attribute("name").Value,
+		ID = prefix + (categoryID + int.Parse(ruleID.PadLeft(2, '0'))).ToString("0000"),
 		Name = ruleNode.Attribute("name").Value,
 		Severity = ruleNode.Attribute("severity")?.Value ?? "Warning",
 		Category = category,

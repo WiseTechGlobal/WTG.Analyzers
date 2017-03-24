@@ -16,6 +16,7 @@ namespace WTG.Analyzers
 
 		public override void Initialize(AnalysisContext context)
 		{
+			context.EnableConcurrentExecution();
 			context.RegisterCompilationStartAction(CompilationStart);
 		}
 

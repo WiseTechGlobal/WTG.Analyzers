@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<rules xmlns="http://cargowise.com/glow/2016/09/10/Rules.xsd">
+<rules xmlns="http://cargowise.com/glow/2016/09/10/Rules.xsd" prefix="WTG">
 	<!--
 	Note: This solution should only contain rules that apply company wide and are not product specific.
 	Product specific rules should be placed in a separate solution under that product's TFS project.
@@ -8,46 +8,52 @@
 		Enterprise -> $/Dev/Common/Tools/EnterpriseAnalyzers/...
 		Glow -> $/Glow/DotNet/Tools/GlowAnalyzers/...
 	-->
-	<category name="CodingConvention">
-		<rule id="WTG1001" name="DoNotUseThePrivateKeyword" severity="Hidden">
+	<category name="CodingConvention" id="1000">
+		<rule id="1" name="DoNotUseThePrivateKeyword" severity="Hidden">
 			<title>Do not use the 'private' keyword.</title>
-			<message>Our coding convention is to leave out the private keyword and let it default to private.</message>
+			<message>Our convention is to omit the 'private' modifier where it is already the default.</message>
 			<description>Remove the 'private' keyword.</description>
 			<tag>Unnecessary</tag>
 		</rule>
-		<rule id="WTG1002" name="UseVarWherePossible" severity="Hidden">
+		<rule id="2" name="UseVarWherePossible" severity="Hidden">
 			<title>Use the 'var' keyword instead of an explicit type where possible.</title>
 			<message>The compiler is able to correctly identify which type to use here, so replace the explicit type with var.</message>
 			<description>Replace with the 'var' keyword.</description>
 			<tag>Unnecessary</tag>
 		</rule>
-		<rule id="WTG1003" name="DoNotLeaveWhitespaceOnTheEndOfTheLine" severity="Info">
+		<rule id="3" name="DoNotLeaveWhitespaceOnTheEndOfTheLine" severity="Info">
 			<title>Do not leave whitespace on the end of the line.</title>
 			<message>You have meaningless whitespace on the end of the line, remove it.</message>
 			<description>Remove whitespace from the end of the line.</description>
 			<tag>Unnecessary</tag>
 		</rule>
-		<rule id="WTG1004" name="IndentWithTabsRatherThanSpaces" severity="Info">
+		<rule id="4" name="IndentWithTabsRatherThanSpaces" severity="Info">
 			<title>Indent with tabs rather than spaces.</title>
 			<message>Our coding convention is to use tabs, not spaces, you may need to fix your settings.</message>
 			<description>Replace the leading spaces with tabs.</description>
 			<tag>Unnecessary</tag>
 		</rule>
-		<rule id="WTG1005" name="UseConsistentLineEndings" severity="Info">
+		<rule id="5" name="UseConsistentLineEndings" severity="Info">
 			<title>Use consistent line endings.</title>
 			<message>All line endings should be using CRLF, this issue usually occures when copying code from another source.</message>
 			<description>Replace the line ending character sequence with CRLF.</description>
 		</rule>
+		<rule id="6" name="DoNotUseTheInternalKeywordForTopLevelTypes" severity="Hidden">
+			<title>Do not use the 'internal' keyword for non-nested type definitions.</title>
+			<message>Our convention is to omit the 'internal' modifier on types where it is already the default.</message>
+			<description>Remove the 'internal' keyword.</description>
+			<tag>Unnecessary</tag>
+		</rule>
 	</category>
-	<category name="Correctness">
-		<rule id="WTG2001" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">
+	<category name="Correctness" id="2000">
+		<rule id="1" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">
 			<title>Do not use ConfigureAwait from an async void method.</title>
 			<message>ConfigureAwait(false) may result in the async method resuming on a non-deterministic thread, and if an exception is then thrown, it will likely be unhandled and result in process termination.</message>
 			<description>Remove the ConfigureAwait call, or return Task.</description>
 		</rule>
 	</category>
-	<category name="Decruftification">
-		<rule id="WTG3001" name="RemovedOrphanedSuppressions" severity="Info">
+	<category name="Decruftification" id="3000">
+		<rule id="1" name="RemovedOrphanedSuppressions" severity="Info">
 			<title>Remove orphaned suppressions.</title>
 			<message>Encountered a code analysis suppression for the non-existent {targetKind} '{targetName}'. Remove or update it.</message>
 			<description>If you change or remove a type or member that had a code analysis suppression against it, be sure to remove any orphaned suppression attributes. This is usually easier to maintain if the suppression attributes are applied directly to the type/member rather than applied to the assembly in a GlobalSuppressions.cs file.</description>

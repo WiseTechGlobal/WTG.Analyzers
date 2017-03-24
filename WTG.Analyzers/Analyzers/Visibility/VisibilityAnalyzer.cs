@@ -10,10 +10,12 @@ namespace WTG.Analyzers
 	public sealed partial class VisibilityAnalyzer : DiagnosticAnalyzer
 	{
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-			Rules.DoNotUseThePrivateKeywordRule);
+			Rules.DoNotUseThePrivateKeywordRule,
+			Rules.DoNotUseTheInternalKeywordForTopLevelTypesRule);
 
 		public override void Initialize(AnalysisContext context)
 		{
+			context.EnableConcurrentExecution();
 			context.RegisterCompilationStartAction(CompilationStart);
 		}
 
@@ -34,10 +36,36 @@ namespace WTG.Analyzers
 
 			foreach (var modifier in list)
 			{
-				if (modifier.Kind() == SyntaxKind.PrivateKeyword)
+				var kind = modifier.Kind();
+
+				switch (kind)
 				{
-					context.ReportDiagnostic(Rules.CreateDoNotUseThePrivateKeywordDiagnostic(modifier.GetLocation()));
+					case SyntaxKind.PrivateKeyword:
+						context.ReportDiagnostic(Rules.CreateDoNotUseThePrivateKeywordDiagnostic(modifier.GetLocation()));
+						break;
+
+					case SyntaxKind.InternalKeyword:
+						if (IsTopLevel(context.Node))
+						{
+							context.ReportDiagnostic(Rules.CreateDoNotUseTheInternalKeywordForTopLevelTypesDiagnostic(modifier.GetLocation()));
+						}
+						break;
 				}
+			}
+		}
+
+		static bool IsTopLevel(SyntaxNode node)
+		{
+			var parentKind = node.Parent?.Kind() ?? SyntaxKind.None;
+
+			switch (parentKind)
+			{
+				case SyntaxKind.NamespaceDeclaration:
+				case SyntaxKind.CompilationUnit:
+					return true;
+
+				default:
+					return false;
 			}
 		}
 	}
