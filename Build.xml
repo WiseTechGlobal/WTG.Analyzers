@@ -6,6 +6,9 @@
   <PreBuild>
     <Command cacheable="false">paket.exe restore</Command>
   </PreBuild>
+  <PostBuild>
+    <Command>packages\NuGet.CommandLine\tools\NuGet.exe pack WTG.Analyzers.nuspec -OutputDirectory Bin\NuGet</Command>
+  </PostBuild>
   <Versioning>
     <CSharpAssemblyFileVersion>CommonAssemblyInfo.cs</CSharpAssemblyFileVersion>
   </Versioning>
@@ -13,5 +16,4 @@
     <Configuration BuildOnDat="true" TestOnDat="true">DEBUG</Configuration>
     <Configuration BuildOnDat="true" Publishable="true">RELEASE</Configuration>
   </BuildConfigurations>
-  <DatSettings />
 </Build>

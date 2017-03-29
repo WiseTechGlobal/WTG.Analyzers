@@ -1,0 +1,9 @@
+﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<WTGAnalyzersPackageRoot Condition="$(WTGAnalyzersPackageRoot) == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..'))</WTGAnalyzersPackageRoot>
+	</PropertyGroup>
+	<ItemGroup>
+		<Analyzer Include="$(WTGAnalyzersPackageRoot)\analyzers\dotnet\cs\WTG.Analyzers.dll" />
+		<Analyzer Include="$(WTGAnalyzersPackageRoot)\analyzers\dotnet\cs\WTG.Analyzers.Utils.dll" />
+	</ItemGroup>
+</Project>

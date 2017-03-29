@@ -23,6 +23,7 @@ NUGET
       Microsoft.CodeAnalysis.Common (1.2)
       Microsoft.Composition (>= 1.0.27)
     Microsoft.Composition (1.0.27)
+    NuGet.CommandLine (3.5)
     NUnit (3.6)
     StyleCop.Analyzers (1.0)
     System.Collections.Immutable (1.1.37)

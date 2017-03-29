@@ -78,6 +78,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="VersioningTest.cs" />
     <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Source.cs" />
     <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Result.cs" />
     <EmbeddedResource Include="TestData\VisibilityAnalyzer\TopLevelInternal\Source.cs" />
