@@ -10,6 +10,10 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "member", Target = "Test.Namespace.TestClass.#Test.Namespace.TestInterface`1<System.Int32>.InterfaceMember")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "type", Target = "Test.Namespace.TestInterface`1")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "member", Target = "Test.Namespace.TestClass.#ByRef(System.String&)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "member", Target = "Test.Namespace.TestClass.#op_Implicit(Test.Namespace.TestClass):System.String")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "member", Target = "Test.Namespace.TestClass.#op_Explicit(Test.Namespace.TestClass):System.String")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "member", Target = "Test.Namespace.TestClass.#op_Implicit(System.String):Test.Namespace.TestClass")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "member", Target = "Test.Namespace.TestClass.#op_Explicit(System.String):Test.Namespace.TestClass")]
 
 namespace Test.Namespace
 {
@@ -21,6 +25,11 @@ namespace Test.Namespace
 		Func<T> GenericMethod<V, T>(Func<V, T> func, V value) => () => func(value);
 		int Property => field;
 		int field;
+
+		public static implicit operator string(TestClass bob) => bob.ToString();
+		public static explicit operator string(TestClass bob) => bob.ToString();
+		public static implicit operator TestClass(string bob) => null;
+		public static explicit operator TestClass(string bob) => null;
 
 		bool ByRef(out string value)
 		{

@@ -36,4 +36,16 @@
 	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#ByRef(System.String&amp;)'. Remove or update it.">
 		<location>Test0.cs: (12,1-170)</location>
 	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#op_Implicit(Test.Namespace.TestClass):System.String'. Remove or update it.">
+		<location>Test0.cs: (13,1-200)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#op_Explicit(Test.Namespace.TestClass):System.String'. Remove or update it.">
+		<location>Test0.cs: (14,1-200)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#op_Implicit(System.String):Test.Namespace.TestClass'. Remove or update it.">
+		<location>Test0.cs: (15,1-200)</location>
+	</diagnostic>
+	<diagnostic message="Encountered a code analysis suppression for the non-existent member 'Test.Namespace.TestClass.#op_Explicit(System.String):Test.Namespace.TestClass'. Remove or update it.">
+		<location>Test0.cs: (16,1-200)</location>
+	</diagnostic>
 </diagnostics>

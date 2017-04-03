@@ -245,6 +245,12 @@ namespace WTG.Analyzers
 			builder.Append('(');
 			WriteParameters(builder, methodSymbol.Parameters);
 			builder.Append(')');
+
+			if (methodSymbol.MethodKind == MethodKind.Conversion)
+			{
+				builder.Append(':');
+				WriteType(builder, methodSymbol.ReturnType);
+			}
 		}
 
 		static void WritePropertySymbol(StringBuilder builder, IPropertySymbol propertySymbol)

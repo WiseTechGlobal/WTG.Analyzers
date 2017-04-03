@@ -10,3 +10,7 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "member", Target = "Test.Namespace.TestClass.#Test.Namespace.TestInterface`1<System.Int32>.InterfaceMember")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "type", Target = "Test.Namespace.TestInterface`1")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "member", Target = "Test.Namespace.TestClass.#ByRef(System.String&)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "member", Target = "Test.Namespace.TestClass.#op_Implicit(Test.Namespace.TestClass):System.String")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "member", Target = "Test.Namespace.TestClass.#op_Explicit(Test.Namespace.TestClass):System.String")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "member", Target = "Test.Namespace.TestClass.#op_Implicit(System.String):Test.Namespace.TestClass")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("WTG.Pedantic", "CA9999:Magic", Scope = "member", Target = "Test.Namespace.TestClass.#op_Explicit(System.String):Test.Namespace.TestClass")]
