@@ -108,10 +108,10 @@ namespace WTG.Analyzers.Utils
 				return null;
 			}
 
-			switch (namedType.SpecialType)
+			switch (namedType.OriginalDefinition.SpecialType)
 			{
 				case SpecialType.System_Collections_IEnumerable:
-				case SpecialType.System_Collections_Generic_IEnumerator_T:
+				case SpecialType.System_Collections_Generic_IEnumerable_T:
 					return GetExplicitElementType(type);
 			}
 

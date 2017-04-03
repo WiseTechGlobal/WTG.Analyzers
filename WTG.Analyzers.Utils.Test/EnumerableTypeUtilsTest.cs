@@ -14,9 +14,10 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("IEnumerable<double>", ExpectedResult = "double")]
 		[TestCase("IEnumerable", ExpectedResult = "object")]
 		[TestCase("PreGenericTypedCollection", ExpectedResult = "float")]
+		[TestCase("ExplicitOnlyCollection", ExpectedResult = "double")]
 		public string GetItemType(string enumerableType)
 		{
-			return EnumerableTypeUtils.GetElementType(GetType(enumerableType)).ToString();
+			return EnumerableTypeUtils.GetElementType(GetType(enumerableType))?.ToString();
 		}
 
 		#region Implementation
@@ -45,6 +46,12 @@ class PreGenericTypedCollection : IEnumerable
 			throw new NotImplementedException();
 		}
 	}
+}
+
+class ExplicitOnlyCollection : IEnumerable<double>
+{
+	IEnumerator<double> IEnumerable<double>.GetEnumerator() { yield break; }
+	IEnumerator IEnumerable.GetEnumerator() { yield break; }
 }
 ";
 
