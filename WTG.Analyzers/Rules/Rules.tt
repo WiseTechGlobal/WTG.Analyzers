@@ -39,7 +39,7 @@ var categories = rules.Select(x => x.Category).Distinct().ToArray();
 #>
 namespace WTG.Analyzers
 {
-	internal static class Rules
+	static class Rules
 	{
 <#
 foreach (var category in categories)

@@ -38,6 +38,9 @@
     <Compile Include="Analyzers\Async\AsyncAnalyzer.cs" />
     <Compile Include="Analyzers\Async\AsyncCodeFixProvider.cs" />
     <Compile Include="Analyzers\Async\IsAsyncVoidMethodVisitor.cs" />
+    <Compile Include="Analyzers\BooleanComparison\BooleanComparisonAnalyzer.cs" />
+    <Compile Include="Analyzers\BooleanComparison\BooleanComparisonCodeFixProvider.cs" />
+    <Compile Include="Analyzers\BooleanComparison\BoolLiteralVisitor.cs" />
     <Compile Include="Analyzers\Suppression\SuppressionAnalyzer.cs" />
     <Compile Include="Analyzers\Suppression\SuppressionCodeFixProvider.cs" />
     <Compile Include="Analyzers\Suppression\SuppressionTargetLookup.cs" />

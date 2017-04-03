@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 
 namespace WTG.Analyzers
 {
-	internal static class Rules
+	static class Rules
 	{
 		public const string CodingConventionCategory = "CodingConvention";
 		public const string CorrectnessCategory = "Correctness";
@@ -14,6 +14,8 @@ namespace WTG.Analyzers
 		public const string IndentWithTabsRatherThanSpacesDiagnosticID = "WTG1004";
 		public const string UseConsistentLineEndingsDiagnosticID = "WTG1005";
 		public const string DoNotUseTheInternalKeywordForTopLevelTypesDiagnosticID = "WTG1006";
+		public const string DoNotCompareBoolToAConstantValueDiagnosticID = "WTG1007";
+		public const string DoNotCompareBoolToAConstantValueInAnExpressionDiagnosticID = "WTG1008";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 
@@ -91,6 +93,32 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor DoNotCompareBoolToAConstantValueRule = new DiagnosticDescriptor(
+			DoNotCompareBoolToAConstantValueDiagnosticID,
+			"Do not compare bool to a constant value.",
+			"Do not compare bool to a constant value.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Either use the original value as-is, or use a logical-not operator ('!')",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
+		public static readonly DiagnosticDescriptor DoNotCompareBoolToAConstantValueInAnExpressionRule = new DiagnosticDescriptor(
+			DoNotCompareBoolToAConstantValueInAnExpressionDiagnosticID,
+			"Do not compare bool to a constant value in an expression.",
+			"Do not compare bool to a constant value in an expression.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Either use the original value as-is, or use a logical-not operator ('!')",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
 			"Do not use ConfigureAwait from an async void method.",
@@ -159,6 +187,22 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDoNotUseTheInternalKeywordForTopLevelTypesDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DoNotUseTheInternalKeywordForTopLevelTypesRule, location);
+		}
+
+		/// <summary>
+		/// Do not compare bool to a constant value.
+		/// </summary>
+		public static Diagnostic CreateDoNotCompareBoolToAConstantValueDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DoNotCompareBoolToAConstantValueRule, location);
+		}
+
+		/// <summary>
+		/// Do not compare bool to a constant value in an expression.
+		/// </summary>
+		public static Diagnostic CreateDoNotCompareBoolToAConstantValueInAnExpressionDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DoNotCompareBoolToAConstantValueInAnExpressionRule, location);
 		}
 
 		/// <summary>

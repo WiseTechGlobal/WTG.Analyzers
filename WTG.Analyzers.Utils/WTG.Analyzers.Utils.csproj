@@ -78,6 +78,7 @@
     </Compile>
     <Compile Include="AttributeUtils.cs" />
     <Compile Include="EnumerableTypeUtils.cs" />
+    <Compile Include="ExpressionSyntaxFactory.cs" />
     <Compile Include="FileDetailCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SymbolExtensions.cs" />

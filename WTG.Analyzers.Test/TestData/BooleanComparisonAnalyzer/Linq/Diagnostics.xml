@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG1008" message="Do not compare bool to a constant value in an expression." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (6,70-77)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (7,70-77)</location>
+	</diagnostic>
+</diagnostics>

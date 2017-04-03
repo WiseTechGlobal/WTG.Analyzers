@@ -119,6 +119,18 @@
     <EmbeddedResource Include="TestData\AsyncAnalyzer\Lambda\Source.cs" />
     <EmbeddedResource Include="TestData\AsyncAnalyzer\DontCrash\Result.cs" />
     <EmbeddedResource Include="TestData\AsyncAnalyzer\DontCrash\Source.cs" />
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Equality\Result.cs" />
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Equality\Source.cs" />
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Inequality\Result.cs" />
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Inequality\Source.cs" />
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\IgnoreNullable\Result.cs" />
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\IgnoreNullable\Source.cs" />
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\IgnoreNonLiteral\Result.cs" />
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\IgnoreNonLiteral\Source.cs" />
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\FindNodeTie\Result.cs" />
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\FindNodeTie\Source.cs" />
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Linq\Result.cs" />
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Linq\Source.cs" />
     <Compile Include="AnalyzerAndCodeFixTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -194,6 +206,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Equality\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Inequality\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\FindNodeTie\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Linq\Diagnostics.xml" />
   </ItemGroup>
   <Import Project="..\BuildSettings\DotNetBefore.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

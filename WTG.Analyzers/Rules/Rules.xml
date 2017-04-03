@@ -44,6 +44,20 @@
 			<description>Remove the 'internal' keyword.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="7" name="DoNotCompareBoolToAConstantValue" severity="Info">
+			<!-- For when the check would take place in IL -->
+			<title>Do not compare bool to a constant value.</title>
+			<message>Do not compare bool to a constant value.</message>
+			<description>Either use the original value as-is, or use a logical-not operator ('!')</description>
+			<tag>Unnecessary</tag>
+		</rule>
+		<rule id="8" name="DoNotCompareBoolToAConstantValueInAnExpression" severity="Info">
+			<!-- For when the check would take place in a linq expression tree -->
+			<title>Do not compare bool to a constant value in an expression.</title>
+			<message>Do not compare bool to a constant value in an expression.</message>
+			<description>Either use the original value as-is, or use a logical-not operator ('!')</description>
+			<tag>Unnecessary</tag>
+		</rule>
 	</category>
 	<category name="Correctness" id="2000">
 		<rule id="1" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">

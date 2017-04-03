@@ -9,11 +9,12 @@ using WTG.Analyzers.TestFramework;
 namespace WTG.Analyzers.Test
 {
 	[TestFixture(TypeArgs = new[] { typeof(AsyncAnalyzer), typeof(AsyncCodeFixProvider) })]
+	[TestFixture(TypeArgs = new[] { typeof(BooleanComparisonAnalyzer), typeof(BooleanComparisonCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(VisibilityAnalyzer), typeof(VisibilityCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(VarAnalyzer), typeof(VarCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(WhitespaceAnalyzer), typeof(WhitespaceCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(SuppressionAnalyzer), typeof(SuppressionCodeFixProvider) })]
-	internal class AnalyzerAndCodeFixTest<TAnalyzer, TCodeFix>
+	class AnalyzerAndCodeFixTest<TAnalyzer, TCodeFix>
 		where TAnalyzer : DiagnosticAnalyzer, new()
 		where TCodeFix : CodeFixProvider, new()
 	{
