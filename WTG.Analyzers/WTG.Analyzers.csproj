@@ -62,6 +62,7 @@
     <None Include="..\WTG.Analyzers.nuspec">
       <Link>WTG.Analyzers.nuspec</Link>
     </None>
+    <None Include="build\WarnAll.ruleset" />
     <None Include="build\WTG.Analyzers.props" />
     <None Include="Rules\Rules.xsd">
       <SubType>Designer</SubType>
