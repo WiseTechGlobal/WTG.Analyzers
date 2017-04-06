@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -68,21 +67,6 @@ namespace WTG.Analyzers
 		{
 			var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(invoke).Symbol;
 			return symbol != null && symbol.IsMatch("mscorlib", "System.Threading.Tasks.Task", nameof(Task.ConfigureAwait));
-		}
-
-		static IMethodSymbol GetInvokeMethod(INamedTypeSymbol delegateType)
-		{
-			foreach (var member in delegateType.GetMembers())
-			{
-				var method = member as IMethodSymbol;
-
-				if (method != null && method.Name == nameof(Action.Invoke))
-				{
-					return method;
-				}
-			}
-
-			return null;
 		}
 	}
 }

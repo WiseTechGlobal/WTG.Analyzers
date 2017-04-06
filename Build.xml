@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
-<Build xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" MSBuild="%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBuild.exe" xmlns="http://wisetechglobal.com/DevTools/Build.xsd">
-  <Solutions>
-    <Solution Filename="WTG.Analyzers.sln" />
-  </Solutions>
-  <PreBuild>
-    <Command cacheable="false">paket.exe restore</Command>
-  </PreBuild>
-  <PostBuild>
-    <Command>packages\NuGet.CommandLine\tools\NuGet.exe pack WTG.Analyzers.nuspec -OutputDirectory Bin\NuGet</Command>
-  </PostBuild>
-  <Versioning>
-    <CSharpAssemblyFileVersion>CommonAssemblyInfo.cs</CSharpAssemblyFileVersion>
-  </Versioning>
-  <BuildConfigurations>
-    <Configuration BuildOnDat="true" TestOnDat="true">DEBUG</Configuration>
-    <Configuration BuildOnDat="true" Publishable="true">RELEASE</Configuration>
-  </BuildConfigurations>
+<Build xmlns="http://wisetechglobal.com/DevTools/Build.xsd" MSBuild="15.0">
+	<Solutions>
+		<Solution Filename="WTG.Analyzers.sln" />
+	</Solutions>
+	<PreBuild>
+		<Command cacheable="false">paket.exe restore</Command>
+	</PreBuild>
+	<PostBuild>
+		<Command>packages\NuGet.CommandLine\tools\NuGet.exe pack WTG.Analyzers.nuspec -OutputDirectory Bin\NuGet</Command>
+	</PostBuild>
+	<Versioning>
+		<CSharpAssemblyFileVersion>CommonAssemblyInfo.cs</CSharpAssemblyFileVersion>
+	</Versioning>
+	<BuildConfigurations>
+		<Configuration BuildOnDat="true" TestOnDat="true">DEBUG</Configuration>
+		<Configuration BuildOnDat="true" Publishable="true">RELEASE</Configuration>
+	</BuildConfigurations>
 </Build>

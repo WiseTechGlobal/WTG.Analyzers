@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -55,7 +56,27 @@ namespace WTG.Analyzers
 				}
 
 				var type = model.GetTypeInfo(node).ConvertedType as INamedTypeSymbol;
-				return type != null && GetInvokeMethod(type).ReturnsVoid;
+
+				if (type == null || type.Kind == SymbolKind.ErrorType)
+				{
+					return false;
+				}
+
+				return GetInvokeMethod(type).ReturnsVoid;
+			}
+
+			static IMethodSymbol GetInvokeMethod(INamedTypeSymbol delegateType)
+			{
+				foreach (var member in delegateType.GetMembers())
+				{
+					if (member is IMethodSymbol method &&
+						method.Name == nameof(Action.Invoke))
+					{
+						return method;
+					}
+				}
+
+				return null;
 			}
 
 			readonly SemanticModel model;
