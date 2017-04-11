@@ -23,19 +23,26 @@ namespace WTG.Analyzers.Test
 		[Test]
 		public void AssemblyVersionMatchesNuGetPackageVersion()
 		{
+			var analyzersVersion = GetAssemblyVersion("WTG.Analyzers");
 			var packageDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, "NuGet");
 			var packages = Directory.GetFiles(packageDirectory, "*.nupkg", SearchOption.TopDirectoryOnly);
 
-			Assert.That(packages.Length, Is.EqualTo(1), "Sanity check - Exactly one NuGet package should have been created.");
+			for (var i = 0; i < packages.Length; i++)
+			{
+				packages[i] = Path.GetFileName(packages[i]);
+			}
 
-			var package = packages[0];
+			var ver = analyzersVersion.ToString(fieldCount: 3);
 
-			var analyzersVersion = GetAssemblyVersion("WTG.Analyzers");
-			var expectedPackageName = FormattableString.Invariant($"WTG.Analyzers.{analyzersVersion.ToString(fieldCount: 3)}.nupkg");
-			Assert.That(Path.GetFileName(package), Is.EqualTo(expectedPackageName));
+			var expected = new[]
+			{
+				FormattableString.Invariant($"WTG.Analyzers.{ver}.nupkg"),
+				FormattableString.Invariant($"WTG.Analyzers.TestFramework.{ver}.nupkg"),
+			};
+
+			Assert.That(packages, Is.EquivalentTo(expected));
 		}
 
-		static Version GetAssemblyVersion(string assemblyName)
-			=> Assembly.Load(assemblyName).GetName().Version;
+		static Version GetAssemblyVersion(string assemblyName) => Assembly.Load(assemblyName).GetName().Version;
 	}
 }

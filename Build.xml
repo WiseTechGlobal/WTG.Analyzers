@@ -8,6 +8,7 @@
 	</PreBuild>
 	<PostBuild>
 		<Command>packages\NuGet.CommandLine\tools\NuGet.exe pack WTG.Analyzers.nuspec -OutputDirectory Bin\NuGet</Command>
+		<Command>packages\NuGet.CommandLine\tools\NuGet.exe pack WTG.Analyzers.TestFramework.nuspec -OutputDirectory Bin\NuGet</Command>
 	</PostBuild>
 	<Versioning>
 		<CSharpAssemblyFileVersion>CommonAssemblyInfo.cs</CSharpAssemblyFileVersion>

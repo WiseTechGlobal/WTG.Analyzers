@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,6 +24,7 @@ namespace WTG.Analyzers.TestFramework
 
 		public DiagnosticAnalyzer Analyzer { get; }
 		public CodeFixProvider CodeFixProvider { get; }
+		public Func<Diagnostic, bool> DiagnosticFilter { get; set; }
 
 		public async Task VerifyFixAsync(string oldSource, string newSource)
 		{
@@ -33,7 +36,7 @@ namespace WTG.Analyzers.TestFramework
 
 		async Task<Document> FixDocumentAsync(Document document)
 		{
-			var analyzerDiagnostics = await DiagnosticUtils.GetDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false);
+			var analyzerDiagnostics = FilterDiagnostics(await DiagnosticUtils.GetDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false));
 			var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document).ConfigureAwait(false);
 			var attempts = analyzerDiagnostics.Length;
 
@@ -50,11 +53,13 @@ namespace WTG.Analyzers.TestFramework
 
 				document = await ApplyFixAsync(document, actionToRun).ConfigureAwait(false);
 
-				analyzerDiagnostics = await DiagnosticUtils.GetDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false);
+				analyzerDiagnostics = FilterDiagnostics(await DiagnosticUtils.GetDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false));
 
 				var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document).ConfigureAwait(false));
 
-				if (newCompilerDiagnostics.Any())
+				var filter = DiagnosticFilter;
+
+				if (filter == null ? newCompilerDiagnostics.Any() : newCompilerDiagnostics.Any(filter))
 				{
 					await ReportNewCompilerDiagnosticAsync(document, compilerDiagnostics).ConfigureAwait(false);
 				}
@@ -66,6 +71,18 @@ namespace WTG.Analyzers.TestFramework
 			}
 
 			return document;
+		}
+
+		Diagnostic[] FilterDiagnostics(Diagnostic[] result)
+		{
+			var filter = DiagnosticFilter;
+
+			if (filter != null)
+			{
+				result = result.Where(filter).ToArray();
+			}
+
+			return result;
 		}
 
 		async Task<List<CodeAction>> RequestFixes(Document document, Diagnostic[] diagnostics)

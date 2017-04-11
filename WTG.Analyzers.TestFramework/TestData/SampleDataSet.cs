@@ -13,18 +13,20 @@ namespace WTG.Analyzers.TestFramework
 {
 	public sealed class SampleDataSet
 	{
-		SampleDataSet(string name, string source, string result, ImmutableArray<DiagnosticResult> diagnostics)
+		SampleDataSet(string name, string source, string result, ImmutableArray<DiagnosticResult> diagnostics, ImmutableHashSet<string> suppressedIds)
 		{
 			Name = name;
 			Source = source;
 			Result = result;
 			Diagnostics = diagnostics;
+			SuppressedIds = suppressedIds;
 		}
 
 		public string Name { get; }
 		public string Source { get; }
 		public string Result { get; }
 		public ImmutableArray<DiagnosticResult> Diagnostics { get; }
+		public ImmutableHashSet<string> SuppressedIds { get; }
 
 		public override string ToString() => Name;
 
@@ -51,7 +53,8 @@ namespace WTG.Analyzers.TestFramework
 		{
 			string source = null;
 			string result = null;
-			ImmutableArray<DiagnosticResult> diagnostics = ImmutableArray<DiagnosticResult>.Empty;
+			var diagnostics = ImmutableArray<DiagnosticResult>.Empty;
+			var suppressedIds = ImmutableHashSet<string>.Empty;
 
 			foreach (var pair in resourceNames)
 			{
@@ -66,12 +69,12 @@ namespace WTG.Analyzers.TestFramework
 						break;
 
 					case "Diagnostics.xml":
-						diagnostics = LoadResults(assembly, pair.Value);
+						LoadResults(assembly, pair.Value, ref diagnostics, ref suppressedIds);
 						break;
 				}
 			}
 
-			return new SampleDataSet(name, source ?? string.Empty, result ?? string.Empty, diagnostics);
+			return new SampleDataSet(name, source ?? string.Empty, result ?? string.Empty, diagnostics, suppressedIds);
 		}
 
 		static string LoadResource(Assembly assembly, string name)
@@ -90,17 +93,16 @@ namespace WTG.Analyzers.TestFramework
 			}
 		}
 
-		static ImmutableArray<DiagnosticResult> LoadResults(Assembly assembly, string name)
+		static void LoadResults(Assembly assembly, string name, ref ImmutableArray<DiagnosticResult> diagnostics, ref ImmutableHashSet<string> suppressedIds)
 		{
 			var text = LoadResource(assembly, name);
 
-			if (text == null)
+			if (!string.IsNullOrEmpty(text))
 			{
-				return ImmutableArray<DiagnosticResult>.Empty;
+				var root = XElement.Parse(text);
+				diagnostics = root.Descendants("diagnostic").Select(LoadResult).ToImmutableArray();
+				suppressedIds = root.Elements("suppressId").Select(x => x.Value).ToImmutableHashSet();
 			}
-
-			var root = XElement.Parse(text);
-			return root.Descendants("diagnostic").Select(LoadResult).ToImmutableArray();
 		}
 
 		static DiagnosticResult LoadResult(XElement element)
