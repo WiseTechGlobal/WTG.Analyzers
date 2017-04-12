@@ -2,6 +2,8 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.CodeAnalysis.Text;
 
 namespace WTG.Analyzers.TestFramework
@@ -30,7 +32,13 @@ namespace WTG.Analyzers.TestFramework
 		{
 			var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
 
-			var solution = new AdhocWorkspace()
+			var workspace = new AdhocWorkspace();
+			workspace.Options = workspace.Options
+				.WithChangedOption(new OptionKey(FormattingOptions.UseTabs, LanguageNames.CSharp), true)
+				.WithChangedOption(new OptionKey(FormattingOptions.TabSize, LanguageNames.CSharp), 2)
+				.WithChangedOption(new OptionKey(FormattingOptions.IndentationSize, LanguageNames.CSharp), 2);
+
+			var solution = workspace
 				.CurrentSolution
 				.AddProject(projectId, TestProjectName, TestProjectName, LanguageNames.CSharp)
 				.AddMetadataReference(projectId, CorlibReference)

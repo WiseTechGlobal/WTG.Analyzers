@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>WTG.Analyzers.TestFramework</id>
-		<version>1.2.1</version>
+		<version>1.2.2</version>
 		<authors>WiseTech Global</authors>
 		<owners>WiseTech Global</owners>
 		<description>Support library for testing Roslyn Analyzers.</description>
