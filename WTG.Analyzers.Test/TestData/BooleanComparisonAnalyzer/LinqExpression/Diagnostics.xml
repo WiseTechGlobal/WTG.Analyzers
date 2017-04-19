@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics severity="Info">
+	<group id="WTG1007" message="Do not compare bool to a constant value.">
+		<diagnostic>
+			<location>Test0.cs: (12,22-29)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (13,24-32)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (14,24-31)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (15,21-28)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (16,17-25)</location>
+		</diagnostic>
+	</group>
+	<group id="WTG1008" message="Do not compare bool to a constant value in an expression.">
+		<diagnostic>
+			<location>Test0.cs: (23,22-29)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (24,24-32)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (25,24-31)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (26,21-28)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (27,17-25)</location>
+		</diagnostic>
+	</group>
+</diagnostics>

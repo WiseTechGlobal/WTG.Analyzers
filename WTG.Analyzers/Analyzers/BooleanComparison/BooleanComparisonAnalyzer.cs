@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -56,9 +57,11 @@ namespace WTG.Analyzers
 				return;
 			}
 
+			var visitor = new IsExpressionVisitor(context.SemanticModel, context.CancellationToken);
+
 			context.ReportDiagnostic(
 				Diagnostic.Create(
-					IsContainedInExpressionTree(context.SemanticModel, expression, context.CancellationToken)
+					IsContainedInExpressionTree(visitor, expression)
 						? Rules.DoNotCompareBoolToAConstantValueInAnExpressionRule
 						: Rules.DoNotCompareBoolToAConstantValueRule,
 					CombineLocations(
@@ -72,43 +75,19 @@ namespace WTG.Analyzers
 			return type != null && type.SpecialType == SpecialType.System_Boolean;
 		}
 
-		static bool IsContainedInExpressionTree(SemanticModel model, ExpressionSyntax expression, CancellationToken cancellationToken)
+		static bool IsContainedInExpressionTree(IsExpressionVisitor visitor, ExpressionSyntax expression)
 		{
-			var lambda = FindContainingLambdaExpression(expression);
-
-			if (lambda == null)
+			for (SyntaxNode node = expression; node != null; node = node.Parent)
 			{
-				return false;
-			}
+				var result = visitor.Visit(node);
 
-			var type = model.GetTypeInfo(lambda, cancellationToken).ConvertedType;
-			return type != null && type.IsMatch("System.Core", "System.Linq.Expressions.Expression`1");
-		}
-
-		static LambdaExpressionSyntax FindContainingLambdaExpression(SyntaxNode node)
-		{
-			while (node != null)
-			{
-				switch (node.Kind())
+				if (result.HasValue)
 				{
-					case SyntaxKind.ParenthesizedLambdaExpression:
-					case SyntaxKind.SimpleLambdaExpression:
-						return (LambdaExpressionSyntax)node;
-
-					case SyntaxKind.AddAccessorDeclaration:
-					case SyntaxKind.AnonymousMethodExpression:
-					case SyntaxKind.GetAccessorDeclaration:
-					case SyntaxKind.MethodDeclaration:
-					case SyntaxKind.RemoveAccessorDeclaration:
-					case SyntaxKind.SetAccessorDeclaration:
-					case SyntaxKind.UnknownAccessorDeclaration:
-						return null;
+					return result.Value;
 				}
-
-				node = node.Parent;
 			}
 
-			return null;
+			return false;
 		}
 
 		static Location CombineLocations(Location location1, Location location2)
@@ -118,6 +97,57 @@ namespace WTG.Analyzers
 				TextSpan.FromBounds(
 					Math.Min(location1.SourceSpan.Start, location2.SourceSpan.Start),
 					Math.Max(location1.SourceSpan.End, location2.SourceSpan.End)));
+		}
+
+		sealed class IsExpressionVisitor : CSharpSyntaxVisitor<bool?>
+		{
+			public IsExpressionVisitor(SemanticModel model, CancellationToken cancellationToken)
+			{
+				this.model = model;
+				this.cancellationToken = cancellationToken;
+			}
+
+			public override bool? VisitAccessorDeclaration(AccessorDeclarationSyntax node) => false;
+			public override bool? VisitAnonymousMethodExpression(AnonymousMethodExpressionSyntax node) => false;
+			public override bool? VisitMethodDeclaration(MethodDeclarationSyntax node) => false;
+
+			public override bool? VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node) => VisitLambdaExpressionSyntax(node);
+			public override bool? VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node) => VisitLambdaExpressionSyntax(node);
+
+			public override bool? VisitWhereClause(WhereClauseSyntax node) => IsExpressionFromQueryClauseSymbol(node);
+			public override bool? VisitOrdering(OrderingSyntax node) => IsExpressionFromNodeSymbol(node);
+			public override bool? VisitLetClause(LetClauseSyntax node) => IsExpressionFromQueryClauseSymbol(node);
+			public override bool? VisitGroupClause(GroupClauseSyntax node) => IsExpressionFromNodeSymbol(node);
+			public override bool? VisitSelectClause(SelectClauseSyntax node) => IsExpressionFromNodeSymbol(node);
+
+			bool IsExpressionFromQueryClauseSymbol(QueryClauseSyntax node)
+			{
+				var clauseInfo = model.GetQueryClauseInfo(node, cancellationToken);
+				var method = (IMethodSymbol)clauseInfo.OperationInfo.Symbol;
+				return method != null && IsExpressionFromLinqMethod(method);
+			}
+
+			bool IsExpressionFromNodeSymbol(SyntaxNode node)
+			{
+				var method = (IMethodSymbol)model.GetSymbolInfo(node).Symbol;
+				return method != null && IsExpressionFromLinqMethod(method);
+			}
+
+			bool? VisitLambdaExpressionSyntax(LambdaExpressionSyntax node)
+			{
+				var type = model.GetTypeInfo(node, cancellationToken).ConvertedType;
+				return type != null && IsExpression(type);
+			}
+
+			static bool IsExpressionFromLinqMethod(IMethodSymbol method)
+			{
+				return IsExpression(method.Parameters[method.IsStatic ? 1 : 0].Type);
+			}
+
+			static bool IsExpression(ITypeSymbol type) => type.IsMatch("System.Core", "System.Linq.Expressions.Expression`1");
+
+			readonly SemanticModel model;
+			readonly CancellationToken cancellationToken;
 		}
 	}
 }
