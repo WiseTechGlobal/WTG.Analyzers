@@ -59,12 +59,17 @@ namespace WTG.Analyzers
 						}
 					}
 
-					if (expressionType == typeSymbol)
+					if (TypeEquals(expressionType, typeSymbol))
 					{
 						context.ReportDiagnostic(Rules.CreateUseVarWherePossibleDiagnostic(candidate.Type.GetLocation()));
 					}
 				}
 			}
+		}
+
+		static bool TypeEquals(ITypeSymbol x, ITypeSymbol y)
+		{
+			return x == y || (x != null && x.Equals(y));
 		}
 
 		sealed class Visitor : CSharpSyntaxVisitor<Candidate>
