@@ -20,6 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		BuildSettings\CodeAnalysis.Test.ruleset = BuildSettings\CodeAnalysis.Test.ruleset
 		BuildSettings\DotNetAfter.props = BuildSettings\DotNetAfter.props
 		BuildSettings\DotNetBefore.props = BuildSettings\DotNetBefore.props
+		ReleaseInfo.xml = ReleaseInfo.xml
 		BuildSettings\StyleCopAnalyzers.ruleset = BuildSettings\StyleCopAnalyzers.ruleset
 	EndProjectSection
 EndProject
