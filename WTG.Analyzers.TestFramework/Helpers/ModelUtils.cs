@@ -28,19 +28,35 @@ namespace WTG.Analyzers.TestFramework
 			return documents;
 		}
 
-		static Project CreateProject(string[] sources)
+		public static AdhocWorkspace CreateWorkspace()
 		{
-			var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
-
 			var workspace = new AdhocWorkspace();
 			workspace.Options = workspace.Options
 				.WithChangedOption(new OptionKey(FormattingOptions.UseTabs, LanguageNames.CSharp), true)
 				.WithChangedOption(new OptionKey(FormattingOptions.TabSize, LanguageNames.CSharp), 2)
 				.WithChangedOption(new OptionKey(FormattingOptions.IndentationSize, LanguageNames.CSharp), 2);
+			return workspace;
+		}
 
-			var solution = workspace
-				.CurrentSolution
-				.AddProject(projectId, TestProjectName, TestProjectName, LanguageNames.CSharp)
+		public static Project CreateProject(params string[] sources)
+		{
+			return AddProject(CreateWorkspace().CurrentSolution, TestProjectName, sources);
+		}
+
+		public static Project AddAdHocDependency(this Project project, string assemblyName, params string[] sources)
+		{
+			var newProject = AddProject(project.Solution, assemblyName, sources);
+
+			return newProject.Solution.GetProject(project.Id)
+				.WithProjectReferences(project.ProjectReferences.Concat(new[] { new ProjectReference(newProject.Id) }));
+		}
+
+		static Project AddProject(Solution currentSolution, string assemblyName, string[] sources)
+		{
+			var projectId = ProjectId.CreateNewId(debugName: assemblyName);
+
+			var solution = currentSolution
+				.AddProject(projectId, assemblyName, assemblyName, LanguageNames.CSharp)
 				.AddMetadataReference(projectId, CorlibReference)
 				.AddMetadataReference(projectId, SystemCoreReference)
 				.AddMetadataReference(projectId, CSharpSymbolsReference)

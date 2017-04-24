@@ -43,6 +43,7 @@
     <Compile Include="Analyzers\BooleanComparison\BoolLiteralVisitor.cs" />
     <Compile Include="Analyzers\Suppression\SuppressionAnalyzer.cs" />
     <Compile Include="Analyzers\Suppression\SuppressionCodeFixProvider.cs" />
+    <Compile Include="Analyzers\Suppression\SuppressionFixAllProvider.cs" />
     <Compile Include="Analyzers\Suppression\SuppressionTargetLookup.cs" />
     <Compile Include="Analyzers\Var\VarAnalyzer.cs" />
     <Compile Include="Analyzers\Var\VarCodeFixProvider.cs" />

@@ -18,7 +18,7 @@ namespace WTG.Analyzers
 		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
 			Rules.RemovedOrphanedSuppressionsDiagnosticID);
 
-		public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+		public sealed override FixAllProvider GetFixAllProvider() => SuppressionFixAllProvider.Instance;
 
 		public override Task RegisterCodeFixesAsync(CodeFixContext context)
 		{

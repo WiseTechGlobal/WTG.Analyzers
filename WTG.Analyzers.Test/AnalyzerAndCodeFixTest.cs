@@ -47,6 +47,16 @@ namespace WTG.Analyzers.Test
 			await fixer.VerifyFixAsync(data.Source, data.Result).ConfigureAwait(false);
 		}
 
+		[Test]
+		public async Task BulkUpdate([ValueSource(nameof(Samples))] SampleDataSet data)
+		{
+			var analyzer = new TAnalyzer();
+			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, data.Source).ConfigureAwait(false);
+
+			var fixer = new CodeFixer(analyzer, new TCodeFix());
+			await fixer.VerifyBulkFixAsync(data.Source, data.Result).ConfigureAwait(false);
+		}
+
 		#region Implementation
 
 		const string TestDataPrefix = "WTG.Analyzers.Test.TestData.";

@@ -14,7 +14,7 @@ namespace WTG.Analyzers.TestFramework
 			return await GetDiagnosticsAsync(analyzer, ModelUtils.GetDocuments(sources)).ConfigureAwait(false);
 		}
 
-		public static async Task<Diagnostic[]> GetDiagnosticsAsync(DiagnosticAnalyzer analyzer, Document[] documents)
+		public static async Task<Diagnostic[]> GetDiagnosticsAsync(DiagnosticAnalyzer analyzer, params Document[] documents)
 		{
 			var ids = new HashSet<string>(analyzer.SupportedDiagnostics.Select(x => x.Id));
 			ids.Add("AD0001"); // <-- Analyzer threw exception.
@@ -41,7 +41,7 @@ namespace WTG.Analyzers.TestFramework
 					}
 					else
 					{
-						for (int i = 0; i < documents.Length; i++)
+						for (var i = 0; i < documents.Length; i++)
 						{
 							var document = documents[i];
 							var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);

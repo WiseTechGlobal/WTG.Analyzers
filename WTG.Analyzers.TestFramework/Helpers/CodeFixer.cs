@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,6 +37,14 @@ namespace WTG.Analyzers.TestFramework
 			Assert.That(actual, Is.EqualTo(newSource));
 		}
 
+		public async Task VerifyBulkFixAsync(string oldSource, string newSource)
+		{
+			var document = ModelUtils.CreateDocument(oldSource);
+			document = await BulkFixDocumentAsync(document).ConfigureAwait(false);
+			var actual = await GetReducedStringFromDocumentAsync(document).ConfigureAwait(false);
+			Assert.That(actual, Is.EqualTo(newSource));
+		}
+
 		async Task<Document> FixDocumentAsync(Document document)
 		{
 			var analyzerDiagnostics = FilterDiagnostics(await DiagnosticUtils.GetDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false));
@@ -47,7 +54,7 @@ namespace WTG.Analyzers.TestFramework
 			// keep applying fixes until all the problems go away (assuming an upper bound of one fix per issue.)
 			for (var i = 0; i < attempts; ++i)
 			{
-				var actions = await RequestFixes(document, analyzerDiagnostics).ConfigureAwait(false);
+				var actions = await RequestFixes(document, analyzerDiagnostics[0]).ConfigureAwait(false);
 				var actionToRun = actions.FirstOrDefault();
 
 				if (actionToRun == null)
@@ -62,13 +69,78 @@ namespace WTG.Analyzers.TestFramework
 				var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document).ConfigureAwait(false));
 
 				var filter = DiagnosticFilter;
+				var hasMatchingCompilerDiagnostics = filter == null ? newCompilerDiagnostics.Any() : newCompilerDiagnostics.Any(filter);
+
+				if (hasMatchingCompilerDiagnostics)
+				{
+					await ReportNewCompilerDiagnosticAsync(document, compilerDiagnostics).ConfigureAwait(false);
+				}
+
+				if (analyzerDiagnostics.Length == 0)
+				{
+					break;
+				}
+			}
+
+			return document;
+		}
+
+		async Task<Document> BulkFixDocumentAsync(Document document)
+		{
+			var analyzerDiagnostics = FilterDiagnostics(await DiagnosticUtils.GetDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false));
+			var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document).ConfigureAwait(false);
+			var batchCount = -1;
+
+			while (analyzerDiagnostics.Length > 0)
+			{
+				var actions = await RequestAllFixes(document, analyzerDiagnostics).ConfigureAwait(false);
+				var batcher = CodeFixProvider.GetFixAllProvider();
+
+				var groupedDiagnostics = Enumerable.ToArray(
+					from tuple in actions
+					where !string.IsNullOrEmpty(tuple.Item2.EquivalenceKey)
+					group tuple.Item1 by tuple.Item2.EquivalenceKey into g
+					let count = g.Count()
+					orderby count descending
+					select g);
+
+				if (groupedDiagnostics.Length == 0)
+				{
+					break;
+				}
+
+				if (batchCount >= 0)
+				{
+					Assert.That(groupedDiagnostics.Length, Is.LessThan(batchCount)); // the number of batches should decrease each pass.
+				}
+
+				batchCount = groupedDiagnostics.Length;
+
+				var batch = groupedDiagnostics[0];
+
+				var context = new FixAllContext(
+					document,
+					CodeFixProvider,
+					FixAllScope.Document,
+					batch.Key,
+					batch.Select(x => x.Id).Distinct().ToArray(),
+					new DummyFixAllDiagnosticProvider(batch.ToArray()),
+					CancellationToken.None);
+
+				var fix = await batcher.GetFixAsync(context).ConfigureAwait(false);
+				document = await ApplyFixAsync(document, fix).ConfigureAwait(false);
+				analyzerDiagnostics = FilterDiagnostics(await DiagnosticUtils.GetDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false));
+
+				var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document).ConfigureAwait(false));
+
+				var filter = DiagnosticFilter;
 
 				if (filter == null ? newCompilerDiagnostics.Any() : newCompilerDiagnostics.Any(filter))
 				{
 					await ReportNewCompilerDiagnosticAsync(document, compilerDiagnostics).ConfigureAwait(false);
 				}
 
-				if (!analyzerDiagnostics.Any())
+				if (analyzerDiagnostics.Length == 0)
 				{
 					break;
 				}
@@ -89,11 +161,24 @@ namespace WTG.Analyzers.TestFramework
 			return result;
 		}
 
-		async Task<List<CodeAction>> RequestFixes(Document document, Diagnostic[] diagnostics)
+		async Task<List<CodeAction>> RequestFixes(Document document, Diagnostic diagnostic)
 		{
 			var actions = new List<CodeAction>();
-			var context = new CodeFixContext(document, diagnostics[0], (a, d) => actions.Add(a), CancellationToken.None);
+			var context = new CodeFixContext(document, diagnostic, (a, d) => actions.Add(a), CancellationToken.None);
 			await CodeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+			return actions;
+		}
+
+		async Task<List<Tuple<Diagnostic, CodeAction>>> RequestAllFixes(Document document, Diagnostic[] diagnostics)
+		{
+			var actions = new List<Tuple<Diagnostic, CodeAction>>();
+
+			foreach (var diagnostic in diagnostics)
+			{
+				var context = new CodeFixContext(document, diagnostic, (a, b) => actions.Add(Tuple.Create(diagnostic, a)), CancellationToken.None);
+				await CodeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+			}
+
 			return actions;
 		}
 
@@ -157,6 +242,20 @@ namespace WTG.Analyzers.TestFramework
 		{
 			var root = await document.GetSyntaxRootAsync().ConfigureAwait(false);
 			return Formatter.Format(root, Formatter.Annotation, document.Project.Solution.Workspace);
+		}
+
+		sealed class DummyFixAllDiagnosticProvider : FixAllContext.DiagnosticProvider
+		{
+			public DummyFixAllDiagnosticProvider(Diagnostic[] diagnostics)
+			{
+				this.diagnostics = Task.FromResult(diagnostics.AsEnumerable());
+			}
+
+			public override Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken) => diagnostics;
+			public override Task<IEnumerable<Diagnostic>> GetProjectDiagnosticsAsync(Project project, CancellationToken cancellationToken) => diagnostics;
+			public override Task<IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, CancellationToken cancellationToken) => diagnostics;
+
+			readonly Task<IEnumerable<Diagnostic>> diagnostics;
 		}
 	}
 }
