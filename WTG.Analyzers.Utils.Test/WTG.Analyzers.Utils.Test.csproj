@@ -76,6 +76,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AttributeUtilsTest.cs" />
+    <Compile Include="DirectiveHelperTest.cs" />
     <Compile Include="DocumentBatchedFixAllProviderTest.cs" />
     <Compile Include="EnumerableTypeUtilsTest.cs" />
     <Compile Include="ExpressionSyntaxFactoryTest.cs" />

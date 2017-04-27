@@ -74,4 +74,18 @@
 			<tag>Unnecessary</tag>
 		</rule>
 	</category>
+	<category name="Maintainability" id="3100">
+		<rule id="1" name="DoNotNestRegions" severity="Info">
+			<title>Do not nest regions.</title>
+			<message>Do not nest regions.</message>
+			<description>Regions tend to obscure the code and nesting them generally indicates that either the code is poorly structured or it is trying to do too much.</description>
+			<tag>Unnecessary</tag>
+		</rule>
+		<rule id="2" name="RegionsShouldNotSplitStructures" severity="Info">
+			<title>Regions should not split structures.</title>
+			<message>If either the start or end of a declaration/statement/expression is within a region, then both ends should be within the same region.</message>
+			<description>This region is clearly confused about what it's for. Remove it.</description>
+			<tag>Unnecessary</tag>
+		</rule>
+	</category>
 </rules>

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3101" message="Do not nest regions." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (6,3-17)</location>
+		<location>Test0.cs: (14,3-13)</location>
+	</diagnostic>
+</diagnostics>

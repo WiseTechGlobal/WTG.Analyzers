@@ -80,6 +80,20 @@
     </Compile>
     <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\LinqExpression\Result.cs" />
     <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\LinqExpression\Source.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Split\Result.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Split\Source.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Nested\Result.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Nested\Source.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Outer\Result.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Outer\Source.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Siblings\Result.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Siblings\Source.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Between\Result.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Between\Source.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\NoTokens\Result.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\NoTokens\Source.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Unmatched\Result.cs" />
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Unmatched\Source.cs" />
     <Compile Include="VersioningTest.cs" />
     <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Source.cs" />
     <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Result.cs" />
@@ -223,6 +237,27 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\LinqExpression\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Nested\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Split\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Outer\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Siblings\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Between\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\NoTokens\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Unmatched\Diagnostics.xml" />
   </ItemGroup>
   <Import Project="..\BuildSettings\DotNetBefore.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

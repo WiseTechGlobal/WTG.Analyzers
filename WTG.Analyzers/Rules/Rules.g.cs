@@ -8,6 +8,7 @@ namespace WTG.Analyzers
 		public const string CodingConventionCategory = "CodingConvention";
 		public const string CorrectnessCategory = "Correctness";
 		public const string DecruftificationCategory = "Decruftification";
+		public const string MaintainabilityCategory = "Maintainability";
 		public const string DoNotUseThePrivateKeywordDiagnosticID = "WTG1001";
 		public const string UseVarWherePossibleDiagnosticID = "WTG1002";
 		public const string DoNotLeaveWhitespaceOnTheEndOfTheLineDiagnosticID = "WTG1003";
@@ -18,6 +19,8 @@ namespace WTG.Analyzers
 		public const string DoNotCompareBoolToAConstantValueInAnExpressionDiagnosticID = "WTG1008";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
+		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
+		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 
 		public static readonly DiagnosticDescriptor DoNotUseThePrivateKeywordRule = new DiagnosticDescriptor(
 			DoNotUseThePrivateKeywordDiagnosticID,
@@ -141,6 +144,32 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
+			DoNotNestRegionsDiagnosticID,
+			"Do not nest regions.",
+			"Do not nest regions.",
+			MaintainabilityCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Regions tend to obscure the code and nesting them generally indicates that either the code is poorly structured or trying to do too much.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
+		public static readonly DiagnosticDescriptor RegionsShouldNotSplitStructuresRule = new DiagnosticDescriptor(
+			RegionsShouldNotSplitStructuresDiagnosticID,
+			"Regions should not split structures.",
+			"If either the start or end of a declaration/statement/expression is within a region, then both ends should be within the same region.",
+			MaintainabilityCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "This region is clearly confused about what it's for, remove it.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
 		/// <summary>
 		/// Our convention is to omit the 'private' modifier where it is already the default.
 		/// </summary>
@@ -219,6 +248,22 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateRemovedOrphanedSuppressionsDiagnostic(Location location, object targetKind, object targetName)
 		{
 			return Diagnostic.Create(RemovedOrphanedSuppressionsRule, location, targetKind, targetName);
+		}
+
+		/// <summary>
+		/// Do not nest regions.
+		/// </summary>
+		public static Diagnostic CreateDoNotNestRegionsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DoNotNestRegionsRule, location);
+		}
+
+		/// <summary>
+		/// If either the start or end of a declaration/statement/expression is within a region, then both ends should be within the same region.
+		/// </summary>
+		public static Diagnostic CreateRegionsShouldNotSplitStructuresDiagnostic(Location location)
+		{
+			return Diagnostic.Create(RegionsShouldNotSplitStructuresRule, location);
 		}
 	}
 }

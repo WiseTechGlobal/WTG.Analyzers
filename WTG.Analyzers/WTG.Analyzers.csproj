@@ -41,6 +41,9 @@
     <Compile Include="Analyzers\BooleanComparison\BooleanComparisonAnalyzer.cs" />
     <Compile Include="Analyzers\BooleanComparison\BooleanComparisonCodeFixProvider.cs" />
     <Compile Include="Analyzers\BooleanComparison\BoolLiteralVisitor.cs" />
+    <Compile Include="Analyzers\RegionDirective\RegionDirectiveAnalyzer.cs" />
+    <Compile Include="Analyzers\RegionDirective\RegionDirectiveCodeFixProvider.cs" />
+    <Compile Include="Analyzers\RegionDirective\RegionDirective.cs" />
     <Compile Include="Analyzers\Suppression\SuppressionAnalyzer.cs" />
     <Compile Include="Analyzers\Suppression\SuppressionCodeFixProvider.cs" />
     <Compile Include="Analyzers\Suppression\SuppressionFixAllProvider.cs" />

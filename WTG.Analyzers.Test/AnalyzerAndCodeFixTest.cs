@@ -14,6 +14,7 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(VarAnalyzer), typeof(VarCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(WhitespaceAnalyzer), typeof(WhitespaceCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(SuppressionAnalyzer), typeof(SuppressionCodeFixProvider) })]
+	[TestFixture(TypeArgs = new[] { typeof(RegionDirectiveAnalyzer), typeof(RegionDirectiveCodeFixProvider) })]
 	class AnalyzerAndCodeFixTest<TAnalyzer, TCodeFix>
 		where TAnalyzer : DiagnosticAnalyzer, new()
 		where TCodeFix : CodeFixProvider, new()

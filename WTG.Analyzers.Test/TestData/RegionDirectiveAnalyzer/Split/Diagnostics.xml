@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3102" message="If either the start or end of a declaration/statement/expression is within a region, then both ends should be within the same region." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (9,3-17)</location>
+		<location>Test0.cs: (22,3-13)</location>
+	</diagnostic>
+</diagnostics>
