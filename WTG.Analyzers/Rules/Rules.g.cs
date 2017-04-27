@@ -151,7 +151,7 @@ namespace WTG.Analyzers
 			MaintainabilityCategory,
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
-			description: "Regions tend to obscure the code and nesting them generally indicates that either the code is poorly structured or trying to do too much.",
+			description: "Regions tend to obscure the code and nesting them generally indicates that either the code is poorly structured or it is trying to do too much.",
 			customTags: new[]
 			{
 				WellKnownDiagnosticTags.Unnecessary,
@@ -164,7 +164,7 @@ namespace WTG.Analyzers
 			MaintainabilityCategory,
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
-			description: "This region is clearly confused about what it's for, remove it.",
+			description: "This region is clearly confused about what it's for. Remove it.",
 			customTags: new[]
 			{
 				WellKnownDiagnosticTags.Unnecessary,
