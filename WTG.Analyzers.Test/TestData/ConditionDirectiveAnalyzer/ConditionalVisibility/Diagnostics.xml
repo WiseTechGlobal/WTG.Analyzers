@@ -9,4 +9,7 @@
 	<diagnostic>
 		<location>Test0.cs: (25,1-6)</location>
 	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (35,1-13)</location>
+	</diagnostic>
 </diagnostics>

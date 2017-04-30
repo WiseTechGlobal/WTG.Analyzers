@@ -29,5 +29,15 @@ namespace Magic
 		{
 
 		}
+
+#if Alpha
+#elif Beta
+#elif !Gamma
+		public
+#endif
+		void MethodA4()
+		{
+
+		}
 	}
 }
