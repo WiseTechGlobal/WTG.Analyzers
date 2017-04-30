@@ -13,8 +13,14 @@
 
 		<!-- Correctness -->
 		<Rule Id="WTG2001" Action="Warning" />
+		<Rule Id="WTG2002" Action="Warning" />
 
 		<!-- Decruftification -->
 		<Rule Id="WTG3001" Action="Warning" />
+
+		<!-- Maintainability -->
+		<Rule Id="WTG3101" Action="Warning" />
+		<Rule Id="WTG3102" Action="Warning" />
+		<Rule Id="WTG3103" Action="Warning" />
 	</Rules>
 </RuleSet>

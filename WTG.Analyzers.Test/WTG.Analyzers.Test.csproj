@@ -92,8 +92,13 @@
     <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Between\Source.cs" />
     <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\NoTokens\Result.cs" />
     <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\NoTokens\Source.cs" />
+    <Compile Include="AnalyzerOnlyTest.cs" />
     <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Unmatched\Result.cs" />
     <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Unmatched\Source.cs" />
+    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\Safe\Source.cs" />
+    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\SplitMethod\Source.cs" />
+    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\DEBUG\Source.cs" />
+    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\ConditionalVisibility\Source.cs" />
     <Compile Include="VersioningTest.cs" />
     <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Source.cs" />
     <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Result.cs" />
@@ -257,7 +262,19 @@
     <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\NoTokens\Diagnostics.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\DEBUG\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Unmatched\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\Safe\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\SplitMethod\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\ConditionalVisibility\Diagnostics.xml" />
   </ItemGroup>
   <Import Project="..\BuildSettings\DotNetBefore.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

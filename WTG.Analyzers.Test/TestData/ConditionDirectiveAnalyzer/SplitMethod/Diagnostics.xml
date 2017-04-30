@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3103" message="If either the start or end of a declaration/statement/expression is within a conditional compilation block, then both ends should be within the same block." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (9,1-9)</location>
+	</diagnostic>
+</diagnostics>

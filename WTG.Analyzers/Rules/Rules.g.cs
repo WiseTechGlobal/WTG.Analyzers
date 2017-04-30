@@ -18,9 +18,11 @@ namespace WTG.Analyzers
 		public const string DoNotCompareBoolToAConstantValueDiagnosticID = "WTG1007";
 		public const string DoNotCompareBoolToAConstantValueInAnExpressionDiagnosticID = "WTG1008";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
+		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
+		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
 
 		public static readonly DiagnosticDescriptor DoNotUseThePrivateKeywordRule = new DiagnosticDescriptor(
 			DoNotUseThePrivateKeywordDiagnosticID,
@@ -131,6 +133,15 @@ namespace WTG.Analyzers
 			isEnabledByDefault: true,
 			description: "Remove the ConfigureAwait call, or return Task.");
 
+		public static readonly DiagnosticDescriptor AvoidConditionalCompilationBasedOnDebugRule = new DiagnosticDescriptor(
+			AvoidConditionalCompilationBasedOnDebugDiagnosticID,
+			"Avoid conditional compilation based on DEBUG.",
+			"Avoid referencing DEBUG in #if or #elif.",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "Changing the behaviour in debug vs release means our tests are not testing what the user sees. Consider using debug switches or command line arguments instead.");
+
 		public static readonly DiagnosticDescriptor RemovedOrphanedSuppressionsRule = new DiagnosticDescriptor(
 			RemovedOrphanedSuppressionsDiagnosticID,
 			"Remove orphaned suppressions.",
@@ -169,6 +180,15 @@ namespace WTG.Analyzers
 			{
 				WellKnownDiagnosticTags.Unnecessary,
 			});
+
+		public static readonly DiagnosticDescriptor ConditionalCompilationDirectivesShouldNotSplitStructuresRule = new DiagnosticDescriptor(
+			ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID,
+			"Conditional compilation directives should not split structures.",
+			"If either the start or end of a declaration/statement/expression is within a conditional compilation block, then both ends should be within the same block.",
+			MaintainabilityCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "The conditional compilation directive is either confused or you are trying to do something dodgy. Changing method signatures/visibility based on compiler directives is just asking for trouble.");
 
 		/// <summary>
 		/// Our convention is to omit the 'private' modifier where it is already the default.
@@ -243,6 +263,14 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
+		/// Avoid referencing DEBUG in #if or #elif.
+		/// </summary>
+		public static Diagnostic CreateAvoidConditionalCompilationBasedOnDebugDiagnostic(Location location)
+		{
+			return Diagnostic.Create(AvoidConditionalCompilationBasedOnDebugRule, location);
+		}
+
+		/// <summary>
 		/// Encountered a code analysis suppression for the non-existent {targetKind} '{targetName}'. Remove or update it.
 		/// </summary>
 		public static Diagnostic CreateRemovedOrphanedSuppressionsDiagnostic(Location location, object targetKind, object targetName)
@@ -264,6 +292,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateRegionsShouldNotSplitStructuresDiagnostic(Location location)
 		{
 			return Diagnostic.Create(RegionsShouldNotSplitStructuresRule, location);
+		}
+
+		/// <summary>
+		/// If either the start or end of a declaration/statement/expression is within a conditional compilation block, then both ends should be within the same block.
+		/// </summary>
+		public static Diagnostic CreateConditionalCompilationDirectivesShouldNotSplitStructuresDiagnostic(Location location)
+		{
+			return Diagnostic.Create(ConditionalCompilationDirectivesShouldNotSplitStructuresRule, location);
 		}
 	}
 }

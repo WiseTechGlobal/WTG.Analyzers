@@ -41,6 +41,8 @@
     <Compile Include="Analyzers\BooleanComparison\BooleanComparisonAnalyzer.cs" />
     <Compile Include="Analyzers\BooleanComparison\BooleanComparisonCodeFixProvider.cs" />
     <Compile Include="Analyzers\BooleanComparison\BoolLiteralVisitor.cs" />
+    <Compile Include="Analyzers\ConditionDirective\ConditionDirective.cs" />
+    <Compile Include="Analyzers\ConditionDirective\ConditionDirectiveAnalyzer.cs" />
     <Compile Include="Analyzers\RegionDirective\RegionDirectiveAnalyzer.cs" />
     <Compile Include="Analyzers\RegionDirective\RegionDirectiveCodeFixProvider.cs" />
     <Compile Include="Analyzers\RegionDirective\RegionDirective.cs" />
