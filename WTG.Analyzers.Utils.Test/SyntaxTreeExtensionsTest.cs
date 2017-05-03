@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
@@ -13,22 +12,6 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("Barry.cs", ExpectedResult = false)]
 		[TestCase("Barry.g.cs", ExpectedResult = true)]
 		[TestCase("Barry.Designer.cs", ExpectedResult = true)]
-		[TestCase(".NETCoreApp,Version=v1.1.AssemblyAttributes.cs", ExpectedResult = true)]
-		[TestCase(".NETFramework,Version=v4.0.AssemblyAttributes.AssemblyAttributes.cs", ExpectedResult = true)]
-		[TestCase(".NETFramework,Version=v4.5.AssemblyAttributes.AssemblyAttributes.cs", ExpectedResult = true)]
-		[TestCase(".NETFramework,Version=v4.5.1.AssemblyAttributes.AssemblyAttributes.cs", ExpectedResult = true)]
-		[TestCase(".NETFramework,Version=v4.5.2.AssemblyAttributes.AssemblyAttributes.cs", ExpectedResult = true)]
-		[TestCase(".NETFramework,Version=v4.6.AssemblyAttributes.AssemblyAttributes.cs", ExpectedResult = true)]
-		[TestCase(".NETFramework,Version=v4.6.AssemblyAttributes.AssemblyAttributes.vb", ExpectedResult = true)]
-		[TestCase(".NETFramework,Version=v4.6.1.AssemblyAttributes.AssemblyAttributes.cs", ExpectedResult = true)]
-		[TestCase(".NETFramework,Version=v4.6.2.AssemblyAttributes.AssemblyAttributes.cs", ExpectedResult = true)]
-		[TestCase(".NETFramework,Version=v4.7.AssemblyAttributes.AssemblyAttributes.cs", ExpectedResult = true)]
-		[TestCase(".NETPortable,Version=v4.5,Profile=Profile7.AssemblyAttributes.AssemblyAttributes.cs", ExpectedResult = true)]
-		[TestCase(".NETStandard,Version=v1.3.AssemblyAttributes.cs", ExpectedResult = true)]
-		[TestCase(".NETStandard,Version=v1.4.AssemblyAttributes.cs", ExpectedResult = true)]
-		[TestCase(".NETStandard.AssemblyAttributes.,Version=v1.4.cs", ExpectedResult = false)]
-		[TestCase(".AssemblyAttributes.NETStandard,Version=v1.4.cs", ExpectedResult = false)]
-		[TestCase(".NETStandard.AssemblyAttributes,Version=v1.4.cs", ExpectedResult = false)]
 		public async Task<bool> IsGeneratedByFilename(string filename)
 		{
 			return await Check(filename, "//text").ConfigureAwait(false);
