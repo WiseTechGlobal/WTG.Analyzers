@@ -17,6 +17,7 @@ namespace WTG.Analyzers
 		public const string DoNotUseTheInternalKeywordForTopLevelTypesDiagnosticID = "WTG1006";
 		public const string DoNotCompareBoolToAConstantValueDiagnosticID = "WTG1007";
 		public const string DoNotCompareBoolToAConstantValueInAnExpressionDiagnosticID = "WTG1008";
+		public const string UsingDirectivesMustBeOrderedByKindDiagnosticID = "WTG1009";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
@@ -123,6 +124,15 @@ namespace WTG.Analyzers
 			{
 				WellKnownDiagnosticTags.Unnecessary,
 			});
+
+		public static readonly DiagnosticDescriptor UsingDirectivesMustBeOrderedByKindRule = new DiagnosticDescriptor(
+			UsingDirectivesMustBeOrderedByKindDiagnosticID,
+			"Using directives must be ordered by kind.",
+			"'using' directives should be placed before 'using static' directives, which in turn must be placed before 'using' alias directives.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Move all 'using static' statements after 'using' statements, and move 'using X=Y' to the end.");
 
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
@@ -252,6 +262,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDoNotCompareBoolToAConstantValueInAnExpressionDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DoNotCompareBoolToAConstantValueInAnExpressionRule, location);
+		}
+
+		/// <summary>
+		/// 'using' directives should be placed before 'using static' directives, which in turn must be placed before 'using' alias directives.
+		/// </summary>
+		public static Diagnostic CreateUsingDirectivesMustBeOrderedByKindDiagnostic(Location location)
+		{
+			return Diagnostic.Create(UsingDirectivesMustBeOrderedByKindRule, location);
 		}
 
 		/// <summary>

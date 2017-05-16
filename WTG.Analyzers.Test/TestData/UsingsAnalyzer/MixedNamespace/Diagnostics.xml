@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG1009" message="'using' directives should be placed before 'using static' directives, which in turn must be placed before 'using' alias directives." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (6,2-32)</location>
+	</diagnostic>
+</diagnostics>

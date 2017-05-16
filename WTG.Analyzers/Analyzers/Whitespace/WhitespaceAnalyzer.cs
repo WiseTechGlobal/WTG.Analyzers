@@ -37,9 +37,7 @@ namespace WTG.Analyzers
 			{
 				if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
 				{
-					SyntaxTrivia preceedingTrivia;
-
-					if (TryGetPreceedingTrivia(trivia, out preceedingTrivia) && preceedingTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
+					if (TryGetPreceedingTrivia(trivia, out var preceedingTrivia) && preceedingTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
 					{
 						context.ReportDiagnostic(Rules.CreateDoNotLeaveWhitespaceOnTheEndOfTheLineDiagnostic(preceedingTrivia.GetLocation()));
 					}

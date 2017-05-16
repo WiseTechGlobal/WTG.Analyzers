@@ -58,6 +58,11 @@
 			<description>Either use the original value as-is, or use a logical-not operator ('!')</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="9" name="UsingDirectivesMustBeOrderedByKind" severity="Info">
+			<title>Using directives must be ordered by kind.</title>
+			<message>'using' directives should be placed before 'using static' directives, which in turn must be placed before 'using' alias directives.</message>
+			<description>Move all 'using static' statements after 'using' statements, and move 'using X=Y' to the end.</description>
+		</rule>
 	</category>
 	<category name="Correctness" id="2000">
 		<rule id="1" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">

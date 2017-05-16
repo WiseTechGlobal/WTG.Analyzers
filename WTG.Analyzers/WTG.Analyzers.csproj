@@ -50,6 +50,10 @@
     <Compile Include="Analyzers\Suppression\SuppressionCodeFixProvider.cs" />
     <Compile Include="Analyzers\Suppression\SuppressionFixAllProvider.cs" />
     <Compile Include="Analyzers\Suppression\SuppressionTargetLookup.cs" />
+    <Compile Include="Analyzers\Usings\UsingDirectiveKind.cs" />
+    <Compile Include="Analyzers\Usings\UsingsAnalyzer.cs" />
+    <Compile Include="Analyzers\Usings\UsingsCodeFixProvider.cs" />
+    <Compile Include="Analyzers\Usings\UsingsHelper.cs" />
     <Compile Include="Analyzers\Var\VarAnalyzer.cs" />
     <Compile Include="Analyzers\Var\VarCodeFixProvider.cs" />
     <Compile Include="Analyzers\Visibility\ModifierExtractionVisitor.cs" />
@@ -71,7 +75,9 @@
     <None Include="..\WTG.Analyzers.TestFramework.nuspec">
       <Link>WTG.Analyzers.TestFramework.nuspec</Link>
     </None>
-    <None Include="build\WarnAll.ruleset" />
+    <None Include="build\WarnAll.ruleset">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="build\WTG.Analyzers.props" />
     <None Include="Rules\Rules.xsd">
       <SubType>Designer</SubType>

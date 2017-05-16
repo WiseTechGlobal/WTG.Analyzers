@@ -99,6 +99,22 @@
     <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\SplitMethod\Source.cs" />
     <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\DEBUG\Source.cs" />
     <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\ConditionalVisibility\Source.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedUnit\Source.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedUnit\Result.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedUnit\Result.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedUnit\Source.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedNamespace\Result.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedNamespace\Source.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedMixture\Result.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedMixture\Source.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\SingleUnit\Result.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\SingleUnit\Source.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\SingleNamespace\Result.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\SingleNamespace\Source.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedMixture\Result.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedMixture\Source.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedNamespace\Result.cs" />
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedNamespace\Source.cs" />
     <Compile Include="VersioningTest.cs" />
     <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Source.cs" />
     <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Result.cs" />
@@ -275,6 +291,30 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\ConditionalVisibility\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedUnit\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedUnit\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedNamespace\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedMixture\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\SingleUnit\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\SingleNamespace\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedMixture\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedNamespace\Diagnostics.xml" />
   </ItemGroup>
   <Import Project="..\BuildSettings\DotNetBefore.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
