@@ -29,7 +29,11 @@ var rules = Enumerable.ToArray(
 		Severity = ruleNode.Attribute("severity")?.Value ?? "Warning",
 		Category = category,
 		Title = ruleNode.Element(ns + "title").Value,
-		Message = new FormatMessage(ruleNode.Element(ns + "message").Value),
+		Messages = Enumerable.ToArray(
+			from messageElement in ruleNode.Elements(ns + "message")
+			select new FormatMessage(
+				messageElement.Attribute("name")?.Value,
+				messageElement.Value)),
 		Description = ruleNode.Element(ns + "description").Value,
 		Tags = ruleNode.Elements(ns + "tag").Select(x => x.Value).ToArray(),
 	});
@@ -58,61 +62,67 @@ foreach (var rule in rules)
 
 foreach (var rule in rules)
 {
+	foreach (var message in rule.Messages)
+	{
 #>
 
-		public static readonly DiagnosticDescriptor <#=rule.Name#>Rule = new DiagnosticDescriptor(
+		public static readonly DiagnosticDescriptor <#=rule.Name#><#=message.NameSuffix#>Rule = new DiagnosticDescriptor(
 			<#=rule.Name#>DiagnosticID,
 			<#=Escape(rule.Title)#>,
-			<#=Escape(rule.Message.MessageFormat)#>,
+			<#=Escape(message.MessageFormat)#>,
 			<#=rule.Category#>Category,
 			DiagnosticSeverity.<#=rule.Severity#>,
 			isEnabledByDefault: true,
 			description: <#=Escape(rule.Description)#><#
 
-	if (rule.Tags.Length > 0)
-	{
+		if (rule.Tags.Length > 0)
+		{
 		#>,
 			customTags: new[]
 			{
 <#
-		foreach (var tag in rule.Tags)
-		{
+			foreach (var tag in rule.Tags)
+			{
 #>
 				WellKnownDiagnosticTags.<#=tag#>,
 <#
-		}
+			}
 #>
 			}<#
-	}
+		}
 
 			#>);
 <#
+	}
 }
 
 foreach (var rule in rules)
 {
+	foreach (var message in rule.Messages)
+	{
 #>
 
 		/// <summary>
-		/// <#=rule.Message.RawMessage#>
+		/// <#=message.RawMessage#>
 		/// </summary>
-		public static Diagnostic Create<#=rule.Name#>Diagnostic(Location location<#
+		public static Diagnostic Create<#=rule.Name#><#=message.NameSuffix#>Diagnostic(Location location<#
 
-	foreach (var arg in rule.Message.Arguments)
-	{
-		#>, object <#=arg#><#
-	}
+		foreach (var arg in message.Arguments)
+		{
+			#>, object <#=arg#><#
+		}
 		#>)
 		{
-			return Diagnostic.Create(<#=rule.Name#>Rule, location<#
+			return Diagnostic.Create(<#=rule.Name#><#=message.NameSuffix#>Rule, location<#
 
-	foreach (var arg in rule.Message.Arguments)
-	{
-		#>, <#=arg#><#
-	}
+		foreach (var arg in message.Arguments)
+		{
+			#>, <#=arg#><#
+		}
 			#>);
 		}
 <#
+	}
 }
 
 #>
@@ -121,7 +131,7 @@ foreach (var rule in rules)
 <#+
 class FormatMessage
 {
-	public FormatMessage(string rawMessage)
+	public FormatMessage(string name, string rawMessage)
 	{
 		var arguments = new List<string>();
 		var builder = new StringBuilder();
@@ -162,14 +172,18 @@ class FormatMessage
 
 		builder.Append(rawMessage, start, rawMessage.Length - start);
 
+		Name = name;
+		NameSuffix = name == null ? string.Empty : "_" + name;
 		RawMessage = rawMessage;
 		MessageFormat = builder.ToString();
 		Arguments = arguments;
 	}
 
-	public string RawMessage { get; private set; }
-	public string MessageFormat { get; private set; }
-	public IEnumerable<string> Arguments { get; private set; }
+	public string Name { get; }
+	public string NameSuffix { get; }
+	public string RawMessage { get; }
+	public string MessageFormat { get; }
+	public IEnumerable<string> Arguments { get; }
 }
 
 static string Escape(string text)

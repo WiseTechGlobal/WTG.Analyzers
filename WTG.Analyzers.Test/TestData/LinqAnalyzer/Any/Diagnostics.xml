@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3002" severity="Info">
+	<diagnostic message="Don't use the Any() extension method on a source of type 'string', use the 'Length' property instead.">
+		<location>Test0.cs: (9,46-51)</location>
+	</diagnostic>
+	<diagnostic message="Don't use the Any() extension method on a source of type 'int[]', use the 'Length' property instead.">
+		<location>Test0.cs: (10,45-50)</location>
+	</diagnostic>
+	<diagnostic message="Don't use the Any() extension method on a source of type 'System.Collections.Generic.IReadOnlyList&lt;int&gt;', use the 'Count' property instead.">
+		<location>Test0.cs: (11,58-63)</location>
+	</diagnostic>
+	<diagnostic message="Don't use the Any() extension method on a source of type 'System.Collections.Generic.IReadOnlyCollection&lt;int&gt;', use the 'Count' property instead.">
+		<location>Test0.cs: (12,64-69)</location>
+	</diagnostic>
+	<diagnostic message="Don't use the Any() extension method on a source of type 'System.Collections.Generic.IList&lt;int&gt;', use the 'Count' property instead.">
+		<location>Test0.cs: (13,50-55)</location>
+	</diagnostic>
+	<diagnostic message="Don't use the Any() extension method on a source of type 'System.Collections.Generic.ICollection&lt;int&gt;', use the 'Count' property instead.">
+		<location>Test0.cs: (14,56-61)</location>
+	</diagnostic>
+	<diagnostic message="Don't use the Any() extension method on a source of type 'int[]', use the 'Length' property instead.">
+		<location>Test0.cs: (17,49-60)</location>
+	</diagnostic>
+	<diagnostic id="WTG3003" message="Don't use the Any() extension method on a source of type 'int[]', use the 'Length' property instead.">
+		<location>Test0.cs: (18,64-69)</location>
+	</diagnostic>
+</diagnostics>

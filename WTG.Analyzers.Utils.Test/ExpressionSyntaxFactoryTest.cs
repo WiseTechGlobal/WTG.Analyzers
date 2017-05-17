@@ -17,5 +17,23 @@ namespace WTG.Analyzers.Utils.Test
 			var expression = ExpressionSyntaxFactory.LogicalNot(baseExpression);
 			return expression.ToFullString();
 		}
+
+		[TestCase(0, ExpectedResult = "0")]
+		[TestCase(1, ExpectedResult = "1")]
+		[TestCase(-1, ExpectedResult = "-1")]
+		[TestCase(65536, ExpectedResult = "65536")]
+		public string CreateLiteral(int value)
+		{
+			return ExpressionSyntaxFactory.CreateLiteral(value).ToString();
+		}
+
+		[Test]
+		public void CreateElementAccess()
+		{
+			var collectionExpression = SyntaxFactory.IdentifierName("collection");
+			var indexExpression = SyntaxFactory.IdentifierName("index");
+			var result = ExpressionSyntaxFactory.CreateElementAccessExpression(collectionExpression, indexExpression);
+			Assert.That(result.ToString(), Is.EqualTo("collection[index]"));
+		}
 	}
 }

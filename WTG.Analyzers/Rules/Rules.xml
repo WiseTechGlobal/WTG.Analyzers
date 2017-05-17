@@ -83,6 +83,20 @@
 			<description>If you change or remove a type or member that had a code analysis suppression against it, be sure to remove any orphaned suppression attributes. This is usually easier to maintain if the suppression attributes are applied directly to the type/member rather than applied to the assembly in a GlobalSuppressions.cs file.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="2" name="PreferDirectMemberAccessOverLinq" severity="Info">
+			<!-- For when the check would take place in IL -->
+			<title>Prefer direct member access over linq.</title>
+			<message name="UseProperty">Don't use the {extensionName} extension method on a source of type '{sourceTypeName}', use the '{propertyName}' property instead.</message>
+			<message name="UseIndexer">Don't use the {extensionName} extension method on a source of type '{sourceTypeName}', use the indexer instead.</message>
+			<description>Don't use linq extension methods when there is a better alternative.</description>
+		</rule>
+		<rule id="3" name="PreferDirectMemberAccessOverLinqInAnExpression" severity="Info">
+			<!-- For when the check would take place in a linq expression tree -->
+			<title>Prefer direct member access over linq in an expression.</title>
+			<message name="UseProperty">Don't use the {extensionName} extension method on a source of type '{sourceTypeName}', use the '{propertyName}' property instead.</message>
+			<message name="UseIndexer">Don't use the {extensionName} extension method on a source of type '{sourceTypeName}', use the indexer instead.</message>
+			<description>Don't use linq extension methods when there is a better alternative.</description>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">

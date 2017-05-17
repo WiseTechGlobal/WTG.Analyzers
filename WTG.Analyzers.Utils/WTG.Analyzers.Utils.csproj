@@ -80,8 +80,10 @@
     <Compile Include="DirectiveHelper.cs" />
     <Compile Include="DocumentBatchedFixAllProvider.cs" />
     <Compile Include="EnumerableTypeUtils.cs" />
+    <Compile Include="ExpressionHelper.cs" />
     <Compile Include="ExpressionSyntaxFactory.cs" />
     <Compile Include="FileDetailCache.cs" />
+    <Compile Include="NestingDiagnosticComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SymbolExtensions.cs" />
     <Compile Include="SyntaxTreeExtensions.cs" />

@@ -21,6 +21,8 @@ namespace WTG.Analyzers
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
+		public const string PreferDirectMemberAccessOverLinqDiagnosticID = "WTG3002";
+		public const string PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID = "WTG3003";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -165,6 +167,42 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor PreferDirectMemberAccessOverLinq_UsePropertyRule = new DiagnosticDescriptor(
+			PreferDirectMemberAccessOverLinqDiagnosticID,
+			"Prefer direct member access over linq.",
+			"Don't use the {0} extension method on a source of type '{1}', use the '{2}' property instead.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Don't use linq extension methods when there is a better alternative.");
+
+		public static readonly DiagnosticDescriptor PreferDirectMemberAccessOverLinq_UseIndexerRule = new DiagnosticDescriptor(
+			PreferDirectMemberAccessOverLinqDiagnosticID,
+			"Prefer direct member access over linq.",
+			"Don't use the {0} extension method on a source of type '{1}', use the indexer instead.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Don't use linq extension methods when there is a better alternative.");
+
+		public static readonly DiagnosticDescriptor PreferDirectMemberAccessOverLinqInAnExpression_UsePropertyRule = new DiagnosticDescriptor(
+			PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID,
+			"Prefer direct member access over linq in an expression.",
+			"Don't use the {0} extension method on a source of type '{1}', use the '{2}' property instead.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Don't use linq extension methods when there is a better alternative.");
+
+		public static readonly DiagnosticDescriptor PreferDirectMemberAccessOverLinqInAnExpression_UseIndexerRule = new DiagnosticDescriptor(
+			PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID,
+			"Prefer direct member access over linq in an expression.",
+			"Don't use the {0} extension method on a source of type '{1}', use the indexer instead.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Don't use linq extension methods when there is a better alternative.");
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -294,6 +332,38 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateRemovedOrphanedSuppressionsDiagnostic(Location location, object targetKind, object targetName)
 		{
 			return Diagnostic.Create(RemovedOrphanedSuppressionsRule, location, targetKind, targetName);
+		}
+
+		/// <summary>
+		/// Don't use the {extensionName} extension method on a source of type '{sourceTypeName}', use the '{propertyName}' property instead.
+		/// </summary>
+		public static Diagnostic CreatePreferDirectMemberAccessOverLinq_UsePropertyDiagnostic(Location location, object extensionName, object sourceTypeName, object propertyName)
+		{
+			return Diagnostic.Create(PreferDirectMemberAccessOverLinq_UsePropertyRule, location, extensionName, sourceTypeName, propertyName);
+		}
+
+		/// <summary>
+		/// Don't use the {extensionName} extension method on a source of type '{sourceTypeName}', use the indexer instead.
+		/// </summary>
+		public static Diagnostic CreatePreferDirectMemberAccessOverLinq_UseIndexerDiagnostic(Location location, object extensionName, object sourceTypeName)
+		{
+			return Diagnostic.Create(PreferDirectMemberAccessOverLinq_UseIndexerRule, location, extensionName, sourceTypeName);
+		}
+
+		/// <summary>
+		/// Don't use the {extensionName} extension method on a source of type '{sourceTypeName}', use the '{propertyName}' property instead.
+		/// </summary>
+		public static Diagnostic CreatePreferDirectMemberAccessOverLinqInAnExpression_UsePropertyDiagnostic(Location location, object extensionName, object sourceTypeName, object propertyName)
+		{
+			return Diagnostic.Create(PreferDirectMemberAccessOverLinqInAnExpression_UsePropertyRule, location, extensionName, sourceTypeName, propertyName);
+		}
+
+		/// <summary>
+		/// Don't use the {extensionName} extension method on a source of type '{sourceTypeName}', use the indexer instead.
+		/// </summary>
+		public static Diagnostic CreatePreferDirectMemberAccessOverLinqInAnExpression_UseIndexerDiagnostic(Location location, object extensionName, object sourceTypeName)
+		{
+			return Diagnostic.Create(PreferDirectMemberAccessOverLinqInAnExpression_UseIndexerRule, location, extensionName, sourceTypeName);
 		}
 
 		/// <summary>

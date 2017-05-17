@@ -99,6 +99,14 @@
     <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\SplitMethod\Source.cs" />
     <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\DEBUG\Source.cs" />
     <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\ConditionalVisibility\Source.cs" />
+    <EmbeddedResource Include="TestData\LinqAnalyzer\Any\Result.cs" />
+    <EmbeddedResource Include="TestData\LinqAnalyzer\Any\Source.cs" />
+    <EmbeddedResource Include="TestData\LinqAnalyzer\Count\Result.cs" />
+    <EmbeddedResource Include="TestData\LinqAnalyzer\Count\Source.cs" />
+    <EmbeddedResource Include="TestData\LinqAnalyzer\ElementAt\Result.cs" />
+    <EmbeddedResource Include="TestData\LinqAnalyzer\ElementAt\Source.cs" />
+    <EmbeddedResource Include="TestData\LinqAnalyzer\First\Result.cs" />
+    <EmbeddedResource Include="TestData\LinqAnalyzer\First\Source.cs" />
     <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedUnit\Source.cs" />
     <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedUnit\Result.cs" />
     <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedUnit\Result.cs" />
@@ -291,6 +299,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\ConditionalVisibility\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\LinqAnalyzer\Any\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\LinqAnalyzer\Count\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\LinqAnalyzer\ElementAt\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\LinqAnalyzer\First\Diagnostics.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedUnit\Diagnostics.xml" />

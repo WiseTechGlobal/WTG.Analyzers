@@ -79,6 +79,7 @@
     <Compile Include="DirectiveHelperTest.cs" />
     <Compile Include="DocumentBatchedFixAllProviderTest.cs" />
     <Compile Include="EnumerableTypeUtilsTest.cs" />
+    <Compile Include="ExpressionHelperTest.cs" />
     <Compile Include="ExpressionSyntaxFactoryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SymbolExtensionsTest.cs" />

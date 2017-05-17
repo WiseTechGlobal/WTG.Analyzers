@@ -25,6 +25,22 @@ namespace WTG.Analyzers.Utils
 			}
 		}
 
+		public static ExpressionSyntax CreateElementAccessExpression(ExpressionSyntax sourceExpression, ExpressionSyntax index)
+		{
+			return SyntaxFactory.ElementAccessExpression(
+				sourceExpression,
+				SyntaxFactory.BracketedArgumentList(
+					SyntaxFactory.SingletonSeparatedList(
+						SyntaxFactory.Argument(index))));
+		}
+
+		public static ExpressionSyntax CreateLiteral(int value)
+		{
+			return SyntaxFactory.LiteralExpression(
+				SyntaxKind.NumericLiteralExpression,
+				SyntaxFactory.Literal(value));
+		}
+
 		static bool HasPrimaryOrUnaryPrecedence(ExpressionSyntax expression)
 		{
 			switch (expression.Kind())

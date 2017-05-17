@@ -41,10 +41,18 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:complexType name="messageType">
+		<xs:simpleContent>
+			<xs:extension base="xs:token">
+				<xs:attribute name="name" type="xs:string" use="optional" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
 	<xs:complexType name="ruleType">
 		<xs:sequence>
 			<xs:element name="title" type="xs:string" />
-			<xs:element name="message" type="xs:string" />
+			<xs:element name="message" type="messageType" maxOccurs="unbounded" />
 			<xs:element name="description" type="xs:string" />
 			<xs:element name="tag" type="tagType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
@@ -52,7 +60,7 @@
 		<xs:attribute name="name" type="xs:token" use="required" />
 		<xs:attribute name="severity" type="severityType" use="optional" />
 	</xs:complexType>
-	
+
 	<xs:complexType name="categoryType">
 		<xs:sequence>
 			<xs:element name="rule" type="ruleType" minOccurs="1" maxOccurs="unbounded" />
