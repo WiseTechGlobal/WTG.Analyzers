@@ -46,7 +46,7 @@ namespace WTG.Analyzers
 				while (enumerator.MoveNext())
 				{
 					var currentUsing = enumerator.Current;
-					
+
 					var comparisonResult = Compare(previousUsing, currentUsing);
 					if (comparisonResult > 0)
 					{

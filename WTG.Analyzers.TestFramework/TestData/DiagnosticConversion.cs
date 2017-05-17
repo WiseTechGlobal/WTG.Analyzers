@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 
 namespace WTG.Analyzers.TestFramework
 {
-	internal static class DiagnosticConversion
+	static class DiagnosticConversion
 	{
 		public static DiagnosticResult Convert(Diagnostic diagnostic)
 		{

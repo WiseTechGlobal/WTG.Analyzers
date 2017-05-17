@@ -10,7 +10,7 @@ using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
-	internal sealed class SuppressionFixAllProvider : DocumentBatchedFixAllProvider
+	sealed class SuppressionFixAllProvider : DocumentBatchedFixAllProvider
 	{
 		public static SuppressionFixAllProvider Instance { get; } = new SuppressionFixAllProvider();
 

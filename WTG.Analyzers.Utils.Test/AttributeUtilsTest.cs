@@ -8,7 +8,7 @@ using WTG.Analyzers.TestFramework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	internal class AttributeUtilsTest
+	class AttributeUtilsTest
 	{
 		[TestCase(0, ExpectedResult = "1")]
 		[TestCase(1, ExpectedResult = "2")]
@@ -33,7 +33,7 @@ namespace WTG.Analyzers.Utils.Test
 		[OneTimeSetUp]
 		protected async Task Setup()
 		{
-			string source =
+			var source =
 @"using System;
 [assembly: Magic(""1"", ""2"", Prop1 = ""A"", Prop2 = ""B"")]
 

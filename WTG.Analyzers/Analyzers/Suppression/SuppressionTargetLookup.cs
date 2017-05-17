@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 
 namespace WTG.Analyzers
 {
-	internal sealed class SuppressionTargetLookup
+	sealed class SuppressionTargetLookup
 	{
 		public SuppressionTargetLookup(SemanticModel model)
 		{
@@ -121,7 +121,7 @@ namespace WTG.Analyzers
 		{
 			var set = new HashSet<string>();
 			StringBuilder builder = null;
-			int len = 0;
+			var len = 0;
 
 			foreach (var scope in EnumerateMatchingTypes(id, length))
 			{

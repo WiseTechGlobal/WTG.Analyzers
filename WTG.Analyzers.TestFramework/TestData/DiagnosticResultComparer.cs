@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace WTG.Analyzers.TestFramework
 {
-	internal sealed class DiagnosticResultComparer : IComparer<DiagnosticResult>, IComparer
+	sealed class DiagnosticResultComparer : IComparer<DiagnosticResult>, IComparer
 	{
 		public static DiagnosticResultComparer Instance { get; } = new DiagnosticResultComparer();
 

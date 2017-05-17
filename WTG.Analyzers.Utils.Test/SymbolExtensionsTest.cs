@@ -9,7 +9,7 @@ using WTG.Analyzers.TestFramework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	internal class SymbolExtensionsTest
+	class SymbolExtensionsTest
 	{
 		[TestCase("mscorlib", ExpectedResult = 0)]
 		[TestCase("System.Core", ExpectedResult = 1)]
@@ -39,7 +39,7 @@ namespace WTG.Analyzers.Utils.Test
 		[OneTimeSetUp]
 		protected async Task Setup()
 		{
-			string source =
+			var source =
 @"using System;
 using System.Collections.Generic;
 using System.Linq;

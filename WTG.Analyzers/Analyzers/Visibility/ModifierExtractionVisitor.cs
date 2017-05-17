@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace WTG.Analyzers
 {
-	internal sealed partial class ModifierExtractionVisitor : CSharpSyntaxVisitor<SyntaxTokenList>
+	sealed partial class ModifierExtractionVisitor : CSharpSyntaxVisitor<SyntaxTokenList>
 	{
 		public static ModifierExtractionVisitor Instance { get; } = new ModifierExtractionVisitor();
 

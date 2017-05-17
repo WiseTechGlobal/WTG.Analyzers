@@ -8,7 +8,7 @@ using WTG.Analyzers.TestFramework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	internal class EnumerableTypeUtilsTest
+	class EnumerableTypeUtilsTest
 	{
 		[TestCase("int[]", ExpectedResult = "int")]
 		[TestCase("IEnumerable<double>", ExpectedResult = "double")]
@@ -25,7 +25,7 @@ namespace WTG.Analyzers.Utils.Test
 		[OneTimeSetUp]
 		protected async Task Setup()
 		{
-			string source =
+			var source =
 @"using System;
 using System.Collections;
 using System.Collections.Generic;
