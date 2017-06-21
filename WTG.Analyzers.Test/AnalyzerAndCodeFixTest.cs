@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -63,7 +64,7 @@ namespace WTG.Analyzers.Test
 		#region Implementation
 
 		const string TestDataPrefix = "WTG.Analyzers.Test.TestData.";
-		static IEnumerable<SampleDataSet> Samples => SampleDataSet.GetSamples(typeof(AnalyzerAndCodeFixTest<,>).Assembly, TestDataPrefix + typeof(TAnalyzer).Name + ".");
+		static IEnumerable<SampleDataSet> Samples => SampleDataSet.GetSamples(typeof(AnalyzerAndCodeFixTest<,>).GetTypeInfo().Assembly, TestDataPrefix + typeof(TAnalyzer).Name + ".");
 
 		#endregion
 	}

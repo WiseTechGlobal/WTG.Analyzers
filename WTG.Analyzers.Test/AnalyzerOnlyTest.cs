@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
@@ -30,7 +31,7 @@ namespace WTG.Analyzers.Test
 		#region Implementation
 
 		const string TestDataPrefix = "WTG.Analyzers.Test.TestData.";
-		static IEnumerable<SampleDataSet> Samples => SampleDataSet.GetSamples(typeof(AnalyzerTest<>).Assembly, TestDataPrefix + typeof(TAnalyzer).Name + ".");
+		static IEnumerable<SampleDataSet> Samples => SampleDataSet.GetSamples(typeof(AnalyzerTest<>).GetTypeInfo().Assembly, TestDataPrefix + typeof(TAnalyzer).Name + ".");
 
 		#endregion
 	}

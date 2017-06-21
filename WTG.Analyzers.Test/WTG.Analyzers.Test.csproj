@@ -1,342 +1,37 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup Label="Globals">
+    <SccProjectName>%24/CWShared/StaticAnalysis/WTG.Analyzers/WTG.Analyzers.Test</SccProjectName>
+    <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>
+    <SccAuxPath>http://tfs.wtg.zone:8080/tfs/cargowise</SccAuxPath>
+    <SccLocalPath>.</SccLocalPath>
+  </PropertyGroup>
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{38871ADE-9AA7-4894-9A8B-580596C17F83}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WTG.Analyzers.Test</RootNamespace>
-    <AssemblyName>WTG.Analyzers.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <AssemblyTitle>WTG Analyzers Test</AssemblyTitle>
+    <TargetFramework>net46</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <OutputPath>..\bin</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <Prefer32Bit>false</Prefer32Bit>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\bin</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Microsoft.CodeAnalysis">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Workspaces">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Workspaces.Common\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NUnit\lib\net45\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable">
-      <HintPath>..\packages\System.Collections.Immutable\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.AttributedModel">
-      <HintPath>..\packages\Microsoft.Composition\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Convention">
-      <HintPath>..\packages\Microsoft.Composition\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Hosting">
-      <HintPath>..\packages\Microsoft.Composition\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Runtime">
-      <HintPath>..\packages\Microsoft.Composition\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.TypedParts">
-      <HintPath>..\packages\Microsoft.Composition\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Reflection.Metadata">
-      <HintPath>..\packages\System.Reflection.Metadata\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
-    </Reference>
+    <Compile Remove="TestData\**\*.cs" />
+    <Compile Remove="TestData\**\*.xml" />
+    <EmbeddedResource Include="TestData\**\*.cs" />
+    <EmbeddedResource Include="TestData\**\*.xml" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\LinqExpression\Result.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\LinqExpression\Source.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Split\Result.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Split\Source.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Nested\Result.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Nested\Source.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Outer\Result.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Outer\Source.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Siblings\Result.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Siblings\Source.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Between\Result.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Between\Source.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\NoTokens\Result.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\NoTokens\Source.cs" />
-    <Compile Include="AnalyzerOnlyTest.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Unmatched\Result.cs" />
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Unmatched\Source.cs" />
-    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\Safe\Source.cs" />
-    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\SplitMethod\Source.cs" />
-    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\DEBUG\Source.cs" />
-    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\ConditionalVisibility\Source.cs" />
-    <EmbeddedResource Include="TestData\LinqAnalyzer\Any\Result.cs" />
-    <EmbeddedResource Include="TestData\LinqAnalyzer\Any\Source.cs" />
-    <EmbeddedResource Include="TestData\LinqAnalyzer\Count\Result.cs" />
-    <EmbeddedResource Include="TestData\LinqAnalyzer\Count\Source.cs" />
-    <EmbeddedResource Include="TestData\LinqAnalyzer\ElementAt\Result.cs" />
-    <EmbeddedResource Include="TestData\LinqAnalyzer\ElementAt\Source.cs" />
-    <EmbeddedResource Include="TestData\LinqAnalyzer\First\Result.cs" />
-    <EmbeddedResource Include="TestData\LinqAnalyzer\First\Source.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedUnit\Source.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedUnit\Result.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedUnit\Result.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedUnit\Source.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedNamespace\Result.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedNamespace\Source.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedMixture\Result.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedMixture\Source.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\SingleUnit\Result.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\SingleUnit\Source.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\SingleNamespace\Result.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\SingleNamespace\Source.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedMixture\Result.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedMixture\Source.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedNamespace\Result.cs" />
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedNamespace\Source.cs" />
-    <Compile Include="VersioningTest.cs" />
-    <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Source.cs" />
-    <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Result.cs" />
-    <EmbeddedResource Include="TestData\VisibilityAnalyzer\TopLevelInternal\Source.cs" />
-    <EmbeddedResource Include="TestData\VisibilityAnalyzer\TopLevelInternal\Result.cs" />
-    <EmbeddedResource Include="TestData\SuppressionAnalyzer\Mixed\Source.cs" />
-    <EmbeddedResource Include="TestData\SuppressionAnalyzer\Mixed\Result.cs" />
-    <EmbeddedResource Include="TestData\SuppressionAnalyzer\Found\Source.cs" />
-    <EmbeddedResource Include="TestData\SuppressionAnalyzer\Found\Result.cs" />
-    <EmbeddedResource Include="TestData\SuppressionAnalyzer\Missing\Source.cs" />
-    <EmbeddedResource Include="TestData\SuppressionAnalyzer\Missing\Result.cs" />
-    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\LineEndings\Source.cs" />
-    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\LineEndings\Result.cs" />
-    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\LeadingWhitespace\Source.cs" />
-    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\LeadingWhitespace\Result.cs" />
-    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\IgnoreGenerated\Source.cs" />
-    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\IgnoreGenerated\Result.cs" />
-    <EmbeddedResource Include="TestData\VisibilityAnalyzer\IgnoreGenerated\Source.cs" />
-    <EmbeddedResource Include="TestData\VisibilityAnalyzer\IgnoreGenerated\Result.cs" />
-    <EmbeddedResource Include="TestData\VarAnalyzer\IgnoreGenerated\Source.cs" />
-    <EmbeddedResource Include="TestData\VarAnalyzer\IgnoreGenerated\Result.cs" />
-    <EmbeddedResource Include="TestData\VarAnalyzer\Using\Source.cs" />
-    <EmbeddedResource Include="TestData\VarAnalyzer\Using\Result.cs" />
-    <EmbeddedResource Include="TestData\VarAnalyzer\For\Source.cs" />
-    <EmbeddedResource Include="TestData\VarAnalyzer\For\Result.cs" />
-    <EmbeddedResource Include="TestData\VarAnalyzer\Foreach\Source.cs" />
-    <EmbeddedResource Include="TestData\VarAnalyzer\Foreach\Result.cs" />
-    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\TrailingWhitespace\Source.cs" />
-    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\TrailingWhitespace\Result.cs" />
-    <EmbeddedResource Include="TestData\AsyncAnalyzer\DirectMethod\Source.cs" />
-    <EmbeddedResource Include="TestData\AsyncAnalyzer\DirectMethod\Result.cs" />
-    <EmbeddedResource Include="TestData\VarAnalyzer\Locals\Source.cs" />
-    <EmbeddedResource Include="TestData\VarAnalyzer\Locals\Result.cs" />
-    <EmbeddedResource Include="TestData\VisibilityAnalyzer\DetectAndFix\Result.cs" />
-    <EmbeddedResource Include="TestData\VisibilityAnalyzer\DetectAndFix\Source.cs" />
-    <EmbeddedResource Include="TestData\AsyncAnalyzer\AnonymousMethod\Result.cs" />
-    <EmbeddedResource Include="TestData\AsyncAnalyzer\AnonymousMethod\Source.cs" />
-    <EmbeddedResource Include="TestData\AsyncAnalyzer\Lambda\Result.cs" />
-    <EmbeddedResource Include="TestData\AsyncAnalyzer\Lambda\Source.cs" />
-    <EmbeddedResource Include="TestData\AsyncAnalyzer\DontCrash\Result.cs" />
-    <EmbeddedResource Include="TestData\AsyncAnalyzer\DontCrash\Source.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Equality\Result.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Equality\Source.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Inequality\Result.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Inequality\Source.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\IgnoreNullable\Result.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\IgnoreNullable\Source.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\IgnoreNonLiteral\Result.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\IgnoreNonLiteral\Source.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\FindNodeTie\Result.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\FindNodeTie\Source.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Expression\Result.cs" />
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Expression\Source.cs" />
-    <Compile Include="AnalyzerAndCodeFixTest.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <ProjectReference Include="..\WTG.Analyzers.TestFramework\WTG.Analyzers.TestFramework.csproj" />
+    <ProjectReference Include="..\WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj" />
+    <ProjectReference Include="..\WTG.Analyzers\WTG.Analyzers.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\WTG.Analyzers.TestFramework\WTG.Analyzers.TestFramework.csproj">
-      <Project>{93ae1162-cb3b-49f8-bf69-40f9799e8924}</Project>
-      <Name>WTG.Analyzers.TestFramework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WTG.Analyzers\WTG.Analyzers.csproj">
-      <Project>{3F266F98-2F7B-4067-B267-50275AD261AA}</Project>
-      <Name>WTG.Analyzers</Name>
-    </ProjectReference>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\VisibilityAnalyzer\DetectAndFix\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\VarAnalyzer\Locals\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\AsyncAnalyzer\DirectMethod\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\TrailingWhitespace\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\AsyncAnalyzer\AnonymousMethod\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\AsyncAnalyzer\Lambda\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\VarAnalyzer\Foreach\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\VarAnalyzer\For\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\VarAnalyzer\Using\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\AsyncAnalyzer\DontCrash\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\LeadingWhitespace\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\VarAnalyzer\IgnoreGenerated\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\VisibilityAnalyzer\IgnoreGenerated\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\IgnoreGenerated\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\WhitespaceAnalyzer\LineEndings\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\SuppressionAnalyzer\Missing\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\SuppressionAnalyzer\Found\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\SuppressionAnalyzer\Mixed\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\VisibilityAnalyzer\TopLevelInternal\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\VisibilityAnalyzer\NestedInternal\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Equality\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Inequality\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\FindNodeTie\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\Expression\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\BooleanComparisonAnalyzer\LinqExpression\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Nested\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Split\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Outer\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Siblings\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Between\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\NoTokens\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\DEBUG\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\RegionDirectiveAnalyzer\Unmatched\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\Safe\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\SplitMethod\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\ConditionDirectiveAnalyzer\ConditionalVisibility\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\LinqAnalyzer\Any\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\LinqAnalyzer\Count\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\LinqAnalyzer\ElementAt\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\LinqAnalyzer\First\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedUnit\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedUnit\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedNamespace\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedMixture\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\SingleUnit\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\SingleNamespace\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\OrderedMixture\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestData\UsingsAnalyzer\MixedNamespace\Diagnostics.xml" />
-  </ItemGroup>
-  <Import Project="..\BuildSettings\DotNetBefore.props" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\BuildSettings\DotNetAfter.props" />
+
+  <Import Project="..\build\Global.props" />
+  <Import Project="..\build\Global.targets" />
+  <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

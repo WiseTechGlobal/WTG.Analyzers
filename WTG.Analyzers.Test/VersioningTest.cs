@@ -24,7 +24,7 @@ namespace WTG.Analyzers.Test
 		public void AssemblyVersionMatchesNuGetPackageVersion()
 		{
 			var analyzersVersion = GetAssemblyVersion("WTG.Analyzers");
-			var packageDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, "NuGet");
+			var packageDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, "..");
 			var packages = Directory.GetFiles(packageDirectory, "*.nupkg", SearchOption.TopDirectoryOnly);
 
 			for (var i = 0; i < packages.Length; i++)

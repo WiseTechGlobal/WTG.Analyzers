@@ -1,154 +1,37 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup Label="Globals">
+    <SccProjectName>%24/CWShared/StaticAnalysis/WTG.Analyzers/WTG.Analyzers</SccProjectName>
+    <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>
+    <SccAuxPath>http://tfs.wtg.zone:8080/tfs/cargowise</SccAuxPath>
+    <SccLocalPath>.</SccLocalPath>
+  </PropertyGroup>
+
   <PropertyGroup>
-    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3F266F98-2F7B-4067-B267-50275AD261AA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WTG.Analyzers</RootNamespace>
-    <AssemblyName>WTG.Analyzers</AssemblyName>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <AssemblyTitle>WTG Analyzers</AssemblyTitle>
+    <TargetFramework>netstandard1.3</TargetFramework>
     <OutputPath>..\bin</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\bin</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+
+  <!-- NuGet Package Settings -->
+  <PropertyGroup>
+    <PackageId>WTG.Analyzers</PackageId>
+    <PackageVersion>$(Version)</PackageVersion>
+    <PackageRequiresLicenseAcceptance>false</PackageRequiresLicenseAcceptance>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Analyzers\Async\AsyncAnalyzer.cs" />
-    <Compile Include="Analyzers\Async\AsyncCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Async\IsAsyncVoidMethodVisitor.cs" />
-    <Compile Include="Analyzers\BooleanComparison\BooleanComparisonAnalyzer.cs" />
-    <Compile Include="Analyzers\BooleanComparison\BooleanComparisonCodeFixProvider.cs" />
-    <Compile Include="Analyzers\BooleanComparison\BoolLiteralVisitor.cs" />
-    <Compile Include="Analyzers\ConditionDirective\ConditionDirective.cs" />
-    <Compile Include="Analyzers\ConditionDirective\ConditionDirectiveAnalyzer.cs" />
-    <Compile Include="Analyzers\Linq\LinqFixAllProvider.cs" />
-    <Compile Include="Analyzers\Linq\LinqUtils.cs" />
-    <Compile Include="Analyzers\RegionDirective\RegionDirectiveAnalyzer.cs" />
-    <Compile Include="Analyzers\RegionDirective\RegionDirectiveCodeFixProvider.cs" />
-    <Compile Include="Analyzers\RegionDirective\RegionDirective.cs" />
-    <Compile Include="Analyzers\Linq\Method\AnyLinqMethod.cs" />
-    <Compile Include="Analyzers\Linq\Method\CountLinqMethod.cs" />
-    <Compile Include="Analyzers\Linq\Method\ElementAtLinqMethod.cs" />
-    <Compile Include="Analyzers\Linq\Method\FirstLinqMethod.cs" />
-    <Compile Include="Analyzers\Linq\LinqMethod.cs" />
-    <Compile Include="Analyzers\Linq\LinqResolution.cs" />
-    <Compile Include="Analyzers\Suppression\SuppressionAnalyzer.cs" />
-    <Compile Include="Analyzers\Suppression\SuppressionCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Suppression\SuppressionFixAllProvider.cs" />
-    <Compile Include="Analyzers\Suppression\SuppressionTargetLookup.cs" />
-    <Compile Include="Analyzers\Linq\LinqAnalyzer.cs" />
-    <Compile Include="Analyzers\Linq\LinqCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Usings\UsingDirectiveKind.cs" />
-    <Compile Include="Analyzers\Usings\UsingsAnalyzer.cs" />
-    <Compile Include="Analyzers\Usings\UsingsCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Usings\UsingsHelper.cs" />
-    <Compile Include="Analyzers\Var\VarAnalyzer.cs" />
-    <Compile Include="Analyzers\Var\VarCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Visibility\ModifierExtractionVisitor.cs" />
-    <Compile Include="Analyzers\Visibility\VisibilityAnalyzer.cs" />
-    <Compile Include="Analyzers\Visibility\VisibilityCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Whitespace\WhitespaceCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Whitespace\WhitespaceAnalyzer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rules\Rules.g.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Rules.tt</DependentUpon>
-    </Compile>
+    <None Include="$(OutputPath)\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="build\**" Pack="true" PackagePath="build" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="..\WTG.Analyzers.nuspec">
-      <Link>WTG.Analyzers.nuspec</Link>
-    </None>
-    <None Include="..\WTG.Analyzers.TestFramework.nuspec">
-      <Link>WTG.Analyzers.TestFramework.nuspec</Link>
-    </None>
-    <None Include="build\WarnAll.ruleset">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="build\WTG.Analyzers.props" />
-    <None Include="Rules\Rules.xsd">
-      <SubType>Designer</SubType>
-    </None>
+    <ProjectReference Include="..\WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.CodeAnalysis">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Workspaces">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Workspaces.Common\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections.Immutable">
-      <HintPath>..\packages\System.Collections.Immutable\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.AttributedModel">
-      <HintPath>..\packages\Microsoft.Composition\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Convention">
-      <HintPath>..\packages\Microsoft.Composition\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Hosting">
-      <HintPath>..\packages\Microsoft.Composition\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Runtime">
-      <HintPath>..\packages\Microsoft.Composition\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.TypedParts">
-      <HintPath>..\packages\Microsoft.Composition\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reflection.Metadata">
-      <HintPath>..\packages\System.Reflection.Metadata\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
-    </Reference>
-    <ProjectReference Include="..\WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj">
-      <Project>{e0567771-3f8b-4185-b31a-324f95c58eb1}</Project>
-      <Name>WTG.Analyzers.Utils</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Rules\Rules.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Rules.g.cs</LastGenOutput>
-    </Content>
-    <Content Include="Rules\Rules.xml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <Import Project="..\BuildSettings\DotNetBefore.props" />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <Import Project="..\BuildSettings\DotNetAfter.props" />
+
+  <Import Project="..\build\Global.props" />
+  <Import Project="..\build\Global.targets" />
+  <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

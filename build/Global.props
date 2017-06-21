@@ -1,0 +1,47 @@
+﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<BranchRootDirectory>$(MSBuildThisFileDirectory)..</BranchRootDirectory>
+		<BranchBuildSettingsDirectory>$(BranchRootDirectory)\build\</BranchBuildSettingsDirectory>
+		<BranchPackagesDirectory>$(BranchRootDirectory)\packages</BranchPackagesDirectory>
+		<MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+
+		<WTGIsTestProject Condition="$(MSBuildProjectFile.Contains('.Test.'))">True</WTGIsTestProject>
+		<WTGIsTestProject Condition="$(MSBuildProjectFile.Contains('.TestFramework.'))">True</WTGIsTestProject>
+		<CheckForOverflowUnderflow Condition="'$(CheckForOverflowUnderflow)' == ''">true</CheckForOverflowUnderflow>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<RunCodeAnalysis>True</RunCodeAnalysis>
+		<CodeAnalysisRuleSet>$(BranchBuildSettingsDirectory)\CodeAnalysis.ruleset</CodeAnalysisRuleSet>
+
+		<!--
+		  - The major and minor versions should match the Roslyn API version,
+		  - and the major/minor/build versions should match the NuGet package version (NuGet is x.y.z only)
+		  - Revision should be incremented whenever an analyzer changes in a way that might affect previously cached results.
+		  -->
+		<Version>2.0.0.0</Version>
+
+		<Company>WiseTech Global Pty Ltd</Company>
+		<Product>WTG Analyzers</Product>
+		<Copyright>Copyright © WiseTech Global 2016-2017</Copyright>
+		<AssemblyVersion>$(Version)</AssemblyVersion>
+		<FileVersion>$(Version)</FileVersion>
+	</PropertyGroup>
+
+	<PropertyGroup  Condition="'$(WTGIsTestProject)' == 'True'">
+		<CodeAnalysisRuleSet>$(BranchBuildSettingsDirectory)\CodeAnalysis.Test.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(RunCodeAnalysis)' == 'True'">
+		<DebugType>full</DebugType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="$(BranchRootDirectory)\CommonAssemblyInfo.cs" Link="CommonAssemblyInfo.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Analyzer Include="$(BranchPackagesDirectory)\StyleCop.Analyzers\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+		<Analyzer Include="$(BranchPackagesDirectory)\StyleCop.Analyzers\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+	</ItemGroup>
+</Project>
