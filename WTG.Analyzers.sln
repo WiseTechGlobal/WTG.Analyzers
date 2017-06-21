@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers", "WTG.Analyzers\WTG.Analyzers.csproj", "{3F266F98-2F7B-4067-B267-50275AD261AA}"
 EndProject
@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		ReleaseInfo.xml = ReleaseInfo.xml
 		BuildSettings\StyleCopAnalyzers.ruleset = BuildSettings\StyleCopAnalyzers.ruleset
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers.TestFramework.Test", "WTG.Analyzers.TestFramework.Test\WTG.Analyzers.TestFramework.Test.csproj", "{A408675F-8575-41E9-82C5-1DE69E80B7A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,12 +50,16 @@ Global
 		{5E3F903C-A085-4D4A-930E-E82BCB6782C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5E3F903C-A085-4D4A-930E-E82BCB6782C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E3F903C-A085-4D4A-930E-E82BCB6782C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A408675F-8575-41E9-82C5-1DE69E80B7A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A408675F-8575-41E9-82C5-1DE69E80B7A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A408675F-8575-41E9-82C5-1DE69E80B7A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A408675F-8575-41E9-82C5-1DE69E80B7A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 6
+		SccNumberOfProjects = 7
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = http://tfs.wtg.zone:8080/tfs/cargowise
 		SccLocalPath0 = .
@@ -72,5 +78,8 @@ Global
 		SccProjectUniqueName5 = WTG.Analyzers.Utils.Test\\WTG.Analyzers.Utils.Test.csproj
 		SccProjectName5 = WTG.Analyzers.Utils.Test
 		SccLocalPath5 = WTG.Analyzers.Utils.Test
+		SccProjectUniqueName6 = WTG.Analyzers.TestFramework.Test\\WTG.Analyzers.TestFramework.Test.csproj
+		SccProjectName6 = WTG.Analyzers.TestFramework.Test
+		SccLocalPath6 = WTG.Analyzers.TestFramework.Test
 	EndGlobalSection
 EndGlobal

@@ -54,15 +54,22 @@ namespace WTG.Analyzers.TestFramework
 			// keep applying fixes until all the problems go away (assuming an upper bound of one fix per issue.)
 			for (var i = 0; i < attempts; ++i)
 			{
-				var actions = await RequestFixes(document, analyzerDiagnostics[0]).ConfigureAwait(false);
-				var actionToRun = actions.FirstOrDefault();
+				CodeAction actionToRun = null;
+				var diagnosticWithNoActionCount = 0;
 
-				if (actionToRun == null)
+				while (actionToRun == null && diagnosticWithNoActionCount < analyzerDiagnostics.Length)
 				{
-					break;
+					var actions = await RequestFixes(document, analyzerDiagnostics[diagnosticWithNoActionCount]).ConfigureAwait(false);
+					actionToRun = actions.FirstOrDefault();
+					if (actionToRun != null)
+					{
+						document = await ApplyFixAsync(document, actionToRun).ConfigureAwait(false);
+					}
+					else
+					{
+						diagnosticWithNoActionCount++;
+					}
 				}
-
-				document = await ApplyFixAsync(document, actionToRun).ConfigureAwait(false);
 
 				analyzerDiagnostics = FilterDiagnostics(await DiagnosticUtils.GetDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false));
 
@@ -76,7 +83,7 @@ namespace WTG.Analyzers.TestFramework
 					await ReportNewCompilerDiagnosticAsync(document, compilerDiagnostics).ConfigureAwait(false);
 				}
 
-				if (analyzerDiagnostics.Length == 0)
+				if (analyzerDiagnostics.Length == diagnosticWithNoActionCount)
 				{
 					break;
 				}
