@@ -14,10 +14,13 @@ namespace WTG.Analyzers
 				this.model = model;
 			}
 
-			public override bool? VisitAnonymousMethodExpression(AnonymousMethodExpressionSyntax node) => IsAsyncVoid(node);
 			public override bool? VisitMethodDeclaration(MethodDeclarationSyntax node) => IsAsyncVoid(node);
+			public override bool? VisitLocalFunctionStatement(LocalFunctionStatementSyntax node) => IsAsyncVoid(node);
+
+			public override bool? VisitAnonymousMethodExpression(AnonymousMethodExpressionSyntax node) => IsAsyncVoid(node);
 			public override bool? VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node) => IsAsyncVoid(node);
 			public override bool? VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node) => IsAsyncVoid(node);
+
 			public override bool? VisitClassDeclaration(ClassDeclarationSyntax node) => false;
 			public override bool? VisitConstructorDeclaration(ConstructorDeclarationSyntax node) => false;
 			public override bool? VisitConversionOperatorDeclaration(ConversionOperatorDeclarationSyntax node) => false;
@@ -39,9 +42,9 @@ namespace WTG.Analyzers
 
 			public override bool? DefaultVisit(SyntaxNode node) => null;
 
-			bool IsAsyncVoid(BaseMethodDeclarationSyntax node)
+			bool IsAsyncVoid(CSharpSyntaxNode node)
 			{
-				var owningMethod = model.GetDeclaredSymbol(node);
+				var owningMethod = (IMethodSymbol)model.GetDeclaredSymbol(node);
 
 				return owningMethod != null
 					&& owningMethod.IsAsync

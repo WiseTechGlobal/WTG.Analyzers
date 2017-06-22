@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG2001" message="ConfigureAwait(false) may result in the async method resuming on a non-deterministic thread, and if an exception is then thrown, it will likely be unhandled and result in process termination." severity="Error">
+	<diagnostic>
+		<location>Test0.cs: (11,35-57)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (12,35-56)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (22,35-57)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (23,35-56)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (33,34-56)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (34,34-55)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (44,34-56)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (45,34-55)</location>
+	</diagnostic>
+</diagnostics>
