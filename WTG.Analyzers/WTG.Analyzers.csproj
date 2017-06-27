@@ -31,6 +31,21 @@
     <ProjectReference Include="..\WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Rules\Rules.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Rules.g.cs</LastGenOutput>
+    </None>
+
+    <Compile Update="Rules\Rules.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Rules.tt</DependentUpon>
+    </Compile>
+
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
   <Import Project="..\build\Global.props" />
   <Import Project="..\build\Global.targets" />
   <Import Project="..\.paket\Paket.Restore.targets" />
