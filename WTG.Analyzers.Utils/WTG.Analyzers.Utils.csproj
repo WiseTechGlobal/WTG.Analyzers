@@ -9,7 +9,6 @@
   <PropertyGroup>
     <AssemblyTitle>WTG Analyzers Utils</AssemblyTitle>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <OutputPath>..\Bin\</OutputPath>
     <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
   </PropertyGroup>
