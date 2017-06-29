@@ -12,7 +12,8 @@ namespace WTG.Analyzers
 	public sealed class VarAnalyzer : DiagnosticAnalyzer
 	{
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-			Rules.UseVarWherePossibleRule);
+			Rules.UseVarWherePossibleRule,
+			Rules.UseOutVarWherePossibleRule);
 
 		public override void Initialize(AnalysisContext context)
 		{
@@ -30,6 +31,10 @@ namespace WTG.Analyzers
 				SyntaxKind.ForStatement,
 				SyntaxKind.ForEachStatement,
 				SyntaxKind.UsingStatement);
+
+			context.RegisterSyntaxNodeAction(
+				c => AnalyzeInvoke(c, cache),
+				SyntaxKind.InvocationExpression);
 		}
 
 		static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache)
@@ -62,6 +67,57 @@ namespace WTG.Analyzers
 					if (TypeEquals(expressionType, typeSymbol))
 					{
 						context.ReportDiagnostic(Rules.CreateUseVarWherePossibleDiagnostic(candidate.Type.GetLocation()));
+					}
+				}
+			}
+		}
+
+		static void AnalyzeInvoke(SyntaxNodeAnalysisContext context, FileDetailCache cache)
+		{
+			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
+			{
+				return;
+			}
+
+			var invoke = (InvocationExpressionSyntax)context.Node;
+			IMethodSymbol knownMethod = null;
+
+			foreach (var arg in invoke.ArgumentList.Arguments)
+			{
+				if (arg.RefOrOutKeyword.IsKind(SyntaxKind.OutKeyword))
+				{
+					var expression = arg.Expression;
+
+					if (expression == null || !expression.IsKind(SyntaxKind.DeclarationExpression))
+					{
+						continue;
+					}
+
+					var type = ((DeclarationExpressionSyntax)expression).Type;
+
+					if (type == null || type.IsVar)
+					{
+						continue;
+					}
+
+					if (knownMethod == null)
+					{
+						knownMethod = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke).Symbol;
+
+						if (knownMethod == null)
+						{
+							// If we can't resolve the symbol with an explicit type, then 'var' is dead in the water.
+							return;
+						}
+					}
+
+					var proposedSyntax = invoke.ReplaceNode(type, SyntaxFactory.IdentifierName("var").WithTriviaFrom(type));
+					var symbol = context.SemanticModel.GetSpeculativeSymbolInfo(invoke.SpanStart, proposedSyntax, SpeculativeBindingOption.BindAsExpression).Symbol;
+
+					if (knownMethod.Equals(symbol))
+					{
+						// We got the same symbol when using var, so var must be safe.
+						context.ReportDiagnostic(Rules.CreateUseOutVarWherePossibleDiagnostic(type.GetLocation()));
 					}
 				}
 			}

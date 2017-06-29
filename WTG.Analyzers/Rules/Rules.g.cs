@@ -18,6 +18,7 @@ namespace WTG.Analyzers
 		public const string DoNotCompareBoolToAConstantValueDiagnosticID = "WTG1007";
 		public const string DoNotCompareBoolToAConstantValueInAnExpressionDiagnosticID = "WTG1008";
 		public const string UsingDirectivesMustBeOrderedByKindDiagnosticID = "WTG1009";
+		public const string UseOutVarWherePossibleDiagnosticID = "WTG1010";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
@@ -135,6 +136,19 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
 			description: "Move all 'using static' statements after 'using' statements, and move 'using X=Y' to the end.");
+
+		public static readonly DiagnosticDescriptor UseOutVarWherePossibleRule = new DiagnosticDescriptor(
+			UseOutVarWherePossibleDiagnosticID,
+			"Use the 'var' keyword instead of an explicit type where possible.",
+			"The compiler is able to correctly identify which type to use here, so replace the explicit type with var.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Hidden,
+			isEnabledByDefault: true,
+			description: "Replace with the 'var' keyword.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
 
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
@@ -308,6 +322,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateUsingDirectivesMustBeOrderedByKindDiagnostic(Location location)
 		{
 			return Diagnostic.Create(UsingDirectivesMustBeOrderedByKindRule, location);
+		}
+
+		/// <summary>
+		/// The compiler is able to correctly identify which type to use here, so replace the explicit type with var.
+		/// </summary>
+		public static Diagnostic CreateUseOutVarWherePossibleDiagnostic(Location location)
+		{
+			return Diagnostic.Create(UseOutVarWherePossibleRule, location);
 		}
 
 		/// <summary>

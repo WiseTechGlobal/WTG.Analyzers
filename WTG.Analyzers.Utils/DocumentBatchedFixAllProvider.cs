@@ -34,7 +34,12 @@ namespace WTG.Analyzers.Utils
 			return Task.FromResult(codeAction);
 		}
 
-		protected abstract Task<Document> ApplyFixesAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken);
+		/// <summary>
+		/// Semantic information should only be gotten from originalDocument (to avoid recompilation),
+		/// but we should make our changes to documentToFix (so that we don't discard fixes made to other documents in the project).
+		/// If we only ever make changes to documentToFix, then the syntax trees for the two documents will be identical on entry.
+		/// </summary>
+		protected abstract Task<Document> ApplyFixesAsync(Document originalDocument, Document documentToFix, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken);
 
 		protected virtual async Task<Solution> ApplyFixesAsync(Solution solution, ImmutableDictionary<Document, ImmutableArray<Diagnostic>> diagnostics, CancellationToken cancellationToken)
 		{
@@ -42,7 +47,7 @@ namespace WTG.Analyzers.Utils
 			{
 				var originalDocument = pair.Key;
 				var documentToFix = solution.GetDocument(originalDocument.Id);
-				var newDocument = await ApplyFixesAsync(documentToFix, pair.Value, cancellationToken).ConfigureAwait(false);
+				var newDocument = await ApplyFixesAsync(originalDocument, documentToFix, pair.Value, cancellationToken).ConfigureAwait(false);
 				solution = newDocument.Project.Solution;
 			}
 
@@ -89,7 +94,7 @@ namespace WTG.Analyzers.Utils
 		{
 			return CodeAction.Create(
 				Title,
-				createChangedDocument: c => ApplyFixesAsync(document, diagnostics, c),
+				createChangedDocument: c => ApplyFixesAsync(document, document, diagnostics, c),
 				equivalenceKey: codeActionEquivalenceKey);
 		}
 

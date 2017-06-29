@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
@@ -15,21 +15,39 @@ namespace WTG.Analyzers
 	[Shared]
 	public sealed class VarCodeFixProvider : CodeFixProvider
 	{
-		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-			Rules.UseVarWherePossibleDiagnosticID);
+		public const string ChangeToVarEquivalenceKey = "ChangeToVar";
+		public const string ChangeToOutVarEquivalenceKey = "ChangeToOutVar";
 
-		public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+			Rules.UseVarWherePossibleDiagnosticID,
+			Rules.UseOutVarWherePossibleDiagnosticID);
+
+		public sealed override FixAllProvider GetFixAllProvider() => VarFixAllProvider.Instance;
 
 		public override Task RegisterCodeFixesAsync(CodeFixContext context)
 		{
 			var diagnostic = context.Diagnostics.First();
 
-			context.RegisterCodeFix(
-				CodeAction.Create(
-					title: "Change to var",
-					createChangedDocument: c => ReplaceWithVar(context.Document, diagnostic, c),
-					equivalenceKey: "ChangeToVar"),
-				diagnostic: diagnostic);
+			switch (diagnostic.Id)
+			{
+				case Rules.UseVarWherePossibleDiagnosticID:
+					context.RegisterCodeFix(
+						CodeAction.Create(
+							title: "Change to var",
+							createChangedDocument: c => ReplaceWithVar(context.Document, diagnostic, c),
+							equivalenceKey: ChangeToVarEquivalenceKey),
+						diagnostic: diagnostic);
+					break;
+
+				case Rules.UseOutVarWherePossibleDiagnosticID:
+					context.RegisterCodeFix(
+						CodeAction.Create(
+							title: "Change to var",
+							createChangedDocument: c => ReplaceWithVar(context.Document, diagnostic, c),
+							equivalenceKey: ChangeToOutVarEquivalenceKey),
+						diagnostic: diagnostic);
+					break;
+			}
 
 			return Task.FromResult<object>(null);
 		}
@@ -40,14 +58,10 @@ namespace WTG.Analyzers
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = root.FindNode(diagnosticSpan);
 
-			var newNode = VarTypeSyntax
-				.WithLeadingTrivia(node.GetLeadingTrivia())
-				.WithTrailingTrivia(node.GetTrailingTrivia());
-
-			var newRoot = root.ReplaceNode(node, newNode);
-			return document.WithSyntaxRoot(newRoot);
+			return document.WithSyntaxRoot(
+				root.ReplaceNode(
+					node,
+					SyntaxFactory.IdentifierName("var").WithTriviaFrom(node)));
 		}
-
-		static readonly TypeSyntax VarTypeSyntax = SyntaxFactory.ParseTypeName("var");
 	}
 }

@@ -91,9 +91,9 @@ namespace WTG.Analyzers.Utils.Test
 
 		sealed class TestFixAllProvider : DocumentBatchedFixAllProvider
 		{
-			protected override async Task<Document> ApplyFixesAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
+			protected override async Task<Document> ApplyFixesAsync(Document originalDocument, Document documentToFix, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
 			{
-				var source = await document.GetTextAsync();
+				var source = await documentToFix.GetTextAsync();
 				var builder = new StringBuilder(source.ToString());
 				builder.AppendLine();
 				builder.Append("// ---");
@@ -105,7 +105,7 @@ namespace WTG.Analyzers.Utils.Test
 					builder.Append(diagnostic.GetMessage());
 				}
 
-				return document.WithText(SourceText.From(builder.ToString()));
+				return documentToFix.WithText(SourceText.From(builder.ToString()));
 			}
 		}
 

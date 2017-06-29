@@ -18,12 +18,12 @@ namespace WTG.Analyzers
 		{
 		}
 
-		protected override async Task<Document> ApplyFixesAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
+		protected override async Task<Document> ApplyFixesAsync(Document originalDocument, Document documentToFix, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await documentToFix.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var nodesToRemove = GetNodesToRemove(root, diagnostics);
 
-			return document.WithSyntaxRoot(
+			return documentToFix.WithSyntaxRoot(
 				root.RemoveNodes(
 					nodesToRemove,
 					SyntaxRemoveOptions.KeepNoTrivia));
