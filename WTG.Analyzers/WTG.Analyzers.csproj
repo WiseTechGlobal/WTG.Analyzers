@@ -13,20 +13,6 @@
     <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
   </PropertyGroup>
 
-  <!-- NuGet Package Settings -->
-  <PropertyGroup>
-    <PackageId>WTG.Analyzers</PackageId>
-    <PackageVersion>$(Version)</PackageVersion>
-    <PackageRequiresLicenseAcceptance>false</PackageRequiresLicenseAcceptance>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="$(OutputPath)\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-    <None Include="build\**" Pack="true" PackagePath="build" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj" />
   </ItemGroup>

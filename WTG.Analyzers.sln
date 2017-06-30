@@ -1,8 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.13
+VisualStudioVersion = 15.0.26228.10
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B4F78007-AF08-4366-9105-250494B32091}"
+	ProjectSection(SolutionItems) = preProject
+		build\CargoWiseRuleSet.Common.ruleset = build\CargoWiseRuleSet.Common.ruleset
+		build\CodeAnalysis.ruleset = build\CodeAnalysis.ruleset
+		build\CodeAnalysis.Test.ruleset = build\CodeAnalysis.Test.ruleset
+		build\Global.props = build\Global.props
+		build\Global.targets = build\Global.targets
+		ReleaseInfo.xml = ReleaseInfo.xml
+		build\StyleCopAnalyzers.ruleset = build\StyleCopAnalyzers.ruleset
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers", "WTG.Analyzers\WTG.Analyzers.csproj", "{3F266F98-2F7B-4067-B267-50275AD261AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers.Test", "WTG.Analyzers.Test\WTG.Analyzers.Test.csproj", "{38871ADE-9AA7-4894-9A8B-580596C17F83}"
@@ -12,17 +23,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers.Utils", "WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj", "{E0567771-3F8B-4185-B31A-324F95C58EB1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers.Utils.Test", "WTG.Analyzers.Utils.Test\WTG.Analyzers.Utils.Test.csproj", "{5E3F903C-A085-4D4A-930E-E82BCB6782C9}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B4F78007-AF08-4366-9105-250494B32091}"
-	ProjectSection(SolutionItems) = preProject
-		BuildSettings\CargoWiseRuleSet.Common.ruleset = BuildSettings\CargoWiseRuleSet.Common.ruleset
-		BuildSettings\CodeAnalysis.ruleset = BuildSettings\CodeAnalysis.ruleset
-		BuildSettings\CodeAnalysis.Test.ruleset = BuildSettings\CodeAnalysis.Test.ruleset
-		BuildSettings\DotNetAfter.props = BuildSettings\DotNetAfter.props
-		BuildSettings\DotNetBefore.props = BuildSettings\DotNetBefore.props
-		ReleaseInfo.xml = ReleaseInfo.xml
-		BuildSettings\StyleCopAnalyzers.ruleset = BuildSettings\StyleCopAnalyzers.ruleset
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTG.Analyzers.TestFramework.Test", "WTG.Analyzers.TestFramework.Test\WTG.Analyzers.TestFramework.Test.csproj", "{A408675F-8575-41E9-82C5-1DE69E80B7A0}"
 EndProject

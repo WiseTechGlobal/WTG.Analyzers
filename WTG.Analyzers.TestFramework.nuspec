@@ -1,0 +1,17 @@
+﻿<?xml version="1.0"?>
+<package>
+	<metadata>
+		<id>WTG.Analyzers.TestFramework</id>
+		<version>2.0.2</version>
+		<authors>WiseTech Global</authors>
+		<owners>WiseTech Global</owners>
+		<description>Support library for testing Roslyn Analyzers.</description>
+		<copyright>Copyright 2017</copyright>
+		<developmentDependency>true</developmentDependency>
+	</metadata>
+
+	<files>
+		<!-- Binaries -->
+		<file src="bin\net46\WTG.Analyzers.TestFramework.dll" target="lib\testing" />
+	</files>
+</package>

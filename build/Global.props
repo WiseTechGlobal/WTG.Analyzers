@@ -17,9 +17,11 @@
 		<!--
 		  - The major and minor versions should match the Roslyn API version,
 		  - and the major/minor/build versions should match the NuGet package version (NuGet is x.y.z only)
-		  - Revision should be incremented whenever an analyzer changes in a way that might affect previously cached results.
+		  - Revision should be incremented whenever you want to publish a new version.
+		  - 
+		  - When updating this version, you should also update it in ReleaseInfo.xml and the nuspec files to match.
 		  -->
-		<Version>2.0.1.0</Version>
+		<Version>2.0.2.0</Version>
 
 		<Company>WiseTech Global Pty Ltd</Company>
 		<Product>WTG Analyzers</Product>

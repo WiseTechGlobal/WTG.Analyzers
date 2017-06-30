@@ -1,0 +1,22 @@
+﻿<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>WTG.Analyzers</id>
+		<version>2.0.2</version>
+		<authors>WiseTech Global</authors>
+		<owners>WiseTech Global</owners>
+		<description>Roslyn Code Analyzers to enforce WiseTech Global coding standards and catch common mistakes.</description>
+		<copyright>Copyright 2017</copyright>
+		<developmentDependency>true</developmentDependency>
+	</metadata>
+
+	<files>
+		<!-- Binaries -->
+		<file src="bin\netstandard1.3\WTG.Analyzers.dll" target="analyzers\dotnet\cs" />
+		<file src="bin\netstandard1.3\WTG.Analyzers.Utils.dll" target="analyzers\dotnet\cs" />
+
+		<!-- MSBuild Properties and Targets -->
+		<file src="WTG.Analyzers\build\WTG.Analyzers.props" target="build\" />
+		<file src="WTG.Analyzers\build\WarnAll.ruleset" target="build\" />
+	</files>
+</package>

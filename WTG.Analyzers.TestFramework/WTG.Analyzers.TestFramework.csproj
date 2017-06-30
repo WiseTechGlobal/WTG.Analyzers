@@ -13,14 +13,6 @@
     <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
   </PropertyGroup>
 
-  <!-- NuGet Package Settings -->
-  <PropertyGroup>
-    <PackageId>WTG.Analyzers.TestFramework</PackageId>
-    <PackageVersion>$(Version)</PackageVersion>
-    <PackageRequiresLicenseAcceptance>false</PackageRequiresLicenseAcceptance>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
-  </PropertyGroup>
-
   <Import Project="..\build\Global.props" />
   <Import Project="..\build\Global.targets" />
   <Import Project="..\.paket\Paket.Restore.targets" />

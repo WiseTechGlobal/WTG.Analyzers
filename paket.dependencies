@@ -15,6 +15,7 @@ cache \\sydco-sdts-2.wtg.zone\ThirdParty\NuGet-PaketCache
 # DO NOT UPDATE paket.lock BY HAND!
 #
 
+nuget NuGet.CommandLine
 nuget NUnit
 nuget StyleCop.Analyzers
 nuget Microsoft.CodeAnalysis.Analyzers
