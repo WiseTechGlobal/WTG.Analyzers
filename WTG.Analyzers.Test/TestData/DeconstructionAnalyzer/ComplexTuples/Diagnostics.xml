@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG1011" message="Only declare 'var' once when deconstructing an object, if applicable." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (7,3-42)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (7,4-18))</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (7,27-41)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (12,3-34)</location>
+	</diagnostic>
+</diagnostics>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <rules xmlns="http://cargowise.com/glow/2016/09/10/Rules.xsd" prefix="WTG">
 	<!--
 	Note: This solution should only contain rules that apply company wide and are not product specific.
@@ -68,6 +68,12 @@
 			<title>Use the 'var' keyword instead of an explicit type where possible.</title>
 			<message>The compiler is able to correctly identify which type to use here, so replace the explicit type with var.</message>
 			<description>Replace with the 'var' keyword.</description>
+			<tag>Unnecessary</tag>
+		</rule>
+		<rule id="11" name="DeconstructWithSingleVar" severity="Info">
+			<title>Use the 'var' keyword once when deconstructing an object.</title>
+			<message>Only declare 'var' once when deconstructing an object, if applicable.</message>
+			<description>Move 'var' outside of the deconstruction expression.</description>
 			<tag>Unnecessary</tag>
 		</rule>
 	</category>

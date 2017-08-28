@@ -19,6 +19,7 @@ namespace WTG.Analyzers
 		public const string DoNotCompareBoolToAConstantValueInAnExpressionDiagnosticID = "WTG1008";
 		public const string UsingDirectivesMustBeOrderedByKindDiagnosticID = "WTG1009";
 		public const string UseOutVarWherePossibleDiagnosticID = "WTG1010";
+		public const string DeconstructWithSingleVarDiagnosticID = "WTG1011";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
@@ -145,6 +146,19 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Hidden,
 			isEnabledByDefault: true,
 			description: "Replace with the 'var' keyword.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
+		public static readonly DiagnosticDescriptor DeconstructWithSingleVarRule = new DiagnosticDescriptor(
+			DeconstructWithSingleVarDiagnosticID,
+			"Use the 'var' keyword once when deconstructing an object.",
+			"Only declare 'var' once when deconstructing an object, if applicable.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Move 'var' outside of the deconstruction expression.",
 			customTags: new[]
 			{
 				WellKnownDiagnosticTags.Unnecessary,
@@ -330,6 +344,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateUseOutVarWherePossibleDiagnostic(Location location)
 		{
 			return Diagnostic.Create(UseOutVarWherePossibleRule, location);
+		}
+
+		/// <summary>
+		/// Only declare 'var' once when deconstructing an object, if applicable.
+		/// </summary>
+		public static Diagnostic CreateDeconstructWithSingleVarDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DeconstructWithSingleVarRule, location);
 		}
 
 		/// <summary>

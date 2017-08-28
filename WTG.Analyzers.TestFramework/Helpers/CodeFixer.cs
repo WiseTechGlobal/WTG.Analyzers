@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -118,7 +118,7 @@ namespace WTG.Analyzers.TestFramework
 
 				if (batchCount >= 0)
 				{
-					Assert.That(groupedDiagnostics.Length, Is.LessThan(batchCount)); // the number of batches should decrease each pass.
+					Assert.That(groupedDiagnostics.Length, Is.LessThan(batchCount), "The number of batches should decrease each pass.");
 				}
 
 				batchCount = groupedDiagnostics.Length;
