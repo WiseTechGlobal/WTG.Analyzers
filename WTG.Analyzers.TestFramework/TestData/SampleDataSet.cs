@@ -74,7 +74,7 @@ namespace WTG.Analyzers.TestFramework
 				}
 			}
 
-			return new SampleDataSet(name, source ?? string.Empty, result ?? string.Empty, diagnostics, suppressedIds);
+			return new SampleDataSet(name, source ?? string.Empty, result ?? source ?? string.Empty, diagnostics, suppressedIds);
 		}
 
 		static string LoadResource(Assembly assembly, string name)

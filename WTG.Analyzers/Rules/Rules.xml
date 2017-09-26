@@ -88,6 +88,11 @@
 			<message>Avoid referencing DEBUG in #if or #elif.</message>
 			<description>Changing the behaviour in debug vs release means our tests are not testing what the user sees. Consider using debug switches or command line arguments instead.</description>
 		</rule>
+		<rule id="3" name="FlagEnumsShouldSpecifyExplicitValues">
+			<title>Flags enums should specify explicit values.</title>
+			<message>This member does not specify an explicit value.</message>
+			<description>The auto-generated values for enums don't work well for flag enums, so you should specify the value explicitly.</description>
+		</rule>
 	</category>
 	<category name="Decruftification" id="3000">
 		<rule id="1" name="RemovedOrphanedSuppressions" severity="Info">

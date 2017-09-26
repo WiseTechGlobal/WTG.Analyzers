@@ -5,13 +5,20 @@ namespace WTG.Analyzers.Utils
 {
 	public static class SymbolExtensions
 	{
+		public static bool IsMatch(this IMethodSymbol methodSymbol, string fullTypeName, string methodName)
+		{
+			return methodSymbol.MetadataName == methodName
+				&& methodSymbol.ContainingType.IsMatch(fullTypeName);
+		}
+
 		public static bool IsMatch(this IMethodSymbol methodSymbol, string assemblyName, string fullTypeName, string methodName)
 		{
 			return methodSymbol.MetadataName == methodName
-				&& IsMatch(methodSymbol.ContainingType, assemblyName, fullTypeName);
+				&& methodSymbol.ContainingAssembly.IsMatch(assemblyName)
+				&& methodSymbol.ContainingType.IsMatch(fullTypeName);
 		}
 
-		public static bool IsMatch(this ITypeSymbol typeSymbol, string assemblyName, string fullName)
+		public static bool IsMatch(this ITypeSymbol typeSymbol, string fullName)
 		{
 			ISymbol symbol = typeSymbol;
 			var length = fullName.Length;
@@ -76,12 +83,13 @@ namespace WTG.Analyzers.Utils
 
 			var tmp = symbol.ContainingNamespace;
 
-			if (!tmp.IsGlobalNamespace)
-			{
-				return false;
-			}
+			return tmp.IsGlobalNamespace;
+		}
 
-			return IsMatch(symbol.ContainingAssembly, assemblyName);
+		public static bool IsMatch(this ITypeSymbol typeSymbol, string assemblyName, string fullName)
+		{
+			return typeSymbol.IsMatch(fullName)
+				&& typeSymbol.ContainingAssembly.IsMatch(assemblyName);
 		}
 
 		public static bool IsMatch(this IAssemblySymbol assemblySymbol, string assemblyName)

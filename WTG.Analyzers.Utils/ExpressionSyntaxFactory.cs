@@ -41,6 +41,16 @@ namespace WTG.Analyzers.Utils
 				SyntaxFactory.Literal(value));
 		}
 
+		public static ExpressionSyntax CreateSingleBitFlag(int index)
+		{
+			return SyntaxFactory.BinaryExpression(
+				SyntaxKind.LeftShiftExpression,
+				CreateLiteral(1)
+					.WithTrailingTrivia(SyntaxFactory.Space),
+				CreateLiteral(index)
+					.WithLeadingTrivia(SyntaxFactory.Space));
+		}
+
 		static bool HasPrimaryOrUnaryPrecedence(ExpressionSyntax expression)
 		{
 			switch (expression.Kind())

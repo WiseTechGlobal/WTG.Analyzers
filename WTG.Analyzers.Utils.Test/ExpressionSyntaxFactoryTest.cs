@@ -27,6 +27,14 @@ namespace WTG.Analyzers.Utils.Test
 			return ExpressionSyntaxFactory.CreateLiteral(value).ToString();
 		}
 
+		[TestCase(0, ExpectedResult = "1 << 0")]
+		[TestCase(1, ExpectedResult = "1 << 1")]
+		[TestCase(32, ExpectedResult = "1 << 32")]
+		public string CreateSingleBitFlag(int index)
+		{
+			return ExpressionSyntaxFactory.CreateSingleBitFlag(index).ToString();
+		}
+
 		[Test]
 		public void CreateElementAccess()
 		{

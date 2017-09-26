@@ -18,6 +18,15 @@ namespace WTG.Analyzers.Utils.Test
 			return SingleMatchIndex(assemblies, x => x.IsMatch(assemblyName));
 		}
 
+		[TestCase("System.Threading.Tasks.Task", ExpectedResult = 0)]
+		[TestCase("System.Linq.Enumerable", ExpectedResult = 1)]
+		[TestCase("System.Collections.Generic.List`1", ExpectedResult = 2)]
+		[TestCase("System.Collections.Generic.List`1+Enumerator", ExpectedResult = 3)]
+		public int MatchType(string typeName)
+		{
+			return SingleMatchIndex(types, x => x.IsMatch(typeName));
+		}
+
 		[TestCase("mscorlib", "System.Threading.Tasks.Task", ExpectedResult = 0)]
 		[TestCase("System.Core", "System.Linq.Enumerable", ExpectedResult = 1)]
 		[TestCase("mscorlib", "System.Collections.Generic.List`1", ExpectedResult = 2)]
@@ -25,6 +34,13 @@ namespace WTG.Analyzers.Utils.Test
 		public int MatchType(string assemblyName, string typeName)
 		{
 			return SingleMatchIndex(types, x => x.IsMatch(assemblyName, typeName));
+		}
+
+		[TestCase("System.Threading.Tasks.Task", "FromResult", ExpectedResult = 0)]
+		[TestCase("System.Threading.Tasks.Task", "FromException", ExpectedResult = 1)]
+		public int MatchMethod(string typeName, string methodName)
+		{
+			return SingleMatchIndex(methods, x => x.IsMatch(typeName, methodName));
 		}
 
 		[TestCase("mscorlib", "System.Threading.Tasks.Task", "FromResult", ExpectedResult = 0)]

@@ -22,6 +22,7 @@ namespace WTG.Analyzers
 		public const string DeconstructWithSingleVarDiagnosticID = "WTG1011";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
+		public const string FlagEnumsShouldSpecifyExplicitValuesDiagnosticID = "WTG2003";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 		public const string PreferDirectMemberAccessOverLinqDiagnosticID = "WTG3002";
 		public const string PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID = "WTG3003";
@@ -181,6 +182,15 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
 			description: "Changing the behaviour in debug vs release means our tests are not testing what the user sees. Consider using debug switches or command line arguments instead.");
+
+		public static readonly DiagnosticDescriptor FlagEnumsShouldSpecifyExplicitValuesRule = new DiagnosticDescriptor(
+			FlagEnumsShouldSpecifyExplicitValuesDiagnosticID,
+			"Flags enums should specify explicit values.",
+			"This member does not specify an explicit value.",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "The auto-generated values for enums don't work well for flag enums, so you should specify the value explicitly.");
 
 		public static readonly DiagnosticDescriptor RemovedOrphanedSuppressionsRule = new DiagnosticDescriptor(
 			RemovedOrphanedSuppressionsDiagnosticID,
@@ -368,6 +378,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateAvoidConditionalCompilationBasedOnDebugDiagnostic(Location location)
 		{
 			return Diagnostic.Create(AvoidConditionalCompilationBasedOnDebugRule, location);
+		}
+
+		/// <summary>
+		/// This member does not specify an explicit value.
+		/// </summary>
+		public static Diagnostic CreateFlagEnumsShouldSpecifyExplicitValuesDiagnostic(Location location)
+		{
+			return Diagnostic.Create(FlagEnumsShouldSpecifyExplicitValuesRule, location);
 		}
 
 		/// <summary>

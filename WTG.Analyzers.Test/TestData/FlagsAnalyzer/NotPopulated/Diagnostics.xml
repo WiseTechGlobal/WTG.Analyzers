@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG2003" message="This member does not specify an explicit value." severity="Warning">
+	<diagnostic>
+		<location>Test0.cs: (6,2-6)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (7,2-3))</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (8,2-3)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (9,2-3)</location>
+	</diagnostic>
+
+	<diagnostic>
+		<location>Test0.cs: (15,2-3))</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (16,2-3)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (17,2-3)</location>
+	</diagnostic>
+</diagnostics>
