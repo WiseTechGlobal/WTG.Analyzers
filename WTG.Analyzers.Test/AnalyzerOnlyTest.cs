@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
 using WTG.Analyzers.TestFramework;
@@ -22,13 +25,16 @@ namespace WTG.Analyzers.Test
 		[Test]
 		public async Task RunTest([ValueSource(nameof(Samples))] SampleDataSet data)
 		{
+			var filter = CreateFilter(data);
 			var analyzer = new TAnalyzer();
 			var actual = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, data.Source).ConfigureAwait(false);
 
-			Assert.That(actual, IsDiagnostic.EqualTo(data.Diagnostics));
+			Assert.That(actual.Where(filter), IsDiagnostic.EqualTo(data.Diagnostics));
 		}
 
 		#region Implementation
+
+		static Func<Diagnostic, bool> CreateFilter(SampleDataSet data) => d => !data.SuppressedIds.Contains(d.Id);
 
 		const string TestDataPrefix = "WTG.Analyzers.Test.TestData.";
 		static IEnumerable<SampleDataSet> Samples => SampleDataSet.GetSamples(typeof(AnalyzerTest<>).GetTypeInfo().Assembly, TestDataPrefix + typeof(TAnalyzer).Name + ".");

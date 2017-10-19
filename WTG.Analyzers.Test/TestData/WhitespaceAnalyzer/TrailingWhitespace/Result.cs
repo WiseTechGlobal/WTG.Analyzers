@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-public class Bob
+public class ClassyBob
 {
 	public void Bob()  // comment
 	{

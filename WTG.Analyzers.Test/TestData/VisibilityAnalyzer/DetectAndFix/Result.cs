@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 public class Bob
 {
@@ -11,25 +11,25 @@ public class Bob
 	internal string InternalField;
 	internal string InternalProperty => InternalField;
 	internal string InternalMethod() => InternalField;
-	internal event EventHandler PublicEvent;
+	internal event EventHandler InternalEvent;
 	internal class InternalClass { }
 
 	protected string ProtectedField;
 	protected string ProtectedProperty => ProtectedField;
 	protected string ProtectedMethod() => ProtectedField;
-	protected event EventHandler PublicEvent;
+	protected event EventHandler ProtectedEvent;
 	protected class ProtectedClass { }
 
 	string PrivateField;
 	string PrivateProperty => PrivateField;
 	string PrivateMethod() => PrivateField;
-	event EventHandler PublicEvent;
+	event EventHandler PrivateEvent;
 	class PrivateClass { }
 
 	string ImplicitPrivateField;
 	string ImplicitPrivateProperty => ImplicitPrivateField;
 	string ImplicitPrivateMethod() => ImplicitPrivateField;
-	event EventHandler PublicEvent;
+	event EventHandler ImplicitEvent;
 	class ImplicitPrivateClass { }
 
 	public string SpecialProperty { get; private set; } // special case where private is acceptable.

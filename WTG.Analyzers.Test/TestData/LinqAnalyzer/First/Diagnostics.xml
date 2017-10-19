@@ -1,5 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <diagnostics id="WTG3002" severity="Info">
+	<suppressId>CS0246</suppressId>
 	<diagnostic message="Don't use the First() extension method on a source of type 'string', use the indexer instead.">
 		<location>Test0.cs: (9,45-52)</location>
 	</diagnostic>
@@ -13,13 +14,13 @@
 		<location>Test0.cs: (13,49-56)</location>
 	</diagnostic>
 	<diagnostic message="Don't use the First() extension method on a source of type 'int[]', use the indexer instead.">
-		<location>Test0.cs: (17,48-61)</location>
+		<location>Test0.cs: (17,49-62)</location>
 	</diagnostic>
 	<diagnostic message="Don't use the First() extension method on a source of type 'int[][]', use the indexer instead.">
-		<location>Test0.cs: (18,46-53)</location>
+		<location>Test0.cs: (18,47-54)</location>
 	</diagnostic>
 	<diagnostic message="Don't use the First() extension method on a source of type 'int[]', use the indexer instead.">
-		<location>Test0.cs: (18,54-61)</location>
+		<location>Test0.cs: (18,55-62)</location>
 	</diagnostic>
 	<diagnostic id="WTG3003" message="Don't use the First() extension method on a source of type 'int[]', use the indexer instead.">
 		<location>Test0.cs: (19,63-70)</location>

@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -41,6 +42,7 @@ namespace WTG.Analyzers.Utils
 				SyntaxFactory.Literal(value));
 		}
 
+		[SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
 		public static ExpressionSyntax CreateSingleBitFlag(int index)
 		{
 			return SyntaxFactory.BinaryExpression(

@@ -1,6 +1,7 @@
-﻿using System;
+using System;
+using System.Linq;
 
-public class Bob
+public class ClassyBob
 {
     public void Bob()
     {

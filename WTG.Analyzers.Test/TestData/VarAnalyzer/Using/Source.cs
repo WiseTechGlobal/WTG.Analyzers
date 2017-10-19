@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 public class Bob
 {
@@ -26,9 +26,9 @@ public class Bob
 	}
 }
 
-class Context : IDisposable
+public class Context : IDisposable
 {
-	void Dispose()
+	public void Dispose()
 	{
 	}
 }

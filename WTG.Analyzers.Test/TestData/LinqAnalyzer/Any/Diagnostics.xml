@@ -1,5 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <diagnostics id="WTG3002" severity="Info">
+	<suppressId>CS0246</suppressId>
 	<diagnostic message="Don't use the Any() extension method on a source of type 'string', use the 'Length' property instead.">
 		<location>Test0.cs: (9,46-51)</location>
 	</diagnostic>
@@ -19,7 +20,7 @@
 		<location>Test0.cs: (14,56-61)</location>
 	</diagnostic>
 	<diagnostic message="Don't use the Any() extension method on a source of type 'int[]', use the 'Length' property instead.">
-		<location>Test0.cs: (17,49-60)</location>
+		<location>Test0.cs: (17,50-61)</location>
 	</diagnostic>
 	<diagnostic id="WTG3003" message="Don't use the Any() extension method on a source of type 'int[]', use the 'Length' property instead.">
 		<location>Test0.cs: (18,64-69)</location>

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 
 public class Bob
@@ -64,7 +64,7 @@ public class Bob
 	}
 }
 
-class MagicCollection<T> : IEnumerable
+public class MagicCollection<T> : IEnumerable
 {
 	public MagicEnumerator GetEnumerator()
 	{
@@ -90,7 +90,7 @@ class MagicCollection<T> : IEnumerable
 	}
 }
 
-class AmbigiousCollection : IEnumerable<int>, IEnumerable<double>
+public class AmbigiousCollection : IEnumerable<int>, IEnumerable<double>
 {
 	IEnumerator<int> IEnumerable<int>.GetEnumerator() { yield break; }
 	IEnumerator<double> IEnumerable<double>.GetEnumerator() { yield break; }

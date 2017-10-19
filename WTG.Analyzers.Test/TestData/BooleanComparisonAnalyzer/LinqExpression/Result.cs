@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
 public static class Bob
 {
-	IEnumerable<Tuple<bool>> Enumerable(IEnumerable<Tuple<bool>> source)
+	public static IEnumerable<bool> Enumerable(IEnumerable<Tuple<bool>> source)
 	{
 		return
 			from tuple in source
@@ -16,7 +16,7 @@ public static class Bob
 			select !g.Key;
 	}
 
-	IQueryable<Tuple<bool>> Queryable(IQueryable<Tuple<bool>> source)
+	public static IQueryable<bool> Queryable(IQueryable<Tuple<bool>> source)
 	{
 		return
 			from tuple in source

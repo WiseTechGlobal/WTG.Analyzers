@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
@@ -62,6 +62,8 @@ namespace WTG.Analyzers.TestFramework
 				.AddMetadataReference(projectId, SystemCoreReference)
 				.AddMetadataReference(projectId, CSharpSymbolsReference)
 				.AddMetadataReference(projectId, CodeAnalysisReference);
+
+			solution = solution.WithProjectCompilationOptions(projectId, solution.GetProject(projectId).CompilationOptions.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
 
 			for (var i = 0; i < sources.Length; i++)
 			{

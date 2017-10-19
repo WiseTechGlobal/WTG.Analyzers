@@ -1,4 +1,6 @@
-﻿public class Bob
+using System;
+
+public class Bob
 {
 	public void ForLoop(int[] values)
 	{
@@ -9,7 +11,7 @@
 
 	public void ForLoopWithoutLocal(Type type)
 	{
-		for (; type.IsArray; type = GetElementType(type))
+		for (; type.IsArray; type = type.GetElementType())
 		{
 		}
 	}

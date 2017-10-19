@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
@@ -44,12 +46,15 @@ namespace WTG.Analyzers.Test
 		[Test]
 		public async Task RunTest([ValueSource(nameof(Samples))] SampleDataSet data)
 		{
+			var filter = CreateFilter(data);
 			var analyzer = new TAnalyzer();
 			var actual = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, data.Source).ConfigureAwait(false);
 
-			Assert.That(actual, IsDiagnostic.EqualTo(data.Diagnostics));
+			Assert.That(actual.Where(filter), IsDiagnostic.EqualTo(data.Diagnostics));
 
 			var fixer = new CodeFixer(analyzer, new TCodeFix());
+			fixer.DiagnosticFilter = filter;
+
 			await fixer.VerifyFixAsync(data.Source, data.Result).ConfigureAwait(false);
 		}
 
@@ -60,10 +65,13 @@ namespace WTG.Analyzers.Test
 			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, data.Source).ConfigureAwait(false);
 
 			var fixer = new CodeFixer(analyzer, new TCodeFix());
+			fixer.DiagnosticFilter = CreateFilter(data);
 			await fixer.VerifyBulkFixAsync(data.Source, data.Result).ConfigureAwait(false);
 		}
 
 		#region Implementation
+
+		static Func<Diagnostic, bool> CreateFilter(SampleDataSet data) => d => !data.SuppressedIds.Contains(d.Id);
 
 		const string TestDataPrefix = "WTG.Analyzers.Test.TestData.";
 		static IEnumerable<SampleDataSet> Samples => SampleDataSet.GetSamples(typeof(AnalyzerAndCodeFixTest<,>).GetTypeInfo().Assembly, TestDataPrefix + typeof(TAnalyzer).Name + ".");

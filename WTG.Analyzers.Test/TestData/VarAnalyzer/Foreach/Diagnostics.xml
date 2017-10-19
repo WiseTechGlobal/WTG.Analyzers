@@ -1,5 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <diagnostics id="WTG1002" message="The compiler is able to correctly identify which type to use here, so replace the explicit type with var." severity="Hidden">
+	<suppressId>CS0246</suppressId>
+	<suppressId>CS0535</suppressId>
+	<suppressId>CS0738</suppressId>
+	<suppressId>CS1579</suppressId>
+	<suppressId>CS1640</suppressId>
 	<diagnostic>
 		<location>Test0.cs: (8,12-15)</location>
 	</diagnostic>

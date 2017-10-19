@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +17,6 @@ namespace WTG.Analyzers.TestFramework
 		public static async Task<Diagnostic[]> GetDiagnosticsAsync(DiagnosticAnalyzer analyzer, params Document[] documents)
 		{
 			var ids = new HashSet<string>(analyzer.SupportedDiagnostics.Select(x => x.Id));
-			ids.Add("AD0001"); // <-- Analyzer threw exception.
 			var projects = new HashSet<Project>();
 
 			foreach (var document in documents)
@@ -33,7 +32,7 @@ namespace WTG.Analyzers.TestFramework
 				var compilationWithAnalyzers = complation.WithAnalyzers(ImmutableArray.Create(analyzer));
 				var diags = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
 
-				foreach (var diag in diags.Where(x => ids.Contains(x.Id)))
+				foreach (var diag in diags.Where(x => ids.Contains(x.Id) || IsImportant(x)))
 				{
 					if (diag.Location == Location.None || diag.Location.IsInMetadata)
 					{
@@ -57,5 +56,18 @@ namespace WTG.Analyzers.TestFramework
 
 			return diagnostics.ToArray();
 		}
+
+		static bool IsImportant(Diagnostic diag)
+		{
+			var descriptor = diag.Descriptor;
+
+			return descriptor.DefaultSeverity == DiagnosticSeverity.Error
+				&& descriptor.CustomTags.Any(x => CriticalTags.Contains(x));
+		}
+
+		static readonly ImmutableHashSet<string> CriticalTags = ImmutableHashSet.Create(
+			WellKnownDiagnosticTags.Build,
+			WellKnownDiagnosticTags.Compiler,
+			WellKnownDiagnosticTags.AnalyzerException);
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,16 +14,16 @@ public class Bob
 	public bool Method(ICollection<int> source) => source.Any();
 	public bool Method(IEnumerable<int> source) => source.Any();
 
-	public bool Method(int[] source) => Enumerable.Any(source);
+	public bool MethodA(int[] source) => Enumerable.Any(source);
 	public Expression<Func<int[], bool>> Query = source => source.Any();
 
-	public bool Method(int[] source) => source?.Any(); // don't suggest as it will change the behavour.
-	public bool Method(ExplicitCollection<int> source) => source.Any(); // don't suggest if using the property would require casting.
-	public bool Method(UnknownCollection source) => source.Any(); // don't suggest if we don't recognise the type.
-	public bool Method(int[] source) => source.Any(x => x > 0); // don't suggest if a filter is provided.
+	public bool? Method1(int[] source) => source?.Any(); // don't suggest as it will change the behavour.
+	public bool Method2(ExplicitCollection<int> source) => source.Any(); // don't suggest if using the property would require casting.
+	public bool Method3(UnknownCollection source) => source.Any(); // don't suggest if we don't recognise the type.
+	public bool Method4(int[] source) => source.Any(x => x > 0); // don't suggest if a filter is provided.
 }
 
-struct ExplicitCollection<T> : IReadOnlyCollection<T>
+public struct ExplicitCollection<T> : IReadOnlyCollection<T>
 {
 	public IEnumerator<T> GetEnumerator()
 	{
@@ -31,5 +31,5 @@ struct ExplicitCollection<T> : IReadOnlyCollection<T>
 	}
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	int IReadOnlyCollection<T>.Count => Length;
+	int IReadOnlyCollection<T>.Count => 0;
 }

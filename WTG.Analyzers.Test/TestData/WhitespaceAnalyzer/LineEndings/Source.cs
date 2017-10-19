@@ -1,5 +1,5 @@
-﻿using System;
-public class Bob
+using System;
+public class ClassyBob
 {
 	public void Bob()
 	{

@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 public static class Bob
 {
@@ -7,7 +7,7 @@ public static class Bob
 		await info.ConfigureAwait(false);
 	}
 
-	public void UnknownDelegateType(Task task)
+	public static void UnknownDelegateType(Task task)
 	{
 		Foo foo = async () => await task.ConfigureAwait(false);
 	}

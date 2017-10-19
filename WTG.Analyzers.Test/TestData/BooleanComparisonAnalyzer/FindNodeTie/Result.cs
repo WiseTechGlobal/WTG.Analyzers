@@ -1,6 +1,6 @@
-﻿public static class Bob
+public static class Bob
 {
-	public static bool Method(bool value)
+	public static void Method(bool value)
 	{
 		Magic(value);
 		Magic(!value);

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <diagnostics>
-	<suppressId>CS0246</suppressId>
+	<suppressId>CS8184</suppressId>
 </diagnostics>

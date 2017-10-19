@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,6 +9,7 @@ using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
+	[SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed class FlagsAnalyzer : DiagnosticAnalyzer
 	{

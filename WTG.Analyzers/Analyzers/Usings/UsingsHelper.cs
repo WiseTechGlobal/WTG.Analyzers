@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -18,7 +18,7 @@ namespace WTG.Analyzers
 					return ((NamespaceDeclarationSyntax)node).Usings;
 
 				default:
-					throw new ArgumentException("Syntax Node is not known to contain usings", nameof(node));
+					throw new ArgumentException("Syntax Node is not known to contain usings: " + node.GetType().Name, nameof(node));
 			}
 		}
 
@@ -33,7 +33,7 @@ namespace WTG.Analyzers
 					return ((NamespaceDeclarationSyntax)node).WithUsings(usings);
 
 				default:
-					throw new ArgumentException("Syntax Node is not known to contain usings", nameof(node));
+					throw new ArgumentException("Syntax Node is not known to contain usings: " + node.GetType().Name, nameof(node));
 			}
 		}
 

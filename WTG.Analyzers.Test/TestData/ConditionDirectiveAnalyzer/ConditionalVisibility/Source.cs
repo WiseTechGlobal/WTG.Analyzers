@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Magic
 {
@@ -35,7 +35,7 @@ namespace Magic
 #elif !Gamma
 		public
 #endif
-		void MethodA4()
+		void MethodA5()
 		{
 
 		}
