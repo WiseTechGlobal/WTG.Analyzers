@@ -1,11 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-  <PropertyGroup Label="Globals">
-    <SccProjectName>%24/CWShared/StaticAnalysis/WTG.Analyzers/WTG.Analyzers.TestFramework.Test</SccProjectName>
-    <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>
-    <SccAuxPath>http://tfs.wtg.zone:8080/tfs/cargowise</SccAuxPath>
-    <SccLocalPath>.</SccLocalPath>
-  </PropertyGroup>
-
   <PropertyGroup>
     <AssemblyTitle>WTG Analyzers Test Framework Test</AssemblyTitle>
     <TargetFramework>net46</TargetFramework>
