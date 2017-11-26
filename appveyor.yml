@@ -1,0 +1,26 @@
+version: 2.0.{build}
+
+skip_branch_with_pr: true
+os: Visual Studio 2017
+
+cache:
+  - packages -> paket.lock
+  - '%LocalAppData%\NuGet\Cache'
+  - '%LocalAppData%\NuGet\v3-cache'
+  - '%UserProfile%\.nuget'
+
+configuration:
+  - Debug
+  - Release
+
+build:
+  parallel: true
+  project: WTG.Analyzers.sln
+  verbosity: minimal
+
+after_build:
+  - build_packages.cmd
+
+artifacts:
+  - path: bin\WTG.Analyzers.$(APPVEYOR_BUILD_VERSION).nupkg
+  - path: bin\WTG.Analyzers.$(APPVEYOR_BUILD_VERSION).nupkg
