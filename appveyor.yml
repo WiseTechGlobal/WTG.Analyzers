@@ -23,7 +23,7 @@ build:
   verbosity: minimal
 
 after_build:
-  - build_packages.cmd
+  - build-packages.cmd
 
 artifacts:
   - path: bin\WTG.Analyzers.$(APPVEYOR_BUILD_VERSION).nupkg
