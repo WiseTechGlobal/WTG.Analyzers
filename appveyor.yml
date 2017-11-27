@@ -13,6 +13,9 @@ configuration:
   - Debug
   - Release
 
+before_build:
+  - .paket\paket.exe restore
+
 build:
   parallel: true
   project: WTG.Analyzers.sln
