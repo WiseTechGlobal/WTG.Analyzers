@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyTitle>WTG Analyzers Test</AssemblyTitle>
     <TargetFramework>net46</TargetFramework>
     <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <OutputPath>..\bin</OutputPath>
-    <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>

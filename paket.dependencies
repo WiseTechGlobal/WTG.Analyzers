@@ -1,14 +1,11 @@
-﻿# All packages come from the public NuGet Gallery
-source https://api.nuget.org/v3/index.json
+﻿version 5.123.1
 
-# Use a local cache in case a package gets deleted from the Gallery,
-# or in case we lose our internet connection.
-# NOTE: DAT Build Servers never have access to the Gallery.
-cache \\sydco-sdts-2.wtg.zone\ThirdParty\NuGet-PaketCache
+# All packages come from the public NuGet Gallery
+source https://api.nuget.org/v3/index.json
 
 # This is our list of packages.
 # If you know what you're doing, manually add an entry.
-# If you don't, use "paket.exe add nuget<package> --no-install".
+# If you don't, use "paket.exe add nuget <package> --no-install".
 # Use ".paket\paket.exe update" to update paket.lock.
 # Use ".paket\paket.exe restore" to update the package cache above
 #
@@ -29,5 +26,5 @@ nuget Microsoft.CodeAnalysis.Workspaces.Common 2.0
 
 nuget Microsoft.Composition 1.0.27
 
-nuget NUnit3TestAdapter >= 3.8.0-alpha1
+nuget NUnit3TestAdapter >= 3.8
 nuget Microsoft.NET.Test.Sdk
