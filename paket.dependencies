@@ -1,4 +1,6 @@
-﻿# All packages come from the public NuGet Gallery
+﻿version 5.123.1
+
+# All packages come from the public NuGet Gallery
 source https://api.nuget.org/v3/index.json
 
 # This is our list of packages.
