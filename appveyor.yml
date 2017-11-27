@@ -13,6 +13,9 @@ configuration:
   - Debug
   - Release
 
+environment:
+  WTG_ANALYZERS_VERSION: 2.0.3
+
 init:
   - git config --global core.autocrlf true
 
@@ -26,7 +29,7 @@ build:
   verbosity: minimal
 
 after_build:
-  - build-packages.cmd 2.0.3
+  - build-packages.cmd %WTG_ANALYZERS_VERSION%
 
 test:
   assemblies:
@@ -34,5 +37,5 @@ test:
       - '**\*.Test.dll'
 
 artifacts:
-  - path: bin\WTG.Analyzers.$(APPVEYOR_BUILD_VERSION).nupkg
-  - path: bin\WTG.Analyzers.TestFramework.$(APPVEYOR_BUILD_VERSION).nupkg
+  - path: bin\WTG.Analyzers.$(WTG_ANALYZERS_VERSION).nupkg
+  - path: bin\WTG.Analyzers.TestFramework.$(WTG_ANALYZERS_VERSION).nupkg
