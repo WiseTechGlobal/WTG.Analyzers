@@ -18,8 +18,6 @@
 		  - The major and minor versions should match the Roslyn API version,
 		  - and the major/minor/build versions should match the NuGet package version (NuGet is x.y.z only)
 		  - Revision should be incremented whenever you want to publish a new version.
-		  - 
-		  - When updating this version, you should also update it in the nuspec files to match.
 		  -->
 		<Version Condition="'$(APPVEYOR_BUILD_VERSION)' != ''">$(APPVEYOR_BUILD_VERSION)</Version>
 		<Version Condition="'$(Version)' == ''">2.0.3.0</Version>
