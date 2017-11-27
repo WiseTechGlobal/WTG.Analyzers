@@ -13,6 +13,9 @@ configuration:
   - Debug
   - Release
 
+init:
+  - git config --global core.autocrlf true
+
 before_build:
   - .paket\paket.exe restore
   - dotnet restore WTG.Analyzers.sln
