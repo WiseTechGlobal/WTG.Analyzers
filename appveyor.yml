@@ -28,6 +28,11 @@ build:
 after_build:
   - build-packages.cmd
 
+test:
+  assemblies:
+    only:
+      - '**\*.Test.dll'
+
 artifacts:
   - path: bin\WTG.Analyzers.$(APPVEYOR_BUILD_VERSION).nupkg
   - path: bin\WTG.Analyzers.$(APPVEYOR_BUILD_VERSION).nupkg
