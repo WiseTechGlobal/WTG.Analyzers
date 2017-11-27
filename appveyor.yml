@@ -35,4 +35,4 @@ test:
 
 artifacts:
   - path: bin\WTG.Analyzers.$(APPVEYOR_BUILD_VERSION).nupkg
-  - path: bin\WTG.Analyzers.$(APPVEYOR_BUILD_VERSION).nupkg
+  - path: bin\WTG.Analyzers.TestFramework.$(APPVEYOR_BUILD_VERSION).nupkg
