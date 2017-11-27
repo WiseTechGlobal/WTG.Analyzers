@@ -1,4 +1,12 @@
-.vs
+# Build Artifacts
 obj
 bin
+
+# Visual Studio
+.vs
+*.csproj.user
+
+# Paket
+.paket/Paket.Restore.Targets
 packages
+paket-files
