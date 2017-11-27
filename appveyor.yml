@@ -15,6 +15,7 @@ configuration:
 
 before_build:
   - .paket\paket.exe restore
+  - dotnet restore WTG.Analyzers.sln
 
 build:
   parallel: true
