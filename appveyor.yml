@@ -26,7 +26,7 @@ build:
   verbosity: minimal
 
 after_build:
-  - build-packages.cmd $(APPVEYOR_BUILD_VERSION)
+  - build-packages.cmd %APPVEYOR_BUILD_VERSION%
 
 test:
   assemblies:
