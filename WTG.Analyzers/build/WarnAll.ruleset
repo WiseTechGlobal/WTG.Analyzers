@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <RuleSet Name="WTGAnalyzersRuleSet" ToolsVersion="14.0">
 	<Rules AnalyzerId="WTG.Analyzers" RuleNamespace="WTG.Analyzers">
 		<!-- CodingConvention -->
@@ -13,6 +13,7 @@
 		<Rule Id="WTG1009" Action="Warning" />
 		<Rule Id="WTG1010" Action="Warning" />
 		<Rule Id="WTG1011" Action="Warning" />
+		<Rule Id="WTG1012" Action="Warning" />
 
 		<!-- Correctness -->
 		<Rule Id="WTG2001" Action="Warning" />

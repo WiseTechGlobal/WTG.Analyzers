@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -11,6 +11,12 @@ namespace WTG.Analyzers.Utils.Test
 	[TestFixture]
 	class SymbolExtensionsTest
 	{
+		[Test]
+		public void IsValueTuple()
+		{
+			Assert.That(SingleMatchIndex(types, x => x.IsValueTuple()), Is.EqualTo(4));
+		}
+
 		[TestCase("mscorlib", ExpectedResult = 0)]
 		[TestCase("System.Core", ExpectedResult = 1)]
 		public int MatchAssembly(string assemblyName)
@@ -74,6 +80,7 @@ using System.Threading.Tasks;
 				GetType("Enumerable"),
 				GetType("List<int>"),
 				GetType("List<int>.Enumerator"),
+				GetType("ValueTuple<string, int>"),
 			};
 
 			assemblies = new[]

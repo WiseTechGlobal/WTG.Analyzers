@@ -1,10 +1,17 @@
-﻿using System;
+using System;
 using Microsoft.CodeAnalysis;
 
 namespace WTG.Analyzers.Utils
 {
 	public static class SymbolExtensions
 	{
+		public static bool IsValueTuple(this ITypeSymbol typeSymbol)
+		{
+			return typeSymbol.MetadataName.StartsWith("ValueTuple`", StringComparison.Ordinal)
+				&& typeSymbol.ContainingType == null
+				&& typeSymbol.ContainingNamespace.IsMatch("System");
+		}
+
 		public static bool IsMatch(this IMethodSymbol methodSymbol, string fullTypeName, string methodName)
 		{
 			return methodSymbol.MetadataName == methodName
@@ -51,6 +58,27 @@ namespace WTG.Analyzers.Utils
 				return false;
 			}
 
+			return IsMatchCore(symbol, fullName, length);
+		}
+
+		public static bool IsMatch(this ITypeSymbol typeSymbol, string assemblyName, string fullName)
+		{
+			return typeSymbol.IsMatch(fullName)
+				&& typeSymbol.ContainingAssembly.IsMatch(assemblyName);
+		}
+
+		public static bool IsMatch(this INamespaceSymbol namespaceSymbol, string fullName)
+		{
+			return IsMatchCore(namespaceSymbol, fullName, fullName.Length);
+		}
+
+		public static bool IsMatch(this IAssemblySymbol assemblySymbol, string assemblyName)
+		{
+			return assemblySymbol.Identity.Name == assemblyName;
+		}
+
+		static bool IsMatchCore(ISymbol symbol, string fullName, int length)
+		{
 			while (true)
 			{
 				var index = fullName.LastIndexOf('.', length - 1);
@@ -84,17 +112,6 @@ namespace WTG.Analyzers.Utils
 			var tmp = symbol.ContainingNamespace;
 
 			return tmp.IsGlobalNamespace;
-		}
-
-		public static bool IsMatch(this ITypeSymbol typeSymbol, string assemblyName, string fullName)
-		{
-			return typeSymbol.IsMatch(fullName)
-				&& typeSymbol.ContainingAssembly.IsMatch(assemblyName);
-		}
-
-		public static bool IsMatch(this IAssemblySymbol assemblySymbol, string assemblyName)
-		{
-			return assemblySymbol.Identity.Name == assemblyName;
 		}
 	}
 }

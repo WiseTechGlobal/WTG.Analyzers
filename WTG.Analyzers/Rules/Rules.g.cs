@@ -20,6 +20,7 @@ namespace WTG.Analyzers
 		public const string UsingDirectivesMustBeOrderedByKindDiagnosticID = "WTG1009";
 		public const string UseOutVarWherePossibleDiagnosticID = "WTG1010";
 		public const string DeconstructWithSingleVarDiagnosticID = "WTG1011";
+		public const string DeconstructWithVarDiagnosticID = "WTG1012";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string FlagEnumsShouldSpecifyExplicitValuesDiagnosticID = "WTG2003";
@@ -160,6 +161,19 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
 			description: "Move 'var' outside of the deconstruction expression.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
+		public static readonly DiagnosticDescriptor DeconstructWithVarRule = new DiagnosticDescriptor(
+			DeconstructWithVarDiagnosticID,
+			"Use the 'var' keyword instead of an explicit type where possible.",
+			"The compiler is able to correctly identify which type to use here, so replace the explicit type with var.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Hidden,
+			isEnabledByDefault: true,
+			description: "Replace with the 'var' keyword.",
 			customTags: new[]
 			{
 				WellKnownDiagnosticTags.Unnecessary,
@@ -362,6 +376,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDeconstructWithSingleVarDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DeconstructWithSingleVarRule, location);
+		}
+
+		/// <summary>
+		/// The compiler is able to correctly identify which type to use here, so replace the explicit type with var.
+		/// </summary>
+		public static Diagnostic CreateDeconstructWithVarDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DeconstructWithVarRule, location);
 		}
 
 		/// <summary>
