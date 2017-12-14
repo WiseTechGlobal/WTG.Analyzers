@@ -50,11 +50,18 @@ namespace WTG.Analyzers
 			{
 				var syntax = (ArrayCreationExpressionSyntax)node;
 
+				var arrayType = syntax.Type.ElementType;
+				if (syntax.Type.RankSpecifiers.Count > 1)
+				{
+					var specifiers = syntax.Type.RankSpecifiers.RemoveAt(0);
+					arrayType = SyntaxFactory.ArrayType(arrayType).WithRankSpecifiers(specifiers);
+				}
+
 				document = document.WithSyntaxRoot(
 					root.ReplaceNode(
 						node,
 						CreateArrayEmptyInvocation(
-							syntax.Type.ElementType)));
+							arrayType)));
 			}
 
 			return document;

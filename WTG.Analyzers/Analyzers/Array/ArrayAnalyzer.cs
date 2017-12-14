@@ -43,35 +43,87 @@ namespace WTG.Analyzers
 			}
 
 			var ranks = syntax.Type.RankSpecifiers;
-			if (ranks.Count != 1)
+			if (ranks.Count == 0)
 			{
-				// Ignore jagged arrays.
+				// Incomplete code?
 				return;
 			}
 
-			var sizes = ranks[0].Sizes;
-
-			if (sizes.Count != 1)
+			foreach (var rank in ranks)
 			{
-				// Ignore multi-dimensional arrays.
-				return;
+				if (rank.Sizes.Count != 1)
+				{
+					// Ignore multi-dimensional arrays.
+					return;
+				}
+
+				foreach (var size in rank.Sizes)
+				{
+					switch (size.Kind())
+					{
+						case SyntaxKind.OmittedArraySizeExpression:
+							continue;
+
+						case SyntaxKind.CharacterLiteralExpression:
+						case SyntaxKind.NumericLiteralExpression:
+						case SyntaxKind.CastExpression:
+						case SyntaxKind.UnaryMinusExpression:
+						case SyntaxKind.UnaryPlusExpression:
+							var constant = context.SemanticModel.GetConstantValue(size, context.CancellationToken);
+							if (constant.HasValue && !IsZeroLiteral(constant.Value))
+							{
+								return;
+							}
+							break;
+
+						default:
+							return;
+					}
+				}
 			}
 
-			var size = sizes[0];
-			if (size.Kind() != SyntaxKind.NumericLiteralExpression)
+			if (syntax.Initializer?.Expressions.Count > 0)
 			{
-				// Ignore dynamically sized arrays.
-				return;
-			}
-
-			var literal = (LiteralExpressionSyntax)size;
-			if (literal.Token.Text != "0")
-			{
-				// Ignore statically sized arrays that are not empty;
 				return;
 			}
 
 			context.ReportDiagnostic(Rules.CreatePreferArrayEmptyOverNewArrayConstructionDiagnostic(context.Node.GetLocation()));
+		}
+
+		static bool IsZeroLiteral(object value)
+		{
+			switch (value)
+			{
+				case sbyte s:
+					return s == 0;
+
+				case byte s:
+					return s == 0;
+
+				case short s:
+					return s == 0;
+
+				case ushort s:
+					return s == 0;
+
+				case int s:
+					return s == 0;
+
+				case uint s:
+					return s == 0;
+
+				case long s:
+					return s == 0;
+
+				case ulong s:
+					return s == 0;
+
+				case char s:
+					return s == 0;
+
+				default:
+					return false;
+			}
 		}
 	}
 }
