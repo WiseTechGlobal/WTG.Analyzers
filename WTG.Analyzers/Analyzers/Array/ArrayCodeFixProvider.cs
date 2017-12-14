@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using WTG.Analyzers.Utils;
+using Microsoft.CodeAnalysis.Simplification;
 
 namespace WTG.Analyzers
 {
@@ -54,51 +54,22 @@ namespace WTG.Analyzers
 					root.ReplaceNode(
 						node,
 						CreateArrayEmptyInvocation(
-							syntax.Type.ElementType,
-							CanUseTypeShortName(model, node.GetLocation(), "System.Array", "Array"))));
+							syntax.Type.ElementType)));
 			}
 
 			return document;
 		}
 
-		static bool CanUseTypeShortName(SemanticModel model, Location location, string typeFullName, string shortName)
+		static InvocationExpressionSyntax CreateArrayEmptyInvocation(TypeSyntax elementType)
 		{
-			var symbols = model.LookupSymbols(location.SourceSpan.Start, null, shortName);
-			if (symbols.Length == 0)
-			{
-				return false;
-			}
-
-			var symbol = symbols[0];
-			if (symbol.Kind != SymbolKind.NamedType)
-			{
-				return false;
-			}
-
-			var namedSymbol = (INamedTypeSymbol)symbol;
-			return namedSymbol.IsMatch(typeFullName);
-		}
-
-		static InvocationExpressionSyntax CreateArrayEmptyInvocation(TypeSyntax elementType, bool canUseShortName)
-		{
-			ExpressionSyntax arrayIdentifier;
-
-			if (canUseShortName)
-			{
-				arrayIdentifier = SyntaxFactory.IdentifierName("Array");
-			}
-			else
-			{
-				arrayIdentifier = SyntaxFactory.MemberAccessExpression(
-					SyntaxKind.SimpleMemberAccessExpression,
-					SyntaxFactory.IdentifierName("System"),
-					SyntaxFactory.IdentifierName("Array"));
-			}
-
 			return SyntaxFactory.InvocationExpression(
 				SyntaxFactory.MemberAccessExpression(
 					SyntaxKind.SimpleMemberAccessExpression,
-					arrayIdentifier,
+					SyntaxFactory.MemberAccessExpression(
+						SyntaxKind.SimpleMemberAccessExpression,
+						SyntaxFactory.IdentifierName("System"),
+						SyntaxFactory.IdentifierName("Array"))
+					.WithAdditionalAnnotations(Simplifier.Annotation),
 					SyntaxFactory.GenericName(
 						SyntaxFactory.Identifier("Empty"))
 					.WithTypeArgumentList(
