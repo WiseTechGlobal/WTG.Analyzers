@@ -61,7 +61,14 @@ namespace WTG.Analyzers
 				switch (size.Kind())
 				{
 					case SyntaxKind.OmittedArraySizeExpression:
-						continue;
+						if (syntax.Initializer == null)
+						{
+							// If there's an initializer, we check with the initializer expression count below.
+							// If there's no initializer, this is a compiler error anyhow, so don't bother the
+							// developer with an analyzer result.
+							return;
+						}
+						break;
 
 					case SyntaxKind.CharacterLiteralExpression:
 					case SyntaxKind.NumericLiteralExpression:

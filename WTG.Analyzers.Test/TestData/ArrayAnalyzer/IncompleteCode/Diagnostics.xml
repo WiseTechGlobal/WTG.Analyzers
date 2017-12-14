@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics>
+	<suppressId>CS0246</suppressId>
+	<suppressId>CS0443</suppressId>
+	<suppressId>CS1003</suppressId>
+	<suppressId>CS1526</suppressId>
+	<suppressId>CS1586</suppressId>
+</diagnostics>
