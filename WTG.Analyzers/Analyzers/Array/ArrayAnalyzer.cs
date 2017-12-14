@@ -49,36 +49,34 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			foreach (var rank in ranks)
+			var rank = ranks[0];
+			if (rank.Sizes.Count != 1)
 			{
-				if (rank.Sizes.Count != 1)
+				// Ignore multi-dimensional top-level arrays.
+				return;
+			}
+
+			foreach (var size in rank.Sizes)
+			{
+				switch (size.Kind())
 				{
-					// Ignore multi-dimensional arrays.
-					return;
-				}
+					case SyntaxKind.OmittedArraySizeExpression:
+						continue;
 
-				foreach (var size in rank.Sizes)
-				{
-					switch (size.Kind())
-					{
-						case SyntaxKind.OmittedArraySizeExpression:
-							continue;
-
-						case SyntaxKind.CharacterLiteralExpression:
-						case SyntaxKind.NumericLiteralExpression:
-						case SyntaxKind.CastExpression:
-						case SyntaxKind.UnaryMinusExpression:
-						case SyntaxKind.UnaryPlusExpression:
-							var constant = context.SemanticModel.GetConstantValue(size, context.CancellationToken);
-							if (constant.HasValue && !IsZeroLiteral(constant.Value))
-							{
-								return;
-							}
-							break;
-
-						default:
+					case SyntaxKind.CharacterLiteralExpression:
+					case SyntaxKind.NumericLiteralExpression:
+					case SyntaxKind.CastExpression:
+					case SyntaxKind.UnaryMinusExpression:
+					case SyntaxKind.UnaryPlusExpression:
+						var constant = context.SemanticModel.GetConstantValue(size, context.CancellationToken);
+						if (constant.HasValue && !IsZeroLiteral(constant.Value))
+						{
 							return;
-					}
+						}
+						break;
+
+					default:
+						return;
 				}
 			}
 
