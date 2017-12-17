@@ -135,10 +135,13 @@ namespace WTG.Analyzers.TestFramework
 					CancellationToken.None);
 
 				var fix = await batcher.GetFixAsync(context).ConfigureAwait(false);
-				if (fix != null)
+
+				if (fix == null)
 				{
-					document = await ApplyFixAsync(document, fix).ConfigureAwait(false);
+					return document;
 				}
+
+				document = await ApplyFixAsync(document, fix).ConfigureAwait(false);
 				analyzerDiagnostics = FilterDiagnostics(await DiagnosticUtils.GetDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false));
 
 				var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document).ConfigureAwait(false));
