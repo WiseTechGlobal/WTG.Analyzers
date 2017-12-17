@@ -99,7 +99,16 @@ namespace WTG.Analyzers
 		{
 			switch (value)
 			{
-				case sbyte s:
+				case int s:
+					return s == 0;
+
+				case uint s:
+					return s == 0;
+
+				case long s:
+					return s == 0;
+
+				case ulong s:
 					return s == 0;
 
 				case byte s:
@@ -111,16 +120,7 @@ namespace WTG.Analyzers
 				case ushort s:
 					return s == 0;
 
-				case int s:
-					return s == 0;
-
-				case uint s:
-					return s == 0;
-
-				case long s:
-					return s == 0;
-
-				case ulong s:
+				case sbyte s:
 					return s == 0;
 
 				case char s:
