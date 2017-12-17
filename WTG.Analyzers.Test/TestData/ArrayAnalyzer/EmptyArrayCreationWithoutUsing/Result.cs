@@ -12,4 +12,11 @@ public static class Foo
 	{
 		var t = System.Array.Empty<T>();
 	}
+
+	public static void WithFunkyWhitespace()
+	{
+		var t =
+			System.Array.Empty<object>()
+		;
+	}
 }

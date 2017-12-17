@@ -14,4 +14,14 @@ public static class Foo
 	{
 		var t = new T[0];
 	}
+
+	public static void WithFunkyWhitespace()
+	{
+		var t =
+			new
+				object[
+					0
+						]
+		;
+	}
 }

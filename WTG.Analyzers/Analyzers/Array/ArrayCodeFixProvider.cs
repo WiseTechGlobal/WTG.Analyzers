@@ -61,7 +61,8 @@ namespace WTG.Analyzers
 					root.ReplaceNode(
 						node,
 						CreateArrayEmptyInvocation(
-							arrayType)));
+							arrayType.WithoutTrivia())
+							.WithTriviaFrom(syntax)));
 			}
 
 			return document;

@@ -14,4 +14,11 @@ public static class Foo
 	{
 		var t = Array.Empty<T>();
 	}
+
+	public static void WithFunkyWhitespace()
+	{
+		var t =
+			Array.Empty<object>()
+		;
+	}
 }

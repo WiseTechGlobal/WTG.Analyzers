@@ -15,4 +15,7 @@
 	<diagnostic>
 		<location>Test0.cs: (13,11-19)</location>
 	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (19,4)-(22,8)</location>
+	</diagnostic>
 </diagnostics>
