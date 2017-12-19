@@ -27,6 +27,7 @@ namespace WTG.Analyzers
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 		public const string PreferDirectMemberAccessOverLinqDiagnosticID = "WTG3002";
 		public const string PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID = "WTG3003";
+		public const string PreferArrayEmptyOverNewArrayConstructionDiagnosticID = "WTG3004";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -255,6 +256,15 @@ namespace WTG.Analyzers
 			isEnabledByDefault: true,
 			description: "Don't use linq extension methods when there is a better alternative.");
 
+		public static readonly DiagnosticDescriptor PreferArrayEmptyOverNewArrayConstructionRule = new DiagnosticDescriptor(
+			PreferArrayEmptyOverNewArrayConstructionDiagnosticID,
+			"Prefer Array.Empty<T>() over creating a new empty array.",
+			"Prefer to use Array.Empty<T>() instead of creating a new empty array.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Array.Empty<T>() caches the array internally, so you can typically use a pre-existing immutable object instead of creating a new one.");
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -448,6 +458,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreatePreferDirectMemberAccessOverLinqInAnExpression_UseIndexerDiagnostic(Location location, object extensionName, object sourceTypeName)
 		{
 			return Diagnostic.Create(PreferDirectMemberAccessOverLinqInAnExpression_UseIndexerRule, location, extensionName, sourceTypeName);
+		}
+
+		/// <summary>
+		/// Prefer to use Array.Empty<T>() instead of creating a new empty array.
+		/// </summary>
+		public static Diagnostic CreatePreferArrayEmptyOverNewArrayConstructionDiagnostic(Location location)
+		{
+			return Diagnostic.Create(PreferArrayEmptyOverNewArrayConstructionRule, location);
 		}
 
 		/// <summary>

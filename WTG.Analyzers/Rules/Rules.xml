@@ -121,6 +121,11 @@
 			<message name="UseIndexer">Don't use the {extensionName} extension method on a source of type '{sourceTypeName}', use the indexer instead.</message>
 			<description>Don't use linq extension methods when there is a better alternative.</description>
 		</rule>
+		<rule id="4" name="PreferArrayEmptyOverNewArrayConstruction" severity="Info">
+			<title>Prefer Array.Empty&lt;T&gt;() over creating a new empty array.</title>
+			<message>Prefer to use Array.Empty&lt;T&gt;() instead of creating a new empty array.</message>
+			<description>Array.Empty&lt;T&gt;() caches the array internally, so you can typically use a pre-existing immutable object instead of creating a new one.</description>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">
