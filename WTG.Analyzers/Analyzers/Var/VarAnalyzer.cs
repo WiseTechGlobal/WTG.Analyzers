@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -13,7 +13,8 @@ namespace WTG.Analyzers
 	{
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 			Rules.UseVarWherePossibleRule,
-			Rules.UseOutVarWherePossibleRule);
+			Rules.UseOutVarWherePossibleRule,
+			Rules.DeconstructWithVarRule);
 
 		public override void Initialize(AnalysisContext context)
 		{
@@ -35,6 +36,10 @@ namespace WTG.Analyzers
 			context.RegisterSyntaxNodeAction(
 				c => AnalyzeInvoke(c, cache),
 				SyntaxKind.InvocationExpression);
+
+			context.RegisterSyntaxNodeAction(
+				c => AnalyzeAssignment(c, cache),
+				SyntaxKind.SimpleAssignmentExpression);
 		}
 
 		static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache)
@@ -119,6 +124,81 @@ namespace WTG.Analyzers
 						// We got the same symbol when using var, so var must be safe.
 						context.ReportDiagnostic(Rules.CreateUseOutVarWherePossibleDiagnostic(type.GetLocation()));
 					}
+				}
+			}
+		}
+
+		static void AnalyzeAssignment(SyntaxNodeAnalysisContext context, FileDetailCache cache)
+		{
+			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
+			{
+				return;
+			}
+
+			var node = (AssignmentExpressionSyntax)context.Node;
+
+			if (node.Left.IsKind(SyntaxKind.TupleExpression))
+			{
+				var type = context.SemanticModel.GetTypeInfo(node.Right).Type;
+
+				if (type != null && type.IsTupleType)
+				{
+					CheckTupleTypes(ref context, (TupleExpressionSyntax)node.Left, (INamedTypeSymbol)type);
+				}
+			}
+		}
+
+		static void CheckTupleTypes(ref SyntaxNodeAnalysisContext context, TupleExpressionSyntax tupleExp, INamedTypeSymbol type)
+		{
+			var arguments = tupleExp.Arguments;
+			var elements = type.TupleElements;
+
+			if (elements == null)
+			{
+				return;
+			}
+
+			var count = Math.Min(arguments.Count, elements.Length);
+
+			for (var i = 0; i < count; i++)
+			{
+				var arg = arguments[i].Expression;
+
+				switch (arg.Kind())
+				{
+					case SyntaxKind.TupleExpression:
+						{
+							var argType = elements[i].Type;
+
+							if (argType.Kind == SymbolKind.NamedType)
+							{
+								CheckTupleTypes(
+									ref context,
+									(TupleExpressionSyntax)arg,
+									(INamedTypeSymbol)argType);
+							}
+						}
+						break;
+
+					case SyntaxKind.DeclarationExpression:
+						{
+							var declExp = (DeclarationExpressionSyntax)arg;
+
+							if (!declExp.Type.IsVar)
+							{
+								var expectedType = elements[i].Type;
+								var actualType = context.SemanticModel.GetTypeInfo(declExp.Type, context.CancellationToken).Type;
+
+								if (TypeEquals(actualType, expectedType))
+								{
+									context.ReportDiagnostic(
+										Diagnostic.Create(
+											Rules.DeconstructWithVarRule,
+											declExp.Type.GetLocation()));
+								}
+							}
+						}
+						break;
 				}
 			}
 		}

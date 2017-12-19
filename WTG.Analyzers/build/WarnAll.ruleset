@@ -13,6 +13,7 @@
 		<Rule Id="WTG1009" Action="Warning" />
 		<Rule Id="WTG1010" Action="Warning" />
 		<Rule Id="WTG1011" Action="Warning" />
+		<Rule Id="WTG1012" Action="Warning" />
 
 		<!-- Correctness -->
 		<Rule Id="WTG2001" Action="Warning" />

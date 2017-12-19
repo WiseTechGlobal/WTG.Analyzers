@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG1012" message="The compiler is able to correctly identify which type to use here, so replace the explicit type with var." severity="Hidden">
+	<diagnostic>
+		<location>Test0.cs: (5,4-7)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (5,12-17)</location>
+	</diagnostic>
+
+	<diagnostic>
+		<location>Test0.cs: (6,4-7)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (6,12-15)</location>
+	</diagnostic>
+
+	<diagnostic>
+		<location>Test0.cs: (7,5-8)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (7,13-18)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (7,25-31)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (7,36-40)</location>
+	</diagnostic>
+
+	<diagnostic>
+		<location>Test0.cs: (12,4-7)</location>
+	</diagnostic>
+
+	<diagnostic>
+		<location>Test0.cs: (13,4-7)</location>
+	</diagnostic>
+</diagnostics>

@@ -76,6 +76,12 @@
 			<description>Move 'var' outside of the deconstruction expression.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="12" name="DeconstructWithVar" severity="Hidden">
+			<title>Use the 'var' keyword instead of an explicit type where possible.</title>
+			<message>The compiler is able to correctly identify which type to use here, so replace the explicit type with var.</message>
+			<description>Replace with the 'var' keyword.</description>
+			<tag>Unnecessary</tag>
+		</rule>
 	</category>
 	<category name="Correctness" id="2000">
 		<rule id="1" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">
