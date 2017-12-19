@@ -43,7 +43,7 @@ namespace WTG.Analyzers
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
-			var node = root.FindNode(diagnosticSpan);
+			var node = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 			var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
 			if (node.Kind() == SyntaxKind.ArrayCreationExpression)
