@@ -1,18 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <diagnostics id="WTG1001" message="Our convention is to omit the 'private' modifier where it is already the default." severity="Hidden">
+	<suppressId>CS0107</suppressId>
 	<diagnostic>
-		<location>Test0.cs: (23,2-9)</location>
+		<location>Test0.cs: (29,2-9)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (24,2-9)</location>
+		<location>Test0.cs: (30,2-9)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (25,2-9)</location>
+		<location>Test0.cs: (31,2-9)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (26,2-9)</location>
+		<location>Test0.cs: (32,2-9)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (27,2-9)</location>
+		<location>Test0.cs: (33,2-9)</location>
 	</diagnostic>
 </diagnostics>

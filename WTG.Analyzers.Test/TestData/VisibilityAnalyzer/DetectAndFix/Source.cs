@@ -20,6 +20,12 @@ public class Bob
 	protected event EventHandler ProtectedEvent;
 	protected class ProtectedClass { }
 
+	private protected string PrivateProtectedField;
+	private protected string PrivateProtectedProperty => PrivateProtectedField;
+	private protected string PrivateProtectedMethod() => PrivateProtectedField;
+	private protected event EventHandler PrivateProtectedEvent;
+	private protected class PrivateProtectedClass { }
+
 	private string PrivateField;
 	private string PrivateProperty => PrivateField;
 	private string PrivateMethod() => PrivateField;
