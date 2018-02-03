@@ -33,8 +33,7 @@ namespace WTG.Analyzers
 			}
 
 			var list = ModifierExtractionVisitor.Instance.Visit(context.Node);
-			var hasProtected = false;
-			Location privateLocation = null;
+			var privateToken = default(SyntaxToken);
 
 			foreach (var modifier in list)
 			{
@@ -43,25 +42,25 @@ namespace WTG.Analyzers
 				switch (kind)
 				{
 					case SyntaxKind.PrivateKeyword:
-						privateLocation = modifier.GetLocation();
+						privateToken = modifier;
 						break;
 
 					case SyntaxKind.ProtectedKeyword:
-						hasProtected = true;
-						break;
+					case SyntaxKind.PublicKeyword:
+						return;
 
 					case SyntaxKind.InternalKeyword:
 						if (IsTopLevel(context.Node))
 						{
 							context.ReportDiagnostic(Rules.CreateDoNotUseTheInternalKeywordForTopLevelTypesDiagnostic(modifier.GetLocation()));
 						}
-						break;
+						return;
 				}
 			}
 
-			if (privateLocation != null && !hasProtected)
+			if (privateToken.Kind() == SyntaxKind.PrivateKeyword)
 			{
-				context.ReportDiagnostic(Rules.CreateDoNotUseThePrivateKeywordDiagnostic(privateLocation));
+				context.ReportDiagnostic(Rules.CreateDoNotUseThePrivateKeywordDiagnostic(privateToken.GetLocation()));
 			}
 		}
 
