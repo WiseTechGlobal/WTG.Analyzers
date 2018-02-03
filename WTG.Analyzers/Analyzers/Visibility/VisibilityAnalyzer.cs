@@ -33,6 +33,7 @@ namespace WTG.Analyzers
 			}
 
 			var list = ModifierExtractionVisitor.Instance.Visit(context.Node);
+			var privateToken = default(SyntaxToken);
 
 			foreach (var modifier in list)
 			{
@@ -41,16 +42,25 @@ namespace WTG.Analyzers
 				switch (kind)
 				{
 					case SyntaxKind.PrivateKeyword:
-						context.ReportDiagnostic(Rules.CreateDoNotUseThePrivateKeywordDiagnostic(modifier.GetLocation()));
+						privateToken = modifier;
 						break;
+
+					case SyntaxKind.ProtectedKeyword:
+					case SyntaxKind.PublicKeyword:
+						return;
 
 					case SyntaxKind.InternalKeyword:
 						if (IsTopLevel(context.Node))
 						{
 							context.ReportDiagnostic(Rules.CreateDoNotUseTheInternalKeywordForTopLevelTypesDiagnostic(modifier.GetLocation()));
 						}
-						break;
+						return;
 				}
+			}
+
+			if (privateToken.Kind() == SyntaxKind.PrivateKeyword)
+			{
+				context.ReportDiagnostic(Rules.CreateDoNotUseThePrivateKeywordDiagnostic(privateToken.GetLocation()));
 			}
 		}
 
