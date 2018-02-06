@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <package>
 	<metadata>
 		<id>WTG.Analyzers.TestFramework</id>
@@ -6,7 +6,7 @@
 		<authors>WiseTech Global</authors>
 		<owners>WiseTech Global</owners>
 		<description>Support library for testing Roslyn Analyzers.</description>
-		<copyright>Copyright 2017</copyright>
+		<copyright>Copyright 2018</copyright>
 		<developmentDependency>true</developmentDependency>
 	</metadata>
 
