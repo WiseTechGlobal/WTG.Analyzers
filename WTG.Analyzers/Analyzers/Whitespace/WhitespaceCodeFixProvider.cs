@@ -1,6 +1,7 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -101,7 +102,7 @@ namespace WTG.Analyzers
 		static SyntaxTrivia FindTrivia(SyntaxNode root, Location location)
 		{
 			var diagnosticSpan = location.SourceSpan;
-			var trivia = root.FindTrivia(diagnosticSpan.Start);
+			var trivia = root.FindTrivia(diagnosticSpan.Start, findInsideTrivia: true);
 			return trivia;
 		}
 
@@ -126,10 +127,43 @@ namespace WTG.Analyzers
 
 		static SyntaxTrivia RewriteIndentingUsingTabs(SyntaxTrivia originalTrivia, SyntaxTrivia targetTrivia)
 		{
-			return SyntaxFactory.Whitespace(StringFromIndentColumn(CalculateColumn(originalTrivia.ToString())));
+			switch (originalTrivia.Kind())
+			{
+				case SyntaxKind.WhitespaceTrivia:
+					return ModifyWhitespaceTrivia(originalTrivia);
+
+				case SyntaxKind.DocumentationCommentExteriorTrivia:
+					return ModifyDocumentationCommentExteriorTrivia(originalTrivia);
+
+				default:
+					return targetTrivia;
+			}
+
+			SyntaxTrivia ModifyWhitespaceTrivia(SyntaxTrivia trivia)
+			{
+				var (column, _) = CalculateColumn(trivia.ToString());
+				return SyntaxFactory.Whitespace(StringFromIndentColumn(column));
+			}
+
+			SyntaxTrivia ModifyDocumentationCommentExteriorTrivia(SyntaxTrivia trivia)
+			{
+				var originalText = trivia.ToString();
+				var (column, length) = CalculateColumn(originalText);
+
+				if (length == originalText.Length)
+				{
+					return SyntaxFactory.DocumentationCommentExterior(StringFromIndentColumn(column));
+				}
+
+				var builder = new StringBuilder();
+				builder.Append('\t', column / AssumedTabSize);
+				builder.Append(' ', column % AssumedTabSize);
+				builder.Append(originalText, length, originalText.Length - length);
+				return SyntaxFactory.DocumentationCommentExterior(builder.ToString());
+			}
 		}
 
-		static int CalculateColumn(string text)
+		static (int column, int length) CalculateColumn(string text)
 		{
 			var column = 0;
 
@@ -141,13 +175,17 @@ namespace WTG.Analyzers
 					column = (column + AssumedTabSize);
 					column = column - (column % AssumedTabSize);
 				}
-				else
+				else if (char.IsWhiteSpace(text, i))
 				{
 					column++;
 				}
+				else
+				{
+					return (column, i);
+				}
 			}
 
-			return column;
+			return (column, text.Length);
 		}
 
 		static string StringFromIndentColumn(int column)
