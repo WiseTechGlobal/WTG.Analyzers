@@ -39,9 +39,9 @@ namespace WTG.Analyzers
 				switch (trivia.Kind())
 				{
 					case SyntaxKind.EndOfLineTrivia:
-						if (TryGetPreceedingTrivia(trivia, out var preceedingTrivia) && preceedingTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
+						if (TryGetPrecedingTrivia(trivia, out var precedingTrivia) && precedingTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
 						{
-							context.ReportDiagnostic(Rules.CreateDoNotLeaveWhitespaceOnTheEndOfTheLineDiagnostic(preceedingTrivia.GetLocation()));
+							context.ReportDiagnostic(Rules.CreateDoNotLeaveWhitespaceOnTheEndOfTheLineDiagnostic(precedingTrivia.GetLocation()));
 						}
 
 						if (trivia.ToString() != "\r\n")
@@ -102,7 +102,7 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool TryGetPreceedingTrivia(SyntaxTrivia trivia, out SyntaxTrivia preceedingTrivia)
+		static bool TryGetPrecedingTrivia(SyntaxTrivia trivia, out SyntaxTrivia precedingTrivia)
 		{
 			var token = trivia.Token;
 			var list = token.TrailingTrivia;
@@ -115,31 +115,28 @@ namespace WTG.Analyzers
 
 				if (index < 0)
 				{
-					preceedingTrivia = default(SyntaxTrivia);
+					precedingTrivia = default(SyntaxTrivia);
 					return false;
 				}
 			}
 
 			if (index > 0)
 			{
-				preceedingTrivia = list[index - 1];
+				precedingTrivia = list[index - 1];
 				return true;
 			}
 
-			preceedingTrivia = default(SyntaxTrivia);
+			precedingTrivia = default(SyntaxTrivia);
 			return false;
 		}
 
 		static string LeadingWhitespace(string text)
 		{
-			if (text.Length != 0)
+			for (var n = 0; n < text.Length; n++)
 			{
-				for (var n = 0; n < text.Length; n++)
+				if (!char.IsWhiteSpace(text, n))
 				{
-					if (!char.IsWhiteSpace(text, n))
-					{
-						return text.Substring(0, n);
-					}
+					return text.Substring(0, n);
 				}
 			}
 
