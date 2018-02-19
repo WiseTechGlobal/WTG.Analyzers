@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
 using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
@@ -33,34 +34,61 @@ namespace WTG.Analyzers
 			var root = context.Tree.GetRoot(context.CancellationToken);
 			List<Location> brokenIndentation = null;
 
-			foreach (var trivia in root.DescendantTrivia())
+			foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
 			{
-				if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+				switch (trivia.Kind())
 				{
-					if (TryGetPreceedingTrivia(trivia, out var preceedingTrivia) && preceedingTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
-					{
-						context.ReportDiagnostic(Rules.CreateDoNotLeaveWhitespaceOnTheEndOfTheLineDiagnostic(preceedingTrivia.GetLocation()));
-					}
-
-					if (trivia.ToString() != "\r\n")
-					{
-						context.ReportDiagnostic(Rules.CreateUseConsistentLineEndingsDiagnostic(trivia.GetLocation()));
-					}
-				}
-				else if (trivia.IsKind(SyntaxKind.WhitespaceTrivia))
-				{
-					var location = trivia.GetLocation();
-
-					if (location.GetLineSpan().StartLinePosition.Character == 0 &&
-						!acceptableLeadingWhitespace.IsMatch(trivia.ToString()))
-					{
-						if (brokenIndentation == null)
+					case SyntaxKind.EndOfLineTrivia:
+						if (TryGetPrecedingTrivia(trivia, out var precedingTrivia) && precedingTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
 						{
-							brokenIndentation = new List<Location>();
+							context.ReportDiagnostic(Rules.CreateDoNotLeaveWhitespaceOnTheEndOfTheLineDiagnostic(precedingTrivia.GetLocation()));
 						}
 
-						brokenIndentation.Add(location);
-					}
+						if (trivia.ToString() != "\r\n")
+						{
+							context.ReportDiagnostic(Rules.CreateUseConsistentLineEndingsDiagnostic(trivia.GetLocation()));
+						}
+						break;
+
+					case SyntaxKind.WhitespaceTrivia:
+						{
+							var location = trivia.GetLocation();
+
+							if (location.GetLineSpan().StartLinePosition.Character == 0 &&
+								!acceptableLeadingWhitespace.IsMatch(trivia.ToString()))
+							{
+								if (brokenIndentation == null)
+								{
+									brokenIndentation = new List<Location>();
+								}
+
+								brokenIndentation.Add(location);
+							}
+						}
+						break;
+
+					case SyntaxKind.DocumentationCommentExteriorTrivia:
+						{
+							var location = trivia.GetLocation();
+
+							if (location.GetLineSpan().StartLinePosition.Character == 0)
+							{
+								var text = LeadingWhitespace(trivia.ToString());
+
+								if (!acceptableLeadingWhitespace.IsMatch(text))
+								{
+									var start = location.SourceSpan.Start;
+
+									if (brokenIndentation == null)
+									{
+										brokenIndentation = new List<Location>();
+									}
+
+									brokenIndentation.Add(Location.Create(location.SourceTree, TextSpan.FromBounds(start, start + text.Length)));
+								}
+							}
+						}
+						break;
 				}
 			}
 
@@ -74,7 +102,7 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool TryGetPreceedingTrivia(SyntaxTrivia trivia, out SyntaxTrivia preceedingTrivia)
+		static bool TryGetPrecedingTrivia(SyntaxTrivia trivia, out SyntaxTrivia precedingTrivia)
 		{
 			var token = trivia.Token;
 			var list = token.TrailingTrivia;
@@ -87,19 +115,32 @@ namespace WTG.Analyzers
 
 				if (index < 0)
 				{
-					preceedingTrivia = default(SyntaxTrivia);
+					precedingTrivia = default(SyntaxTrivia);
 					return false;
 				}
 			}
 
 			if (index > 0)
 			{
-				preceedingTrivia = list[index - 1];
+				precedingTrivia = list[index - 1];
 				return true;
 			}
 
-			preceedingTrivia = default(SyntaxTrivia);
+			precedingTrivia = default(SyntaxTrivia);
 			return false;
+		}
+
+		static string LeadingWhitespace(string text)
+		{
+			for (var n = 0; n < text.Length; n++)
+			{
+				if (!char.IsWhiteSpace(text, n))
+				{
+					return text.Substring(0, n);
+				}
+			}
+
+			return text;
 		}
 
 		// Must consist of one or more tab followed by up to 3 spaces.

@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <diagnostics id="WTG1004" message="Our coding convention is to use tabs, not spaces, you may need to fix your settings." severity="Info">
 	<diagnostic>
-		<location>Test0.cs: (6,1-5)</location>
-		<location>Test0.cs: (7,1-5)</location>
-		<location>Test0.cs: (8,1-9)</location>
-		<location>Test0.cs: (9,1-9)</location>
-		<location>Test0.cs: (10,1-5)</location>
+		<location>Test0.cs: (4,1-5)</location>
+		<location>Test0.cs: (5,1-8)</location>
+		<location>Test0.cs: (6,1-6)</location>
+
+		<location>Test0.cs: (9,1-5)</location>
+		<location>Test0.cs: (10,1-6)</location>
+		<location>Test0.cs: (11,1-6)</location>
+
 		<location>Test0.cs: (12,1-5)</location>
 		<location>Test0.cs: (13,1-5)</location>
 		<location>Test0.cs: (14,1-9)</location>
-		<location>Test0.cs: (18,1-9)</location>
-		<location>Test0.cs: (19,1-19)</location>
-		<location>Test0.cs: (20,1-19)</location>
+		<location>Test0.cs: (15,1-9)</location>
+		<location>Test0.cs: (16,1-5)</location>
+
+		<location>Test0.cs: (18,1-5)</location>
+		<location>Test0.cs: (19,1-5)</location>
+		<location>Test0.cs: (20,1-5)</location>
 		<location>Test0.cs: (21,1-5)</location>
+		<location>Test0.cs: (22,1-5)</location>
+		<location>Test0.cs: (23,1-9)</location>
+
+		<location>Test0.cs: (27,1-9)</location>
+		<location>Test0.cs: (28,1-19)</location>
+		<location>Test0.cs: (29,1-19)</location>
+		<location>Test0.cs: (30,1-5)</location>
 	</diagnostic>
 </diagnostics>
