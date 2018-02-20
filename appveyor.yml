@@ -40,7 +40,7 @@ artifacts:
   - path: bin\WTG.Analyzers.$(WTG_ANALYZERS_VERSION).nupkg
   - path: bin\WTG.Analyzers.TestFramework.$(WTG_ANALYZERS_VERSION).nupkg
 
- deploy:
+deploy:
   - provider: NuGet
     api_key:
       secure: 'N0UpuDdHhEWIREEAXYDSNqJqpNIBq5c5lcIvpoAzvQA5A7AdCH2/l/b4VNWipmLk'
