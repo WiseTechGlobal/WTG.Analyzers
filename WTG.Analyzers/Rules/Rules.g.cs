@@ -34,6 +34,7 @@ namespace WTG.Analyzers
 		public const string RemovePointlessOverridesDiagnosticID = "WTG3007";
 		public const string DontEquateValueTypesWithNullDiagnosticID = "WTG3008";
 		public const string PreferCompletedTaskDiagnosticID = "WTG3009";
+		public const string DoNotCompareGetTypeToANullableValueTypeDiagnosticID = "WTG3010";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -393,6 +394,19 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor DoNotCompareGetTypeToANullableValueTypeRule = new DiagnosticDescriptor(
+			DoNotCompareGetTypeToANullableValueTypeDiagnosticID,
+			"Do not compare GetType() to a nullable value type.",
+			"Boxing a nullable value will always result in either null or a boxed non-nullable value, so GetType() will never return a nullable type.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "This expression will always return false, remove it.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -674,6 +688,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreatePreferCompletedTaskDiagnostic(Location location)
 		{
 			return Diagnostic.Create(PreferCompletedTaskRule, location);
+		}
+
+		/// <summary>
+		/// Boxing a nullable value will always result in either null or a boxed non-nullable value, so GetType() will never return a nullable type.
+		/// </summary>
+		public static Diagnostic CreateDoNotCompareGetTypeToANullableValueTypeDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DoNotCompareGetTypeToANullableValueTypeRule, location);
 		}
 
 		/// <summary>

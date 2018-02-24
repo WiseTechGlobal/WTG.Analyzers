@@ -156,6 +156,12 @@
 			<description>Prefer Task.CompletedTask when applicable.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="10" name="DoNotCompareGetTypeToANullableValueType" severity="Info">
+			<title>Do not compare GetType() to a nullable value type.</title>
+			<message>Boxing a nullable value will always result in either null or a boxed non-nullable value, so GetType() will never return a nullable type.</message>
+			<description>This expression will always return false, remove it.</description>
+			<tag>Unnecessary</tag>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">
