@@ -58,7 +58,7 @@ namespace WTG.Analyzers
 
 		static bool IsFlagsEnum(SemanticModel model, EnumDeclarationSyntax decl, CancellationToken cancellationToken)
 		{
-			bool isFlagsEnum = false;
+			var isFlagsEnum = false;
 
 			foreach (var attributeList in decl.AttributeLists)
 			{

@@ -33,7 +33,7 @@ namespace WTG.Analyzers
 			if (context.Node.IsKind(SyntaxKind.TupleExpression))
 			{
 				var tupleExpression = (TupleExpressionSyntax)context.Node;
-				
+
 				if (AllTupleArgumentsAreVarDeclarations(tupleExpression))
 				{
 					context.ReportDiagnostic(Diagnostic.Create(Rules.DeconstructWithSingleVarRule, context.Node.GetLocation()));
