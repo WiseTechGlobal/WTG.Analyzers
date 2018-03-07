@@ -28,6 +28,8 @@ namespace WTG.Analyzers
 		public const string PreferDirectMemberAccessOverLinqDiagnosticID = "WTG3002";
 		public const string PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID = "WTG3003";
 		public const string PreferArrayEmptyOverNewArrayConstructionDiagnosticID = "WTG3004";
+		public const string DontCallToStringOnAStringDiagnosticID = "WTG3005";
+		public const string PreferNameofOverCallingToStringOnAnEnumDiagnosticID = "WTG3006";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -265,6 +267,28 @@ namespace WTG.Analyzers
 			isEnabledByDefault: true,
 			description: "Array.Empty<T>() caches the array internally, so you can typically use a pre-existing immutable object instead of creating a new one.");
 
+		public static readonly DiagnosticDescriptor DontCallToStringOnAStringRule = new DiagnosticDescriptor(
+			DontCallToStringOnAStringDiagnosticID,
+			"Don't call ToString() on a string.",
+			"Don't call ToString() on a string.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Calling ToString() on a string object is redundant, just use the original string object.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
+		public static readonly DiagnosticDescriptor PreferNameofOverCallingToStringOnAnEnumRule = new DiagnosticDescriptor(
+			PreferNameofOverCallingToStringOnAnEnumDiagnosticID,
+			"Prefer nameof over calling ToString on an enum literal.",
+			"Prefer nameof over calling ToString on an enum literal.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Prefer nameof over calling ToString on an enum literal.");
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -466,6 +490,22 @@ namespace WTG.Analyzers
 		public static Diagnostic CreatePreferArrayEmptyOverNewArrayConstructionDiagnostic(Location location)
 		{
 			return Diagnostic.Create(PreferArrayEmptyOverNewArrayConstructionRule, location);
+		}
+
+		/// <summary>
+		/// Don't call ToString() on a string.
+		/// </summary>
+		public static Diagnostic CreateDontCallToStringOnAStringDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DontCallToStringOnAStringRule, location);
+		}
+
+		/// <summary>
+		/// Prefer nameof over calling ToString on an enum literal.
+		/// </summary>
+		public static Diagnostic CreatePreferNameofOverCallingToStringOnAnEnumDiagnostic(Location location)
+		{
+			return Diagnostic.Create(PreferNameofOverCallingToStringOnAnEnumRule, location);
 		}
 
 		/// <summary>

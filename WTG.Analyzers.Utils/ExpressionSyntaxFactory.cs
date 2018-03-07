@@ -42,6 +42,24 @@ namespace WTG.Analyzers.Utils
 				SyntaxFactory.Literal(value));
 		}
 
+		public static InvocationExpressionSyntax CreateNameof(ExpressionSyntax argument)
+		{
+			var node = SyntaxFactory.InvocationExpression(
+				SyntaxFactory.IdentifierName("nameof"),
+				SyntaxFactory.ArgumentList(
+					SyntaxFactory.SeparatedList(
+						new[] { SyntaxFactory.Argument(argument) })));
+
+			// This may seem stupid (lets face it, it is) but without it, roslyn will
+			// complain about a missing 'nameof' method. As far as I can tell, the
+			// only effect this has on the actual syntax tree is that it is stripping
+			// all the annotations and changing the 'contextual kind' of the underlying
+			// green node.
+			//
+			// Error CS0103: The name 'nameof' does not exist in the current context
+			return (InvocationExpressionSyntax)SyntaxFactory.ParseExpression(node.ToString());
+		}
+
 		[SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
 		public static ExpressionSyntax CreateSingleBitFlag(int index)
 		{

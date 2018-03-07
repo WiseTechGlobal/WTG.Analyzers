@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3005" message="Don't call ToString() on a string." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (5,52-63)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (6,84-109)</location>
+	</diagnostic>
+</diagnostics>

@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp;
 using NUnit.Framework;
 
 namespace WTG.Analyzers.Utils.Test
@@ -33,6 +33,14 @@ namespace WTG.Analyzers.Utils.Test
 		public string CreateSingleBitFlag(int index)
 		{
 			return ExpressionSyntaxFactory.CreateSingleBitFlag(index).ToString();
+		}
+
+		[Test]
+		public void Nameof()
+		{
+			var expression = ExpressionSyntaxFactory.CreateNameof(SyntaxFactory.IdentifierName("Identifier"));
+
+			Assert.That(expression.ToString(), Is.EqualTo("nameof(Identifier)"));
 		}
 
 		[Test]

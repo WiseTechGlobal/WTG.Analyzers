@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3006" message="Prefer nameof over calling ToString on an enum literal." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (5,36-59)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (6,36-59)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (7,36-59)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (9,40-65)</location>
+	</diagnostic>
+</diagnostics>
