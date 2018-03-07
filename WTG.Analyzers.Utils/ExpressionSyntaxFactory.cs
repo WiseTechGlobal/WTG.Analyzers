@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -7,6 +8,25 @@ namespace WTG.Analyzers.Utils
 {
 	public static class ExpressionSyntaxFactory
 	{
+		public static IdentifierNameSyntax Nameof
+		{
+			get
+			{
+				if (nameofSyntax == null)
+				{
+					// This may seem stupid (lets face it, it is) but the identifier produced by SyntaxFactory.IdentifierName
+					// has the wrong kind of magic for the compiler to recognise it as a contextual keyword.
+					//
+					// Error CS0103: The name 'nameof' does not exist in the current context
+					var invoke = (InvocationExpressionSyntax)SyntaxFactory.ParseExpression("nameof(A)");
+					var identifier = (IdentifierNameSyntax)invoke.Expression;
+					nameofSyntax = Interlocked.CompareExchange(ref nameofSyntax, identifier, null) ?? identifier;
+				}
+
+				return nameofSyntax;
+			}
+		}
+
 		public static ExpressionSyntax LogicalNot(ExpressionSyntax expression)
 		{
 			if (HasPrimaryOrUnaryPrecedence(expression))
@@ -44,20 +64,11 @@ namespace WTG.Analyzers.Utils
 
 		public static InvocationExpressionSyntax CreateNameof(ExpressionSyntax argument)
 		{
-			var node = SyntaxFactory.InvocationExpression(
-				SyntaxFactory.IdentifierName("nameof"),
+			return SyntaxFactory.InvocationExpression(
+				Nameof,
 				SyntaxFactory.ArgumentList(
 					SyntaxFactory.SeparatedList(
 						new[] { SyntaxFactory.Argument(argument) })));
-
-			// This may seem stupid (lets face it, it is) but without it, roslyn will
-			// complain about a missing 'nameof' method. As far as I can tell, the
-			// only effect this has on the actual syntax tree is that it is stripping
-			// all the annotations and changing the 'contextual kind' of the underlying
-			// green node.
-			//
-			// Error CS0103: The name 'nameof' does not exist in the current context
-			return (InvocationExpressionSyntax)SyntaxFactory.ParseExpression(node.ToString());
 		}
 
 		[SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
@@ -116,5 +127,7 @@ namespace WTG.Analyzers.Utils
 					return false;
 			}
 		}
+
+		static IdentifierNameSyntax nameofSyntax;
 	}
 }
