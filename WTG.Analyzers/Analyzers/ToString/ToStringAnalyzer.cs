@@ -40,25 +40,51 @@ namespace WTG.Analyzers
 
 			var invoke = (InvocationExpressionSyntax)context.Node;
 
-			if (invoke.Expression.IsKind(SyntaxKind.SimpleMemberAccessExpression) &&
-				invoke.Expression is MemberAccessExpressionSyntax member &&
-				member.Name.Identifier.Text == WellKnownMemberNames.ObjectToString)
+			switch (invoke.Expression.Kind())
 			{
-				var symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
+				case SyntaxKind.SimpleMemberAccessExpression:
+					{
+						var member = (MemberAccessExpressionSyntax)invoke.Expression;
 
-				if (symbol != null)
-				{
-					if (symbol.ReceiverType.IsMatch("System.String"))
-					{
-						context.ReportDiagnostic(Rules.CreateDontCallToStringOnAStringDiagnostic(InvokeLocation(invoke, member)));
+						if (member.Name.Identifier.Text == WellKnownMemberNames.ObjectToString)
+						{
+							var symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
+
+							if (symbol != null)
+							{
+								if (symbol.ReceiverType.IsMatch("System.String"))
+								{
+									context.ReportDiagnostic(Rules.CreateDontCallToStringOnAStringDiagnostic(InvokeLocation(invoke, member.OperatorToken)));
+								}
+								else if (symbol.ReceiverType.IsMatch("System.Enum") &&
+									symbol.Parameters.Length == 0 &&
+									IsEnumLiteral(member.Expression, context.SemanticModel, context.CancellationToken))
+								{
+									context.ReportDiagnostic(Rules.CreatePreferNameofOverCallingToStringOnAnEnumDiagnostic(invoke.GetLocation()));
+								}
+							}
+						}
 					}
-					else if (symbol.ReceiverType.IsMatch("System.Enum") &&
-						symbol.Parameters.Length == 0 &&
-						IsEnumLiteral(member.Expression, context.SemanticModel, context.CancellationToken))
+					break;
+
+				case SyntaxKind.MemberBindingExpression:
 					{
-						context.ReportDiagnostic(Rules.CreatePreferNameofOverCallingToStringOnAnEnumDiagnostic(invoke.GetLocation()));
+						var binding = (MemberBindingExpressionSyntax)invoke.Expression;
+
+						if (binding.Name.Identifier.Text == WellKnownMemberNames.ObjectToString)
+						{
+							var symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
+
+							if (symbol != null)
+							{
+								if (symbol.ReceiverType.IsMatch("System.String"))
+								{
+									context.ReportDiagnostic(Rules.CreateDontCallToStringOnAStringDiagnostic(InvokeLocation(invoke, binding.OperatorToken)));
+								}
+							}
+						}
 					}
-				}
+					break;
 			}
 		}
 
@@ -78,12 +104,12 @@ namespace WTG.Analyzers
 				memberSymbol.ContainingType.EnumUnderlyingType != null;
 		}
 
-		static Location InvokeLocation(InvocationExpressionSyntax invoke, MemberAccessExpressionSyntax member)
+		static Location InvokeLocation(InvocationExpressionSyntax invoke, SyntaxToken operatorToken)
 		{
 			return Location.Create(
 				invoke.SyntaxTree,
 				TextSpan.FromBounds(
-					member.OperatorToken.Span.Start,
+					operatorToken.Span.Start,
 					invoke.ArgumentList.CloseParenToken.Span.End));
 		}
 	}

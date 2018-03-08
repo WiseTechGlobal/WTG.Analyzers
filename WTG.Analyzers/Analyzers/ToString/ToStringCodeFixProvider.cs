@@ -55,11 +55,59 @@ namespace WTG.Analyzers
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var invoke = GetTargetInvoke(root, diagnostic);
 
-			return document.WithSyntaxRoot(
-				root.ReplaceNode(
-					invoke,
-					Unwrap(invoke)
-					.WithTriviaFrom(invoke)));
+			switch (invoke.Expression.Kind())
+			{
+				case SyntaxKind.SimpleMemberAccessExpression:
+					// value.ToString() --> value
+					return document.WithSyntaxRoot(
+						root.ReplaceNode(
+							invoke,
+							Unwrap(invoke)
+							.WithTriviaFrom(invoke)));
+
+				case SyntaxKind.MemberBindingExpression:
+					switch (invoke.Parent.Kind())
+					{
+						case SyntaxKind.ConditionalAccessExpression:
+							// value?.ToString() --> value
+							var conditionalAccess = (ConditionalAccessExpressionSyntax)invoke.Parent;
+
+							return document.WithSyntaxRoot(
+								root.ReplaceNode(
+									conditionalAccess,
+									conditionalAccess.Expression)
+									.WithTriviaFrom(conditionalAccess));
+
+						case SyntaxKind.SimpleMemberAccessExpression:
+							{
+								// value?.ToString().Length --> value?.Length
+								var member = (MemberAccessExpressionSyntax)invoke.Parent;
+								var binding = (MemberBindingExpressionSyntax)invoke.Expression;
+
+								return document.WithSyntaxRoot(
+									root.ReplaceNode(
+										member,
+										binding.WithName(member.Name)
+											.WithTriviaFrom(member)));
+							}
+
+						case SyntaxKind.ElementAccessExpression:
+							{
+								// value?.ToString()[0] --> value?[0]
+								var member = (ElementAccessExpressionSyntax)invoke.Parent;
+								var binding = (MemberBindingExpressionSyntax)invoke.Expression;
+
+								return document.WithSyntaxRoot(
+									root.ReplaceNode(
+										member,
+										SyntaxFactory.ElementBindingExpression(member.ArgumentList)
+											.WithTriviaFrom(member)));
+							}
+					}
+					break;
+			}
+
+			return document;
 		}
 
 		static async Task<Document> ConvertToNameof(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
