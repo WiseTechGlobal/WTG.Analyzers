@@ -19,7 +19,7 @@ namespace WTG.Analyzers.Utils
 					//
 					// Error CS0103: The name 'nameof' does not exist in the current context
 					var invoke = (InvocationExpressionSyntax)SyntaxFactory.ParseExpression("nameof(A)");
-					var identifier = (IdentifierNameSyntax)invoke.Expression;
+					var identifier = (IdentifierNameSyntax)invoke.Expression.WithoutTrivia();
 					nameofSyntax = Interlocked.CompareExchange(ref nameofSyntax, identifier, null) ?? identifier;
 				}
 

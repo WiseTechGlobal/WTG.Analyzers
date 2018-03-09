@@ -51,6 +51,12 @@ namespace WTG.Analyzers.Utils.Test
 		}
 
 		[Test]
+		public void Nameof_DontHangOnToDeadWeight()
+		{
+			Assert.That(ExpressionSyntaxFactory.Nameof.Parent, Is.Null);
+		}
+
+		[Test]
 		public async Task Nameof_Compilable()
 		{
 			var source =
