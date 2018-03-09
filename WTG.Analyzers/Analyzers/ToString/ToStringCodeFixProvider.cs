@@ -77,8 +77,8 @@ namespace WTG.Analyzers
 								return document.WithSyntaxRoot(
 									root.ReplaceNode(
 										conditionalAccess,
-										conditionalAccess.Expression)
-										.WithTriviaFrom(conditionalAccess));
+										conditionalAccess.Expression
+											.WithTriviaFrom(conditionalAccess)));
 							}
 							else
 							{
@@ -86,8 +86,8 @@ namespace WTG.Analyzers
 								return document.WithSyntaxRoot(
 									root.ReplaceNode(
 										conditionalAccess,
-										conditionalAccess.WhenNotNull)
-										.WithTriviaFrom(conditionalAccess));
+										conditionalAccess.WhenNotNull
+											.WithTriviaFrom(conditionalAccess)));
 							}
 
 						case SyntaxKind.SimpleMemberAccessExpression:
