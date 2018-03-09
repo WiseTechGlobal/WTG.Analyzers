@@ -69,14 +69,26 @@ namespace WTG.Analyzers
 					switch (invoke.Parent.Kind())
 					{
 						case SyntaxKind.ConditionalAccessExpression:
-							// value?.ToString() --> value
 							var conditionalAccess = (ConditionalAccessExpressionSyntax)invoke.Parent;
 
-							return document.WithSyntaxRoot(
-								root.ReplaceNode(
-									conditionalAccess,
-									conditionalAccess.Expression)
-									.WithTriviaFrom(conditionalAccess));
+							if (conditionalAccess.WhenNotNull == invoke)
+							{
+								// value?.ToString() --> value
+								return document.WithSyntaxRoot(
+									root.ReplaceNode(
+										conditionalAccess,
+										conditionalAccess.Expression)
+										.WithTriviaFrom(conditionalAccess));
+							}
+							else
+							{
+								// value?.ToString()?.Length --> value?.Length
+								return document.WithSyntaxRoot(
+									root.ReplaceNode(
+										conditionalAccess,
+										conditionalAccess.WhenNotNull)
+										.WithTriviaFrom(conditionalAccess));
+							}
 
 						case SyntaxKind.SimpleMemberAccessExpression:
 							{
