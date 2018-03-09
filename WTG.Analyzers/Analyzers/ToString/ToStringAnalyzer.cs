@@ -52,15 +52,19 @@ namespace WTG.Analyzers
 
 							if (symbol != null)
 							{
-								if (symbol.ReceiverType.IsMatch("System.String"))
+								switch (symbol.ReceiverType.SpecialType)
 								{
-									context.ReportDiagnostic(Rules.CreateDontCallToStringOnAStringDiagnostic(InvokeLocation(invoke, member.OperatorToken)));
-								}
-								else if (symbol.ReceiverType.IsMatch("System.Enum") &&
-									symbol.Parameters.Length == 0 &&
-									IsEnumLiteral(member.Expression, context.SemanticModel, context.CancellationToken))
-								{
-									context.ReportDiagnostic(Rules.CreatePreferNameofOverCallingToStringOnAnEnumDiagnostic(invoke.GetLocation()));
+									case SpecialType.System_String:
+										context.ReportDiagnostic(Rules.CreateDontCallToStringOnAStringDiagnostic(InvokeLocation(invoke, member.OperatorToken)));
+										break;
+
+									case SpecialType.System_Enum:
+										if (symbol.Parameters.Length == 0 &&
+											IsEnumLiteral(member.Expression, context.SemanticModel, context.CancellationToken))
+										{
+											context.ReportDiagnostic(Rules.CreatePreferNameofOverCallingToStringOnAnEnumDiagnostic(invoke.GetLocation()));
+										}
+										break;
 								}
 							}
 						}
@@ -75,12 +79,9 @@ namespace WTG.Analyzers
 						{
 							var symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
 
-							if (symbol != null)
+							if (symbol != null && symbol.ReceiverType.SpecialType == SpecialType.System_String)
 							{
-								if (symbol.ReceiverType.IsMatch("System.String"))
-								{
-									context.ReportDiagnostic(Rules.CreateDontCallToStringOnAStringDiagnostic(InvokeLocation(invoke, binding.OperatorToken)));
-								}
+								context.ReportDiagnostic(Rules.CreateDontCallToStringOnAStringDiagnostic(InvokeLocation(invoke, binding.OperatorToken)));
 							}
 						}
 					}
@@ -106,6 +107,8 @@ namespace WTG.Analyzers
 
 		static Location InvokeLocation(InvocationExpressionSyntax invoke, SyntaxToken operatorToken)
 		{
+			//   -->...........<--
+			// value.ToString()
 			return Location.Create(
 				invoke.SyntaxTree,
 				TextSpan.FromBounds(
