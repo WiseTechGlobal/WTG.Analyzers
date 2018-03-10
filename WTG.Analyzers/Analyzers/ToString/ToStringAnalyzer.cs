@@ -113,7 +113,7 @@ namespace WTG.Analyzers
 				invoke.SyntaxTree,
 				TextSpan.FromBounds(
 					operatorToken.Span.Start,
-					invoke.ArgumentList.CloseParenToken.Span.End));
+					invoke.Span.End));
 		}
 	}
 }

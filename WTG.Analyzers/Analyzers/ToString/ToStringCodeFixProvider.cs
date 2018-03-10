@@ -20,7 +20,7 @@ namespace WTG.Analyzers
 			Rules.DontCallToStringOnAStringDiagnosticID,
 			Rules.PreferNameofOverCallingToStringOnAnEnumDiagnosticID);
 
-		public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+		public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
 		public override Task RegisterCodeFixesAsync(CodeFixContext context)
 		{
