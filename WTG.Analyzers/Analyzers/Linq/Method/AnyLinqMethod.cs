@@ -1,18 +1,28 @@
-﻿using System.Linq;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
 	sealed class AnyLinqMethod : LinqMethod
 	{
 		public override bool IsMatch(IMethodSymbol method) => IsEnumerableLinqMethod(method, nameof(Enumerable.Any), 1);
+
 		public override LinqResolution GetResolution(ITypeSymbol sourceType)
 		{
 			if (sourceType.Kind == SymbolKind.ArrayType)
 			{
 				return Resolution.UseLength;
+			}
+			else if (IsExempt(sourceType))
+			{
+				return null;
+			}
+			else if (HasIsEmptyProperty(sourceType))
+			{
+				return IsEmptyResolution.Instance;
 			}
 			else if (HasCountProperty(sourceType))
 			{
@@ -24,6 +34,30 @@ namespace WTG.Analyzers
 			}
 
 			return null;
+		}
+
+		static bool IsExempt(ITypeSymbol sourceType)
+		{
+			return sourceType.IsMatch("System.Collections.Concurrent.ConcurrentDictionary`2");
+		}
+
+		sealed class IsEmptyResolution : LinqResolution
+		{
+			public static IsEmptyResolution Instance { get; } = new IsEmptyResolution();
+
+			IsEmptyResolution()
+			{
+			}
+
+			public override Diagnostic CreateDiagnostic(InvocationExpressionSyntax invoke, ITypeSymbol sourceType, bool isInAnExpression)
+			{
+				return CreatePropertyDiagnostic(invoke, sourceType, nameof(Enumerable.Any) + "()", "IsEmpty", isInAnExpression);
+			}
+
+			public override ExpressionSyntax ApplyFix(InvocationExpressionSyntax invoke)
+			{
+				return ExpressionSyntaxFactory.LogicalNot(CreatePropertyAccessExpression(invoke, "IsEmpty"));
+			}
 		}
 
 		sealed class Resolution : LinqResolution
@@ -51,8 +85,7 @@ namespace WTG.Analyzers
 				if (ShouldParenthesize(invoke))
 				{
 					return SyntaxFactory.ParenthesizedExpression(result.WithoutTrivia())
-						.WithLeadingTrivia(result.GetLeadingTrivia())
-						.WithTrailingTrivia(result.GetTrailingTrivia());
+						.WithTriviaFrom(result);
 				}
 
 				return result;
