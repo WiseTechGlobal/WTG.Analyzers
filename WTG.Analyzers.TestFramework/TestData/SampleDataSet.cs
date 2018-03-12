@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
@@ -40,13 +40,25 @@ namespace WTG.Analyzers.TestFramework
 			var tmp =
 				from name in assembly.GetManifestResourceNames()
 				where name.StartsWith(prefix, StringComparison.Ordinal)
-				let index = name.IndexOf('.', prefix.Length)
+				let index = FileNameStartIndex(prefix, name)
 				where index >= 0
 				let sampleName = name.Substring(prefix.Length, index - prefix.Length)
 				group new KeyValuePair<string, string>(name.Substring(index + 1), name) by sampleName into g
 				select GetSampleData(assembly, g.Key, g);
 
 			return tmp.ToImmutableArray();
+		}
+
+		static int FileNameStartIndex(string prefix, string name)
+		{
+			var index = name.LastIndexOf('.', name.Length - 1, name.Length - prefix.Length);
+
+			if (index < 0)
+			{
+				return index;
+			}
+
+			return name.LastIndexOf('.', index - 1, index - prefix.Length);
 		}
 
 		static SampleDataSet GetSampleData(Assembly assembly, string name, IEnumerable<KeyValuePair<string, string>> resourceNames)

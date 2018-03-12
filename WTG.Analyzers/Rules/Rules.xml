@@ -118,6 +118,17 @@
 			<message>Prefer to use Array.Empty&lt;T&gt;() instead of creating a new empty array.</message>
 			<description>Array.Empty&lt;T&gt;() caches the array internally, so you can typically use a pre-existing immutable object instead of creating a new one.</description>
 		</rule>
+		<rule id="5" name="DontCallToStringOnAString" severity="Info">
+			<title>Don't call ToString() on a string.</title>
+			<message>Don't call ToString() on a string.</message>
+			<description>Calling ToString() on a string object is redundant, just use the original string object.</description>
+			<tag>Unnecessary</tag>
+		</rule>
+		<rule id="6" name="PreferNameofOverCallingToStringOnAnEnum" severity="Info">
+			<title>Prefer nameof over calling ToString on an enum literal.</title>
+			<message>Prefer nameof over calling ToString on an enum literal.</message>
+			<description>Prefer nameof over calling ToString on an enum literal.</description>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">

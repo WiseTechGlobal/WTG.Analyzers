@@ -23,6 +23,7 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(DeconstructionAnalyzer), typeof(DeconstructionCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(FlagsAnalyzer), typeof(FlagsCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(ArrayAnalyzer), typeof(ArrayCodeFixProvider) })]
+	[TestFixture(TypeArgs = new[] { typeof(ToStringAnalyzer), typeof(ToStringCodeFixProvider) })]
 	class AnalyzerAndCodeFixTest<TAnalyzer, TCodeFix>
 		where TAnalyzer : DiagnosticAnalyzer, new()
 		where TCodeFix : CodeFixProvider, new()
