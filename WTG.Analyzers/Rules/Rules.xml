@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <rules xmlns="http://cargowise.com/glow/2016/09/10/Rules.xsd" prefix="WTG">
-	<!--
-	Note: This solution should only contain rules that apply company wide and are not product specific.
-	Product specific rules should be placed in a separate solution under that product's TFS project.
-
-	Eg.
-		Enterprise -> $/Dev/Common/Tools/EnterpriseAnalyzers/...
-		Glow -> $/Glow/DotNet/Tools/GlowAnalyzers/...
-	-->
 	<category name="CodingConvention" id="1000">
 		<rule id="1" name="DoNotUseThePrivateKeyword" severity="Hidden">
 			<title>Do not use the 'private' keyword.</title>
