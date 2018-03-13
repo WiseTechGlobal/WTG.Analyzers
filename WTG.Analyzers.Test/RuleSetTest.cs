@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
@@ -12,7 +13,9 @@ namespace WTG.Analyzers.Test
 		[Test]
 		public void WarnAll()
 		{
-			var ruleSet = XElement.Load(@"..\..\WTG.Analyzers\build\WarnAll.ruleset")
+			var rulesetPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "WTG.Analyzers", "build", "WarnAll.ruleset");
+
+			var ruleSet = XElement.Load(rulesetPath)
 				.Element("Rules")
 				.Elements("Rule")
 				.ToDictionary(
