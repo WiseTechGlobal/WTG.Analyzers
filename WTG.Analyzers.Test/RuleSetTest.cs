@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -13,7 +14,7 @@ namespace WTG.Analyzers.Test
 		[Test]
 		public void WarnAll()
 		{
-			var rulesetPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "WTG.Analyzers", "build", "WarnAll.ruleset");
+			var rulesetPath = Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "WTG.Analyzers", "build", "WarnAll.ruleset"));
 
 			var ruleSet = XElement.Load(rulesetPath)
 				.Element("Rules")
@@ -24,7 +25,8 @@ namespace WTG.Analyzers.Test
 
 			var descriptors = typeof(Rules).GetFields()
 				.Where(x => x.IsStatic && x.IsInitOnly && typeof(DiagnosticDescriptor).IsAssignableFrom(x.FieldType))
-				.Select(x => (DiagnosticDescriptor)x.GetValue(null));
+				.Select(x => (DiagnosticDescriptor)x.GetValue(null))
+				.ToArray();
 
 			Assert.Multiple(() =>
 			{
@@ -36,6 +38,16 @@ namespace WTG.Analyzers.Test
 					}
 
 					Assert.That(severity, Is.EqualTo(DiagnosticSeverity.Warning), descriptor.Id);
+				}
+
+				var definedRules = new HashSet<string>(descriptors.Select(x => x.Id));
+
+				foreach (var rule in ruleSet)
+				{
+					if (!definedRules.Contains(rule.Key))
+					{
+						Assert.Fail($"Referenced the undefined rule '{rule.Key}.");
+					}
 				}
 			});
 		}
