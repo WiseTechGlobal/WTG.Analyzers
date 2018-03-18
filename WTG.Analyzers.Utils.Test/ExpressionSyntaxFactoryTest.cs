@@ -1,5 +1,9 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using NUnit.Framework;
+using WTG.Analyzers.TestFramework;
 
 namespace WTG.Analyzers.Utils.Test
 {
@@ -33,6 +37,47 @@ namespace WTG.Analyzers.Utils.Test
 		public string CreateSingleBitFlag(int index)
 		{
 			return ExpressionSyntaxFactory.CreateSingleBitFlag(index).ToString();
+		}
+
+		[Test]
+		public void Nameof()
+		{
+			var annotation = new SyntaxAnnotation("Marker");
+			var inner = SyntaxFactory.IdentifierName("Identifier").WithAdditionalAnnotations(annotation);
+			var expression = ExpressionSyntaxFactory.CreateNameof(inner);
+
+			Assert.That(expression.ToString(), Is.EqualTo("nameof(Identifier)"));
+			Assert.That(expression.ArgumentList.Arguments[0].Expression.HasAnnotation(annotation), Is.True, "Annotations should survive the process.");
+		}
+
+		[Test]
+		public void Nameof_DontHangOnToDeadWeight()
+		{
+			Assert.That(ExpressionSyntaxFactory.Nameof.Parent, Is.Null);
+		}
+
+		[Test]
+		public async Task Nameof_Compilable()
+		{
+			var source =
+@"class Bob
+{
+	public string Foo => ""X"";
+}
+";
+			var document = ModelUtils.CreateDocument(source);
+			var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
+			var root = await tree.GetRootAsync().ConfigureAwait(false);
+			var stringExpression = root.DescendantNodes().Single(x => x.IsKind(SyntaxKind.StringLiteralExpression));
+
+			document = document.WithSyntaxRoot(
+				root.ReplaceNode(
+					stringExpression,
+					ExpressionSyntaxFactory.CreateNameof(
+						SyntaxFactory.IdentifierName("Bob"))));
+
+			var compilation = await document.Project.GetCompilationAsync().ConfigureAwait(false);
+			Assert.That(compilation.GetDiagnostics(), Is.Empty);
 		}
 
 		[Test]

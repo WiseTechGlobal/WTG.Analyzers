@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -7,6 +8,25 @@ namespace WTG.Analyzers.Utils
 {
 	public static class ExpressionSyntaxFactory
 	{
+		public static IdentifierNameSyntax Nameof
+		{
+			get
+			{
+				if (nameofSyntax == null)
+				{
+					// This may seem stupid (lets face it, it is) but the identifier produced by SyntaxFactory.IdentifierName
+					// has the wrong kind of magic for the compiler to recognise it as a contextual keyword.
+					//
+					// Error CS0103: The name 'nameof' does not exist in the current context
+					var invoke = (InvocationExpressionSyntax)SyntaxFactory.ParseExpression("nameof(A)");
+					var identifier = (IdentifierNameSyntax)invoke.Expression.WithoutTrivia();
+					nameofSyntax = Interlocked.CompareExchange(ref nameofSyntax, identifier, null) ?? identifier;
+				}
+
+				return nameofSyntax;
+			}
+		}
+
 		public static ExpressionSyntax LogicalNot(ExpressionSyntax expression)
 		{
 			if (HasPrimaryOrUnaryPrecedence(expression))
@@ -40,6 +60,15 @@ namespace WTG.Analyzers.Utils
 			return SyntaxFactory.LiteralExpression(
 				SyntaxKind.NumericLiteralExpression,
 				SyntaxFactory.Literal(value));
+		}
+
+		public static InvocationExpressionSyntax CreateNameof(ExpressionSyntax argument)
+		{
+			return SyntaxFactory.InvocationExpression(
+				Nameof,
+				SyntaxFactory.ArgumentList(
+					SyntaxFactory.SeparatedList(
+						new[] { SyntaxFactory.Argument(argument) })));
 		}
 
 		[SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
@@ -98,5 +127,7 @@ namespace WTG.Analyzers.Utils
 					return false;
 			}
 		}
+
+		static IdentifierNameSyntax nameofSyntax;
 	}
 }
