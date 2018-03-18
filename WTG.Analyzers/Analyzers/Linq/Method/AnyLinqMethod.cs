@@ -16,10 +16,6 @@ namespace WTG.Analyzers
 			{
 				return Resolution.UseLength;
 			}
-			else if (IsExempt(sourceType))
-			{
-				return null;
-			}
 			else if (HasIsEmptyProperty(sourceType))
 			{
 				return IsEmptyResolution.Instance;
@@ -34,11 +30,6 @@ namespace WTG.Analyzers
 			}
 
 			return null;
-		}
-
-		static bool IsExempt(ITypeSymbol sourceType)
-		{
-			return sourceType.IsMatch("System.Collections.Concurrent.ConcurrentDictionary`2");
 		}
 
 		sealed class IsEmptyResolution : LinqResolution

@@ -20,7 +20,7 @@ public class Bob
 
 	public bool Method(ConcurrentQueue<int> source) => !source.IsEmpty;
 	public bool Method(ConcurrentStack<int> source) => !source.IsEmpty;
-	public bool Method(ConcurrentDictionary<int, int> source) => source.Any(); // don't suggest for now.
+	public bool Method(ConcurrentDictionary<int, int> source) => !source.IsEmpty;
 
 	public bool? Method1(int[] source) => source?.Any(); // don't suggest as it will change the behavour.
 	public bool Method2(ExplicitCollection<int> source) => source.Any(); // don't suggest if using the property would require casting.
