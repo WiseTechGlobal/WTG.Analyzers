@@ -2,27 +2,38 @@
 <diagnostics id="WTG3002" severity="Info">
 	<suppressId>CS0246</suppressId>
 	<diagnostic message="Don't use the Any() extension method on a source of type 'string', use the 'Length' property instead.">
-		<location>Test0.cs: (9,46-51)</location>
+		<location>Test0.cs: (10,46-51)</location>
 	</diagnostic>
 	<diagnostic message="Don't use the Any() extension method on a source of type 'int[]', use the 'Length' property instead.">
-		<location>Test0.cs: (10,45-50)</location>
+		<location>Test0.cs: (11,45-50)</location>
 	</diagnostic>
 	<diagnostic message="Don't use the Any() extension method on a source of type 'System.Collections.Generic.IReadOnlyList&lt;int&gt;', use the 'Count' property instead.">
-		<location>Test0.cs: (11,58-63)</location>
+		<location>Test0.cs: (12,58-63)</location>
 	</diagnostic>
 	<diagnostic message="Don't use the Any() extension method on a source of type 'System.Collections.Generic.IReadOnlyCollection&lt;int&gt;', use the 'Count' property instead.">
-		<location>Test0.cs: (12,64-69)</location>
+		<location>Test0.cs: (13,64-69)</location>
 	</diagnostic>
 	<diagnostic message="Don't use the Any() extension method on a source of type 'System.Collections.Generic.IList&lt;int&gt;', use the 'Count' property instead.">
-		<location>Test0.cs: (13,50-55)</location>
+		<location>Test0.cs: (14,50-55)</location>
 	</diagnostic>
 	<diagnostic message="Don't use the Any() extension method on a source of type 'System.Collections.Generic.ICollection&lt;int&gt;', use the 'Count' property instead.">
-		<location>Test0.cs: (14,56-61)</location>
+		<location>Test0.cs: (15,56-61)</location>
 	</diagnostic>
+
 	<diagnostic message="Don't use the Any() extension method on a source of type 'int[]', use the 'Length' property instead.">
-		<location>Test0.cs: (17,50-61)</location>
+		<location>Test0.cs: (18,50-61)</location>
 	</diagnostic>
 	<diagnostic id="WTG3003" message="Don't use the Any() extension method on a source of type 'int[]', use the 'Length' property instead.">
-		<location>Test0.cs: (18,64-69)</location>
+		<location>Test0.cs: (19,64-69)</location>
+	</diagnostic>
+
+	<diagnostic message="Don't use the Any() extension method on a source of type 'System.Collections.Concurrent.ConcurrentQueue&lt;int&gt;', use the 'IsEmpty' property instead.">
+		<location>Test0.cs: (21,60-65)</location>
+	</diagnostic>
+	<diagnostic message="Don't use the Any() extension method on a source of type 'System.Collections.Concurrent.ConcurrentStack&lt;int&gt;', use the 'IsEmpty' property instead.">
+		<location>Test0.cs: (22,60-65)</location>
+	</diagnostic>
+	<diagnostic message="Don't use the Any() extension method on a source of type 'System.Collections.Concurrent.ConcurrentDictionary&lt;int, int&gt;', use the 'IsEmpty' property instead.">
+		<location>Test0.cs: (23,70-75)</location>
 	</diagnostic>
 </diagnostics>

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -48,6 +48,7 @@ namespace WTG.Analyzers
 
 		protected static bool HasCountProperty(ITypeSymbol type) => HasProperty(type, "Count");
 		protected static bool HasLengthProperty(ITypeSymbol type) => HasProperty(type, "Length");
+		protected static bool HasIsEmptyProperty(ITypeSymbol type) => HasProperty(type, "IsEmpty");
 
 		protected static bool HasIndexer(ITypeSymbol type)
 		{

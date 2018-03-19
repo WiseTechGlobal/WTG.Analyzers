@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -16,6 +17,10 @@ public class Bob
 
 	public bool MethodA(int[] source) => Enumerable.Any(source);
 	public Expression<Func<int[], bool>> Query = source => source.Any();
+
+	public bool Method(ConcurrentQueue<int> source) => source.Any();
+	public bool Method(ConcurrentStack<int> source) => source.Any();
+	public bool Method(ConcurrentDictionary<int, int> source) => source.Any();
 
 	public bool? Method1(int[] source) => source?.Any(); // don't suggest as it will change the behavour.
 	public bool Method2(ExplicitCollection<int> source) => source.Any(); // don't suggest if using the property would require casting.
