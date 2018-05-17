@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -43,6 +44,14 @@ namespace WTG.Analyzers.Test
 			var analyzer = new TAnalyzer();
 			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, string.Empty).ConfigureAwait(false);
 			Assert.That(diagnostics, IsDiagnostic.Empty);
+		}
+
+		[Test]
+		public void CodeFixProviderAttribute()
+		{
+			var codeFixType = typeof(TCodeFix);
+			var att = codeFixType.GetCustomAttribute<ExportCodeFixProviderAttribute>();
+			Assert.That(att, Is.Not.Null & Has.Property(nameof(att.Name)).EqualTo(codeFixType.Name));
 		}
 
 		[Test]
