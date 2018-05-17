@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace WTG.Analyzers
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(VarCodeFixProvider))]
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LinqCodeFixProvider))]
 	[Shared]
 	public sealed class LinqCodeFixProvider : CodeFixProvider
 	{

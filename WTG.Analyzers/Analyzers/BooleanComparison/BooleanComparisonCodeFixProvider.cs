@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
@@ -12,7 +12,7 @@ using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AsyncCodeFixProvider))]
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(BooleanComparisonCodeFixProvider))]
 	[Shared]
 	public sealed class BooleanComparisonCodeFixProvider : CodeFixProvider
 	{
