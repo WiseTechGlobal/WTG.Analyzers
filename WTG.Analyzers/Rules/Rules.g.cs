@@ -30,6 +30,7 @@ namespace WTG.Analyzers
 		public const string PreferArrayEmptyOverNewArrayConstructionDiagnosticID = "WTG3004";
 		public const string DontCallToStringOnAStringDiagnosticID = "WTG3005";
 		public const string PreferNameofOverCallingToStringOnAnEnumDiagnosticID = "WTG3006";
+		public const string RemovePointlessOverridesDiagnosticID = "WTG3007";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -289,6 +290,19 @@ namespace WTG.Analyzers
 			isEnabledByDefault: true,
 			description: "Prefer nameof over calling ToString on an enum literal.");
 
+		public static readonly DiagnosticDescriptor RemovePointlessOverridesRule = new DiagnosticDescriptor(
+			RemovePointlessOverridesDiagnosticID,
+			"Remove pointless overrides.",
+			"This override doesn't change the behaviour of the base implementation and so should be removed.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "This override doesn't change the behaviour of the base implementation and so should be removed.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -506,6 +520,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreatePreferNameofOverCallingToStringOnAnEnumDiagnostic(Location location)
 		{
 			return Diagnostic.Create(PreferNameofOverCallingToStringOnAnEnumRule, location);
+		}
+
+		/// <summary>
+		/// This override doesn't change the behaviour of the base implementation and so should be removed.
+		/// </summary>
+		public static Diagnostic CreateRemovePointlessOverridesDiagnostic(Location location)
+		{
+			return Diagnostic.Create(RemovePointlessOverridesRule, location);
 		}
 
 		/// <summary>

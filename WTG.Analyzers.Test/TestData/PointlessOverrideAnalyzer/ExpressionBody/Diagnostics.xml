@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3007" message="This override doesn't change the behaviour of the base implementation and so should be removed." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (7,3-98)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (9,3)-(13,4)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (15,3-65)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (17,3)-(21,4)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (23,3)-(27,4)</location>
+	</diagnostic>
+</diagnostics>

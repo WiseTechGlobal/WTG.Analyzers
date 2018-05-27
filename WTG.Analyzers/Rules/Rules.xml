@@ -129,6 +129,12 @@
 			<message>Prefer nameof over calling ToString on an enum literal.</message>
 			<description>Prefer nameof over calling ToString on an enum literal.</description>
 		</rule>
+		<rule id="7" name="RemovePointlessOverrides" severity="Info">
+			<title>Remove pointless overrides.</title>
+			<message>This override doesn't change the behaviour of the base implementation and so should be removed.</message>
+			<description>This override doesn't change the behaviour of the base implementation and so should be removed.</description>
+			<tag>Unnecessary</tag>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">
