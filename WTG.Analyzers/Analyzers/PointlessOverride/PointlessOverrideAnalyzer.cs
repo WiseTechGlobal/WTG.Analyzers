@@ -69,14 +69,6 @@ namespace WTG.Analyzers
 		static bool IsBaseMemberAccess(MemberAccessExpressionSyntax node)
 			=> node.Expression != null && node.Expression.IsKind(SyntaxKind.BaseExpression);
 
-		static bool IsValue(ExpressionSyntax node)
-			=> node != null
-				&& node.IsKind(SyntaxKind.IdentifierName)
-				&& IsValue((IdentifierNameSyntax)node);
-
-		static bool IsValue(IdentifierNameSyntax node)
-			=> node.Identifier.Text == "value";
-
 		sealed class IsMeaningfulVisitor : CSharpSyntaxVisitor<bool>
 		{
 			public static IsMeaningfulVisitor Instance { get; } = new IsMeaningfulVisitor();
@@ -114,7 +106,7 @@ namespace WTG.Analyzers
 			{
 				if (node.ExpressionBody != null)
 				{
-					return IsGetMeaningful(node.ExpressionBody.Accept(SolitaryExpressionLocator.Instance));
+					return !IsMatchingSelf(node.ExpressionBody.Accept(SolitaryExpressionLocator.Instance));
 				}
 
 				foreach (var accessor in node.AccessorList.Accessors)
@@ -124,14 +116,14 @@ namespace WTG.Analyzers
 						case SyntaxKind.GetAccessorDeclaration:
 							var expression = accessor.Accept(SolitaryExpressionLocator.Instance);
 
-							if (IsGetMeaningful(expression))
+							if (!IsMatchingSelf(expression))
 							{
 								return true;
 							}
 							break;
 
 						case SyntaxKind.SetAccessorDeclaration:
-							if (IsSetMeaningful(accessor.Accept(SolitaryExpressionLocator.Instance)))
+							if (!IsMatchingSelf(GetAssignmentTarget(accessor.Accept(SolitaryExpressionLocator.Instance))))
 							{
 								return true;
 							}
@@ -144,45 +136,21 @@ namespace WTG.Analyzers
 
 				return false;
 
-				bool IsGetMeaningful(ExpressionSyntax expression)
+				bool IsMatchingSelf(ExpressionSyntax expression)
 				{
 					if (!expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
 					{
-						return true;
+						return false;
 					}
 
 					var propertyRef = (MemberAccessExpressionSyntax)expression;
 
 					if (!IsBaseMemberAccess(propertyRef) || !IsMatch(node, propertyRef))
 					{
-						return true;
+						return false;
 					}
 
-					return false;
-				}
-
-				bool IsSetMeaningful(ExpressionSyntax expression)
-				{
-					if (!expression.IsKind(SyntaxKind.SimpleAssignmentExpression))
-					{
-						return true;
-					}
-
-					var assignment = (AssignmentExpressionSyntax)expression;
-
-					if (!IsValue(assignment.Right))
-					{
-						return true;
-					}
-
-					var propertyRef = (MemberAccessExpressionSyntax)assignment.Left;
-
-					if (!IsBaseMemberAccess(assignment.Left) || !IsMatch(node, propertyRef))
-					{
-						return true;
-					}
-
-					return false;
+					return true;
 				}
 			}
 
@@ -190,7 +158,7 @@ namespace WTG.Analyzers
 			{
 				if (node.ExpressionBody != null)
 				{
-					return IsGetMeaningful(node.ExpressionBody.Accept(SolitaryExpressionLocator.Instance));
+					return !IsMatchingSelf(node.ExpressionBody.Accept(SolitaryExpressionLocator.Instance));
 				}
 
 				foreach (var accessor in node.AccessorList.Accessors)
@@ -198,14 +166,14 @@ namespace WTG.Analyzers
 					switch (accessor.Kind())
 					{
 						case SyntaxKind.GetAccessorDeclaration:
-							if (IsGetMeaningful(accessor.Accept(SolitaryExpressionLocator.Instance)))
+							if (!IsMatchingSelf(accessor.Accept(SolitaryExpressionLocator.Instance)))
 							{
 								return true;
 							}
 							break;
 
 						case SyntaxKind.SetAccessorDeclaration:
-							if (IsSetMeaningful(accessor.Accept(SolitaryExpressionLocator.Instance)))
+							if (!IsMatchingSelf(GetAssignmentTarget(accessor.Accept(SolitaryExpressionLocator.Instance))))
 							{
 								return true;
 							}
@@ -218,11 +186,11 @@ namespace WTG.Analyzers
 
 				return false;
 
-				bool IsGetMeaningful(ExpressionSyntax expression)
+				bool IsMatchingSelf(ExpressionSyntax expression)
 				{
 					if (!expression.IsKind(SyntaxKind.ElementAccessExpression))
 					{
-						return true;
+						return false;
 					}
 
 					var element = (ElementAccessExpressionSyntax)expression;
@@ -230,34 +198,10 @@ namespace WTG.Analyzers
 					if (!element.Expression.IsKind(SyntaxKind.BaseExpression) ||
 						!IsMatch(node.ParameterList, element.ArgumentList))
 					{
-						return true;
+						return false;
 					}
 
-					return false;
-				}
-
-				bool IsSetMeaningful(ExpressionSyntax expression)
-				{
-					if (!expression.IsKind(SyntaxKind.SimpleAssignmentExpression))
-					{
-						return true;
-					}
-
-					var assignment = (AssignmentExpressionSyntax)expression;
-
-					if (!assignment.Left.IsKind(SyntaxKind.ElementAccessExpression) || !IsValue(assignment.Right))
-					{
-						return true;
-					}
-
-					var element = (ElementAccessExpressionSyntax)assignment.Left;
-
-					if (!element.Expression.IsKind(SyntaxKind.BaseExpression) || !IsMatch(node.ParameterList, element.ArgumentList))
-					{
-						return true;
-					}
-
-					return false;
+					return true;
 				}
 			}
 
@@ -268,14 +212,14 @@ namespace WTG.Analyzers
 					switch (accessor.Kind())
 					{
 						case SyntaxKind.AddAccessorDeclaration:
-							if (IsAssignmentMeaningful(accessor.Accept(SolitaryExpressionLocator.Instance), SyntaxKind.AddAssignmentExpression))
+							if (!IsMatchingSelf(GetAssignmentTarget(accessor.Accept(SolitaryExpressionLocator.Instance), SyntaxKind.AddAssignmentExpression)))
 							{
 								return true;
 							}
 							break;
 
 						case SyntaxKind.RemoveAccessorDeclaration:
-							if (IsAssignmentMeaningful(accessor.Accept(SolitaryExpressionLocator.Instance), SyntaxKind.SubtractAssignmentExpression))
+							if (!IsMatchingSelf(GetAssignmentTarget(accessor.Accept(SolitaryExpressionLocator.Instance), SyntaxKind.SubtractAssignmentExpression)))
 							{
 								return true;
 							}
@@ -288,29 +232,42 @@ namespace WTG.Analyzers
 
 				return false;
 
-				bool IsAssignmentMeaningful(ExpressionSyntax expression, SyntaxKind kind)
+				bool IsMatchingSelf(ExpressionSyntax expression)
 				{
-					if (!expression.IsKind(kind))
+					if (!expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
 					{
-						return true;
+						return false;
 					}
 
+					var propertyRef = (MemberAccessExpressionSyntax)expression;
+
+					if (!IsBaseMemberAccess(propertyRef) || !IsMatch(node, propertyRef))
+					{
+						return false;
+					}
+
+					return true;
+				}
+			}
+
+			ExpressionSyntax GetAssignmentTarget(ExpressionSyntax expression, SyntaxKind kind = SyntaxKind.SimpleAssignmentExpression)
+			{
+				if (expression.IsKind(kind))
+				{
 					var assignment = (AssignmentExpressionSyntax)expression;
 
-					if (!IsValue(assignment.Right))
+					if (assignment.Right.IsKind(SyntaxKind.IdentifierName))
 					{
-						return true;
+						var identifier = ((IdentifierNameSyntax)assignment.Right);
+
+						if (identifier.Identifier.Text == "value")
+						{
+							return assignment.Left;
+						}
 					}
-
-					var propertyRef = (MemberAccessExpressionSyntax)assignment.Left;
-
-					if (!IsBaseMemberAccess(assignment.Left) || !IsMatch(node, propertyRef))
-					{
-						return true;
-					}
-
-					return false;
 				}
+
+				return null;
 			}
 
 			static bool IsMatch(ParameterListSyntax parameterList, ArgumentListSyntax argumentList)
@@ -376,36 +333,10 @@ namespace WTG.Analyzers
 			public override ExpressionSyntax DefaultVisit(SyntaxNode node) => null;
 
 			public override ExpressionSyntax VisitMethodDeclaration(MethodDeclarationSyntax node)
-			{
-				if (node.ExpressionBody != null)
-				{
-					return node.ExpressionBody.Accept(this);
-				}
-				else if (node.Body != null)
-				{
-					return node.Body.Accept(this);
-				}
-				else
-				{
-					return null;
-				}
-			}
+				=> node.ExpressionBody?.Accept(this) ?? node.Body?.Accept(this);
 
 			public override ExpressionSyntax VisitAccessorDeclaration(AccessorDeclarationSyntax node)
-			{
-				if (node.ExpressionBody != null)
-				{
-					return node.ExpressionBody.Accept(this);
-				}
-				else if (node.Body != null)
-				{
-					return node.Body.Accept(this);
-				}
-				else
-				{
-					return null;
-				}
-			}
+				=> node.ExpressionBody?.Accept(this) ?? node.Body?.Accept(this);
 
 			public override ExpressionSyntax VisitBlock(BlockSyntax node)
 			{
@@ -417,17 +348,15 @@ namespace WTG.Analyzers
 				return null;
 			}
 
-			public override ExpressionSyntax VisitReturnStatement(ReturnStatementSyntax node) => node.Expression?.Accept(this);
-			public override ExpressionSyntax VisitExpressionStatement(ExpressionStatementSyntax node) => node.Expression?.Accept(this);
 			public override ExpressionSyntax VisitArrowExpressionClause(ArrowExpressionClauseSyntax node) => node.Expression?.Accept(this);
+			public override ExpressionSyntax VisitExpressionStatement(ExpressionStatementSyntax node) => node.Expression?.Accept(this);
 			public override ExpressionSyntax VisitParenthesizedExpression(ParenthesizedExpressionSyntax node) => node.Expression?.Accept(this);
+			public override ExpressionSyntax VisitReturnStatement(ReturnStatementSyntax node) => node.Expression?.Accept(this);
 
 			public override ExpressionSyntax VisitAssignmentExpression(AssignmentExpressionSyntax node) => node;
 			public override ExpressionSyntax VisitElementAccessExpression(ElementAccessExpressionSyntax node) => node;
-			public override ExpressionSyntax VisitMemberAccessExpression(MemberAccessExpressionSyntax node) => node;
-
-			public override ExpressionSyntax VisitBinaryExpression(BinaryExpressionSyntax node) => node;
 			public override ExpressionSyntax VisitInvocationExpression(InvocationExpressionSyntax node) => node;
+			public override ExpressionSyntax VisitMemberAccessExpression(MemberAccessExpressionSyntax node) => node;
 		}
 	}
 }
