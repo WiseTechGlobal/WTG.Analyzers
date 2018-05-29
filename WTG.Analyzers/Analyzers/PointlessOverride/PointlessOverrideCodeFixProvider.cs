@@ -24,14 +24,14 @@ namespace WTG.Analyzers
 			context.RegisterCodeFix(
 				CodeAction.Create(
 					title: "Remove override.",
-					createChangedDocument: c => RemoveOveride(context.Document, diagnostic, c),
+					createChangedDocument: c => RemoveOverideAsync(context.Document, diagnostic, c),
 					equivalenceKey: "RemoveOverride"),
 				diagnostic: diagnostic);
 
 			return Task.CompletedTask;
 		}
 
-		async Task<Document> RemoveOveride(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		async Task<Document> RemoveOverideAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var node = root.FindNode(diagnostic.Location.SourceSpan);
