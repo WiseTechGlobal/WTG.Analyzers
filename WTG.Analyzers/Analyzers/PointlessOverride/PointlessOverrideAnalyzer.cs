@@ -250,7 +250,7 @@ namespace WTG.Analyzers
 				}
 			}
 
-			ExpressionSyntax GetAssignmentTarget(ExpressionSyntax expression, SyntaxKind kind = SyntaxKind.SimpleAssignmentExpression)
+			static ExpressionSyntax GetAssignmentTarget(ExpressionSyntax expression, SyntaxKind kind = SyntaxKind.SimpleAssignmentExpression)
 			{
 				if (expression.IsKind(kind))
 				{
