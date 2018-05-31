@@ -31,5 +31,9 @@ public static class Foo
 		var t1 = new T[Size];
 		var t2 = new T[size];
 		var t3 = new T[GetSize()];
+
+		var u1 = new T[(int)size];
+		var u2 = new T[(size)];
+		var u3 = new T[+size];
 	}
 }
