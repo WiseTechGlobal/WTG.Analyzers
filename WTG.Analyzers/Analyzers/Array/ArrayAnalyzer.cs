@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -75,8 +76,7 @@ namespace WTG.Analyzers
 					case SyntaxKind.CastExpression:
 					case SyntaxKind.UnaryMinusExpression:
 					case SyntaxKind.UnaryPlusExpression:
-						var constant = context.SemanticModel.GetConstantValue(size, context.CancellationToken);
-						if (constant.HasValue && !IsZeroLiteral(constant.Value))
+						if (!IsConstantZero(context.SemanticModel, size, context.CancellationToken))
 						{
 							return;
 						}
@@ -93,6 +93,13 @@ namespace WTG.Analyzers
 			}
 
 			context.ReportDiagnostic(Rules.CreatePreferArrayEmptyOverNewArrayConstructionDiagnostic(context.Node.GetLocation()));
+		}
+
+		static bool IsConstantZero(SemanticModel model, ExpressionSyntax expression, CancellationToken cancellationToken)
+		{
+			var constant = model.GetConstantValue(expression, cancellationToken);
+
+			return constant.HasValue && IsZeroLiteral(constant.Value);
 		}
 
 		static bool IsZeroLiteral(object value)
