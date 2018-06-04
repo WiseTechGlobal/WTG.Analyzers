@@ -292,8 +292,60 @@ namespace WTG.Analyzers
 
 		public static readonly DiagnosticDescriptor RemovePointlessOverridesRule = new DiagnosticDescriptor(
 			RemovePointlessOverridesDiagnosticID,
-			"Remove pointless overrides.",
-			"This override doesn't change the behaviour of the base implementation and so should be removed.",
+			"Overrides should not simply call base.",
+			"This member overrides a member in a base class, but does not change the behaviour of the base implementation.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "This override doesn't change the behaviour of the base implementation and so should be removed.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
+		public static readonly DiagnosticDescriptor RemovePointlessOverrides_MethodRule = new DiagnosticDescriptor(
+			RemovePointlessOverridesDiagnosticID,
+			"Overrides should not simply call base.",
+			"This method overrides a method in a base class, but does not change the behaviour of the base implementation.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "This override doesn't change the behaviour of the base implementation and so should be removed.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
+		public static readonly DiagnosticDescriptor RemovePointlessOverrides_PropertyRule = new DiagnosticDescriptor(
+			RemovePointlessOverridesDiagnosticID,
+			"Overrides should not simply call base.",
+			"This property overrides a property in a base class, but does not change the behaviour of the base implementation.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "This override doesn't change the behaviour of the base implementation and so should be removed.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
+		public static readonly DiagnosticDescriptor RemovePointlessOverrides_IndexerRule = new DiagnosticDescriptor(
+			RemovePointlessOverridesDiagnosticID,
+			"Overrides should not simply call base.",
+			"This indexer overrides an indexer in a base class, but does not change the behaviour of the base implementation.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "This override doesn't change the behaviour of the base implementation and so should be removed.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
+		public static readonly DiagnosticDescriptor RemovePointlessOverrides_EventRule = new DiagnosticDescriptor(
+			RemovePointlessOverridesDiagnosticID,
+			"Overrides should not simply call base.",
+			"This event overrides an event in a base class, but does not change the behaviour of the base implementation.",
 			DecruftificationCategory,
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
@@ -523,11 +575,43 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
-		/// This override doesn't change the behaviour of the base implementation and so should be removed.
+		/// This member overrides a member in a base class, but does not change the behaviour of the base implementation.
 		/// </summary>
 		public static Diagnostic CreateRemovePointlessOverridesDiagnostic(Location location)
 		{
 			return Diagnostic.Create(RemovePointlessOverridesRule, location);
+		}
+
+		/// <summary>
+		/// This method overrides a method in a base class, but does not change the behaviour of the base implementation.
+		/// </summary>
+		public static Diagnostic CreateRemovePointlessOverrides_MethodDiagnostic(Location location)
+		{
+			return Diagnostic.Create(RemovePointlessOverrides_MethodRule, location);
+		}
+
+		/// <summary>
+		/// This property overrides a property in a base class, but does not change the behaviour of the base implementation.
+		/// </summary>
+		public static Diagnostic CreateRemovePointlessOverrides_PropertyDiagnostic(Location location)
+		{
+			return Diagnostic.Create(RemovePointlessOverrides_PropertyRule, location);
+		}
+
+		/// <summary>
+		/// This indexer overrides an indexer in a base class, but does not change the behaviour of the base implementation.
+		/// </summary>
+		public static Diagnostic CreateRemovePointlessOverrides_IndexerDiagnostic(Location location)
+		{
+			return Diagnostic.Create(RemovePointlessOverrides_IndexerRule, location);
+		}
+
+		/// <summary>
+		/// This event overrides an event in a base class, but does not change the behaviour of the base implementation.
+		/// </summary>
+		public static Diagnostic CreateRemovePointlessOverrides_EventDiagnostic(Location location)
+		{
+			return Diagnostic.Create(RemovePointlessOverrides_EventRule, location);
 		}
 
 		/// <summary>

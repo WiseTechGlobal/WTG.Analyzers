@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<diagnostics id="WTG3007" message="This override doesn't change the behaviour of the base implementation and so should be removed." severity="Info">
-	<diagnostic>
+<diagnostics id="WTG3007" severity="Info">
+	<diagnostic message="This method overrides a method in a base class, but does not change the behaviour of the base implementation.">
 		<location>Test0.cs: (12,3)-(15,4)</location>
 	</diagnostic>
-	<diagnostic>
+	<diagnostic message="This property overrides a property in a base class, but does not change the behaviour of the base implementation.">
 		<location>Test0.cs: (17,3)-(21,4)</location>
 	</diagnostic>
-	<diagnostic>
+	<diagnostic message="This property overrides a property in a base class, but does not change the behaviour of the base implementation.">
 		<location>Test0.cs: (23,3)-(26,4)</location>
 	</diagnostic>
-	<diagnostic>
+	<diagnostic message="This indexer overrides an indexer in a base class, but does not change the behaviour of the base implementation.">
 		<location>Test0.cs: (28,3)-(32,4)</location>
 	</diagnostic>
-	<diagnostic>
+	<diagnostic message="This event overrides an event in a base class, but does not change the behaviour of the base implementation.">
 		<location>Test0.cs: (34,3)-(38,4)</location>
 	</diagnostic>
 </diagnostics>

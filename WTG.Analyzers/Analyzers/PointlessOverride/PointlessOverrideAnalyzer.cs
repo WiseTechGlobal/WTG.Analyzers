@@ -42,7 +42,29 @@ namespace WTG.Analyzers
 
 			if (IsOverride(node) && !node.Accept(IsMeaningfulVisitor.Instance))
 			{
-				context.ReportDiagnostic(Rules.CreateRemovePointlessOverridesDiagnostic(node.GetLocation()));
+				context.ReportDiagnostic(CreateDiagnostic(node));
+			}
+		}
+
+		static Diagnostic CreateDiagnostic(CSharpSyntaxNode node)
+		{
+			switch (node.Kind())
+			{
+				case SyntaxKind.PropertyDeclaration:
+					return Rules.CreateRemovePointlessOverrides_PropertyDiagnostic(node.GetLocation());
+
+				case SyntaxKind.MethodDeclaration:
+					return Rules.CreateRemovePointlessOverrides_MethodDiagnostic(node.GetLocation());
+
+				case SyntaxKind.IndexerDeclaration:
+					return Rules.CreateRemovePointlessOverrides_IndexerDiagnostic(node.GetLocation());
+
+				case SyntaxKind.EventDeclaration:
+					return Rules.CreateRemovePointlessOverrides_EventDiagnostic(node.GetLocation());
+
+				default:
+					// shouldn't happen, but just in case.
+					return Rules.CreateRemovePointlessOverridesDiagnostic(node.GetLocation());
 			}
 		}
 
@@ -67,7 +89,7 @@ namespace WTG.Analyzers
 				&& IsBaseMemberAccess((MemberAccessExpressionSyntax)node);
 
 		static bool IsBaseMemberAccess(MemberAccessExpressionSyntax node)
-			=> node.Expression != null && node.Expression.IsKind(SyntaxKind.BaseExpression);
+			=> node.Expression.IsKind(SyntaxKind.BaseExpression);
 
 		sealed class IsMeaningfulVisitor : CSharpSyntaxVisitor<bool>
 		{
@@ -114,18 +136,24 @@ namespace WTG.Analyzers
 					switch (accessor.Kind())
 					{
 						case SyntaxKind.GetAccessorDeclaration:
-							var expression = accessor.Accept(SolitaryExpressionLocator.Instance);
-
-							if (!IsMatchingSelf(expression))
 							{
-								return true;
+								var expression = accessor.Accept(SolitaryExpressionLocator.Instance);
+
+								if (!IsMatchingSelf(expression))
+								{
+									return true;
+								}
 							}
 							break;
 
 						case SyntaxKind.SetAccessorDeclaration:
-							if (!IsMatchingSelf(GetAssignmentTarget(accessor.Accept(SolitaryExpressionLocator.Instance))))
 							{
-								return true;
+								var expression = GetAssignmentTarget(accessor.Accept(SolitaryExpressionLocator.Instance));
+
+								if (!IsMatchingSelf(expression))
+								{
+									return true;
+								}
 							}
 							break;
 

@@ -23,7 +23,7 @@ namespace WTG.Analyzers
 			var diagnostic = context.Diagnostics.First();
 			context.RegisterCodeFix(
 				CodeAction.Create(
-					title: "Remove override.",
+					title: "Remove overriding member.",
 					createChangedDocument: c => RemoveOverideAsync(context.Document, diagnostic, c),
 					equivalenceKey: "RemoveOverride"),
 				diagnostic: diagnostic);
