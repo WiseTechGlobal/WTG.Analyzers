@@ -27,6 +27,7 @@
 		<Rule Id="WTG3004" Action="Warning" />
 		<Rule Id="WTG3005" Action="Warning" />
 		<Rule Id="WTG3006" Action="Warning" />
+		<Rule Id="WTG3007" Action="Warning" />
 
 		<!-- Maintainability -->
 		<Rule Id="WTG3101" Action="Warning" />

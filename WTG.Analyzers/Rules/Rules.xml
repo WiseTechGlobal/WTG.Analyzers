@@ -129,6 +129,16 @@
 			<message>Prefer nameof over calling ToString on an enum literal.</message>
 			<description>Prefer nameof over calling ToString on an enum literal.</description>
 		</rule>
+		<rule id="7" name="RemovePointlessOverrides" severity="Info">
+			<title>Overrides should not simply call base.</title>
+			<message>This member overrides a member in a base class, but does not change the behaviour of the base implementation.</message>
+			<message name="Method">This method overrides a method in a base class, but does not change the behaviour of the base implementation.</message>
+			<message name="Property">This property overrides a property in a base class, but does not change the behaviour of the base implementation.</message>
+			<message name="Indexer">This indexer overrides an indexer in a base class, but does not change the behaviour of the base implementation.</message>
+			<message name="Event">This event overrides an event in a base class, but does not change the behaviour of the base implementation.</message>
+			<description>This override doesn't change the behaviour of the base implementation and so should be removed.</description>
+			<tag>Unnecessary</tag>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">
