@@ -2,6 +2,7 @@
 <package>
 	<metadata>
 		<id>WTG.Analyzers</id>
+		<version>2.0.5</version>
 		<authors>WiseTech Global</authors>
 		<owners>WiseTech Global</owners>
 		<description>Roslyn Code Analyzers to enforce WiseTech Global coding standards and catch common mistakes.</description>
