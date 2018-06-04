@@ -194,16 +194,24 @@ namespace WTG.Analyzers
 					switch (accessor.Kind())
 					{
 						case SyntaxKind.GetAccessorDeclaration:
-							if (!IsMatchingSelf(accessor.Accept(SolitaryExpressionLocator.Instance)))
 							{
-								return true;
+								var expression = accessor.Accept(SolitaryExpressionLocator.Instance);
+
+								if (!IsMatchingSelf(expression))
+								{
+									return true;
+								}
 							}
 							break;
 
 						case SyntaxKind.SetAccessorDeclaration:
-							if (!IsMatchingSelf(GetAssignmentTarget(accessor.Accept(SolitaryExpressionLocator.Instance))))
 							{
-								return true;
+								var expression = GetAssignmentTarget(accessor.Accept(SolitaryExpressionLocator.Instance));
+
+								if (!IsMatchingSelf(expression))
+								{
+									return true;
+								}
 							}
 							break;
 
@@ -240,16 +248,24 @@ namespace WTG.Analyzers
 					switch (accessor.Kind())
 					{
 						case SyntaxKind.AddAccessorDeclaration:
-							if (!IsMatchingSelf(GetAssignmentTarget(accessor.Accept(SolitaryExpressionLocator.Instance), SyntaxKind.AddAssignmentExpression)))
 							{
-								return true;
+								var expression = GetAssignmentTarget(accessor.Accept(SolitaryExpressionLocator.Instance), SyntaxKind.AddAssignmentExpression);
+
+								if (!IsMatchingSelf(expression))
+								{
+									return true;
+								}
 							}
 							break;
 
 						case SyntaxKind.RemoveAccessorDeclaration:
-							if (!IsMatchingSelf(GetAssignmentTarget(accessor.Accept(SolitaryExpressionLocator.Instance), SyntaxKind.SubtractAssignmentExpression)))
 							{
-								return true;
+								var expression = GetAssignmentTarget(accessor.Accept(SolitaryExpressionLocator.Instance), SyntaxKind.SubtractAssignmentExpression);
+
+								if (!IsMatchingSelf(expression))
+								{
+									return true;
+								}
 							}
 							break;
 
