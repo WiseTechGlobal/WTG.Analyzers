@@ -139,6 +139,12 @@
 			<description>This override doesn't change the behaviour of the base implementation and so should be removed.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="8" name="DontEquateValueTypesWithNull" severity="Info">
+			<title>Do not compare value types with null.</title>
+			<message>Do not compare value types with null.</message>
+			<description>Value types can never be null. This expression is constant.</description>
+			<tag>Unnecessary</tag>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">
