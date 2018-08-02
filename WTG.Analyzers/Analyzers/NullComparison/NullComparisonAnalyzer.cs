@@ -61,7 +61,7 @@ namespace WTG.Analyzers
 		static bool IsValueType(SemanticModel model, ExpressionSyntax expression, CancellationToken cancellationToken)
 		{
 			var type = model.GetTypeInfo(expression, cancellationToken).Type;
-			return type != null && type.IsValueType;
+			return type != null && type.IsValueType && type.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T;
 		}
 
 		static Location CombineLocations(Location location1, Location location2)
