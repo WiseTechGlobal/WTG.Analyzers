@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3008" message="Do not compare value types with null." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (5,9-22)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (6,9-22)</location>
+	</diagnostic>
+</diagnostics>
