@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -8,17 +9,15 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(BooleanComparisonCodeFixProvider))]
 	[Shared]
-	public sealed class BooleanComparisonCodeFixProvider : CodeFixProvider
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(NullComparisonCodeFixProvider))]
+	public sealed class NullComparisonCodeFixProvider : CodeFixProvider
 	{
 		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-			Rules.DoNotCompareBoolToAConstantValueDiagnosticID,
-			Rules.DoNotCompareBoolToAConstantValueInAnExpressionDiagnosticID);
+			Rules.DontEquateValueTypesWithNullDiagnosticID);
 
 		public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
@@ -30,7 +29,7 @@ namespace WTG.Analyzers
 				CodeAction.Create(
 					title: "Simplify",
 					createChangedDocument: c => Fix(context.Document, diagnostic, c),
-					equivalenceKey: "SimplifyBoolean"),
+					equivalenceKey: "SimplifyNull"),
 				diagnostic: diagnostic);
 
 			return Task.FromResult<object>(null);
@@ -42,30 +41,24 @@ namespace WTG.Analyzers
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = (BinaryExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
-			ExpressionSyntax newNode;
-			ExpressionSyntax discardNode;
+			SyntaxNode literalNode;
 
-			if (node.Left.Span.OverlapsWith(diagnosticSpan))
+			switch (node.Kind())
 			{
-				discardNode = node.Left;
-				newNode = node.Right.WithLeadingTrivia(discardNode.GetLeadingTrivia());
-			}
-			else
-			{
-				discardNode = node.Right;
-				newNode = node.Left.WithTrailingTrivia(discardNode.GetTrailingTrivia());
-			}
+				case SyntaxKind.EqualsExpression:
+					literalNode = SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression);
+					break;
 
-			var comparand = BoolLiteralVisitor.Instance.Visit(discardNode).Value;
-			var isEquality = node.OperatorToken.IsKind(SyntaxKind.EqualsEqualsToken);
+				case SyntaxKind.NotEqualsExpression:
+					literalNode = SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression);
+					break;
 
-			if (isEquality != comparand)
-			{
-				newNode = ExpressionSyntaxFactory.LogicalNot(newNode);
+				default:
+					throw new InvalidOperationException("Unreachable - encountered unexpected syntax node " + node.Kind());
 			}
 
 			return document.WithSyntaxRoot(
-				root.ReplaceNode(node, newNode));
+				root.ReplaceNode(node, literalNode));
 		}
 	}
 }
