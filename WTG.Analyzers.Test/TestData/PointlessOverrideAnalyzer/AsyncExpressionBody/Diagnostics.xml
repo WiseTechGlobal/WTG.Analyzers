@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3007" message="This method overrides a method in a base class, but does not change the behaviour of the base implementation." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (8,3-64)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (9,3-69)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (10,3-91)</location>
+	</diagnostic>
+</diagnostics>
