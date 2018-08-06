@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -42,11 +41,44 @@ namespace WTG.Analyzers
 
 			var expression = (BinaryExpressionSyntax)context.Node;
 
-			if (
-				!(NullLiteralVisitor.Instance.Visit(expression.Left) && IsValueType(context.SemanticModel, expression.Right, context.CancellationToken))
-				&&
-				!(NullLiteralVisitor.Instance.Visit(expression.Right) && IsValueType(context.SemanticModel, expression.Left, context.CancellationToken)))
+			int indexOfNull;
+
+			if (NullLiteralVisitor.Instance.Visit(expression.Left) && IsValueType(context.SemanticModel, expression.Right, context.CancellationToken))
 			{
+				indexOfNull = 0;
+			}
+			else if (NullLiteralVisitor.Instance.Visit(expression.Right) && IsValueType(context.SemanticModel, expression.Left, context.CancellationToken))
+			{
+				indexOfNull = 1;
+			}
+			else
+			{
+				return;
+			}
+
+			var binaryExpressionOperator = context.SemanticModel.GetSymbolInfo(expression);
+			if (binaryExpressionOperator.Symbol?.Kind == SymbolKind.Method)
+			{
+				var binaryOperatorMethod = (IMethodSymbol)binaryExpressionOperator.Symbol;
+				if (binaryOperatorMethod.MethodKind == MethodKind.UserDefinedOperator && binaryOperatorMethod.Parameters.Length == 2)
+				{
+					var parameterForNull = binaryOperatorMethod.Parameters[indexOfNull];
+					if (!IsValueType(parameterForNull.Type))
+					{
+						// User-defined conversion operator accepts reference types, so there is no compile-time guaranteed result from this comparison
+						// to null that the compiler is optimizing away.
+						return;
+					}
+				}
+			}
+
+			var leftConversion = context.SemanticModel.GetConversion(expression.Left);
+			var rightConversion = context.SemanticModel.GetConversion(expression.Right);
+
+			if (IsUserDefinedValueTypeConversion(leftConversion, rightConversion) || IsUserDefinedValueTypeConversion(rightConversion, leftConversion))
+			{
+				// User-defined conversion operator is implicitly converting null into a value type, which will then run the user-defined equality operator.
+				// As such there is no compile-time guaranteed result.
 				return;
 			}
 
@@ -61,8 +93,10 @@ namespace WTG.Analyzers
 		static bool IsValueType(SemanticModel model, ExpressionSyntax expression, CancellationToken cancellationToken)
 		{
 			var type = model.GetTypeInfo(expression, cancellationToken).Type;
-			return type != null && type.IsValueType && type.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T;
+			return IsValueType(type);
 		}
+
+		static bool IsValueType(ITypeSymbol type) => type != null && type.IsValueType && type.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T;
 
 		static Location CombineLocations(Location location1, Location location2)
 		{
@@ -72,5 +106,9 @@ namespace WTG.Analyzers
 					Math.Min(location1.SourceSpan.Start, location2.SourceSpan.Start),
 					Math.Max(location1.SourceSpan.End, location2.SourceSpan.End)));
 		}
+
+		static bool IsUserDefinedValueTypeConversion(Conversion first, Conversion second) => first.IsIdentity && IsLoweredToValueType(second);
+
+		static bool IsLoweredToValueType(Conversion conversion) => conversion.IsImplicit && conversion.IsUserDefined && !conversion.IsNullable;
 	}
 }
