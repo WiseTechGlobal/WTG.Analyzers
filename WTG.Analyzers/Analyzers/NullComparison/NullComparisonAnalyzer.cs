@@ -85,9 +85,7 @@ namespace WTG.Analyzers
 			context.ReportDiagnostic(
 				Diagnostic.Create(
 					Rules.DontEquateValueTypesWithNullRule,
-					CombineLocations(
-						expression.Left.GetLocation(),
-						expression.Right.GetLocation())));
+					expression.GetLocation()));
 		}
 
 		static bool IsValueType(SemanticModel model, ExpressionSyntax expression, CancellationToken cancellationToken)
@@ -97,15 +95,6 @@ namespace WTG.Analyzers
 		}
 
 		static bool IsValueType(ITypeSymbol type) => type != null && type.IsValueType && type.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T;
-
-		static Location CombineLocations(Location location1, Location location2)
-		{
-			return Location.Create(
-				location1.SourceTree,
-				TextSpan.FromBounds(
-					Math.Min(location1.SourceSpan.Start, location2.SourceSpan.Start),
-					Math.Max(location1.SourceSpan.End, location2.SourceSpan.End)));
-		}
 
 		static bool IsUserDefinedValueTypeConversion(Conversion first, Conversion second) => first.IsIdentity && IsLoweredToValueType(second);
 
