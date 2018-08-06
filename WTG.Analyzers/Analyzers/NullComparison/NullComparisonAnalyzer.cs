@@ -56,7 +56,7 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			var binaryExpressionOperator = context.SemanticModel.GetSymbolInfo(expression);
+			var binaryExpressionOperator = context.SemanticModel.GetSymbolInfo(expression, context.CancellationToken);
 			if (binaryExpressionOperator.Symbol?.Kind == SymbolKind.Method)
 			{
 				var binaryOperatorMethod = (IMethodSymbol)binaryExpressionOperator.Symbol;
