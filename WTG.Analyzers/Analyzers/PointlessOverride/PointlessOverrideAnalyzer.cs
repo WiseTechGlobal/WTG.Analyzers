@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -390,6 +391,26 @@ namespace WTG.Analyzers
 				}
 
 				return null;
+			}
+
+			public override ExpressionSyntax VisitAwaitExpression(AwaitExpressionSyntax node)
+			{
+				if (node.Expression.IsKind(SyntaxKind.InvocationExpression))
+				{
+					var invoke = (InvocationExpressionSyntax)node.Expression;
+
+					if (invoke.Expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+					{
+						var member = (MemberAccessExpressionSyntax)invoke.Expression;
+
+						if (member.Name.Identifier.Text == nameof(Task.ConfigureAwait))
+						{
+							return member.Expression.Accept(this);
+						}
+					}
+				}
+
+				return node.Expression.Accept(this);
 			}
 
 			public override ExpressionSyntax VisitArrowExpressionClause(ArrowExpressionClauseSyntax node) => node.Expression?.Accept(this);
