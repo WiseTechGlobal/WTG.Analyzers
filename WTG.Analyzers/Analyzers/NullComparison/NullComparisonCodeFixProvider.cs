@@ -29,7 +29,7 @@ namespace WTG.Analyzers
 				CodeAction.Create(
 					title: "Simplify",
 					createChangedDocument: c => Fix(context.Document, diagnostic, c),
-					equivalenceKey: "SimplifyNull"),
+					equivalenceKey: "Simplify"),
 				diagnostic: diagnostic);
 
 			return Task.FromResult<object>(null);
