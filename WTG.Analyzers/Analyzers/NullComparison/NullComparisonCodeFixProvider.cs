@@ -58,7 +58,7 @@ namespace WTG.Analyzers
 			}
 
 			return document.WithSyntaxRoot(
-				root.ReplaceNode(node, literalNode));
+				root.ReplaceNode(node, literalNode.WithTriviaFrom(node)));
 		}
 	}
 }
