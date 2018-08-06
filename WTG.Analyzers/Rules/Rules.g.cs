@@ -31,6 +31,7 @@ namespace WTG.Analyzers
 		public const string DontCallToStringOnAStringDiagnosticID = "WTG3005";
 		public const string PreferNameofOverCallingToStringOnAnEnumDiagnosticID = "WTG3006";
 		public const string RemovePointlessOverridesDiagnosticID = "WTG3007";
+		public const string DontEquateValueTypesWithNullDiagnosticID = "WTG3008";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -355,6 +356,19 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor DontEquateValueTypesWithNullRule = new DiagnosticDescriptor(
+			DontEquateValueTypesWithNullDiagnosticID,
+			"Do not compare value types with null.",
+			"Do not compare value types with null.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Value types can never be null. This expression is constant.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -612,6 +626,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateRemovePointlessOverrides_EventDiagnostic(Location location)
 		{
 			return Diagnostic.Create(RemovePointlessOverrides_EventRule, location);
+		}
+
+		/// <summary>
+		/// Do not compare value types with null.
+		/// </summary>
+		public static Diagnostic CreateDontEquateValueTypesWithNullDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DontEquateValueTypesWithNullRule, location);
 		}
 
 		/// <summary>
