@@ -72,8 +72,8 @@ namespace WTG.Analyzers
 				}
 			}
 
-			var leftConversion = context.SemanticModel.GetConversion(expression.Left);
-			var rightConversion = context.SemanticModel.GetConversion(expression.Right);
+			var leftConversion = context.SemanticModel.GetConversion(expression.Left, context.CancellationToken);
+			var rightConversion = context.SemanticModel.GetConversion(expression.Right, context.CancellationToken);
 
 			if (IsUserDefinedValueTypeConversion(leftConversion, rightConversion) || IsUserDefinedValueTypeConversion(rightConversion, leftConversion))
 			{
