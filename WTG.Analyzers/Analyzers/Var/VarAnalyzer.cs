@@ -53,6 +53,11 @@ namespace WTG.Analyzers
 
 			if (candidate != null)
 			{
+				if (FutureSyntaxKinds.IsDefaultLiteralExpression(candidate.ValueSource.Kind()))
+				{
+					return;
+				}
+
 				var model = context.SemanticModel;
 				var typeSymbol = (ITypeSymbol)model.GetSymbolInfo(candidate.Type, context.CancellationToken).Symbol;
 				var expressionType = model.GetTypeInfo(candidate.ValueSource, context.CancellationToken).Type;
