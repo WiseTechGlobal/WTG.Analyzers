@@ -51,34 +51,43 @@ namespace WTG.Analyzers
 
 			var candidate = Visitor.Instance.Visit(context.Node);
 
-			if (candidate != null)
+			if (candidate == null)
 			{
-				if (FutureSyntaxKinds.IsDefaultLiteralExpression(candidate.ValueSource.Kind()))
+				return;
+			}
+
+			if (FutureSyntaxKinds.IsDefaultLiteralExpression(candidate.ValueSource.Kind()))
+			{
+				return;
+			}
+
+			var model = context.SemanticModel;
+			var typeSymbol = (ITypeSymbol)model.GetSymbolInfo(candidate.Type, context.CancellationToken).Symbol;
+			var expressionType = model.GetTypeInfo(candidate.ValueSource, context.CancellationToken).Type;
+
+			if (typeSymbol == null || expressionType == null)
+			{
+				return;
+			}
+
+			if (candidate.ValueSource.IsKind(SyntaxKind.StackAllocArrayCreationExpression) && expressionType.TypeKind == TypeKind.Struct && expressionType.IsMatch("System.Span`1"))
+			{
+				return;
+			}
+
+			if (candidate.Unwrap)
+			{
+				expressionType = EnumerableTypeUtils.GetElementType(expressionType);
+
+				if (typeSymbol == null)
 				{
 					return;
 				}
+			}
 
-				var model = context.SemanticModel;
-				var typeSymbol = (ITypeSymbol)model.GetSymbolInfo(candidate.Type, context.CancellationToken).Symbol;
-				var expressionType = model.GetTypeInfo(candidate.ValueSource, context.CancellationToken).Type;
-
-				if (typeSymbol != null && expressionType != null)
-				{
-					if (candidate.Unwrap)
-					{
-						expressionType = EnumerableTypeUtils.GetElementType(expressionType);
-
-						if (typeSymbol == null)
-						{
-							return;
-						}
-					}
-
-					if (TypeEquals(expressionType, typeSymbol))
-					{
-						context.ReportDiagnostic(Rules.CreateUseVarWherePossibleDiagnostic(candidate.Type.GetLocation()));
-					}
-				}
+			if (TypeEquals(expressionType, typeSymbol))
+			{
+				context.ReportDiagnostic(Rules.CreateUseVarWherePossibleDiagnostic(candidate.Type.GetLocation()));
 			}
 		}
 
