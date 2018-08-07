@@ -1,6 +1,5 @@
-NUnit
-NUnit3TestAdapter
-Microsoft.NET.Test.Sdk
-
-group Latest
-Microsoft.CodeAnalysis.CSharp.Workspaces
+group Test
+	Microsoft.CodeAnalysis.CSharp.Workspaces
+	Microsoft.NET.Test.Sdk
+	NUnit
+	NUnit3TestAdapter
