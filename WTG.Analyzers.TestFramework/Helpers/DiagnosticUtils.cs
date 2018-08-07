@@ -32,8 +32,15 @@ namespace WTG.Analyzers.TestFramework
 				var project = p;
 				if (project.ParseOptions.Language == LanguageNames.CSharp)
 				{
-					var options = ((CSharpParseOptions)project.ParseOptions).WithLanguageVersion(LanguageVersion.Latest);
-					project = project.WithParseOptions(options);
+					var parseOptions = ((CSharpParseOptions)project.ParseOptions)
+						.WithLanguageVersion(LanguageVersion.CSharp7_3);
+
+					var compilationOptions = ((CSharpCompilationOptions)project.CompilationOptions)
+						.WithAllowUnsafe(enabled: true);
+
+					project = project
+						.WithParseOptions(parseOptions)
+						.WithCompilationOptions(compilationOptions);
 				}
 
 				var complation = await project.GetCompilationAsync().ConfigureAwait(false);
