@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace WTG.Analyzers.TestFramework
@@ -26,8 +27,15 @@ namespace WTG.Analyzers.TestFramework
 
 			var diagnostics = new List<Diagnostic>();
 
-			foreach (var project in projects)
+			foreach (var p in projects)
 			{
+				var project = p;
+				if (project.ParseOptions.Language == LanguageNames.CSharp)
+				{
+					var options = ((CSharpParseOptions)project.ParseOptions).WithLanguageVersion(LanguageVersion.Latest);
+					project = project.WithParseOptions(options);
+				}
+
 				var complation = await project.GetCompilationAsync().ConfigureAwait(false);
 				var compilationWithAnalyzers = complation.WithAnalyzers(ImmutableArray.Create(analyzer));
 				var diags = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
@@ -43,9 +51,7 @@ namespace WTG.Analyzers.TestFramework
 						for (var i = 0; i < documents.Length; i++)
 						{
 							var document = documents[i];
-							var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
-
-							if (tree == diag.Location.SourceTree)
+							if (project.GetDocument(diag.Location.SourceTree).Id == document.Id)
 							{
 								diagnostics.Add(diag);
 							}
