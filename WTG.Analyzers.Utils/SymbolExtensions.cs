@@ -77,6 +77,77 @@ namespace WTG.Analyzers.Utils
 			return assemblySymbol.Identity.Name == assemblyName;
 		}
 
+		public static bool ImplementsAnInterface(this ISymbol symbol)
+		{
+			switch (symbol.Kind)
+			{
+				case SymbolKind.Method:
+				case SymbolKind.Property:
+				case SymbolKind.Event:
+					break;
+
+				default:
+					return false;
+			}
+
+			var decl = symbol.ContainingType;
+
+			switch (decl.TypeKind)
+			{
+				case TypeKind.Interface:
+				case TypeKind.Enum:
+				case TypeKind.Delegate:
+				case TypeKind.Error:
+				case TypeKind.Pointer:
+					return false;
+			}
+
+			foreach (var iface in decl.AllInterfaces)
+			{
+				foreach (var member in iface.GetMembers(symbol.Name))
+				{
+					if (member.Kind == symbol.Kind)
+					{
+						var local = decl.FindImplementationForInterfaceMember(member);
+
+						if (local == symbol)
+						{
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
+		public static bool IsExternallyVisible(this ISymbol symbol)
+		{
+			do
+			{
+				switch (symbol.DeclaredAccessibility)
+				{
+					case Accessibility.Public:
+					case Accessibility.Protected:
+					case Accessibility.ProtectedOrInternal:
+						break;
+
+					default:
+						return false;
+				}
+
+				symbol = symbol.ContainingSymbol;
+
+				if (symbol.Kind == SymbolKind.Namespace)
+				{
+					break;
+				}
+			}
+			while (symbol != null);
+
+			return true;
+		}
+
 		static bool IsMatchCore(ISymbol symbol, string fullName, int length)
 		{
 			while (true)

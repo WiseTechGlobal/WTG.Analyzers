@@ -21,6 +21,7 @@ namespace WTG.Analyzers
 		public const string UseOutVarWherePossibleDiagnosticID = "WTG1010";
 		public const string DeconstructWithSingleVarDiagnosticID = "WTG1011";
 		public const string DeconstructWithVarDiagnosticID = "WTG1012";
+		public const string AvoidTupleTypesInPublicInterfacesDiagnosticID = "WTG1013";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string FlagEnumsShouldSpecifyExplicitValuesDiagnosticID = "WTG2003";
@@ -183,6 +184,15 @@ namespace WTG.Analyzers
 			{
 				WellKnownDiagnosticTags.Unnecessary,
 			});
+
+		public static readonly DiagnosticDescriptor AvoidTupleTypesInPublicInterfacesRule = new DiagnosticDescriptor(
+			AvoidTupleTypesInPublicInterfacesDiagnosticID,
+			"Don't use tuple types in public interfaces.",
+			"Tuple types don't impart useful semantic information, use a dedicated type instead.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Replace with a dedicated type.");
 
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
@@ -498,6 +508,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDeconstructWithVarDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DeconstructWithVarRule, location);
+		}
+
+		/// <summary>
+		/// Tuple types don't impart useful semantic information, use a dedicated type instead.
+		/// </summary>
+		public static Diagnostic CreateAvoidTupleTypesInPublicInterfacesDiagnostic(Location location)
+		{
+			return Diagnostic.Create(AvoidTupleTypesInPublicInterfacesRule, location);
 		}
 
 		/// <summary>

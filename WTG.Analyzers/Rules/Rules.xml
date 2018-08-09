@@ -74,6 +74,11 @@
 			<description>Replace with the 'var' keyword.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="13" name="AvoidTupleTypesInPublicInterfaces" severity="Info">
+			<title>Don't use tuple types in public interfaces.</title>
+			<message>Tuple types don't impart useful semantic information, use a dedicated type instead.</message>
+			<description>Replace with a dedicated type.</description>
+		</rule>
 	</category>
 	<category name="Correctness" id="2000">
 		<rule id="1" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">
