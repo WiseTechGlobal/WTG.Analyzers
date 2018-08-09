@@ -14,11 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="TestData\PublicTupleTypeAnalyzer\ValueTuple\Diagnostics.xml" />
-    <None Remove="TestData\PublicTupleTypeAnalyzer\Tuple\Diagnostics.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\WTG.Analyzers.TestFramework\WTG.Analyzers.TestFramework.csproj" />
     <ProjectReference Include="..\WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj" />
     <ProjectReference Include="..\WTG.Analyzers\WTG.Analyzers.csproj" />
