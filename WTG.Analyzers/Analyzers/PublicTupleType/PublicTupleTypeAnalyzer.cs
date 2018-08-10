@@ -70,22 +70,28 @@ namespace WTG.Analyzers
 
 			public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
 			{
-				var syntax = model.GetDeclaredSymbol(node, cancellationToken);
-
-				if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
+				if (!IsOverride(node.Modifiers))
 				{
-					VisitParameters(node.ParameterList.Parameters);
-					Visit(node.ReturnType);
+					var syntax = model.GetDeclaredSymbol(node, cancellationToken);
+
+					if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
+					{
+						VisitParameters(node.ParameterList.Parameters);
+						Visit(node.ReturnType);
+					}
 				}
 			}
 
 			public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
 			{
-				var syntax = model.GetDeclaredSymbol(node, cancellationToken);
-
-				if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
+				if (!IsOverride(node.Modifiers))
 				{
-					Visit(node.Type);
+					var syntax = model.GetDeclaredSymbol(node, cancellationToken);
+
+					if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
+					{
+						Visit(node.Type);
+					}
 				}
 			}
 
@@ -106,19 +112,25 @@ namespace WTG.Analyzers
 
 			public override void VisitEventDeclaration(EventDeclarationSyntax node)
 			{
-				var syntax = model.GetDeclaredSymbol(node, cancellationToken);
-
-				if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
+				if (!IsOverride(node.Modifiers))
 				{
-					Visit(node.Type);
+					var syntax = model.GetDeclaredSymbol(node, cancellationToken);
+
+					if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
+					{
+						Visit(node.Type);
+					}
 				}
 			}
 
 			public override void VisitEventFieldDeclaration(EventFieldDeclarationSyntax node)
 			{
-				if (MustComply(node.Declaration))
+				if (!IsOverride(node.Modifiers))
 				{
-					Visit(node.Declaration.Type);
+					if (MustComply(node.Declaration))
+					{
+						Visit(node.Declaration.Type);
+					}
 				}
 
 				bool MustComply(VariableDeclarationSyntax declaration)
@@ -151,12 +163,15 @@ namespace WTG.Analyzers
 
 			public override void VisitIndexerDeclaration(IndexerDeclarationSyntax node)
 			{
-				var syntax = model.GetDeclaredSymbol(node, cancellationToken);
-
-				if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
+				if (!IsOverride(node.Modifiers))
 				{
-					VisitParameters(node.ParameterList.Parameters);
-					Visit(node.Type);
+					var syntax = model.GetDeclaredSymbol(node, cancellationToken);
+
+					if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
+					{
+						VisitParameters(node.ParameterList.Parameters);
+						Visit(node.Type);
+					}
 				}
 			}
 
@@ -209,6 +224,19 @@ namespace WTG.Analyzers
 			public override void VisitQualifiedName(QualifiedNameSyntax node)
 			{
 				Validate(node);
+			}
+
+			static bool IsOverride(SyntaxTokenList modifiers)
+			{
+				foreach (var modifier in modifiers)
+				{
+					if (modifier.IsKind(SyntaxKind.OverrideKeyword))
+					{
+						return true;
+					}
+				}
+
+				return false;
 			}
 
 			void VisitParameters(SeparatedSyntaxList<ParameterSyntax> parameters)
