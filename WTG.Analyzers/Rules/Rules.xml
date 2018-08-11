@@ -76,7 +76,7 @@
 		</rule>
 		<rule id="13" name="AvoidTupleTypesInPublicInterfaces" severity="Info">
 			<title>Don't use tuple types in public interfaces.</title>
-			<message>Tuple types don't impart useful semantic information, use a dedicated type instead.</message>
+			<message>Tuple types don't impart useful semantic information, public interfaces should use a dedicated type instead.</message>
 			<description>Replace with a dedicated type.</description>
 		</rule>
 	</category>

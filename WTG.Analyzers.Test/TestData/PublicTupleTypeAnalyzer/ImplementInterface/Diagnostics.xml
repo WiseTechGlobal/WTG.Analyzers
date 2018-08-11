@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<diagnostics id="WTG1013" message="Tuple types don't impart useful semantic information, use a dedicated type instead." severity="Info">
+<diagnostics id="WTG1013" message="Tuple types don't impart useful semantic information, public interfaces should use a dedicated type instead." severity="Info">
 	<diagnostic>
 		<location>Test0.cs: (6,14-28)</location>
 	</diagnostic>

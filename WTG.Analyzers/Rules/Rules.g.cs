@@ -188,7 +188,7 @@ namespace WTG.Analyzers
 		public static readonly DiagnosticDescriptor AvoidTupleTypesInPublicInterfacesRule = new DiagnosticDescriptor(
 			AvoidTupleTypesInPublicInterfacesDiagnosticID,
 			"Don't use tuple types in public interfaces.",
-			"Tuple types don't impart useful semantic information, use a dedicated type instead.",
+			"Tuple types don't impart useful semantic information, public interfaces should use a dedicated type instead.",
 			CodingConventionCategory,
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
@@ -511,7 +511,7 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
-		/// Tuple types don't impart useful semantic information, use a dedicated type instead.
+		/// Tuple types don't impart useful semantic information, public interfaces should use a dedicated type instead.
 		/// </summary>
 		public static Diagnostic CreateAvoidTupleTypesInPublicInterfacesDiagnostic(Location location)
 		{
