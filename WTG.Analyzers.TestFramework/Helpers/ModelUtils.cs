@@ -56,14 +56,25 @@ namespace WTG.Analyzers.TestFramework
 		{
 			var projectId = ProjectId.CreateNewId(debugName: assemblyName);
 
-			var solution = currentSolution
-				.AddProject(projectId, assemblyName, assemblyName, LanguageNames.CSharp)
-				.AddMetadataReference(projectId, CorlibReference)
-				.AddMetadataReference(projectId, SystemCoreReference)
-				.AddMetadataReference(projectId, CSharpSymbolsReference)
-				.AddMetadataReference(projectId, CodeAnalysisReference);
+			var solution = currentSolution.AddProject(projectId, assemblyName, assemblyName, LanguageNames.CSharp);
 
-			solution = solution.WithProjectCompilationOptions(projectId, solution.GetProject(projectId).CompilationOptions.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
+			var project = solution.GetProject(projectId)
+				.AddMetadataReference(CorlibReference)
+				.AddMetadataReference(SystemCoreReference)
+				.AddMetadataReference(CSharpSymbolsReference)
+				.AddMetadataReference(CodeAnalysisReference);
+
+			var compilationOptions = (CSharpCompilationOptions)project.CompilationOptions;
+			compilationOptions = compilationOptions
+				.WithAllowUnsafe(enabled: true)
+				.WithOutputKind(OutputKind.DynamicallyLinkedLibrary);
+			project = project.WithCompilationOptions(compilationOptions);
+
+			var parseOptions = (CSharpParseOptions)project.ParseOptions;
+			parseOptions = parseOptions.WithLanguageVersion(LanguageVersion.CSharp7_3);
+			project = project.WithParseOptions(parseOptions);
+
+			solution = project.Solution;
 
 			for (var i = 0; i < sources.Length; i++)
 			{
