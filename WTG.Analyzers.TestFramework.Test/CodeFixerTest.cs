@@ -40,8 +40,6 @@ namespace WTG.Analyzers.Framework.Test
 
 		static DiagnosticDescriptor error = new DiagnosticDescriptor("Error", string.Empty, string.Empty, string.Empty, DiagnosticSeverity.Error, true);
 
-#pragma warning disable RS1022 // Change diagnostic analyzer to remove all direct and/or indirect accesses to code-fix type(s) 
-
 		[DiagnosticAnalyzer(LanguageNames.CSharp)]
 		class AnalyzerMock : DiagnosticAnalyzer
 		{
@@ -57,10 +55,6 @@ namespace WTG.Analyzers.Framework.Test
 				context.RegisterSyntaxNodeAction(Analyze, SyntaxKind.ClassDeclaration);
 			}
 		}
-
-#pragma warning restore RS1022
-
-#pragma warning disable RS1016 // 'FixProviderMock' registers one or more code fixes, but does not override the method 'CodeFixProvider.GetFixAllProvider'.
 
 		class FixProviderMock : CodeFixProvider
 		{
@@ -83,8 +77,6 @@ namespace WTG.Analyzers.Framework.Test
 						diagnostic);
 				}
 			}
-
-#pragma warning restore RS1016
 
 			static async Task<Document> Delete(Document document, ClassDeclarationSyntax localDeclaration, CancellationToken cancellationToken)
 			{
