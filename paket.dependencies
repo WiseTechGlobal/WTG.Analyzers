@@ -21,6 +21,7 @@ nuget Microsoft.CodeAnalysis 2.0
 group Test
 	source https://api.nuget.org/v3/index.json
 	nuget Microsoft.CodeAnalysis 2.8
+	nuget Microsoft.CodeAnalysis.Analyzers 1.1
 	nuget Microsoft.NET.Test.Sdk
 	nuget NUnit
 	nuget NUnit3TestAdapter >= 3.8
