@@ -56,7 +56,7 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			if (FutureSyntaxKinds.IsDefaultLiteralExpression(candidate.ValueSource.Kind()))
+			if (candidate.ValueSource.IsKind(FutureSyntaxKinds.DefaultLiteralExpression))
 			{
 				return;
 			}
