@@ -51,12 +51,7 @@ namespace WTG.Analyzers
 
 			var candidate = Visitor.Instance.Visit(context.Node);
 
-			if (candidate == null)
-			{
-				return;
-			}
-
-			if (candidate.ValueSource.IsKind(FutureSyntaxKinds.DefaultLiteralExpression))
+			if (candidate == null || candidate.ValueSource.IsKind(FutureSyntaxKinds.DefaultLiteralExpression))
 			{
 				return;
 			}
