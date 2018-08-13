@@ -3,7 +3,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace WTG.Analyzers.TestFramework
@@ -27,22 +26,8 @@ namespace WTG.Analyzers.TestFramework
 
 			var diagnostics = new List<Diagnostic>();
 
-			foreach (var p in projects)
+			foreach (var project in projects)
 			{
-				var project = p;
-				if (project.ParseOptions.Language == LanguageNames.CSharp)
-				{
-					var parseOptions = ((CSharpParseOptions)project.ParseOptions)
-						.WithLanguageVersion(LanguageVersion.CSharp7_3);
-
-					var compilationOptions = ((CSharpCompilationOptions)project.CompilationOptions)
-						.WithAllowUnsafe(enabled: true);
-
-					project = project
-						.WithParseOptions(parseOptions)
-						.WithCompilationOptions(compilationOptions);
-				}
-
 				var complation = await project.GetCompilationAsync().ConfigureAwait(false);
 				var compilationWithAnalyzers = complation.WithAnalyzers(ImmutableArray.Create(analyzer));
 				var diags = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
