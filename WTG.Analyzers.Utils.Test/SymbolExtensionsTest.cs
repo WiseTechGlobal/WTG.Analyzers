@@ -64,6 +64,7 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("class Foo { public class Bar { public void Method(); } }", ExpectedResult = false)]
 		[TestCase("public class Foo { internal void Method(); }", ExpectedResult = false)]
 		[TestCase("public class Foo { protected void Method(); }", ExpectedResult = true)]
+		[TestCase("public class Foo { private protected void Method(); }", ExpectedResult = false)]
 		[TestCase("public class Foo { protected internal void Method(); }", ExpectedResult = true)]
 		[TestCase("public class Foo { private void Method(); }", ExpectedResult = false)]
 		public async Task<bool> IsExternallyVisible(string source)
