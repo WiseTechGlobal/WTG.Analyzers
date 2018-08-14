@@ -45,8 +45,25 @@ namespace WTG.Analyzers
 			}
 
 			var decl = (MemberDeclarationSyntax)context.Node;
-			var processor = new Processor(context.SemanticModel, context.ReportDiagnostic, context.CancellationToken);
-			decl.Accept(processor);
+
+			if (!IsOverriden(decl))
+			{
+				var processor = new Processor(context.SemanticModel, context.ReportDiagnostic, context.CancellationToken);
+				decl.Accept(processor);
+			}
+		}
+
+		static bool IsOverriden(MemberDeclarationSyntax decl)
+		{
+			foreach (var modifier in decl.Accept(ModifierExtractionVisitor.Instance))
+			{
+				if (modifier.IsKind(SyntaxKind.OverrideKeyword))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		sealed class Processor : CSharpSyntaxVisitor
@@ -70,8 +87,7 @@ namespace WTG.Analyzers
 
 			public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
 			{
-				if (!IsOverride(node.Modifiers) &&
-					model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
+				if (model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
 					symbol != null &&
 					symbol.IsExternallyVisible() &&
 					!symbol.ImplementsAnInterface())
@@ -83,8 +99,7 @@ namespace WTG.Analyzers
 
 			public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
 			{
-				if (!IsOverride(node.Modifiers) &&
-					model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
+				if (model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
 					symbol != null &&
 					symbol.IsExternallyVisible() &&
 					!symbol.ImplementsAnInterface())
@@ -108,8 +123,7 @@ namespace WTG.Analyzers
 
 			public override void VisitEventDeclaration(EventDeclarationSyntax node)
 			{
-				if (!IsOverride(node.Modifiers) &&
-					model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
+				if (model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
 					symbol != null &&
 					symbol.IsExternallyVisible() &&
 					!symbol.ImplementsAnInterface())
@@ -120,7 +134,7 @@ namespace WTG.Analyzers
 
 			public override void VisitEventFieldDeclaration(EventFieldDeclarationSyntax node)
 			{
-				if (!IsOverride(node.Modifiers) && MustComply(node.Declaration))
+				if (MustComply(node.Declaration))
 				{
 					Visit(node.Declaration.Type);
 				}
@@ -155,8 +169,7 @@ namespace WTG.Analyzers
 
 			public override void VisitIndexerDeclaration(IndexerDeclarationSyntax node)
 			{
-				if (!IsOverride(node.Modifiers) &&
-					model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
+				if (model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
 					symbol != null &&
 					symbol.IsExternallyVisible() &&
 					!symbol.ImplementsAnInterface())
@@ -215,19 +228,6 @@ namespace WTG.Analyzers
 			public override void VisitQualifiedName(QualifiedNameSyntax node)
 			{
 				Validate(node);
-			}
-
-			static bool IsOverride(SyntaxTokenList modifiers)
-			{
-				foreach (var modifier in modifiers)
-				{
-					if (modifier.IsKind(SyntaxKind.OverrideKeyword))
-					{
-						return true;
-					}
-				}
-
-				return false;
 			}
 
 			void VisitParameters(SeparatedSyntaxList<ParameterSyntax> parameters)
