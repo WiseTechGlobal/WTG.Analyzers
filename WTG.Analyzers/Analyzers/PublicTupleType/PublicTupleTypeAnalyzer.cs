@@ -77,12 +77,6 @@ namespace WTG.Analyzers
 
 			switch (memberSyntax.Kind())
 			{
-				default:
-					{
-						var symbol = semanticModel.GetDeclaredSymbol(memberSyntax, cancellationToken);
-						return symbol != null && symbol.IsExternallyVisible() && !symbol.ImplementsAnInterface();
-					}
-
 				case SyntaxKind.FieldDeclaration:
 					{
 						// If any field is externally visible, then they all are.
@@ -119,6 +113,12 @@ namespace WTG.Analyzers
 						}
 
 						return false;
+					}
+
+				default:
+					{
+						var symbol = semanticModel.GetDeclaredSymbol(memberSyntax, cancellationToken);
+						return symbol != null && symbol.IsExternallyVisible() && !symbol.ImplementsAnInterface();
 					}
 			}
 		}
