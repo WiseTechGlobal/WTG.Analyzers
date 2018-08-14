@@ -46,14 +46,16 @@ namespace WTG.Analyzers
 
 			var decl = (MemberDeclarationSyntax)context.Node;
 
-			if (!IsOverriden(decl))
+			if (!IsRuleApplicable(context.SemanticModel, decl, context.CancellationToken))
 			{
-				var processor = new Processor(context.SemanticModel, context.ReportDiagnostic, context.CancellationToken);
-				decl.Accept(processor);
+				return;
 			}
+
+			var processor = new Processor(context.SemanticModel, context.ReportDiagnostic, context.CancellationToken);
+			decl.Accept(processor);
 		}
 
-		static bool IsOverriden(MemberDeclarationSyntax decl)
+		static bool IsOverride(MemberDeclarationSyntax decl)
 		{
 			foreach (var modifier in decl.Accept(ModifierExtractionVisitor.Instance))
 			{
@@ -66,6 +68,61 @@ namespace WTG.Analyzers
 			return false;
 		}
 
+		static bool IsRuleApplicable(SemanticModel semanticModel, MemberDeclarationSyntax memberSyntax, CancellationToken cancellationToken)
+		{
+			if (IsOverride(memberSyntax))
+			{
+				return false;
+			}
+
+			switch (memberSyntax.Kind())
+			{
+				default:
+					{
+						var symbol = semanticModel.GetDeclaredSymbol(memberSyntax, cancellationToken);
+						return symbol != null && symbol.IsExternallyVisible() && !symbol.ImplementsAnInterface();
+					}
+
+				case SyntaxKind.FieldDeclaration:
+					{
+						// If any field is externally visible, then they all are.
+						// Fields never implement an interface.
+						var variables = ((FieldDeclarationSyntax)memberSyntax).Declaration.Variables;
+						var symbol = semanticModel.GetDeclaredSymbol(variables[0], cancellationToken);
+						return symbol != null && symbol.IsExternallyVisible();
+					}
+
+				case SyntaxKind.EventFieldDeclaration:
+					{
+						// If any event is externally visible, then they all are.
+						// Only consider this as implementing an interface if all the events implement an interface.
+						var variables = ((EventFieldDeclarationSyntax)memberSyntax).Declaration.Variables;
+						var symbol = semanticModel.GetDeclaredSymbol(variables[0], cancellationToken);
+
+						if (symbol == null || !symbol.IsExternallyVisible())
+						{
+							return false;
+						}
+						else if (!symbol.ImplementsAnInterface())
+						{
+							return true;
+						}
+
+						for (var i = 1; i < variables.Count; i++)
+						{
+							symbol = semanticModel.GetDeclaredSymbol(variables[i], cancellationToken);
+
+							if (!symbol.ImplementsAnInterface())
+							{
+								return true;
+							}
+						}
+
+						return false;
+					}
+			}
+		}
+
 		sealed class Processor : CSharpSyntaxVisitor
 		{
 			public Processor(SemanticModel model, Action<Diagnostic> report, CancellationToken cancellationToken)
@@ -75,130 +132,34 @@ namespace WTG.Analyzers
 				this.cancellationToken = cancellationToken;
 			}
 
-			public override void VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
-			{
-				var syntax = model.GetDeclaredSymbol(node, cancellationToken);
-
-				if (syntax != null && syntax.IsExternallyVisible())
-				{
-					VisitParameters(node.ParameterList.Parameters);
-				}
-			}
+			public override void VisitConstructorDeclaration(ConstructorDeclarationSyntax node) => VisitParameters(node.ParameterList.Parameters);
+			public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node) => Visit(node.Type);
+			public override void VisitFieldDeclaration(FieldDeclarationSyntax node) => Visit(node.Declaration.Type);
+			public override void VisitEventDeclaration(EventDeclarationSyntax node) => Visit(node.Type);
+			public override void VisitEventFieldDeclaration(EventFieldDeclarationSyntax node) => Visit(node.Declaration.Type);
 
 			public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
 			{
-				if (model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
-					symbol != null &&
-					symbol.IsExternallyVisible() &&
-					!symbol.ImplementsAnInterface())
-				{
-					VisitParameters(node.ParameterList.Parameters);
-					Visit(node.ReturnType);
-				}
-			}
-
-			public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
-			{
-				if (model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
-					symbol != null &&
-					symbol.IsExternallyVisible() &&
-					!symbol.ImplementsAnInterface())
-				{
-					Visit(node.Type);
-				}
-			}
-
-			public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
-			{
-				var variables = node.Declaration.Variables;
-
-				if (variables.Count > 0 &&
-					model.GetDeclaredSymbol(variables[0], cancellationToken) is var symbol &&
-					symbol != null &&
-					symbol.IsExternallyVisible())
-				{
-					Visit(node.Declaration.Type);
-				}
-			}
-
-			public override void VisitEventDeclaration(EventDeclarationSyntax node)
-			{
-				if (model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
-					symbol != null &&
-					symbol.IsExternallyVisible() &&
-					!symbol.ImplementsAnInterface())
-				{
-					Visit(node.Type);
-				}
-			}
-
-			public override void VisitEventFieldDeclaration(EventFieldDeclarationSyntax node)
-			{
-				if (MustComply(node.Declaration))
-				{
-					Visit(node.Declaration.Type);
-				}
-
-				bool MustComply(VariableDeclarationSyntax declaration)
-				{
-					var variables = node.Declaration.Variables;
-
-					if (variables.Count > 0)
-					{
-						var syntax = model.GetDeclaredSymbol(variables[0], cancellationToken);
-
-						if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
-						{
-							return true;
-						}
-
-						for (var i = 1; i < variables.Count; i++)
-						{
-							syntax = model.GetDeclaredSymbol(variables[0], cancellationToken);
-
-							if (syntax != null && !syntax.ImplementsAnInterface())
-							{
-								return true;
-							}
-						}
-					}
-
-					return false;
-				}
+				VisitParameters(node.ParameterList.Parameters);
+				Visit(node.ReturnType);
 			}
 
 			public override void VisitIndexerDeclaration(IndexerDeclarationSyntax node)
 			{
-				if (model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
-					symbol != null &&
-					symbol.IsExternallyVisible() &&
-					!symbol.ImplementsAnInterface())
-				{
-					VisitParameters(node.ParameterList.Parameters);
-					Visit(node.Type);
-				}
+				VisitParameters(node.ParameterList.Parameters);
+				Visit(node.Type);
 			}
 
 			public override void VisitDelegateDeclaration(DelegateDeclarationSyntax node)
 			{
-				var syntax = model.GetDeclaredSymbol(node, cancellationToken);
-
-				if (syntax != null && syntax.IsExternallyVisible())
-				{
-					VisitParameters(node.ParameterList.Parameters);
-					Visit(node.ReturnType);
-				}
+				VisitParameters(node.ParameterList.Parameters);
+				Visit(node.ReturnType);
 			}
 
-			public override void VisitArrayType(ArrayTypeSyntax node)
-			{
-				Visit(node.ElementType);
-			}
-
-			public override void VisitPointerType(PointerTypeSyntax node)
-			{
-				Visit(node.ElementType);
-			}
+			public override void VisitArrayType(ArrayTypeSyntax node) => Visit(node.ElementType);
+			public override void VisitPointerType(PointerTypeSyntax node) => Visit(node.ElementType);
+			public override void VisitIdentifierName(IdentifierNameSyntax node) => Validate(node);
+			public override void VisitQualifiedName(QualifiedNameSyntax node) => Validate(node);
 
 			public override void VisitGenericName(GenericNameSyntax node)
 			{
@@ -220,16 +181,6 @@ namespace WTG.Analyzers
 				Validate(node);
 			}
 
-			public override void VisitIdentifierName(IdentifierNameSyntax node)
-			{
-				Validate(node);
-			}
-
-			public override void VisitQualifiedName(QualifiedNameSyntax node)
-			{
-				Validate(node);
-			}
-
 			void VisitParameters(SeparatedSyntaxList<ParameterSyntax> parameters)
 			{
 				foreach (var parameter in parameters)
@@ -240,7 +191,7 @@ namespace WTG.Analyzers
 
 			void Validate(TypeSyntax node)
 			{
-				var symbol = model.GetSymbolInfo(node).Symbol;
+				var symbol = model.GetSymbolInfo(node, cancellationToken).Symbol;
 
 				if (symbol != null &&
 					symbol.Kind == SymbolKind.NamedType &&
