@@ -262,22 +262,10 @@ namespace WTG.Analyzers
 				switch (symbol.TypeKind)
 				{
 					case TypeKind.Class:
-						if (symbol.Name == "Tuple" &&
-							symbol.ContainingType == null &&
-							symbol.ContainingNamespace.IsMatch("System"))
-						{
-							return true;
-						}
-						break;
+						return symbol.IsMatchAnyArity("System.Tuple");
 
 					case TypeKind.Struct:
-						if (symbol.Name == "ValueTuple" &&
-							symbol.ContainingType == null &&
-							symbol.ContainingNamespace.IsMatch("System"))
-						{
-							return true;
-						}
-						break;
+						return symbol.IsMatchAnyArity("System.ValueTuple");
 				}
 
 				return false;

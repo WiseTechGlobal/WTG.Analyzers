@@ -77,6 +77,42 @@ namespace WTG.Analyzers.Utils
 			return assemblySymbol.Identity.Name == assemblyName;
 		}
 
+		public static bool IsMatchAnyArity(this ITypeSymbol typeSymbol, string fullName)
+		{
+			ISymbol symbol = typeSymbol;
+			var length = fullName.Length;
+
+			while (true)
+			{
+				var index = fullName.LastIndexOf('+', length - 1);
+
+				if (index < 0)
+				{
+					break;
+				}
+
+				if (string.Compare(symbol.Name, 0, fullName, index + 1, length - index - 1, StringComparison.Ordinal) != 0)
+				{
+					return false;
+				}
+
+				length = index;
+				symbol = symbol.ContainingType;
+
+				if (symbol == null)
+				{
+					return false;
+				}
+			}
+
+			if (symbol.ContainingType != null)
+			{
+				return false;
+			}
+
+			return IsMatchCore(symbol, fullName, length);
+		}
+
 		public static bool ImplementsAnInterface(this ISymbol symbol)
 		{
 			switch (symbol.Kind)
