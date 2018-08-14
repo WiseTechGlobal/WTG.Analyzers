@@ -70,28 +70,26 @@ namespace WTG.Analyzers
 
 			public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
 			{
-				if (!IsOverride(node.Modifiers))
+				if (!IsOverride(node.Modifiers) &&
+					model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
+					symbol != null &&
+					symbol.IsExternallyVisible() &&
+					!symbol.ImplementsAnInterface())
 				{
-					var syntax = model.GetDeclaredSymbol(node, cancellationToken);
-
-					if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
-					{
-						VisitParameters(node.ParameterList.Parameters);
-						Visit(node.ReturnType);
-					}
+					VisitParameters(node.ParameterList.Parameters);
+					Visit(node.ReturnType);
 				}
 			}
 
 			public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
 			{
-				if (!IsOverride(node.Modifiers))
+				if (!IsOverride(node.Modifiers) &&
+					model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
+					symbol != null &&
+					symbol.IsExternallyVisible() &&
+					!symbol.ImplementsAnInterface())
 				{
-					var syntax = model.GetDeclaredSymbol(node, cancellationToken);
-
-					if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
-					{
-						Visit(node.Type);
-					}
+					Visit(node.Type);
 				}
 			}
 
@@ -99,38 +97,32 @@ namespace WTG.Analyzers
 			{
 				var variables = node.Declaration.Variables;
 
-				if (variables.Count > 0)
+				if (variables.Count > 0 &&
+					model.GetDeclaredSymbol(variables[0], cancellationToken) is var symbol &&
+					symbol != null &&
+					symbol.IsExternallyVisible())
 				{
-					var syntax = model.GetDeclaredSymbol(variables[0], cancellationToken);
-
-					if (syntax != null && syntax.IsExternallyVisible())
-					{
-						Visit(node.Declaration.Type);
-					}
+					Visit(node.Declaration.Type);
 				}
 			}
 
 			public override void VisitEventDeclaration(EventDeclarationSyntax node)
 			{
-				if (!IsOverride(node.Modifiers))
+				if (!IsOverride(node.Modifiers) &&
+					model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
+					symbol != null &&
+					symbol.IsExternallyVisible() &&
+					!symbol.ImplementsAnInterface())
 				{
-					var syntax = model.GetDeclaredSymbol(node, cancellationToken);
-
-					if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
-					{
-						Visit(node.Type);
-					}
+					Visit(node.Type);
 				}
 			}
 
 			public override void VisitEventFieldDeclaration(EventFieldDeclarationSyntax node)
 			{
-				if (!IsOverride(node.Modifiers))
+				if (!IsOverride(node.Modifiers) && MustComply(node.Declaration))
 				{
-					if (MustComply(node.Declaration))
-					{
-						Visit(node.Declaration.Type);
-					}
+					Visit(node.Declaration.Type);
 				}
 
 				bool MustComply(VariableDeclarationSyntax declaration)
@@ -163,15 +155,14 @@ namespace WTG.Analyzers
 
 			public override void VisitIndexerDeclaration(IndexerDeclarationSyntax node)
 			{
-				if (!IsOverride(node.Modifiers))
+				if (!IsOverride(node.Modifiers) &&
+					model.GetDeclaredSymbol(node, cancellationToken) is var symbol &&
+					symbol != null &&
+					symbol.IsExternallyVisible() &&
+					!symbol.ImplementsAnInterface())
 				{
-					var syntax = model.GetDeclaredSymbol(node, cancellationToken);
-
-					if (syntax != null && syntax.IsExternallyVisible() && !syntax.ImplementsAnInterface())
-					{
-						VisitParameters(node.ParameterList.Parameters);
-						Visit(node.Type);
-					}
+					VisitParameters(node.ParameterList.Parameters);
+					Visit(node.Type);
 				}
 			}
 
@@ -251,16 +242,13 @@ namespace WTG.Analyzers
 			{
 				var symbol = model.GetSymbolInfo(node).Symbol;
 
-				if (symbol != null && symbol.Kind == SymbolKind.NamedType)
+				if (symbol != null &&
+					symbol.Kind == SymbolKind.NamedType &&
+					IsTupleLike((INamedTypeSymbol)symbol))
 				{
-					var type = (INamedTypeSymbol)symbol;
-
-					if (IsTupleLike(type))
-					{
-						report(Diagnostic.Create(
-							Rules.AvoidTupleTypesInPublicInterfacesRule,
-							node.GetLocation()));
-					}
+					report(Diagnostic.Create(
+						Rules.AvoidTupleTypesInPublicInterfacesRule,
+						node.GetLocation()));
 				}
 			}
 
