@@ -34,7 +34,7 @@ namespace WTG.Analyzers.Utils
 			{
 				var inner = Visit(node.Expression);
 
-				if (ShouldCollapse(inner))
+				if (CanDiscard(inner))
 				{
 					return inner.WithTriviaFrom(node);
 				}
@@ -70,7 +70,7 @@ namespace WTG.Analyzers.Utils
 			{
 				var condition = Visit(node.Condition);
 
-				if (ShouldCollapse(condition))
+				if (CanDiscard(condition))
 				{
 					if (condition.IsKind(SyntaxKind.TrueLiteralExpression))
 					{
@@ -86,9 +86,9 @@ namespace WTG.Analyzers.Utils
 				var whenTrue = (ExpressionSyntax)Visit(node.WhenTrue);
 				var whenFalse = (ExpressionSyntax)Visit(node.WhenFalse);
 
-				if (ShouldCollapse(whenTrue))
+				if (CanDiscard(whenTrue))
 				{
-					if (ShouldCollapse(whenFalse))
+					if (CanDiscard(whenFalse))
 					{
 						var newExpression = conditionExpression;
 
@@ -128,7 +128,7 @@ namespace WTG.Analyzers.Utils
 							.WithTrailingTrivia(node.ColonToken.TrailingTrivia),
 						whenFalse);
 				}
-				else if (ShouldCollapse(whenFalse))
+				else if (CanDiscard(whenFalse))
 				{
 					SyntaxKind opKind;
 					SyntaxKind nodeKind;
@@ -164,7 +164,7 @@ namespace WTG.Analyzers.Utils
 			{
 				var condition = Visit(node.Condition);
 
-				if (ShouldCollapse(condition))
+				if (CanDiscard(condition))
 				{
 					if (condition.IsKind(SyntaxKind.TrueLiteralExpression))
 					{
@@ -188,7 +188,7 @@ namespace WTG.Analyzers.Utils
 				{
 					var elseStatement = Visit(node.Else.Statement);
 
-					if (ShouldCollapse(elseStatement))
+					if (CanDiscard(elseStatement))
 					{
 						result = result.WithElse(null);
 					}
@@ -206,7 +206,7 @@ namespace WTG.Analyzers.Utils
 			{
 				var condition = Visit(node.Condition);
 
-				if (ShouldCollapse(condition))
+				if (CanDiscard(condition))
 				{
 					if (condition.IsKind(SyntaxKind.FalseLiteralExpression))
 					{
@@ -224,7 +224,7 @@ namespace WTG.Analyzers.Utils
 			{
 				var condition = Visit(node.Condition);
 
-				if (ShouldCollapse(condition))
+				if (CanDiscard(condition))
 				{
 					if (condition.IsKind(SyntaxKind.FalseLiteralExpression))
 					{
@@ -245,7 +245,7 @@ namespace WTG.Analyzers.Utils
 
 				for (var i = 0; i < statements.Count;)
 				{
-					if (ShouldCollapse(statements[i]))
+					if (CanDiscard(statements[i]))
 					{
 						statements = statements.RemoveAt(i);
 						modified = true;
@@ -260,7 +260,7 @@ namespace WTG.Analyzers.Utils
 
 				if (modified && statements.Count == 0)
 				{
-					result = result.WithAdditionalAnnotations(CollapseAnnotation);
+					result = result.WithAdditionalAnnotations(DiscardableAnnotation);
 				}
 
 				return result;
@@ -271,7 +271,7 @@ namespace WTG.Analyzers.Utils
 				var left = Visit(node.Left);
 				var right = Visit(node.Right);
 
-				if (ShouldCollapse(left))
+				if (CanDiscard(left))
 				{
 					if (left.IsKind(GetExpressionKind(shortCircuitValue)))
 					{
@@ -282,7 +282,7 @@ namespace WTG.Analyzers.Utils
 						return right.WithLeadingTrivia(node.GetLeadingTrivia());
 					}
 				}
-				else if (ShouldCollapse(right))
+				else if (CanDiscard(right))
 				{
 					if (!right.IsKind(GetExpressionKind(shortCircuitValue)))
 					{
@@ -301,7 +301,7 @@ namespace WTG.Analyzers.Utils
 			{
 				var newInner = Visit(node.Operand);
 
-				if (ShouldCollapse(newInner))
+				if (CanDiscard(newInner))
 				{
 					if (newInner.IsKind(SyntaxKind.TrueLiteralExpression))
 					{
@@ -344,11 +344,11 @@ namespace WTG.Analyzers.Utils
 
 		static ExpressionSyntax GetExpression(bool value) => value ? TrueExpression : FalseExpression;
 		static SyntaxKind GetExpressionKind(bool value) => value ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression;
-		static bool ShouldCollapse(SyntaxNode node) => node.HasAnnotation(CollapseAnnotation);
+		static bool CanDiscard(SyntaxNode node) => node.HasAnnotation(DiscardableAnnotation);
 
-		static readonly SyntaxAnnotation CollapseAnnotation = new SyntaxAnnotation("WTG.Analyzers:Collapse");
-		static readonly LiteralExpressionSyntax TrueExpression = SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression).WithAdditionalAnnotations(CollapseAnnotation);
-		static readonly LiteralExpressionSyntax FalseExpression = SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression).WithAdditionalAnnotations(CollapseAnnotation);
-		static readonly StatementSyntax EmptyStatement = SyntaxFactory.EmptyStatement().WithAdditionalAnnotations(CollapseAnnotation);
+		static readonly SyntaxAnnotation DiscardableAnnotation = new SyntaxAnnotation("WTG.Analyzers:Discardable");
+		static readonly LiteralExpressionSyntax TrueExpression = SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression).WithAdditionalAnnotations(DiscardableAnnotation);
+		static readonly LiteralExpressionSyntax FalseExpression = SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression).WithAdditionalAnnotations(DiscardableAnnotation);
+		static readonly StatementSyntax EmptyStatement = SyntaxFactory.EmptyStatement().WithAdditionalAnnotations(DiscardableAnnotation);
 	}
 }
