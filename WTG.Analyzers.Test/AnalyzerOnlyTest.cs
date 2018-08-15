@@ -11,6 +11,7 @@ using WTG.Analyzers.TestFramework;
 namespace WTG.Analyzers.Test
 {
 	[TestFixture(TypeArgs = new[] { typeof(ConditionDirectiveAnalyzer) })]
+	[TestFixture(TypeArgs = new[] { typeof(PublicTupleTypeAnalyzer) })]
 	class AnalyzerTest<TAnalyzer>
 		where TAnalyzer : DiagnosticAnalyzer, new()
 	{

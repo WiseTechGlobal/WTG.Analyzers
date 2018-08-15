@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG1013" message="Tuple types don't impart useful semantic information, public interfaces should use a dedicated type instead." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (6,25-46)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (10,21-36)</location>
+	</diagnostic>
+
+	<diagnostic>
+		<location>Test0.cs: (14,9-24)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (15,9-24)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (16,9-24)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (17,9-27))</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (17,33-51)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (18,28-46))</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (19,28-46)</location>
+	</diagnostic>
+</diagnostics>
