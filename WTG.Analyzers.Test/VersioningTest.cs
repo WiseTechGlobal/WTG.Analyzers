@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 
@@ -11,7 +12,7 @@ namespace WTG.Analyzers.Test
 		public void AssemblyMajorMinorVersionMatchesRoslynMajorMinorVersion()
 		{
 			var analyzersVersion = GetAssemblyVersion("WTG.Analyzers");
-			var roslynVersion = GetAssemblyVersion("Microsoft.CodeAnalysis");
+			var roslynVersion = GetAssemblyReferenceVersion("WTG.Analyzers", "Microsoft.CodeAnalysis");
 
 			Assert.Multiple(() =>
 			{
@@ -44,5 +45,13 @@ namespace WTG.Analyzers.Test
 		}
 
 		static Version GetAssemblyVersion(string assemblyName) => Assembly.Load(assemblyName).GetName().Version;
+
+		static Version GetAssemblyReferenceVersion(string assemblyName, string assemblyReference)
+		{
+			var assembly = Assembly.Load(assemblyName);
+			var references = assembly.GetReferencedAssemblies();
+			var reference = references.Where(x => x.Name == assemblyReference).Single();
+			return reference.Version;
+		}
 	}
 }

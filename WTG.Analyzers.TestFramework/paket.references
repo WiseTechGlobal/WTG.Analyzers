@@ -1,2 +1,5 @@
-﻿Microsoft.CodeAnalysis.CSharp.Workspaces
-NUnit
+group Test
+	Microsoft.CodeAnalysis.CSharp.Workspaces
+	Microsoft.NET.Test.Sdk
+	NUnit
+	NUnit3TestAdapter

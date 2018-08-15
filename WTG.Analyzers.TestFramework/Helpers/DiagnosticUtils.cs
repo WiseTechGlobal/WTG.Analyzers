@@ -43,9 +43,7 @@ namespace WTG.Analyzers.TestFramework
 						for (var i = 0; i < documents.Length; i++)
 						{
 							var document = documents[i];
-							var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
-
-							if (tree == diag.Location.SourceTree)
+							if (project.GetDocument(diag.Location.SourceTree).Id == document.Id)
 							{
 								diagnostics.Add(diag);
 							}
