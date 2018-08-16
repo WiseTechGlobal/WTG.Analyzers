@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace WTG.Analyzers.Utils
 {
@@ -168,11 +171,15 @@ namespace WTG.Analyzers.Utils
 				{
 					if (condition.IsKind(SyntaxKind.TrueLiteralExpression))
 					{
-						return Visit(node.Statement).WithTriviaFrom(node);
+						return Visit(node.Statement)
+							.WithTriviaFrom(node)
+							.WithAdditionalAnnotations(WeakAnnotation);
 					}
 					else if (node.Else != null)
 					{
-						return Visit(node.Else.Statement).WithTriviaFrom(node);
+						return Visit(node.Else.Statement)
+							.WithTriviaFrom(node)
+							.WithAdditionalAnnotations(WeakAnnotation);
 					}
 					else
 					{
@@ -228,7 +235,9 @@ namespace WTG.Analyzers.Utils
 				{
 					if (condition.IsKind(SyntaxKind.FalseLiteralExpression))
 					{
-						return Visit(node.Statement).WithTriviaFrom(node);
+						return Visit(node.Statement)
+							.WithTriviaFrom(node)
+							.WithAdditionalAnnotations(WeakAnnotation);
 					}
 				}
 
@@ -245,9 +254,16 @@ namespace WTG.Analyzers.Utils
 
 				for (var i = 0; i < statements.Count;)
 				{
-					if (CanDiscard(statements[i]))
+					var current = statements[i];
+
+					if (CanDiscard(current))
 					{
 						statements = statements.RemoveAt(i);
+						modified = true;
+					}
+					else if (current.IsKind(SyntaxKind.Block) && IsWeak(current))
+					{
+						statements = InlineBlock(statements, (BlockSyntax)current);
 						modified = true;
 					}
 					else
@@ -264,6 +280,32 @@ namespace WTG.Analyzers.Utils
 				}
 
 				return result;
+			}
+
+			static SyntaxList<StatementSyntax> InlineBlock(SyntaxList<StatementSyntax> statements, BlockSyntax block)
+			{
+				var innerStatements = block.Statements;
+				var newStatements = new StatementSyntax[innerStatements.Count];
+
+				for (var i = 0; i < innerStatements.Count; i++)
+				{
+					newStatements[i] = innerStatements[i]
+						.WithAdditionalAnnotations(Formatter.Annotation);
+				}
+
+				ref var first = ref newStatements[0];
+				first = first.WithLeadingTrivia(
+					block.GetLeadingTrivia()
+						.Concat(block.OpenBraceToken.TrailingTrivia)
+						.Concat(first.GetLeadingTrivia()));
+
+				ref var last = ref newStatements[newStatements.Length - 1];
+				last = last.WithTrailingTrivia(
+					last.GetTrailingTrivia()
+						.Concat(block.CloseBraceToken.LeadingTrivia)
+						.Concat(block.GetTrailingTrivia()));
+
+				return statements.ReplaceRange(block, newStatements);
 			}
 
 			SyntaxNode VisitAndOrExpression(BinaryExpressionSyntax node, bool shortCircuitValue)
@@ -345,8 +387,10 @@ namespace WTG.Analyzers.Utils
 		static ExpressionSyntax GetExpression(bool value) => value ? TrueExpression : FalseExpression;
 		static SyntaxKind GetExpressionKind(bool value) => value ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression;
 		static bool CanDiscard(SyntaxNode node) => node.HasAnnotation(DiscardableAnnotation);
+		static bool IsWeak(SyntaxNode node) => node.HasAnnotation(WeakAnnotation);
 
 		static readonly SyntaxAnnotation DiscardableAnnotation = new SyntaxAnnotation("WTG.Analyzers:Discardable");
+		static readonly SyntaxAnnotation WeakAnnotation = new SyntaxAnnotation("WTG.Analyzers:Weak");
 		static readonly LiteralExpressionSyntax TrueExpression = SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression).WithAdditionalAnnotations(DiscardableAnnotation);
 		static readonly LiteralExpressionSyntax FalseExpression = SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression).WithAdditionalAnnotations(DiscardableAnnotation);
 		static readonly StatementSyntax EmptyStatement = SyntaxFactory.EmptyStatement().WithAdditionalAnnotations(DiscardableAnnotation);
