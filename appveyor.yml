@@ -38,6 +38,7 @@ test:
 
 artifacts:
   - path: bin\WTG.Analyzers.$(WTG_ANALYZERS_VERSION).nupkg
+  - path: bin\WTG.Analyzers.Utils.$(WTG_ANALYZERS_VERSION).nupkg
   - path: bin\WTG.Analyzers.TestFramework.$(WTG_ANALYZERS_VERSION).nupkg
 
 deploy:
