@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
@@ -19,7 +20,7 @@ namespace WTG.Analyzers
 		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
 			Rules.DontEquateValueTypesWithNullDiagnosticID);
 
-		public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+		public sealed override FixAllProvider GetFixAllProvider() => NullComparisonFixAllProvider.Instance;
 
 		public override Task RegisterCodeFixesAsync(CodeFixContext context)
 		{
@@ -41,24 +42,23 @@ namespace WTG.Analyzers
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = (BinaryExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
-			SyntaxNode literalNode;
+			bool value;
 
 			switch (node.Kind())
 			{
 				case SyntaxKind.EqualsExpression:
-					literalNode = SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression);
+					value = false;
 					break;
 
 				case SyntaxKind.NotEqualsExpression:
-					literalNode = SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression);
+					value = true;
 					break;
 
 				default:
 					throw new InvalidOperationException("Unreachable - encountered unexpected syntax node " + node.Kind());
 			}
 
-			return document.WithSyntaxRoot(
-				root.ReplaceNode(node, literalNode.WithTriviaFrom(node)));
+			return document.WithSyntaxRoot(ExpressionRemover.ReplaceWithConstantBool(root, node, value));
 		}
 	}
 }
