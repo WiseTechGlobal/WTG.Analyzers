@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package>
+	<metadata>
+		<id>WTG.Analyzers.Utils</id>
+		<version>2.0.5</version>
+		<authors>WiseTech Global</authors>
+		<owners>WiseTech Global</owners>
+		<description>Support library for Roslyn Analyzers.</description>
+		<copyright>Copyright 2018</copyright>
+
+		<dependencies>
+			<dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="2.0.0" />
+		</dependencies>
+	</metadata>
+
+	<files>
+		<!-- Binaries -->
+		<file src="bin\netstandard1.3\WTG.Analyzers.Utils.dll" target="lib\netstandard1.3" />
+	</files>
+</package>
