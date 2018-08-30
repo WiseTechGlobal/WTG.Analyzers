@@ -12,6 +12,6 @@
 
 	<files>
 		<!-- Binaries -->
-		<file src="bin\net46\WTG.Analyzers.TestFramework.dll" target="lib\testing" />
+		<file src="bin\net46\WTG.Analyzers.TestFramework.dll" target="lib\net46" />
 	</files>
 </package>
