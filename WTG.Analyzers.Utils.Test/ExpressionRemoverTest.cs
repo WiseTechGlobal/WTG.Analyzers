@@ -24,8 +24,8 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("__FALSE__ ? A : B", ExpectedResult = "B")]
 		[TestCase("exp ? __TRUE__ : B", ExpectedResult = "exp || B")]
 		[TestCase("exp ? __FALSE__ : B", ExpectedResult = "!exp && B")]
-		[TestCase("exp ? A : __TRUE__", ExpectedResult = "exp || A")]
-		[TestCase("exp ? A : __FALSE__", ExpectedResult = "!exp && A")]
+		[TestCase("exp ? A : __TRUE__", ExpectedResult = "!exp || A")]
+		[TestCase("exp ? A : __FALSE__", ExpectedResult = "exp && A")]
 		[TestCase("exp ? __TRUE__ : __FALSE__", ExpectedResult = "exp")]
 		[TestCase("exp ? __FALSE__ : __TRUE__ ", ExpectedResult = "!exp")]
 		[TestCase("exp ? __TRUE__ : __TRUE__ ", ExpectedResult = "exp || true")] // need to keep exp incase it has side effects.

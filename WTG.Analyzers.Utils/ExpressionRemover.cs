@@ -119,7 +119,6 @@ namespace WTG.Analyzers.Utils
 					{
 						opKind = SyntaxKind.AmpersandAmpersandToken;
 						nodeKind = SyntaxKind.LogicalAndExpression;
-
 						conditionExpression = ExpressionSyntaxFactory.LogicalNot(conditionExpression);
 					}
 
@@ -140,12 +139,12 @@ namespace WTG.Analyzers.Utils
 					{
 						opKind = SyntaxKind.BarBarToken;
 						nodeKind = SyntaxKind.LogicalOrExpression;
+						conditionExpression = ExpressionSyntaxFactory.LogicalNot(conditionExpression);
 					}
 					else
 					{
 						opKind = SyntaxKind.AmpersandAmpersandToken;
 						nodeKind = SyntaxKind.LogicalAndExpression;
-						conditionExpression = ExpressionSyntaxFactory.LogicalNot(conditionExpression);
 					}
 
 					return SyntaxFactory.BinaryExpression(
