@@ -38,6 +38,7 @@ namespace WTG.Analyzers.Test
 			var expected = new[]
 			{
 				FormattableString.Invariant($"WTG.Analyzers.{ver}.nupkg"),
+				FormattableString.Invariant($"WTG.Analyzers.Utils.{ver}.nupkg"),
 				FormattableString.Invariant($"WTG.Analyzers.TestFramework.{ver}.nupkg"),
 			};
 
