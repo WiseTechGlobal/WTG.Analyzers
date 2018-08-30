@@ -20,7 +20,7 @@
 		  - Revision should be incremented whenever you want to publish a new version.
 		  -->
 		<Version Condition="'$(APPVEYOR_BUILD_VERSION)' != ''">$(APPVEYOR_BUILD_VERSION)</Version>
-		<Version Condition="'$(Version)' == ''">2.0.5.0</Version>
+		<Version Condition="'$(Version)' == ''">2.0.6.0</Version>
 
 		<Company>WiseTech Global Pty Ltd</Company>
 		<Product>WTG Analyzers</Product>
