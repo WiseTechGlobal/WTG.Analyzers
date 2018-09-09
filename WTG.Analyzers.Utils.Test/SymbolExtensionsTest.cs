@@ -30,6 +30,9 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("System.Collections.Generic.List`1", ExpectedResult = 2)]
 		[TestCase("System.Collections.Generic.List`1+Enumerator", ExpectedResult = 3)]
 		[TestCase("System.ValueTuple`2", ExpectedResult = 4)]
+		[TestCase("System.ValueTuple", ExpectedResult = -1)]
+		[TestCase("System.Collections.Generic.List`1+Enum", ExpectedResult = -1)]
+		[TestCase("Syste.Linq.Enumerable", ExpectedResult = -1)]
 		public int MatchType(string typeName)
 		{
 			return SingleMatchIndex(types, x => x.IsMatch(typeName));
@@ -50,6 +53,9 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("System.Collections.Generic.List", ExpectedResult = 2)]
 		[TestCase("System.Collections.Generic.List+Enumerator", ExpectedResult = 3)]
 		[TestCase("System.ValueTuple", ExpectedResult = 4)]
+		[TestCase("System.Value", ExpectedResult = -1)]
+		[TestCase("System.Collections.Generic.List+Enum", ExpectedResult = -1)]
+		[TestCase("Syste.Linq.Enumerable", ExpectedResult = -1)]
 		public int MatchAnyArity(string typeName)
 		{
 			return SingleMatchIndex(types, x => x.IsMatchAnyArity(typeName));
@@ -167,7 +173,15 @@ using System.Threading.Tasks;
 
 		static int SingleMatchIndex<T>(T[] items, Predicate<T> predicate)
 		{
-			return items.Select((x, i) => new { x, i }).Single(x => predicate(x.x)).i;
+			for (var i = 0; i < items.Length; i++)
+			{
+				if (predicate(items[i]))
+				{
+					return i;
+				}
+			}
+
+			return -1;
 		}
 
 		ITypeSymbol GetType(string source)
