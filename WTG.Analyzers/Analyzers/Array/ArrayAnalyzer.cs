@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -71,19 +70,12 @@ namespace WTG.Analyzers
 						}
 						break;
 
-					case SyntaxKind.CharacterLiteralExpression:
-					case SyntaxKind.NumericLiteralExpression:
-					case SyntaxKind.CastExpression:
-					case SyntaxKind.UnaryMinusExpression:
-					case SyntaxKind.UnaryPlusExpression:
-						if (!IsConstantZero(context.SemanticModel, size, context.CancellationToken))
+					default:
+						if (!context.SemanticModel.IsConstantZero(size, context.CancellationToken))
 						{
 							return;
 						}
 						break;
-
-					default:
-						return;
 				}
 			}
 
@@ -93,49 +85,6 @@ namespace WTG.Analyzers
 			}
 
 			context.ReportDiagnostic(Rules.CreatePreferArrayEmptyOverNewArrayConstructionDiagnostic(context.Node.GetLocation()));
-		}
-
-		static bool IsConstantZero(SemanticModel model, ExpressionSyntax expression, CancellationToken cancellationToken)
-		{
-			var constant = model.GetConstantValue(expression, cancellationToken);
-
-			return constant.HasValue && IsZeroLiteral(constant.Value);
-		}
-
-		static bool IsZeroLiteral(object value)
-		{
-			switch (value)
-			{
-				case int s:
-					return s == 0;
-
-				case uint s:
-					return s == 0;
-
-				case long s:
-					return s == 0;
-
-				case ulong s:
-					return s == 0;
-
-				case byte s:
-					return s == 0;
-
-				case short s:
-					return s == 0;
-
-				case ushort s:
-					return s == 0;
-
-				case sbyte s:
-					return s == 0;
-
-				case char s:
-					return s == 0;
-
-				default:
-					return false;
-			}
 		}
 	}
 }

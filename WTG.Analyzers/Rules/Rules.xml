@@ -150,6 +150,12 @@
 			<description>Value types can never be null. This expression is constant.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="9" name="PreferCompletedTask" severity="Info">
+			<title>Prefer Task.CompletedTask when applicable.</title>
+			<message>Prefer Task.CompletedTask when applicable.</message>
+			<description>Prefer Task.CompletedTask when applicable.</description>
+			<tag>Unnecessary</tag>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">
