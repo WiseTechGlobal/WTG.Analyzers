@@ -9,17 +9,9 @@ namespace WTG.Analyzers.Utils
 	{
 		public static bool IsConstantZero(this SemanticModel model, ExpressionSyntax expression, CancellationToken cancellationToken)
 		{
-			switch (expression.Kind())
+			if (!expression.Accept(IsLiteralVisitor.Instance))
 			{
-				case SyntaxKind.CharacterLiteralExpression:
-				case SyntaxKind.NumericLiteralExpression:
-				case SyntaxKind.CastExpression:
-				case SyntaxKind.UnaryMinusExpression:
-				case SyntaxKind.UnaryPlusExpression:
-					break;
-
-				default:
-					return false;
+				return false;
 			}
 
 			var constant = model.GetConstantValue(expression, cancellationToken);
@@ -60,6 +52,43 @@ namespace WTG.Analyzers.Utils
 
 				default:
 					return false;
+			}
+		}
+
+		sealed class IsLiteralVisitor : CSharpSyntaxVisitor<bool>
+		{
+			public static IsLiteralVisitor Instance { get; } = new IsLiteralVisitor();
+
+			IsLiteralVisitor()
+			{
+			}
+
+			public override bool DefaultVisit(SyntaxNode node) => false;
+			public override bool VisitParenthesizedExpression(ParenthesizedExpressionSyntax node) => node.Expression.Accept(this);
+			public override bool VisitCastExpression(CastExpressionSyntax node) => node.Expression.Accept(this);
+
+			public override bool VisitLiteralExpression(LiteralExpressionSyntax node)
+			{
+				switch (node.Kind())
+				{
+					case SyntaxKind.NumericLiteralExpression:
+					case SyntaxKind.CharacterLiteralExpression:
+						return true;
+				}
+
+				return false;
+			}
+
+			public override bool VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node)
+			{
+				switch (node.Kind())
+				{
+					case SyntaxKind.UnaryPlusExpression:
+					case SyntaxKind.UnaryMinusExpression:
+						return node.Operand.Accept(this);
+				}
+
+				return false;
 			}
 		}
 	}
