@@ -33,6 +33,7 @@ namespace WTG.Analyzers
 		public const string PreferNameofOverCallingToStringOnAnEnumDiagnosticID = "WTG3006";
 		public const string RemovePointlessOverridesDiagnosticID = "WTG3007";
 		public const string DontEquateValueTypesWithNullDiagnosticID = "WTG3008";
+		public const string PreferCompletedTaskDiagnosticID = "WTG3009";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -379,6 +380,19 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor PreferCompletedTaskRule = new DiagnosticDescriptor(
+			PreferCompletedTaskDiagnosticID,
+			"Prefer Task.CompletedTask when applicable.",
+			"Prefer Task.CompletedTask when applicable.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Prefer Task.CompletedTask when applicable.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -652,6 +666,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDontEquateValueTypesWithNullDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DontEquateValueTypesWithNullRule, location);
+		}
+
+		/// <summary>
+		/// Prefer Task.CompletedTask when applicable.
+		/// </summary>
+		public static Diagnostic CreatePreferCompletedTaskDiagnostic(Location location)
+		{
+			return Diagnostic.Create(PreferCompletedTaskRule, location);
 		}
 
 		/// <summary>

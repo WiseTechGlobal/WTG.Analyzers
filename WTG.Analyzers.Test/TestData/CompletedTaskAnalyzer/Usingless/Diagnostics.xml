@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3009" message="Prefer Task.CompletedTask when applicable." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (3,52-88)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (4,52-90)</location>
+	</diagnostic>
+</diagnostics>
