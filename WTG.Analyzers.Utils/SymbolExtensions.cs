@@ -39,7 +39,7 @@ namespace WTG.Analyzers.Utils
 					break;
 				}
 
-				if (string.Compare(symbol.MetadataName, 0, fullName, index + 1, length - index - 1, StringComparison.Ordinal) != 0)
+				if (!MatchesSubstring(symbol.MetadataName, fullName, index + 1, length))
 				{
 					return false;
 				}
@@ -79,6 +79,11 @@ namespace WTG.Analyzers.Utils
 
 		public static bool IsMatchAnyArity(this ITypeSymbol typeSymbol, string fullName)
 		{
+			if (typeSymbol.IsTupleType)
+			{
+				typeSymbol = ((INamedTypeSymbol)typeSymbol).TupleUnderlyingType;
+			}
+
 			ISymbol symbol = typeSymbol;
 			var length = fullName.Length;
 
@@ -91,7 +96,7 @@ namespace WTG.Analyzers.Utils
 					break;
 				}
 
-				if (string.Compare(symbol.Name, 0, fullName, index + 1, length - index - 1, StringComparison.Ordinal) != 0)
+				if (!MatchesSubstring(symbol.Name, fullName, index + 1, length))
 				{
 					return false;
 				}
@@ -110,7 +115,7 @@ namespace WTG.Analyzers.Utils
 				return false;
 			}
 
-			return IsMatchCore(symbol, fullName, length);
+			return IsMatchAnyArityCore(fullName, symbol, length);
 		}
 
 		public static bool ImplementsAnInterface(this ISymbol symbol)
@@ -195,7 +200,7 @@ namespace WTG.Analyzers.Utils
 					break;
 				}
 
-				if (string.Compare(symbol.MetadataName, 0, fullName, index + 1, length - index - 1, StringComparison.Ordinal) != 0)
+				if (!MatchesSubstring(symbol.MetadataName, fullName, index + 1, length))
 				{
 					return false;
 				}
@@ -211,7 +216,7 @@ namespace WTG.Analyzers.Utils
 				symbol = ns;
 			}
 
-			if (string.Compare(symbol.MetadataName, 0, fullName, 0, length, StringComparison.Ordinal) != 0)
+			if (!MatchesSubstring(symbol.MetadataName, fullName, 0, length))
 			{
 				return false;
 			}
@@ -219,6 +224,50 @@ namespace WTG.Analyzers.Utils
 			var tmp = symbol.ContainingNamespace;
 
 			return tmp.IsGlobalNamespace;
+		}
+
+		static bool IsMatchAnyArityCore(string fullName, ISymbol symbol, int length)
+		{
+			while (true)
+			{
+				var index = fullName.LastIndexOf('.', length - 1);
+
+				if (index < 0)
+				{
+					break;
+				}
+
+				if (!MatchesSubstring(symbol.Name, fullName, index + 1, length))
+				{
+					return false;
+				}
+
+				length = index;
+				var ns = symbol.ContainingNamespace;
+
+				if (ns.IsGlobalNamespace)
+				{
+					return false;
+				}
+
+				symbol = ns;
+			}
+
+			if (!MatchesSubstring(symbol.Name, fullName, 0, length))
+			{
+				return false;
+			}
+
+			var tmp = symbol.ContainingNamespace;
+
+			return tmp.IsGlobalNamespace;
+		}
+
+		static bool MatchesSubstring(string name, string fullName, int start, int end)
+		{
+			var segLen = end - start;
+			return name.Length == segLen &&
+				string.Compare(name, 0, fullName, start, segLen, StringComparison.Ordinal) == 0;
 		}
 	}
 }
