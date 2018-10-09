@@ -46,16 +46,25 @@ namespace WTG.Analyzers
 			var node = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 			var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-			if (node.Kind() == SyntaxKind.ArrayCreationExpression)
+			if (node.IsKind(SyntaxKind.ArrayCreationExpression))
 			{
 				var syntax = (ArrayCreationExpressionSyntax)node;
 
-				var arrayType = syntax.Type.ElementType;
-				if (syntax.Type.RankSpecifiers.Count > 1)
-				{
-					var specifiers = syntax.Type.RankSpecifiers.RemoveAt(0);
-					arrayType = SyntaxFactory.ArrayType(arrayType).WithRankSpecifiers(specifiers);
-				}
+				var arrayType = GetArrayElementTypeSyntax(syntax.Type);
+
+				document = document.WithSyntaxRoot(
+					root.ReplaceNode(
+						node,
+						CreateArrayEmptyInvocation(
+							arrayType.WithoutTrivia())
+							.WithTriviaFrom(syntax)));
+			}
+			else if (node.IsKind(SyntaxKind.ArrayInitializerExpression))
+			{
+				var syntax = (InitializerExpressionSyntax)node;
+
+				var typeNode = (ArrayTypeSyntax)node.FirstAncestorOrSelf<VariableDeclarationSyntax>().Type;
+				var arrayType = GetArrayElementTypeSyntax(typeNode);
 
 				document = document.WithSyntaxRoot(
 					root.ReplaceNode(
@@ -66,6 +75,20 @@ namespace WTG.Analyzers
 			}
 
 			return document;
+		}
+
+		static TypeSyntax GetArrayElementTypeSyntax(ArrayTypeSyntax syntax)
+		{
+			if (syntax.RankSpecifiers.Count == 0)
+			{
+				return syntax.ElementType;
+			}
+			else
+			{
+				var specifiers = syntax.RankSpecifiers.RemoveAt(0);
+				var arrayType = SyntaxFactory.ArrayType(syntax.ElementType).WithRankSpecifiers(specifiers);
+				return arrayType;
+			}
 		}
 
 		static InvocationExpressionSyntax CreateArrayEmptyInvocation(TypeSyntax elementType)
