@@ -44,35 +44,37 @@ namespace WTG.Analyzers
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
-			var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-			if (node.IsKind(SyntaxKind.ArrayCreationExpression))
+			ArrayTypeSyntax typeSyntaxNode;
+
+			switch (node.Kind())
 			{
-				var syntax = (ArrayCreationExpressionSyntax)node;
+				case SyntaxKind.ArrayCreationExpression:
+				{
+					var syntax = (ArrayCreationExpressionSyntax)node;
+					typeSyntaxNode = syntax.Type;
+					break;
+				}
 
-				var arrayType = GetArrayElementTypeSyntax(syntax.Type);
+				case SyntaxKind.ArrayInitializerExpression:
+				{
+					var syntax = (InitializerExpressionSyntax)node;
+					typeSyntaxNode = (ArrayTypeSyntax)node.FirstAncestorOrSelf<VariableDeclarationSyntax>().Type;
+					break;
+				}
 
-				document = document.WithSyntaxRoot(
-					root.ReplaceNode(
-						node,
-						CreateArrayEmptyInvocation(
-							arrayType.WithoutTrivia())
-							.WithTriviaFrom(syntax)));
+				default:
+					return document;
 			}
-			else if (node.IsKind(SyntaxKind.ArrayInitializerExpression))
-			{
-				var syntax = (InitializerExpressionSyntax)node;
 
-				var typeNode = (ArrayTypeSyntax)node.FirstAncestorOrSelf<VariableDeclarationSyntax>().Type;
-				var arrayType = GetArrayElementTypeSyntax(typeNode);
+			var arrayType = GetArrayElementTypeSyntax(typeSyntaxNode);
 
-				document = document.WithSyntaxRoot(
-					root.ReplaceNode(
-						node,
-						CreateArrayEmptyInvocation(
-							arrayType.WithoutTrivia())
-							.WithTriviaFrom(syntax)));
-			}
+			document = document.WithSyntaxRoot(
+				root.ReplaceNode(
+					node,
+					CreateArrayEmptyInvocation(
+						arrayType.WithoutTrivia())
+						.WithTriviaFrom(node)));
 
 			return document;
 		}
