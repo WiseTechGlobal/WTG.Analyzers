@@ -23,11 +23,15 @@ namespace WTG.Analyzers
 			var cache = new FileDetailCache();
 
 			context.RegisterSyntaxNodeAction(
-				c => Analyze(c, cache),
+				c => AnalyzeCreation(c, cache),
 				SyntaxKind.ArrayCreationExpression);
+
+			context.RegisterSyntaxNodeAction(
+				c => AnalyzeInitializer(c, cache),
+				SyntaxKind.ArrayInitializerExpression);
 		}
 
-		static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache)
+		static void AnalyzeCreation(SyntaxNodeAnalysisContext context, FileDetailCache cache)
 		{
 			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
 			{
@@ -80,6 +84,46 @@ namespace WTG.Analyzers
 			}
 
 			if (syntax.Initializer?.Expressions.Count > 0)
+			{
+				return;
+			}
+
+			context.ReportDiagnostic(Rules.CreatePreferArrayEmptyOverNewArrayConstructionDiagnostic(context.Node.GetLocation()));
+		}
+
+		static void AnalyzeInitializer(SyntaxNodeAnalysisContext context, FileDetailCache cache)
+		{
+			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
+			{
+				return;
+			}
+
+			var syntax = (InitializerExpressionSyntax)context.Node;
+
+			if (syntax.Expressions.Count > 0)
+			{
+				return;
+			}
+
+			if (!syntax.Parent.IsKind(SyntaxKind.EqualsValueClause))
+			{
+				return;
+			}
+
+			var equalsValue = syntax.Parent;
+			if (!equalsValue.Parent.IsKind(SyntaxKind.VariableDeclarator))
+			{
+				return;
+			}
+
+			var declarator = equalsValue.Parent;
+			if (!declarator.Parent.IsKind(SyntaxKind.VariableDeclaration))
+			{
+				return;
+			}
+
+			var declaration = (VariableDeclarationSyntax)declarator.Parent;
+			if (!declaration.Type.IsKind(SyntaxKind.ArrayType))
 			{
 				return;
 			}

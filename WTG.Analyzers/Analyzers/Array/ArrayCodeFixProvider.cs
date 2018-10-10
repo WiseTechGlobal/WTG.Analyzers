@@ -44,28 +44,53 @@ namespace WTG.Analyzers
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
-			var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-			if (node.Kind() == SyntaxKind.ArrayCreationExpression)
+			ArrayTypeSyntax typeSyntaxNode;
+
+			switch (node.Kind())
 			{
-				var syntax = (ArrayCreationExpressionSyntax)node;
-
-				var arrayType = syntax.Type.ElementType;
-				if (syntax.Type.RankSpecifiers.Count > 1)
+				case SyntaxKind.ArrayCreationExpression:
 				{
-					var specifiers = syntax.Type.RankSpecifiers.RemoveAt(0);
-					arrayType = SyntaxFactory.ArrayType(arrayType).WithRankSpecifiers(specifiers);
+					var syntax = (ArrayCreationExpressionSyntax)node;
+					typeSyntaxNode = syntax.Type;
+					break;
 				}
 
-				document = document.WithSyntaxRoot(
-					root.ReplaceNode(
-						node,
-						CreateArrayEmptyInvocation(
-							arrayType.WithoutTrivia())
-							.WithTriviaFrom(syntax)));
+				case SyntaxKind.ArrayInitializerExpression:
+				{
+					var syntax = (InitializerExpressionSyntax)node;
+					typeSyntaxNode = (ArrayTypeSyntax)node.FirstAncestorOrSelf<VariableDeclarationSyntax>().Type;
+					break;
+				}
+
+				default:
+					return document;
 			}
 
+			var arrayType = GetArrayElementTypeSyntax(typeSyntaxNode);
+
+			document = document.WithSyntaxRoot(
+				root.ReplaceNode(
+					node,
+					CreateArrayEmptyInvocation(
+						arrayType.WithoutTrivia())
+						.WithTriviaFrom(node)));
+
 			return document;
+		}
+
+		static TypeSyntax GetArrayElementTypeSyntax(ArrayTypeSyntax syntax)
+		{
+			if (syntax.RankSpecifiers.Count == 0)
+			{
+				return syntax.ElementType;
+			}
+			else
+			{
+				var specifiers = syntax.RankSpecifiers.RemoveAt(0);
+				var arrayType = SyntaxFactory.ArrayType(syntax.ElementType).WithRankSpecifiers(specifiers);
+				return arrayType;
+			}
 		}
 
 		static InvocationExpressionSyntax CreateArrayEmptyInvocation(TypeSyntax elementType)
