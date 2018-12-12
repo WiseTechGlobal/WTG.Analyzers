@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyTitle>WTG Analyzers</AssemblyTitle>
     <TargetFramework>netstandard1.3</TargetFramework>
@@ -25,7 +25,5 @@
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
-  <Import Project="..\build\Global.props" />
-  <Import Project="..\build\Global.targets" />
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
