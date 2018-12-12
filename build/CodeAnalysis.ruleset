@@ -1,12 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <RuleSet Name="Production Assembly Rules" ToolsVersion="15.0">
-	<Include Path="CargoWiseRuleSet.Common.ruleset" Action="Default" />
 	<Include Path="StyleCopAnalyzers.ruleset" Action="Default" />
 
-	<Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
-		<Rule Id="CA1014" Action="None" />
-		<Rule Id="CA1020" Action="None" />
-		<Rule Id="CA1811" Action="None" />
+	<Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers">
+		<Rule Id="CA1506" Action="Info" />
 	</Rules>
 
 	<Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp.Features" RuleNamespace="Microsoft.CodeAnalysis.CSharp.Features">

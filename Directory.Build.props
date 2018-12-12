@@ -9,7 +9,6 @@
 		<ErrorReport>prompt</ErrorReport>
 		<WarningLevel>4</WarningLevel>
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-		<RunCodeAnalysis>True</RunCodeAnalysis>
 		<CodeAnalysisRuleSet>$(BuildDirectory)CodeAnalysis.ruleset</CodeAnalysisRuleSet>
 
 		<!--
