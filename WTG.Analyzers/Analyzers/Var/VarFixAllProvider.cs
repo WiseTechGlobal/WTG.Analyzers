@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,8 +33,8 @@ namespace WTG.Analyzers
 
 		protected override async Task<Document> ApplyFixesAsync(Document originalDocument, Document documentToFix, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
 		{
-			var root = await originalDocument.GetSyntaxRootAsync(cancellationToken);
-			var model = await originalDocument.GetSemanticModelAsync(cancellationToken);
+			var root = await originalDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var model = await originalDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 			var group = new Dictionary<InvocationExpressionSyntax, List<TypeSyntax>>();
 
 			foreach (var diagnostic in diagnostics)

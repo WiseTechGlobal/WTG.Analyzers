@@ -31,7 +31,7 @@ namespace WTG.Analyzers
 			return Task.CompletedTask;
 		}
 
-		async Task<Document> RemoveOverideAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		static async Task<Document> RemoveOverideAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var node = root.FindNode(diagnostic.Location.SourceSpan);

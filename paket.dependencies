@@ -15,6 +15,8 @@ source https://api.nuget.org/v3/index.json
 
 nuget NuGet.CommandLine
 nuget StyleCop.Analyzers
+nuget Microsoft.CodeAnalysis.FxCopAnalyzers
+
 nuget Microsoft.CodeAnalysis.Analyzers 1.1
 nuget Microsoft.CodeAnalysis 2.0
 
