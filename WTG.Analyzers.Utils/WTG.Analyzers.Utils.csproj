@@ -5,6 +5,4 @@
     <OutputPath>..\Bin\</OutputPath>
     <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
   </PropertyGroup>
-
-  <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

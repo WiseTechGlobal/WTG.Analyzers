@@ -37,4 +37,6 @@
 	<ItemGroup>
 		<Compile Include="$(MSBuildThisFileDirectory)CommonAssemblyInfo.cs" Link="CommonAssemblyInfo.cs" />
 	</ItemGroup>
+
+	<Import Project="$(MSBuildThisFileDirectory).paket\Paket.Restore.targets" />
 </Project>
