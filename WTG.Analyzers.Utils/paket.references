@@ -1,3 +1,5 @@
-StyleCop.Analyzers
 Microsoft.CodeAnalysis.CSharp.Workspaces
-Microsoft.CodeAnalysis.FxCopAnalyzers
+
+group Analyzers
+	StyleCop.Analyzers
+	Microsoft.CodeAnalysis.FxCopAnalyzers

@@ -14,11 +14,14 @@ source https://api.nuget.org/v3/index.json
 #
 
 nuget NuGet.CommandLine
-nuget StyleCop.Analyzers
-nuget Microsoft.CodeAnalysis.FxCopAnalyzers
 
 nuget Microsoft.CodeAnalysis.Analyzers 1.1
 nuget Microsoft.CodeAnalysis 2.0
+
+group Analyzers
+	source https://api.nuget.org/v3/index.json
+	nuget StyleCop.Analyzers
+	nuget Microsoft.CodeAnalysis.FxCopAnalyzers
 
 group Test
 	source https://api.nuget.org/v3/index.json

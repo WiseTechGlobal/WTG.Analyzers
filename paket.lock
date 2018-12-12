@@ -52,11 +52,6 @@ NUGET
       Microsoft.CodeAnalysis.CSharp (2.0)
       Microsoft.CodeAnalysis.Workspaces.Common (2.0)
     Microsoft.CodeAnalysis.Elfie (0.10.6) - restriction: >= net46
-    Microsoft.CodeAnalysis.FxCopAnalyzers (2.6.2)
-      Microsoft.CodeQuality.Analyzers (2.6.2)
-      Microsoft.NetCore.Analyzers (2.6.2)
-      Microsoft.NetFramework.Analyzers (2.6.2)
-      Text.Analyzers (2.6.2)
     Microsoft.CodeAnalysis.VisualBasic (2.0)
       Microsoft.CodeAnalysis.Common (>= 2.0)
     Microsoft.CodeAnalysis.VisualBasic.Workspaces (2.0)
@@ -72,12 +67,9 @@ NUGET
       System.ObjectModel (>= 4.3) - restriction: && (< net46) (>= netstandard1.3)
       System.Text.RegularExpressions (>= 4.3) - restriction: && (< net46) (>= netstandard1.3)
       System.Threading.Tasks.Parallel (>= 4.3) - restriction: && (< net46) (>= netstandard1.3)
-    Microsoft.CodeQuality.Analyzers (2.6.2)
     Microsoft.Composition (1.0.27) - restriction: >= netstandard1.3
-    Microsoft.NetCore.Analyzers (2.6.2)
     Microsoft.NETCore.Platforms (1.1) - restriction: || (&& (>= dnxcore50) (>= netstandard1.3)) (&& (>= dnxcore50) (>= netstandard1.6)) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.6) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< monotouch) (< net46) (>= netstandard1.3) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos))
     Microsoft.NETCore.Targets (1.1) - restriction: || (&& (>= dnxcore50) (>= netstandard1.3)) (&& (>= dnxcore50) (>= netstandard1.6)) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.6) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< monotouch) (< net46) (>= netstandard1.3) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos))
-    Microsoft.NetFramework.Analyzers (2.6.2)
     NuGet.CommandLine (4.7.1)
     runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - restriction: && (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
     runtime.fedora.23-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - restriction: && (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
@@ -112,7 +104,6 @@ NUGET
     runtime.ubuntu.14.04-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - restriction: && (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
     runtime.ubuntu.16.04-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - restriction: && (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
     runtime.ubuntu.16.10-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - restriction: && (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
-    StyleCop.Analyzers (1.0.2)
     System.AppContext (4.3) - restriction: >= netstandard1.3
       System.Runtime (>= 4.3) - restriction: || (>= dnxcore50) (&& (< monoandroid) (< net46) (>= netstandard1.3) (< netstandard1.6)) (&& (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos))
     System.Buffers (4.3) - restriction: || (&& (>= dnxcore50) (>= netstandard1.3)) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos))
@@ -574,6 +565,19 @@ NUGET
       System.Xml.ReaderWriter (>= 4.3) - restriction: && (< monoandroid) (< monotouch) (< net46) (>= netstandard1.3) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
       System.Xml.XDocument (>= 4.3) - restriction: && (< monoandroid) (< monotouch) (< net46) (>= netstandard1.3) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
       System.Xml.XPath (>= 4.3) - restriction: || (&& (< monoandroid) (< monotouch) (>= netstandard1.3) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (>= net46)
+
+GROUP Analyzers
+NUGET
+  remote: https://api.nuget.org/v3/index.json
+    Microsoft.CodeAnalysis.FxCopAnalyzers (2.6.2)
+      Microsoft.CodeQuality.Analyzers (2.6.2)
+      Microsoft.NetCore.Analyzers (2.6.2)
+      Microsoft.NetFramework.Analyzers (2.6.2)
+      Text.Analyzers (2.6.2)
+    Microsoft.CodeQuality.Analyzers (2.6.2)
+    Microsoft.NetCore.Analyzers (2.6.2)
+    Microsoft.NetFramework.Analyzers (2.6.2)
+    StyleCop.Analyzers (1.0.2)
     Text.Analyzers (2.6.2)
 
 GROUP Test
