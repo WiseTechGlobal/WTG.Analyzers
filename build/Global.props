@@ -40,9 +40,4 @@
 	<ItemGroup>
 		<Compile Include="$(BranchRootDirectory)\CommonAssemblyInfo.cs" Link="CommonAssemblyInfo.cs" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<Analyzer Include="$(BranchPackagesDirectory)\StyleCop.Analyzers\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
-		<Analyzer Include="$(BranchPackagesDirectory)\StyleCop.Analyzers\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-	</ItemGroup>
 </Project>
