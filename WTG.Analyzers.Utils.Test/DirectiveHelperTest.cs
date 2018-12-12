@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -58,7 +58,7 @@ namespace NS
 }
 ";
 			tree = SyntaxFactory.ParseSyntaxTree(text);
-			var root = await tree.GetRootAsync();
+			var root = await tree.GetRootAsync().ConfigureAwait(false);
 
 			trivia = Enumerable.ToDictionary(
 				from trivia in root.DescendantTrivia()

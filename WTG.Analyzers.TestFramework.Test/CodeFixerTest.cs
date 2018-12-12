@@ -35,7 +35,8 @@ namespace WTG.Analyzers.Framework.Test
 				namespace MyNamespace
 				{
 					public class MyClass2 { }
-				}");
+				}")
+				.ConfigureAwait(false);
 		}
 
 		static DiagnosticDescriptor error = new DiagnosticDescriptor("Error", string.Empty, string.Empty, string.Empty, DiagnosticSeverity.Error, true);
@@ -80,7 +81,7 @@ namespace WTG.Analyzers.Framework.Test
 
 			static async Task<Document> Delete(Document document, ClassDeclarationSyntax localDeclaration, CancellationToken cancellationToken)
 			{
-				var oldRoot = await document.GetSyntaxRootAsync(cancellationToken);
+				var oldRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 				var newRoot = oldRoot.RemoveNode(localDeclaration, SyntaxRemoveOptions.KeepNoTrivia);
 				return document.WithSyntaxRoot(newRoot);
 			}

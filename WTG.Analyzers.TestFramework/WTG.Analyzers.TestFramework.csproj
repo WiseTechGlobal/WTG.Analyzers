@@ -1,12 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyTitle>WTG Analyzers Test Framework</AssemblyTitle>
     <TargetFramework>net46</TargetFramework>
     <OutputPath>..\bin</OutputPath>
     <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
   </PropertyGroup>
-
-  <Import Project="..\build\Global.props" />
-  <Import Project="..\build\Global.targets" />
-  <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
