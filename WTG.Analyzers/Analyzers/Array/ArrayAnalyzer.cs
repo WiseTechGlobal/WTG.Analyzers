@@ -35,7 +35,7 @@ namespace WTG.Analyzers
 				c => AnalyzeInitializer(c, cache),
 				SyntaxKind.ArrayInitializerExpression);
 		}
-		
+
 		static void AnalyzeCreation(SyntaxNodeAnalysisContext context, FileDetailCache cache)
 		{
 			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
