@@ -20,17 +20,22 @@ namespace WTG.Analyzers
 
 		static void CompilationStart(CompilationStartAnalysisContext context)
 		{
+			if (!HasArrayEmpty(context.Compilation))
+			{
+				return;
+			}
+
 			var cache = new FileDetailCache();
 
 			context.RegisterSyntaxNodeAction(
-				c => AnalyzeCreation(c, cache),
-				SyntaxKind.ArrayCreationExpression);
+					c => AnalyzeCreation(c, cache),
+					SyntaxKind.ArrayCreationExpression);
 
 			context.RegisterSyntaxNodeAction(
-				c => AnalyzeInitializer(c, cache),
-				SyntaxKind.ArrayInitializerExpression);
+					c => AnalyzeInitializer(c, cache),
+					SyntaxKind.ArrayInitializerExpression);
 		}
-
+		
 		static void AnalyzeCreation(SyntaxNodeAnalysisContext context, FileDetailCache cache)
 		{
 			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
@@ -129,6 +134,19 @@ namespace WTG.Analyzers
 			}
 
 			context.ReportDiagnostic(Rules.CreatePreferArrayEmptyOverNewArrayConstructionDiagnostic(context.Node.GetLocation()));
+		}
+
+		static bool HasArrayEmpty(Compilation compilation)
+		{
+			foreach (var symbol in compilation.GetTypeByMetadataName(typeof(System.Array).FullName).GetMembers(nameof(System.Array.Empty)))
+			{
+				if (symbol.Kind == SymbolKind.Method)
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }
