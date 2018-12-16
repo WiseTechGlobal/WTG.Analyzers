@@ -28,12 +28,12 @@ namespace WTG.Analyzers
 			var cache = new FileDetailCache();
 
 			context.RegisterSyntaxNodeAction(
-					c => AnalyzeCreation(c, cache),
-					SyntaxKind.ArrayCreationExpression);
+				c => AnalyzeCreation(c, cache),
+				SyntaxKind.ArrayCreationExpression);
 
 			context.RegisterSyntaxNodeAction(
-					c => AnalyzeInitializer(c, cache),
-					SyntaxKind.ArrayInitializerExpression);
+				c => AnalyzeInitializer(c, cache),
+				SyntaxKind.ArrayInitializerExpression);
 		}
 		
 		static void AnalyzeCreation(SyntaxNodeAnalysisContext context, FileDetailCache cache)
