@@ -24,10 +24,9 @@ namespace WTG.Analyzers
 		static void Analyze(SyntaxNodeAnalysisContext context)
 		{
 			var invoke = (InvocationExpressionSyntax)context.Node;
-			var member = invoke.Expression as MemberAccessExpressionSyntax;
 
-			if (member != null &&
-				member.Name.Identifier.Text == nameof(Task.ConfigureAwait) && // quick check before hitting the SemanticModel.
+			if (invoke.Expression is MemberAccessExpressionSyntax member &&
+			member.Name.Identifier.Text == nameof(Task.ConfigureAwait) && // quick check before hitting the SemanticModel.
 				IsConfigureAwait(context.SemanticModel, invoke) &&
 				IsWithinAsyncVoidMethod(context.SemanticModel, invoke))
 			{
