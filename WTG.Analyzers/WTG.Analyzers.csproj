@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyTitle>WTG Analyzers</AssemblyTitle>
@@ -5,23 +6,19 @@
     <OutputPath>..\bin</OutputPath>
     <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="Rules\Rules.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Rules.g.cs</LastGenOutput>
     </None>
-
     <Compile Update="Rules\Rules.g.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Rules.tt</DependentUpon>
     </Compile>
-
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 </Project>
