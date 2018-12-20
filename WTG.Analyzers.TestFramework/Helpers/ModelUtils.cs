@@ -62,7 +62,14 @@ namespace WTG.Analyzers.TestFramework
 				.AddMetadataReference(CorlibReference)
 				.AddMetadataReference(SystemCoreReference)
 				.AddMetadataReference(CSharpSymbolsReference)
-				.AddMetadataReference(CodeAnalysisReference);
+				.AddMetadataReference(CodeAnalysisReference)
+				.AddMetadataReference(SystemRuntimeReference)
+				.AddMetadataReference(MSCorLibReference)
+				.AddMetadataReference(SystemLinqExpressionsReference)
+				.AddMetadataReference(SystemLinqQueryableReference)
+				.AddMetadataReference(SystemConsoleReference)
+				.AddMetadataReference(SystemCollectionsReference)
+				.AddMetadataReference(SystemCollectionsConcurrentReference);
 
 			var compilationOptions = (CSharpCompilationOptions)project.CompilationOptions;
 			compilationOptions = compilationOptions
@@ -102,5 +109,13 @@ namespace WTG.Analyzers.TestFramework
 		static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.Location);
 		static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).GetTypeInfo().Assembly.Location);
 		static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).GetTypeInfo().Assembly.Location);
+		
+		static readonly MetadataReference MSCorLibReference = MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("mscorlib")).Location);
+		static readonly MetadataReference SystemCollectionsReference = MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("System.Collections")).Location);
+		static readonly MetadataReference SystemCollectionsConcurrentReference = MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("System.Collections.Concurrent")).Location);
+		static readonly MetadataReference SystemConsoleReference = MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("System.Console")).Location);
+		static readonly MetadataReference SystemLinqExpressionsReference = MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("System.Linq.Expressions")).Location);
+		static readonly MetadataReference SystemLinqQueryableReference = MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("System.Linq.Queryable")).Location);
+		static readonly MetadataReference SystemRuntimeReference = MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("System.Runtime")).Location);
 	}
 }
