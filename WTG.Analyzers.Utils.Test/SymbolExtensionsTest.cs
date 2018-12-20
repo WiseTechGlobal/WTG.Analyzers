@@ -18,13 +18,6 @@ namespace WTG.Analyzers.Utils.Test
 			Assert.That(SingleMatchIndex(types, x => x.IsValueTuple()), Is.EqualTo(4));
 		}
 
-		[TestCase("mscorlib", ExpectedResult = 0)]
-		[TestCase("System.Core", ExpectedResult = 1)]
-		public int MatchAssembly(string assemblyName)
-		{
-			return SingleMatchIndex(assemblies, x => x.IsMatch(assemblyName));
-		}
-
 		[TestCase("System.Threading.Tasks.Task", ExpectedResult = 0)]
 		[TestCase("System.Linq.Enumerable", ExpectedResult = 1)]
 		[TestCase("System.Collections.Generic.List`1", ExpectedResult = 2)]

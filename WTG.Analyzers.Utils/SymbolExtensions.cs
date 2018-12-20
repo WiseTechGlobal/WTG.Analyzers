@@ -59,11 +59,6 @@ namespace WTG.Analyzers.Utils
 			return IsMatchCore(namespaceSymbol, fullName, fullName.Length);
 		}
 
-		public static bool IsMatch(this IAssemblySymbol assemblySymbol, string assemblyName)
-		{
-			return assemblySymbol.Identity.Name == assemblyName;
-		}
-
 		public static bool IsMatchAnyArity(this ITypeSymbol typeSymbol, string fullName)
 		{
 			if (typeSymbol.IsTupleType)
