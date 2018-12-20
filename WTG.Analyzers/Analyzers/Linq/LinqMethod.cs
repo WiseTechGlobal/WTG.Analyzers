@@ -42,7 +42,7 @@ namespace WTG.Analyzers
 		{
 			var exm = method.ReducedFrom ?? method;
 
-			return exm.IsMatch("System.Core", "System.Linq.Enumerable", methodName)
+			return exm.IsMatch("System.Linq.Enumerable", methodName)
 				&& exm.Parameters.Length == paramCount;
 		}
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -66,7 +66,7 @@ namespace WTG.Analyzers
 		static bool IsConfigureAwait(SemanticModel semanticModel, InvocationExpressionSyntax invoke)
 		{
 			var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(invoke).Symbol;
-			return symbol != null && symbol.IsMatch("mscorlib", "System.Threading.Tasks.Task", nameof(Task.ConfigureAwait));
+			return symbol != null && symbol.IsMatch("System.Threading.Tasks.Task", nameof(Task.ConfigureAwait));
 		}
 	}
 }

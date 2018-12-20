@@ -68,13 +68,6 @@ namespace WTG.Analyzers.Utils.Test
 			return SingleMatchIndex(methods, x => x.IsMatch(typeName, methodName));
 		}
 
-		[TestCase("mscorlib", "System.Threading.Tasks.Task", "FromResult", ExpectedResult = 0)]
-		[TestCase("mscorlib", "System.Threading.Tasks.Task", "FromException", ExpectedResult = 1)]
-		public int MatchMethod(string assemblyName, string typeName, string methodName)
-		{
-			return SingleMatchIndex(methods, x => x.IsMatch(assemblyName, typeName, methodName));
-		}
-
 		[TestCase("public class Foo { public void Method(); }", ExpectedResult = true)]
 		[TestCase("public class Foo { public class Bar { public void Method(); } }", ExpectedResult = true)]
 		[TestCase("public class Foo { public class Bar { void Method(); } }", ExpectedResult = false)]
