@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -101,7 +101,7 @@ namespace WTG.Analyzers.Utils
 				return IsExpression(method.Parameters[method.IsStatic ? 1 : 0].Type);
 			}
 
-			static bool IsExpression(ITypeSymbol type) => type.IsMatch("System.Core", "System.Linq.Expressions.Expression`1");
+			static bool IsExpression(ITypeSymbol type) => type.IsMatch("System.Linq.Expressions.Expression`1");
 
 			readonly SemanticModel model;
 			readonly CancellationToken cancellationToken;

@@ -54,12 +54,6 @@ namespace WTG.Analyzers.Utils
 			return IsMatchCore(symbol, fullName, length);
 		}
 
-		public static bool IsMatch(this ITypeSymbol typeSymbol, string assemblyName, string fullName)
-		{
-			return typeSymbol.IsMatch(fullName)
-				&& typeSymbol.ContainingAssembly.IsMatch(assemblyName);
-		}
-
 		public static bool IsMatch(this INamespaceSymbol namespaceSymbol, string fullName)
 		{
 			return IsMatchCore(namespaceSymbol, fullName, fullName.Length);

@@ -38,16 +38,6 @@ namespace WTG.Analyzers.Utils.Test
 			return SingleMatchIndex(types, x => x.IsMatch(typeName));
 		}
 
-		[TestCase("mscorlib", "System.Threading.Tasks.Task", ExpectedResult = 0)]
-		[TestCase("System.Core", "System.Linq.Enumerable", ExpectedResult = 1)]
-		[TestCase("mscorlib", "System.Collections.Generic.List`1", ExpectedResult = 2)]
-		[TestCase("mscorlib", "System.Collections.Generic.List`1+Enumerator", ExpectedResult = 3)]
-		[TestCase("mscorlib", "System.ValueTuple`2", ExpectedResult = 4)]
-		public int MatchType(string assemblyName, string typeName)
-		{
-			return SingleMatchIndex(types, x => x.IsMatch(assemblyName, typeName));
-		}
-
 		[TestCase("System.Threading.Tasks.Task", ExpectedResult = 0)]
 		[TestCase("System.Linq.Enumerable", ExpectedResult = 1)]
 		[TestCase("System.Collections.Generic.List", ExpectedResult = 2)]

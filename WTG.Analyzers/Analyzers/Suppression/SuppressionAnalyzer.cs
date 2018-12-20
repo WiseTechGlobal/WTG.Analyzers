@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
@@ -96,7 +96,7 @@ namespace WTG.Analyzers
 				{
 					var type = model.GetTypeInfo(attribute).Type;
 
-					if (type != null && type.IsMatch("mscorlib", "System.Diagnostics.CodeAnalysis.SuppressMessageAttribute"))
+					if (type != null && type.IsMatch("System.Diagnostics.CodeAnalysis.SuppressMessageAttribute"))
 					{
 						yield return attribute;
 					}
