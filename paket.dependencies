@@ -18,8 +18,6 @@ nuget NuGet.CommandLine
 nuget Microsoft.CodeAnalysis.Analyzers 1.1
 nuget Microsoft.CodeAnalysis 2.0
 
-nuget Microsoft.Composition >= 1.0.31
-
 group Analyzers
 	source https://api.nuget.org/v3/index.json
 	nuget StyleCop.Analyzers
@@ -29,6 +27,7 @@ group Test
 	source https://api.nuget.org/v3/index.json
 	nuget Microsoft.CodeAnalysis 2.8
 	nuget Microsoft.CodeAnalysis.Analyzers 1.1
+	nuget Microsoft.Composition >= 1.0.31
 	nuget Microsoft.NET.Test.Sdk
 	nuget NUnit
 	nuget NUnit3TestAdapter >= 3.8
