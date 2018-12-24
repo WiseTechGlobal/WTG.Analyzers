@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
@@ -59,10 +61,7 @@ namespace WTG.Analyzers.TestFramework
 			var solution = currentSolution.AddProject(projectId, assemblyName, assemblyName, LanguageNames.CSharp);
 
 			var project = solution.GetProject(projectId)
-				.AddMetadataReference(CorlibReference)
-				.AddMetadataReference(SystemCoreReference)
-				.AddMetadataReference(CSharpSymbolsReference)
-				.AddMetadataReference(CodeAnalysisReference);
+				.AddMetadataReferences(MetadataReferences);
 
 			var compilationOptions = (CSharpCompilationOptions)project.CompilationOptions;
 			compilationOptions = compilationOptions
@@ -98,9 +97,55 @@ namespace WTG.Analyzers.TestFramework
 		const string CSharpDefaultFileExt = "cs";
 		const string TestProjectName = "TestProject";
 
-		static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location);
-		static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.Location);
-		static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).GetTypeInfo().Assembly.Location);
-		static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).GetTypeInfo().Assembly.Location);
+		static readonly ImmutableArray<MetadataReference> MetadataReferences = GetMetadataReferences();
+
+		static ImmutableArray<MetadataReference> GetMetadataReferences()
+		{
+			var types = new[]
+			{
+				typeof(object),
+				typeof(Enumerable),
+				typeof(CSharpCompilation),
+				typeof(Compilation)
+			};
+
+			var wellKnownAssemblyNames = new[]
+			{
+				"mscorlib",
+				"System.Collections",
+				"System.Collections.Concurrent",
+				"System.Console",
+				"System.Linq.Expressions",
+				"System.Linq.Queryable",
+				"System.Runtime"
+			};
+
+			var builder = ImmutableArray.CreateBuilder<MetadataReference>(initialCapacity: types.Length + wellKnownAssemblyNames.Length);
+
+			foreach (var type in types)
+			{
+				var reference = MetadataReference.CreateFromFile(type.GetTypeInfo().Assembly.Location);
+				builder.Add(reference);
+			}
+
+			foreach (var assemblyName in wellKnownAssemblyNames)
+			{
+				Assembly assembly;
+				try
+				{
+					assembly = Assembly.Load(assemblyName);
+				}
+				catch (FileNotFoundException)
+				{
+					// Not all of these assemblies are available (or required) on all runtimes.
+					continue;
+				}
+
+				var reference = MetadataReference.CreateFromFile(assembly.Location);
+				builder.Add(reference);
+			}
+
+			return builder.ToImmutable();
+		}
 	}
 }

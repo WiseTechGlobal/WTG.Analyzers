@@ -18,13 +18,6 @@ namespace WTG.Analyzers.Utils
 				&& methodSymbol.ContainingType.IsMatch(fullTypeName);
 		}
 
-		public static bool IsMatch(this IMethodSymbol methodSymbol, string assemblyName, string fullTypeName, string methodName)
-		{
-			return methodSymbol.MetadataName == methodName
-				&& methodSymbol.ContainingAssembly.IsMatch(assemblyName)
-				&& methodSymbol.ContainingType.IsMatch(fullTypeName);
-		}
-
 		public static bool IsMatch(this ITypeSymbol typeSymbol, string fullName)
 		{
 			ISymbol symbol = typeSymbol;
@@ -61,20 +54,9 @@ namespace WTG.Analyzers.Utils
 			return IsMatchCore(symbol, fullName, length);
 		}
 
-		public static bool IsMatch(this ITypeSymbol typeSymbol, string assemblyName, string fullName)
-		{
-			return typeSymbol.IsMatch(fullName)
-				&& typeSymbol.ContainingAssembly.IsMatch(assemblyName);
-		}
-
 		public static bool IsMatch(this INamespaceSymbol namespaceSymbol, string fullName)
 		{
 			return IsMatchCore(namespaceSymbol, fullName, fullName.Length);
-		}
-
-		public static bool IsMatch(this IAssemblySymbol assemblySymbol, string assemblyName)
-		{
-			return assemblySymbol.Identity.Name == assemblyName;
 		}
 
 		public static bool IsMatchAnyArity(this ITypeSymbol typeSymbol, string fullName)
