@@ -647,6 +647,8 @@ NUGET
       System.Text.RegularExpressions (>= 4.3) - restriction: && (< net46) (>= netstandard1.3)
       System.Threading.Tasks.Parallel (>= 4.3) - restriction: && (< net46) (>= netstandard1.3)
     Microsoft.CodeCoverage (15.9) - restriction: || (>= net45) (>= netcoreapp1.0)
+    Microsoft.Composition (1.0.31)
+      System.Composition (>= 1.0.31)
     Microsoft.CSharp (4.5) - restriction: || (&& (< netstandard1.3) (>= uap10.0)) (&& (< netstandard2.0) (>= uap10.0))
     Microsoft.DotNet.InternalAbstractions (1.0) - restriction: >= netcoreapp1.0
       System.AppContext (>= 4.1) - restriction: && (< net451) (>= netstandard1.3)
@@ -709,7 +711,7 @@ NUGET
       System.Memory (>= 4.5) - restriction: || (&& (< net46) (< netcoreapp2.1) (>= netstandard2.0)) (>= netcoreapp2.0) (>= uap10.1)
       System.Security.AccessControl (>= 4.5) - restriction: || (>= monoandroid) (>= monotouch) (&& (< net46) (>= netstandard2.0)) (>= net461) (>= netcoreapp2.0) (>= netcoreapp2.1) (>= xamarinios) (>= xamarinmac) (>= xamarintvos) (>= xamarinwatchos)
       System.Security.Principal.Windows (>= 4.5) - restriction: || (>= monoandroid) (>= monotouch) (&& (< net46) (>= netstandard2.0)) (>= net461) (>= netcoreapp2.0) (>= netcoreapp2.1) (>= xamarinios) (>= xamarinmac) (>= xamarintvos) (>= xamarinwatchos)
-    NETStandard.Library (2.0.3) - restriction: || (&& (< monoandroid) (< monotouch) (< net46) (>= netstandard1.3) (< netstandard2.0) (< uap10.1) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< net20) (>= netstandard1.4) (< netstandard2.0)) (&& (< net20) (>= netstandard2.0)) (&& (< net45) (>= netstandard1.3) (< netstandard2.0) (< win8) (< wpa81)) (>= netcoreapp1.0) (&& (< netstandard1.3) (>= uap10.0)) (&& (< netstandard2.0) (>= uap10.0))
+    NETStandard.Library (2.0.3) - restriction: || (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< netstandard2.0) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< monotouch) (< net46) (>= netstandard1.3) (< netstandard2.0) (< uap10.1) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< net20) (>= netstandard1.4) (< netstandard2.0)) (&& (< net20) (>= netstandard2.0)) (&& (< net45) (>= netstandard1.0) (< netstandard2.0) (< win8) (< wp8) (< wpa81)) (>= netcoreapp1.0) (&& (< netstandard1.3) (>= uap10.0)) (&& (< netstandard2.0) (>= uap10.0))
       Microsoft.NETCore.Platforms (>= 1.1) - restriction: || (&& (>= net45) (< netstandard1.3)) (&& (< net45) (>= netstandard1.1) (< netstandard1.2) (< win8)) (&& (< net45) (>= netstandard1.2) (< netstandard1.3) (< win8) (< wpa81)) (&& (< net45) (>= netstandard1.3) (< netstandard1.4) (< win8) (< wpa81)) (&& (< net45) (>= netstandard1.4) (< netstandard1.5) (< win8) (< wpa81)) (&& (< net45) (>= netstandard1.5) (< netstandard1.6) (< win8) (< wpa81)) (&& (< net45) (>= netstandard1.6) (< netstandard2.0) (< win8) (< wpa81)) (&& (< net45) (>= netstandard2.0)) (&& (>= net46) (< netstandard1.4)) (>= net461) (>= netcoreapp2.0) (&& (>= netstandard1.0) (< portable-net45+win8+wpa81)) (&& (< netstandard1.0) (>= portable-net45+win8) (< win8)) (&& (< netstandard1.0) (< portable-net45+win8) (>= portable-net45+win8+wpa81)) (&& (< netstandard1.0) (>= portable-net45+win8+wp8+wpa81) (< portable-net45+win8+wpa81)) (&& (< netstandard1.0) (>= win8)) (&& (< netstandard1.3) (< win8) (>= wpa81)) (&& (< netstandard1.5) (>= uap10.0)) (>= uap10.1) (>= wp8)
       Microsoft.Win32.Primitives (>= 4.3) - restriction: || (&& (< net45) (>= netstandard1.3) (< netstandard1.4) (< win8) (< wpa81)) (&& (< net45) (>= netstandard1.4) (< netstandard1.5) (< win8) (< wpa81)) (&& (< net45) (>= netstandard1.5) (< netstandard1.6) (< win8) (< wpa81)) (&& (< net45) (>= netstandard1.6) (< netstandard2.0) (< win8) (< wpa81)) (&& (>= net46) (< netstandard1.4)) (&& (< netstandard1.5) (>= uap10.0) (< uap10.1))
       System.AppContext (>= 4.3) - restriction: || (&& (< net45) (>= netstandard1.3) (< netstandard1.4) (< win8) (< wpa81)) (&& (< net45) (>= netstandard1.4) (< netstandard1.5) (< win8) (< wpa81)) (&& (< net45) (>= netstandard1.5) (< netstandard1.6) (< win8) (< wpa81)) (&& (< net45) (>= netstandard1.6) (< netstandard2.0) (< win8) (< wpa81)) (&& (>= net46) (< netstandard1.4)) (&& (< netstandard1.5) (>= uap10.0) (< uap10.1))
@@ -882,23 +884,23 @@ NUGET
       System.Runtime (>= 4.3) - restriction: || (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.5) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.5) (< win8) (< wp8) (< wpa81))
       System.Runtime.Extensions (>= 4.3) - restriction: || (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.5) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.5) (< win8) (< wp8) (< wpa81))
       System.Threading (>= 4.3) - restriction: || (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.5) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.5) (< win8) (< wp8) (< wpa81))
-    System.Composition (1.2) - restriction: >= netstandard1.3
+    System.Composition (1.2)
       System.Composition.AttributedModel (>= 1.2)
       System.Composition.Convention (>= 1.2)
       System.Composition.Hosting (>= 1.2)
       System.Composition.Runtime (>= 1.2)
       System.Composition.TypedParts (>= 1.2)
-    System.Composition.AttributedModel (1.2) - restriction: >= netstandard1.3
+    System.Composition.AttributedModel (1.2)
       NETStandard.Library (>= 1.6.1) - restriction: && (< net45) (>= netstandard1.0) (< netstandard2.0) (< win8) (< wp8) (< wpa81)
-    System.Composition.Convention (1.2) - restriction: >= netstandard1.3
+    System.Composition.Convention (1.2)
       NETStandard.Library (>= 1.6.1) - restriction: && (< net45) (>= netstandard1.0) (< netstandard2.0) (< win8) (< wp8) (< wpa81)
       System.Composition.AttributedModel (>= 1.2) - restriction: || (>= net45) (&& (>= netstandard1.0) (< win8)) (&& (< netstandard1.0) (>= portable-net45+win8+wp8+wpa81) (< win8)) (&& (< netstandard1.0) (>= win8)) (>= netstandard2.0) (>= wp8) (>= wpa81)
-    System.Composition.Hosting (1.2) - restriction: >= netstandard1.3
+    System.Composition.Hosting (1.2)
       NETStandard.Library (>= 1.6.1) - restriction: && (< net45) (>= netstandard1.0) (< netstandard2.0) (< win8) (< wp8) (< wpa81)
       System.Composition.Runtime (>= 1.2) - restriction: || (>= net45) (&& (>= netstandard1.0) (< win8)) (&& (< netstandard1.0) (>= portable-net45+win8+wp8+wpa81) (< win8)) (&& (< netstandard1.0) (>= win8)) (>= netstandard2.0) (>= wp8) (>= wpa81)
-    System.Composition.Runtime (1.2) - restriction: >= netstandard1.3
+    System.Composition.Runtime (1.2)
       NETStandard.Library (>= 1.6.1) - restriction: && (< net45) (>= netstandard1.0) (< netstandard2.0) (< win8) (< wp8) (< wpa81)
-    System.Composition.TypedParts (1.2) - restriction: >= netstandard1.3
+    System.Composition.TypedParts (1.2)
       NETStandard.Library (>= 1.6.1) - restriction: && (< net45) (>= netstandard1.0) (< netstandard2.0) (< win8) (< wp8) (< wpa81)
       System.Composition.AttributedModel (>= 1.2) - restriction: || (>= net45) (&& (>= netstandard1.0) (< win8)) (&& (< netstandard1.0) (>= portable-net45+win8+wp8+wpa81) (< win8)) (&& (< netstandard1.0) (>= win8)) (>= netstandard2.0) (>= wp8) (>= wpa81)
       System.Composition.Hosting (>= 1.2) - restriction: || (>= net45) (&& (>= netstandard1.0) (< win8)) (&& (< netstandard1.0) (>= portable-net45+win8+wp8+wpa81) (< win8)) (&& (< netstandard1.0) (>= win8)) (>= netstandard2.0) (>= wp8) (>= wpa81)

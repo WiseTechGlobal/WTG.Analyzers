@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
@@ -27,10 +27,7 @@ namespace WTG.Analyzers
 
 			foreach (var attribute in FindGlobalSuppressionAttributes((CompilationUnitSyntax)context.Node, context.SemanticModel))
 			{
-				SuppressionScope scope;
-				string target;
-
-				if (TryDecodeAttribute(attribute, out scope, out target))
+				if (TryDecodeAttribute(attribute, out var scope, out var target))
 				{
 					if (lookup == null)
 					{
@@ -96,7 +93,7 @@ namespace WTG.Analyzers
 				{
 					var type = model.GetTypeInfo(attribute).Type;
 
-					if (type != null && type.IsMatch("mscorlib", "System.Diagnostics.CodeAnalysis.SuppressMessageAttribute"))
+					if (type != null && type.IsMatch("System.Diagnostics.CodeAnalysis.SuppressMessageAttribute"))
 					{
 						yield return attribute;
 					}
@@ -106,11 +103,8 @@ namespace WTG.Analyzers
 
 		static bool TryDecodeAttribute(AttributeSyntax att, out SuppressionScope scope, out string target)
 		{
-			string scopeStr;
-			string targetStr;
-
-			if (TryGetStringValue(att.GetPropertyValue(nameof(SuppressMessageAttribute.Scope)), out scopeStr) &&
-				TryGetStringValue(att.GetPropertyValue(nameof(SuppressMessageAttribute.Target)), out targetStr))
+			if (TryGetStringValue(att.GetPropertyValue(nameof(SuppressMessageAttribute.Scope)), out var scopeStr) &&
+				TryGetStringValue(att.GetPropertyValue(nameof(SuppressMessageAttribute.Target)), out var targetStr))
 			{
 				scope = TranslateScope(scopeStr);
 
@@ -128,9 +122,7 @@ namespace WTG.Analyzers
 
 		static bool TryGetStringValue(ExpressionSyntax expression, out string value)
 		{
-			var literal = expression as LiteralExpressionSyntax;
-
-			if (literal != null)
+			if (expression is LiteralExpressionSyntax literal)
 			{
 				value = (string)literal.Token.Value;
 				return true;

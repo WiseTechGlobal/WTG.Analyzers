@@ -5,6 +5,7 @@ group Analyzers
 
 group Test
 	Microsoft.CodeAnalysis.CSharp.Workspaces
+	Microsoft.Composition
 	Microsoft.NET.Test.Sdk
 	NUnit
 	NUnit3TestAdapter

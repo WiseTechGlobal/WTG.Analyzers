@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -24,10 +24,9 @@ namespace WTG.Analyzers
 		static void Analyze(SyntaxNodeAnalysisContext context)
 		{
 			var invoke = (InvocationExpressionSyntax)context.Node;
-			var member = invoke.Expression as MemberAccessExpressionSyntax;
 
-			if (member != null &&
-				member.Name.Identifier.Text == nameof(Task.ConfigureAwait) && // quick check before hitting the SemanticModel.
+			if (invoke.Expression is MemberAccessExpressionSyntax member &&
+			member.Name.Identifier.Text == nameof(Task.ConfigureAwait) && // quick check before hitting the SemanticModel.
 				IsConfigureAwait(context.SemanticModel, invoke) &&
 				IsWithinAsyncVoidMethod(context.SemanticModel, invoke))
 			{
@@ -66,7 +65,7 @@ namespace WTG.Analyzers
 		static bool IsConfigureAwait(SemanticModel semanticModel, InvocationExpressionSyntax invoke)
 		{
 			var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(invoke).Symbol;
-			return symbol != null && symbol.IsMatch("mscorlib", "System.Threading.Tasks.Task", nameof(Task.ConfigureAwait));
+			return symbol != null && symbol.IsMatch("System.Threading.Tasks.Task", nameof(Task.ConfigureAwait));
 		}
 	}
 }

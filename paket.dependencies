@@ -25,6 +25,7 @@ group Analyzers
 group Test
 	source https://api.nuget.org/v3/index.json
 	nuget Microsoft.CodeAnalysis 2.8
+	nuget Microsoft.Composition >= 1.0.31
 	nuget Microsoft.NET.Test.Sdk
 	nuget NUnit
 	nuget NUnit3TestAdapter >= 3.8

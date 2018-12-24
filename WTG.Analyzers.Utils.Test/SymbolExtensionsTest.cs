@@ -18,13 +18,6 @@ namespace WTG.Analyzers.Utils.Test
 			Assert.That(SingleMatchIndex(types, x => x.IsValueTuple()), Is.EqualTo(4));
 		}
 
-		[TestCase("mscorlib", ExpectedResult = 0)]
-		[TestCase("System.Core", ExpectedResult = 1)]
-		public int MatchAssembly(string assemblyName)
-		{
-			return SingleMatchIndex(assemblies, x => x.IsMatch(assemblyName));
-		}
-
 		[TestCase("System.Threading.Tasks.Task", ExpectedResult = 0)]
 		[TestCase("System.Linq.Enumerable", ExpectedResult = 1)]
 		[TestCase("System.Collections.Generic.List`1", ExpectedResult = 2)]
@@ -36,16 +29,6 @@ namespace WTG.Analyzers.Utils.Test
 		public int MatchType(string typeName)
 		{
 			return SingleMatchIndex(types, x => x.IsMatch(typeName));
-		}
-
-		[TestCase("mscorlib", "System.Threading.Tasks.Task", ExpectedResult = 0)]
-		[TestCase("System.Core", "System.Linq.Enumerable", ExpectedResult = 1)]
-		[TestCase("mscorlib", "System.Collections.Generic.List`1", ExpectedResult = 2)]
-		[TestCase("mscorlib", "System.Collections.Generic.List`1+Enumerator", ExpectedResult = 3)]
-		[TestCase("mscorlib", "System.ValueTuple`2", ExpectedResult = 4)]
-		public int MatchType(string assemblyName, string typeName)
-		{
-			return SingleMatchIndex(types, x => x.IsMatch(assemblyName, typeName));
 		}
 
 		[TestCase("System.Threading.Tasks.Task", ExpectedResult = 0)]
@@ -66,13 +49,6 @@ namespace WTG.Analyzers.Utils.Test
 		public int MatchMethod(string typeName, string methodName)
 		{
 			return SingleMatchIndex(methods, x => x.IsMatch(typeName, methodName));
-		}
-
-		[TestCase("mscorlib", "System.Threading.Tasks.Task", "FromResult", ExpectedResult = 0)]
-		[TestCase("mscorlib", "System.Threading.Tasks.Task", "FromException", ExpectedResult = 1)]
-		public int MatchMethod(string assemblyName, string typeName, string methodName)
-		{
-			return SingleMatchIndex(methods, x => x.IsMatch(assemblyName, typeName, methodName));
 		}
 
 		[TestCase("public class Foo { public void Method(); }", ExpectedResult = true)]
