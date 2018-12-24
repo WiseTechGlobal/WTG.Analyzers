@@ -20,7 +20,6 @@ group Analyzers
 	source https://api.nuget.org/v3/index.json
 	nuget StyleCop.Analyzers
 	nuget Microsoft.CodeAnalysis.FxCopAnalyzers
-	nuget Microsoft.CodeAnalysis.Analyzers 1.1
 
 group Test
 	source https://api.nuget.org/v3/index.json
