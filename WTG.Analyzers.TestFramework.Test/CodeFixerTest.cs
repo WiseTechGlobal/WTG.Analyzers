@@ -39,27 +39,29 @@ namespace WTG.Analyzers.Framework.Test
 				.ConfigureAwait(false);
 		}
 
-		static DiagnosticDescriptor error = new DiagnosticDescriptor("Error", string.Empty, string.Empty, string.Empty, DiagnosticSeverity.Error, true);
-
 		[DiagnosticAnalyzer(LanguageNames.CSharp)]
-		class AnalyzerMock : DiagnosticAnalyzer
+		sealed class AnalyzerMock : DiagnosticAnalyzer
 		{
-			public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(error);
+			public static readonly DiagnosticDescriptor Error = new DiagnosticDescriptor("Error", string.Empty, string.Empty, string.Empty, DiagnosticSeverity.Error, true);
 
-			static void Analyze(SyntaxNodeAnalysisContext context)
-			{
-				context.ReportDiagnostic(Diagnostic.Create(error, context.Node.GetLocation()));
-			}
+			public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Error);
 
 			public override void Initialize(AnalysisContext context)
 			{
 				context.RegisterSyntaxNodeAction(Analyze, SyntaxKind.ClassDeclaration);
 			}
+
+			static void Analyze(SyntaxNodeAnalysisContext context)
+			{
+				context.ReportDiagnostic(Diagnostic.Create(Error, context.Node.GetLocation()));
+			}
 		}
 
-		class FixProviderMock : CodeFixProvider
+		sealed class FixProviderMock : CodeFixProvider
 		{
-			public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(error.Id);
+			public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AnalyzerMock.Error.Id);
+
+			public override FixAllProvider GetFixAllProvider() => null;
 
 			public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
 			{
