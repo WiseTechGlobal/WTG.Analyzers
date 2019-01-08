@@ -1,7 +1,7 @@
 # WiseTech Global Analyzers
 
-[![Build](https://img.shields.io/appveyor/ci/WiseTechGlobal/wtg-analyzers/master.svg)](https://ci.appveyor.com/project/WiseTechGlobal/wtg-analyzersd)
-[![Tests](https://img.shields.io/appveyor/tests/WiseTechGlobal/wtg-analyzers/master.svg)](https://ci.appveyor.com/project/WiseTechGlobal/wtg-analyzersd)
+[![Build](https://img.shields.io/appveyor/ci/WiseTechGlobal/wtg-analyzers/master.svg)](https://ci.appveyor.com/project/WiseTechGlobal/wtg-analyzers)
+[![Tests](https://img.shields.io/appveyor/tests/WiseTechGlobal/wtg-analyzers/master.svg)](https://ci.appveyor.com/project/WiseTechGlobal/wtg-analyzers)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/WiseTechGlobal/WTG.Analyzers/blob/master/LICENSE.md)
 [![NuGet](https://img.shields.io/nuget/v/WTG.Analyzers.svg)](http://nuget.org/packages/WTG.Analyzers)
 
