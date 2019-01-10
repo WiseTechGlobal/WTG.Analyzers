@@ -41,7 +41,7 @@ namespace WTG.Analyzers
 							{
 								context.ReportDiagnostic(
 									Rules.CreateRemovedOrphanedSuppressionsDiagnostic(
-										GetLocation(attribute),
+										AttributeUtils.GetLocation(attribute),
 										"namespace",
 										target));
 							}
@@ -52,7 +52,7 @@ namespace WTG.Analyzers
 							{
 								context.ReportDiagnostic(
 									Rules.CreateRemovedOrphanedSuppressionsDiagnostic(
-										GetLocation(attribute),
+										AttributeUtils.GetLocation(attribute),
 										"type",
 										target));
 							}
@@ -63,7 +63,7 @@ namespace WTG.Analyzers
 							{
 								context.ReportDiagnostic(
 									Rules.CreateRemovedOrphanedSuppressionsDiagnostic(
-										GetLocation(attribute),
+										AttributeUtils.GetLocation(attribute),
 										"member",
 										target));
 							}
@@ -71,18 +71,6 @@ namespace WTG.Analyzers
 					}
 				}
 			}
-		}
-
-		static Location GetLocation(AttributeSyntax attribute)
-		{
-			var attributeList = (AttributeListSyntax)attribute.Parent;
-
-			if (attributeList == null || attributeList.Attributes.Count > 1)
-			{
-				return attribute.GetLocation();
-			}
-
-			return attributeList.GetLocation();
 		}
 
 		static IEnumerable<AttributeSyntax> FindGlobalSuppressionAttributes(CompilationUnitSyntax unit, SemanticModel model)
@@ -136,10 +124,14 @@ namespace WTG.Analyzers
 		{
 			switch (scope)
 			{
-				case "namespace": return SuppressionScope.Namespace;
-				case "type": return SuppressionScope.Type;
-				case "member": return SuppressionScope.Member;
-				default: return SuppressionScope.Unknown;
+				case "namespace":
+					return SuppressionScope.Namespace;
+				case "type":
+					return SuppressionScope.Type;
+				case "member":
+					return SuppressionScope.Member;
+				default:
+					return SuppressionScope.Unknown;
 			}
 		}
 
