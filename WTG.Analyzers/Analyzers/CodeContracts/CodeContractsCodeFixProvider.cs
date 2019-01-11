@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
+using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
@@ -34,6 +38,15 @@ namespace WTG.Analyzers
 								equivalenceKey: "FIX"),
 							diagnostic);
 						break;
+
+					case CodeContractsAnalyzer.FixGenericRequires:
+						context.RegisterCodeFix(
+							CodeAction.Create(
+								"Replace with 'if' check.",
+								c => FixGenericRequires(context.Document, diagnostic, c),
+								equivalenceKey: "FIX"),
+							diagnostic);
+						break;
 				}
 			}
 
@@ -48,6 +61,45 @@ namespace WTG.Analyzers
 
 			return document.WithSyntaxRoot(
 				root.RemoveNode(node, SyntaxRemoveOptions.AddElasticMarker | SyntaxRemoveOptions.KeepExteriorTrivia));
+		}
+
+		static async Task<Document> FixGenericRequires(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		{
+			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
+			var invokeNode = (InvocationExpressionSyntax)statementNode.Expression;
+			var exceptionType = GetGenericTypeArgument(invokeNode);
+			var arguments = invokeNode.ArgumentList.Arguments;
+			var condition = ExpressionSyntaxFactory.LogicalNot(arguments[0].Expression);
+
+			var replacement = CreateGuardClause(
+				condition,
+				exceptionType,
+				arguments.Count > 1 ? SyntaxFactory.ArgumentList(arguments.RemoveAt(0)) : SyntaxFactory.ArgumentList());
+
+			return document.WithSyntaxRoot(
+				root.ReplaceNode(statementNode, replacement));
+
+			TypeSyntax GetGenericTypeArgument(InvocationExpressionSyntax node)
+			{
+				var access = (MemberAccessExpressionSyntax)node.Expression;
+				var name = (GenericNameSyntax)access.Name;
+				var typeArgs = name.TypeArgumentList.Arguments;
+				return typeArgs.Count > 0 ? typeArgs[0] : null;
+			}
+		}
+
+		static IfStatementSyntax CreateGuardClause(ExpressionSyntax condition, TypeSyntax exceptionType, ArgumentListSyntax argumentList)
+		{
+			return SyntaxFactory.IfStatement(
+				condition,
+				SyntaxFactory.Block(
+					SyntaxFactory.ThrowStatement(
+						SyntaxFactory.ObjectCreationExpression(
+							exceptionType,
+							argumentList,
+							null))))
+				.WithAdditionalAnnotations(Formatter.Annotation);
 		}
 	}
 }

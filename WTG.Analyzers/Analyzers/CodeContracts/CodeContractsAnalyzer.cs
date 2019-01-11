@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,6 +16,7 @@ namespace WTG.Analyzers
 
 		public const string FixUnavailable = "U";
 		public const string FixDelete = "D";
+		public const string FixGenericRequires = "RG";
 
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 			Rules.DoNotUseCodeContractsRule);
@@ -36,7 +38,7 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			ImmutableDictionary<string, string> properties;
+			bool isRequires;
 
 			switch (name.Identifier.Text)
 			{
@@ -45,31 +47,57 @@ namespace WTG.Analyzers
 				case nameof(SDC.Contract.EndContractBlock):
 				case nameof(SDC.Contract.Ensures):
 				case nameof(SDC.Contract.EnsuresOnThrow):
-					properties = FixDeleteProperties;
+					isRequires = false;
 					break;
 
 				case nameof(SDC.Contract.Requires):
-					properties = FixUnavailableProperties;
+					isRequires = true;
 					break;
 
 				default:
 					return;
 			}
 
-			var symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
+			var symbol = GetMethodSymbol(context.SemanticModel, invoke, context.CancellationToken);
 
-			if (symbol == null || !symbol.ContainingType.IsMatch("System.Diagnostics.Contracts.Contract"))
+			if (symbol == null || !IsContractMethod(symbol))
 			{
 				return;
 			}
 
-			var syntax = GetContainingStatement(invoke) ?? (SyntaxNode)invoke;
+			if (!(invoke.Parent is ExpressionStatementSyntax statement))
+			{
+				context.ReportDiagnostic(Diagnostic.Create(
+					Rules.DoNotUseCodeContractsRule,
+					invoke.GetLocation(),
+					FixUnavailable));
+
+				return;
+			}
+
+			ImmutableDictionary<string, string> properties;
+
+			if (!isRequires)
+			{
+				properties = FixDeleteProperties;
+			}
+			else if (symbol.IsGenericMethod)
+			{
+				properties = FixGenericRequiresProperties;
+			}
+			else
+			{
+				properties = FixUnavailableProperties;
+			}
 
 			context.ReportDiagnostic(Diagnostic.Create(
 				Rules.DoNotUseCodeContractsRule,
-				syntax.GetLocation(),
+				statement.GetLocation(),
 				properties));
 		}
+
+		static IMethodSymbol GetMethodSymbol(SemanticModel model, InvocationExpressionSyntax invoke, CancellationToken cancellationToken)
+			=> (IMethodSymbol)model.GetSymbolInfo(invoke, cancellationToken).Symbol;
 
 		void AnalyzeAttribute(SyntaxNodeAnalysisContext context)
 		{
@@ -115,6 +143,8 @@ namespace WTG.Analyzers
 				FixDeleteProperties));
 		}
 
+		static bool IsContractMethod(IMethodSymbol methodSymbol) => methodSymbol.ContainingType.IsMatch("System.Diagnostics.Contracts.Contract");
+
 		static Location GetAttributedMemberLocation(AttributeSyntax attribute, SyntaxKind expectedKind)
 		{
 			var attributeList = attribute.Parent;
@@ -132,22 +162,8 @@ namespace WTG.Analyzers
 			return AttributeUtils.GetLocation(attribute);
 		}
 
-		static StatementSyntax GetContainingStatement(InvocationExpressionSyntax invoke)
-		{
-			var node = invoke.Parent;
-
-			while (node != null)
-			{
-				if (node is StatementSyntax statement)
-				{
-					return statement;
-				}
-			}
-
-			return null;
-		}
-
 		static readonly ImmutableDictionary<string, string> FixUnavailableProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixUnavailable);
 		static readonly ImmutableDictionary<string, string> FixDeleteProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixDelete);
+		static readonly ImmutableDictionary<string, string> FixGenericRequiresProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixGenericRequires);
 	}
 }
