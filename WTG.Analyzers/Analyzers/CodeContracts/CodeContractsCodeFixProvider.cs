@@ -35,7 +35,7 @@ namespace WTG.Analyzers
 					case CodeContractsAnalyzer.FixDelete:
 						context.RegisterCodeFix(
 							CodeAction.Create(
-								"Remove Contract Usage.",
+								"Delete.",
 								c => FixByDelete(context.Document, diagnostic, c),
 								equivalenceKey: "FIX"),
 							diagnostic);
