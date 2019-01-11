@@ -6,11 +6,4 @@ namespace Foo
 	{
 		void Method();
 	}
-
-	abstract class ContractClassForIBob : IBob
-	{
-		public void Method()
-		{
-		}
-	}
 }
