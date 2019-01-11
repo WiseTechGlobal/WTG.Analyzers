@@ -11,7 +11,7 @@ public class Bob : IBob
 
 	protected void Method2(string value)
 	{
-		Contract.Requires(!string.IsNullOrEmpty(value));
+		Contract.Requires(!string.IsNullOrEmpty(value), "Invalid value.");
 
 		value.GetType();
 	}

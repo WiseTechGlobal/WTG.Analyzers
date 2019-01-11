@@ -18,6 +18,7 @@ namespace WTG.Analyzers
 		public const string FixDelete = "D";
 		public const string FixGenericRequires = "RG";
 		public const string FixRequiresNonNull = "RN";
+		public const string FixRequiresNonEmptyString = "RS";
 
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 			Rules.DoNotUseCodeContractsRule);
@@ -144,6 +145,16 @@ namespace WTG.Analyzers
 
 				return;
 			}
+			else if (IsNonEmptyStringArgumentCheck(context.SemanticModel, invoke, out identifierLocation, context.CancellationToken))
+			{
+				context.ReportDiagnostic(Diagnostic.Create(
+					Rules.DoNotUseCodeContractsRule,
+					statement.GetLocation(),
+					new[] { identifierLocation },
+					FixRequiresNonEmptyStringProperties));
+
+				return;
+			}
 			else
 			{
 				properties = FixUnavailableProperties;
@@ -206,6 +217,63 @@ namespace WTG.Analyzers
 					return null;
 				}
 			}
+		}
+
+		static bool IsNonEmptyStringArgumentCheck(SemanticModel semanticModel, InvocationExpressionSyntax invoke, out Location identifierLocation, CancellationToken cancellationToken)
+		{
+			var arguments = invoke.ArgumentList.Arguments;
+
+			if (arguments.Count == 0)
+			{
+				identifierLocation = null;
+				return false;
+			}
+
+			var expression = arguments[0].Expression;
+
+			if (!expression.IsKind(SyntaxKind.LogicalNotExpression))
+			{
+				identifierLocation = null;
+				return false;
+			}
+
+			expression = ((PrefixUnaryExpressionSyntax)expression).Operand;
+
+			if (!expression.IsKind(SyntaxKind.InvocationExpression))
+			{
+				identifierLocation = null;
+				return false;
+			}
+
+			var checkInvoke = (InvocationExpressionSyntax)expression;
+			var checkArguments = checkInvoke.ArgumentList.Arguments;
+
+			if (ExpressionHelper.GetMethodName(checkInvoke).Identifier.Text != nameof(string.IsNullOrEmpty) ||
+				checkArguments.Count != 1)
+			{
+				identifierLocation = null;
+				return false;
+			}
+
+			var checkMethodSymbol = (IMethodSymbol)semanticModel.GetSymbolInfo(checkInvoke, cancellationToken).Symbol;
+
+			if (checkMethodSymbol == null || checkMethodSymbol.ContainingType.SpecialType != SpecialType.System_String)
+			{
+				identifierLocation = null;
+				return false;
+			}
+
+			expression = checkArguments[0].Expression;
+			var paramSymbol = semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
+
+			if (paramSymbol == null || paramSymbol.Kind != SymbolKind.Parameter)
+			{
+				identifierLocation = null;
+				return false;
+			}
+
+			identifierLocation = expression.GetLocation();
+			return true;
 		}
 
 		static bool IsInPrivateMember(SemanticModel model, SyntaxNode node, CancellationToken cancellationToken)
@@ -278,5 +346,6 @@ namespace WTG.Analyzers
 		static readonly ImmutableDictionary<string, string> FixDeleteProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixDelete);
 		static readonly ImmutableDictionary<string, string> FixGenericRequiresProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixGenericRequires);
 		static readonly ImmutableDictionary<string, string> FixRequiresNonNullProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixRequiresNonNull);
+		static readonly ImmutableDictionary<string, string> FixRequiresNonEmptyStringProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixRequiresNonEmptyString);
 	}
 }

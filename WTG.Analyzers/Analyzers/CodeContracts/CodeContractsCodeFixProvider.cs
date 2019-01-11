@@ -58,6 +58,15 @@ namespace WTG.Analyzers
 								equivalenceKey: "FIX"),
 							diagnostic);
 						break;
+
+					case CodeContractsAnalyzer.FixRequiresNonEmptyString:
+						context.RegisterCodeFix(
+							CodeAction.Create(
+								"Replace with 'if' check.",
+								c => FixRequireNonEmptyString(context.Document, diagnostic, c),
+								equivalenceKey: "FIX"),
+							diagnostic);
+						break;
 				}
 			}
 
@@ -145,6 +154,63 @@ namespace WTG.Analyzers
 				root.ReplaceNode(statementNode, replacement));
 		}
 
+		static async Task<Document> FixRequireNonEmptyString(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		{
+			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
+			var invokeNode = (InvocationExpressionSyntax)statementNode.Expression;
+			var arguments = invokeNode.ArgumentList.Arguments;
+			var condition = ExpressionSyntaxFactory.LogicalNot(arguments[0].Expression);
+
+			var message = GetMessageArgument(arguments);
+			var paramSyntax = (ExpressionSyntax)invokeNode.FindNode(diagnostic.AdditionalLocations[0].SourceSpan, getInnermostNodeForTie: true);
+			ArgumentListSyntax argumentList;
+
+			if (paramSyntax.IsKind(SyntaxKind.IdentifierName))
+			{
+				// If we can work out the name of the parameter, create a suitable 'nameof' expression.
+				argumentList = SyntaxFactory.ArgumentList(
+					SyntaxFactory.SeparatedList(new[]
+					{
+						SyntaxFactory.Argument(message),
+						SyntaxFactory.Argument(ExpressionSyntaxFactory.CreateNameof(paramSyntax)),
+					}));
+			}
+			else
+			{
+				argumentList = SyntaxFactory.ArgumentList(
+					SyntaxFactory.SeparatedList(new[]
+					{
+						SyntaxFactory.Argument(message),
+					}));
+			}
+
+			var replacement = CreateGuardClause(
+				condition,
+				ArgumentExceptionTypeName,
+				argumentList);
+
+			return document.WithSyntaxRoot(
+				root.ReplaceNode(statementNode, replacement));
+
+			ExpressionSyntax GetMessageArgument(SeparatedSyntaxList<ArgumentSyntax> requireArguments)
+			{
+				if (requireArguments.Count > 1)
+				{
+					// If an explicit message was provided to Requires(), then keep it.
+					var expression = requireArguments[1].Expression;
+
+					if (expression != null)
+					{
+						return expression;
+					}
+				}
+
+				// default message.
+				return ExpressionSyntaxFactory.CreateLiteral("Value cannot be null or empty.");
+			}
+		}
+
 		static IfStatementSyntax CreateGuardClause(ExpressionSyntax condition, TypeSyntax exceptionType, ArgumentListSyntax argumentList)
 		{
 			return SyntaxFactory.IfStatement(
@@ -162,6 +228,12 @@ namespace WTG.Analyzers
 			SyntaxFactory.QualifiedName(
 				SyntaxFactory.IdentifierName(nameof(System)),
 				SyntaxFactory.IdentifierName(nameof(ArgumentNullException)))
+			.WithAdditionalAnnotations(Simplifier.Annotation);
+
+		static readonly TypeSyntax ArgumentExceptionTypeName =
+			SyntaxFactory.QualifiedName(
+				SyntaxFactory.IdentifierName(nameof(System)),
+				SyntaxFactory.IdentifierName(nameof(ArgumentException)))
 			.WithAdditionalAnnotations(Simplifier.Annotation);
 	}
 }

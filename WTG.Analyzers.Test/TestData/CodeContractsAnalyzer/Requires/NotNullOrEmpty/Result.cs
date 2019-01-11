@@ -4,21 +4,30 @@ public class Bob : IBob
 {
 	public void Method1(string value)
 	{
-		Contract.Requires(!string.IsNullOrEmpty(value));
+		if (string.IsNullOrEmpty(value))
+		{
+			throw new System.ArgumentException("Value cannot be null or empty.", nameof(value));
+		}
 
 		value.GetType();
 	}
 
 	protected void Method2(string value)
 	{
-		Contract.Requires(!string.IsNullOrEmpty(value));
+		if (string.IsNullOrEmpty(value))
+		{
+			throw new System.ArgumentException("Invalid value.", nameof(value));
+		}
 
 		value.GetType();
 	}
 
 	void IBob.Method(string value)
 	{
-		Contract.Requires(!string.IsNullOrEmpty(value));
+		if (string.IsNullOrEmpty(value))
+		{
+			throw new System.ArgumentException("Value cannot be null or empty.", nameof(value));
+		}
 
 		value.GetType();
 	}
