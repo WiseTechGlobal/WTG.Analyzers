@@ -36,6 +36,8 @@ namespace WTG.Analyzers
 				return;
 			}
 
+			ImmutableDictionary<string, string> properties;
+
 			switch (name.Identifier.Text)
 			{
 				case nameof(SDC.Contract.Assert):
@@ -43,7 +45,11 @@ namespace WTG.Analyzers
 				case nameof(SDC.Contract.EndContractBlock):
 				case nameof(SDC.Contract.Ensures):
 				case nameof(SDC.Contract.EnsuresOnThrow):
+					properties = FixDeleteProperties;
+					break;
+
 				case nameof(SDC.Contract.Requires):
+					properties = FixUnavailableProperties;
 					break;
 
 				default:
@@ -62,7 +68,7 @@ namespace WTG.Analyzers
 			context.ReportDiagnostic(Diagnostic.Create(
 				Rules.DoNotUseCodeContractsRule,
 				syntax.GetLocation(),
-				FixUnavailableProperties));
+				properties));
 		}
 
 		void AnalyzeAttribute(SyntaxNodeAnalysisContext context)
