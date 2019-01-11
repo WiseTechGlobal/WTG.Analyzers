@@ -129,6 +129,10 @@ namespace WTG.Analyzers
 			{
 				properties = FixGenericRequiresProperties;
 			}
+			else if (IsInPrivateMember(context.SemanticModel, statement, context.CancellationToken))
+			{
+				properties = FixDeleteProperties;
+			}
 			else
 			{
 				properties = FixUnavailableProperties;
@@ -138,6 +142,50 @@ namespace WTG.Analyzers
 				Rules.DoNotUseCodeContractsRule,
 				statement.GetLocation(),
 				properties));
+		}
+
+		static bool IsInPrivateMember(SemanticModel model, SyntaxNode node, CancellationToken cancellationToken)
+		{
+			while (node != null)
+			{
+				switch (node.Kind())
+				{
+					case SyntaxKind.MethodDeclaration:
+						var methodDecl = (MethodDeclarationSyntax)node;
+						return methodDecl.ExplicitInterfaceSpecifier == null && IsPrivate(model.GetDeclaredSymbol(methodDecl));
+
+					case SyntaxKind.ConstructorDeclaration:
+						return IsPrivate(model.GetDeclaredSymbol((ConstructorDeclarationSyntax)node, cancellationToken));
+
+					case SyntaxKind.DestructorDeclaration:
+						return IsPrivate(model.GetDeclaredSymbol((DestructorDeclarationSyntax)node, cancellationToken));
+
+					case SyntaxKind.AddAccessorDeclaration:
+					case SyntaxKind.RemoveAccessorDeclaration:
+						var eventAccessorDecl = (AccessorDeclarationSyntax)node;
+						var eventDecl = (EventDeclarationSyntax)node.Parent;
+						return eventDecl?.ExplicitInterfaceSpecifier != null && IsPrivate(model.GetDeclaredSymbol(eventAccessorDecl, cancellationToken));
+
+					case SyntaxKind.GetAccessorDeclaration:
+					case SyntaxKind.SetAccessorDeclaration:
+						var propertyAccessorDecl = (AccessorDeclarationSyntax)node;
+						var propertyDecl = (PropertyDeclarationSyntax)node.Parent;
+						return propertyDecl?.ExplicitInterfaceSpecifier != null && IsPrivate(model.GetDeclaredSymbol(propertyAccessorDecl, cancellationToken));
+
+					case SyntaxKind.NamespaceDeclaration:
+					case SyntaxKind.CompilationUnit:
+					case SyntaxKind.ClassDeclaration:
+					case SyntaxKind.StructDeclaration:
+					case SyntaxKind.UnknownAccessorDeclaration:
+						return false;
+				}
+
+				node = node.Parent;
+			}
+
+			return false;
+
+			bool IsPrivate(ISymbol symbol) => symbol != null && symbol.DeclaredAccessibility == Accessibility.Private;
 		}
 
 		static IMethodSymbol GetMethodSymbol(SemanticModel model, InvocationExpressionSyntax invoke, CancellationToken cancellationToken)
