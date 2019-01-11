@@ -68,10 +68,7 @@ namespace WTG.Analyzers
 					return;
 			}
 
-			context.ReportDiagnostic(Diagnostic.Create(
-				Rules.DoNotUseCodeContractsRule,
-				location,
-				FixDeleteProperties));
+			context.ReportDiagnostic(FixDeleteDiagnostic(location));
 		}
 
 		void AnalyzeInvoke(SyntaxNodeAnalysisContext context)
@@ -104,66 +101,49 @@ namespace WTG.Analyzers
 					return;
 			}
 
-			var symbol = GetMethodSymbol(context.SemanticModel, invoke, context.CancellationToken);
+			var symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
 
-			if (symbol == null || !IsContractMethod(symbol))
+			if (symbol == null || !symbol.ContainingType.IsMatch("System.Diagnostics.Contracts.Contract"))
 			{
 				return;
 			}
 
-			if (!(invoke.Parent is ExpressionStatementSyntax statement))
+			if (!invoke.Parent.IsKind(SyntaxKind.ExpressionStatement))
 			{
-				context.ReportDiagnostic(Diagnostic.Create(
-					Rules.DoNotUseCodeContractsRule,
-					invoke.GetLocation(),
-					FixUnavailable));
-
-				return;
-			}
-
-			ImmutableDictionary<string, string> properties;
-
-			if (!isRequires)
-			{
-				properties = FixDeleteProperties;
-			}
-			else if (symbol.IsGenericMethod)
-			{
-				properties = FixGenericRequiresProperties;
-			}
-			else if (IsInPrivateMember(context.SemanticModel, statement, context.CancellationToken))
-			{
-				properties = FixDeleteProperties;
-			}
-			else if (IsNullArgumentCheck(context.SemanticModel, invoke, out var identifierLocation, context.CancellationToken))
-			{
-				context.ReportDiagnostic(Diagnostic.Create(
-					Rules.DoNotUseCodeContractsRule,
-					statement.GetLocation(),
-					new[] { identifierLocation },
-					FixRequiresNonNullProperties));
-
-				return;
-			}
-			else if (IsNonEmptyStringArgumentCheck(context.SemanticModel, invoke, out identifierLocation, context.CancellationToken))
-			{
-				context.ReportDiagnostic(Diagnostic.Create(
-					Rules.DoNotUseCodeContractsRule,
-					statement.GetLocation(),
-					new[] { identifierLocation },
-					FixRequiresNonEmptyStringProperties));
-
-				return;
+				// All these methods return void, so if the parent is not an ExpressionStatement,
+				// then something crazy is happening and we can't provide a meaningful auto-fix.
+				context.ReportDiagnostic(FixUnavailableDiagnostic(invoke.GetLocation()));
 			}
 			else
 			{
-				properties = FixUnavailableProperties;
-			}
+				var statement = (ExpressionStatementSyntax)invoke.Parent;
 
-			context.ReportDiagnostic(Diagnostic.Create(
-				Rules.DoNotUseCodeContractsRule,
-				statement.GetLocation(),
-				properties));
+				if (!isRequires)
+				{
+					// Only Contract.Requires needs special handling, all the rest are simply deleted.
+					context.ReportDiagnostic(FixDeleteDiagnostic(statement.GetLocation()));
+				}
+				else if (symbol.IsGenericMethod)
+				{
+					context.ReportDiagnostic(FixGenericRequiresDiagnostic(statement.GetLocation()));
+				}
+				else if (IsInPrivateMember(context.SemanticModel, statement, context.CancellationToken))
+				{
+					context.ReportDiagnostic(FixDeleteDiagnostic(statement.GetLocation()));
+				}
+				else if (IsNullArgumentCheck(context.SemanticModel, invoke, out var identifierLocation, context.CancellationToken))
+				{
+					context.ReportDiagnostic(FixRequiresNonNullDiagnostic(statement.GetLocation(), identifierLocation));
+				}
+				else if (IsNonEmptyStringArgumentCheck(context.SemanticModel, invoke, out identifierLocation, context.CancellationToken))
+				{
+					context.ReportDiagnostic(FixRequiresNonEmptyStringDiagnostic(statement.GetLocation(), identifierLocation));
+				}
+				else
+				{
+					context.ReportDiagnostic(FixUnavailableDiagnostic(statement.GetLocation()));
+				}
+			}
 		}
 
 		static bool IsNullArgumentCheck(SemanticModel semanticModel, InvocationExpressionSyntax invoke, out Location identifierLocation, CancellationToken cancellationToken)
@@ -320,9 +300,6 @@ namespace WTG.Analyzers
 			bool IsPrivate(ISymbol symbol) => symbol != null && symbol.DeclaredAccessibility == Accessibility.Private;
 		}
 
-		static IMethodSymbol GetMethodSymbol(SemanticModel model, InvocationExpressionSyntax invoke, CancellationToken cancellationToken)
-			=> (IMethodSymbol)model.GetSymbolInfo(invoke, cancellationToken).Symbol;
-
 		static Location GetAttributedMemberLocation(AttributeSyntax attribute, SyntaxKind expectedKind)
 		{
 			var attributeList = attribute.Parent;
@@ -340,7 +317,20 @@ namespace WTG.Analyzers
 			return AttributeUtils.GetLocation(attribute);
 		}
 
-		static bool IsContractMethod(IMethodSymbol methodSymbol) => methodSymbol.ContainingType.IsMatch("System.Diagnostics.Contracts.Contract");
+		static Diagnostic FixUnavailableDiagnostic(Location location)
+			=> Diagnostic.Create(Rules.DoNotUseCodeContractsRule, location, FixUnavailableProperties);
+
+		static Diagnostic FixDeleteDiagnostic(Location location)
+			=> Diagnostic.Create(Rules.DoNotUseCodeContractsRule, location, FixDeleteProperties);
+
+		static Diagnostic FixGenericRequiresDiagnostic(Location location)
+			=> Diagnostic.Create(Rules.DoNotUseCodeContractsRule, location, FixGenericRequiresProperties);
+
+		static Diagnostic FixRequiresNonNullDiagnostic(Location location, Location identifierLocation)
+			=> Diagnostic.Create(Rules.DoNotUseCodeContractsRule, location, new[] { identifierLocation }, FixRequiresNonNullProperties);
+
+		static Diagnostic FixRequiresNonEmptyStringDiagnostic(Location location, Location identifierLocation)
+			=> Diagnostic.Create(Rules.DoNotUseCodeContractsRule, location, new[] { identifierLocation }, FixRequiresNonEmptyStringProperties);
 
 		static readonly ImmutableDictionary<string, string> FixUnavailableProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixUnavailable);
 		static readonly ImmutableDictionary<string, string> FixDeleteProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixDelete);
