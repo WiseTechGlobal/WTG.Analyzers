@@ -5,21 +5,30 @@ public class Bob : IBob
 {
 	public void Method1(Action action)
 	{
-		Contract.Requires(action != null);
+		if (action == null)
+		{
+			throw new ArgumentNullException(nameof(action));
+		}
 
 		action();
 	}
 
 	protected void Method2(Action action)
 	{
-		Contract.Requires(action != null);
+		if (action == null)
+		{
+			throw new ArgumentNullException("foo");
+		}
 
 		action();
 	}
 
 	void IBob.Method(Action action)
 	{
-		Contract.Requires(action != null);
+		if (action == null)
+		{
+			throw new ArgumentNullException(nameof(action));
+		}
 
 		action();
 	}

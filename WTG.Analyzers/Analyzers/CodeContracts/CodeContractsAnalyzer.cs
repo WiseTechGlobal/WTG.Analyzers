@@ -17,6 +17,7 @@ namespace WTG.Analyzers
 		public const string FixUnavailable = "U";
 		public const string FixDelete = "D";
 		public const string FixGenericRequires = "RG";
+		public const string FixRequiresNonNull = "RN";
 
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 			Rules.DoNotUseCodeContractsRule);
@@ -133,6 +134,16 @@ namespace WTG.Analyzers
 			{
 				properties = FixDeleteProperties;
 			}
+			else if (IsNullArgumentCheck(context.SemanticModel, invoke, out var identifierLocation, context.CancellationToken))
+			{
+				context.ReportDiagnostic(Diagnostic.Create(
+					Rules.DoNotUseCodeContractsRule,
+					statement.GetLocation(),
+					new[] { identifierLocation },
+					FixRequiresNonNullProperties));
+
+				return;
+			}
 			else
 			{
 				properties = FixUnavailableProperties;
@@ -142,6 +153,59 @@ namespace WTG.Analyzers
 				Rules.DoNotUseCodeContractsRule,
 				statement.GetLocation(),
 				properties));
+		}
+
+		static bool IsNullArgumentCheck(SemanticModel semanticModel, InvocationExpressionSyntax invoke, out Location identifierLocation, CancellationToken cancellationToken)
+		{
+			var arguments = invoke.ArgumentList.Arguments;
+
+			if (arguments.Count == 0)
+			{
+				identifierLocation = null;
+				return false;
+			}
+
+			var comparand = GetComparand(arguments[0].Expression);
+
+			if (comparand == null)
+			{
+				identifierLocation = null;
+				return false;
+			}
+
+			var symbol = semanticModel.GetSymbolInfo(comparand, cancellationToken).Symbol;
+
+			if (symbol == null || symbol.Kind != SymbolKind.Parameter)
+			{
+				identifierLocation = null;
+				return false;
+			}
+
+			identifierLocation = comparand.GetLocation();
+			return true;
+
+			ExpressionSyntax GetComparand(ExpressionSyntax condition)
+			{
+				if (!condition.IsKind(SyntaxKind.NotEqualsExpression))
+				{
+					return null;
+				}
+
+				var b = (BinaryExpressionSyntax)condition;
+
+				if (b.Right.IsKind(SyntaxKind.NullLiteralExpression))
+				{
+					return b.Left;
+				}
+				else if (b.Left.IsKind(SyntaxKind.NullLiteralExpression))
+				{
+					return b.Right;
+				}
+				else
+				{
+					return null;
+				}
+			}
 		}
 
 		static bool IsInPrivateMember(SemanticModel model, SyntaxNode node, CancellationToken cancellationToken)
@@ -213,5 +277,6 @@ namespace WTG.Analyzers
 		static readonly ImmutableDictionary<string, string> FixUnavailableProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixUnavailable);
 		static readonly ImmutableDictionary<string, string> FixDeleteProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixDelete);
 		static readonly ImmutableDictionary<string, string> FixGenericRequiresProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixGenericRequires);
+		static readonly ImmutableDictionary<string, string> FixRequiresNonNullProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixRequiresNonNull);
 	}
 }

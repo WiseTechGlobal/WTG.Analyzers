@@ -12,7 +12,7 @@ public class Bob : IBob
 
 	protected void Method2(Action action)
 	{
-		Contract.Requires(action != null);
+		Contract.Requires(action != null, "foo");
 
 		action();
 	}

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -9,6 +10,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Simplification;
 using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
@@ -44,6 +46,15 @@ namespace WTG.Analyzers
 							CodeAction.Create(
 								"Replace with 'if' check.",
 								c => FixGenericRequires(context.Document, diagnostic, c),
+								equivalenceKey: "FIX"),
+							diagnostic);
+						break;
+
+					case CodeContractsAnalyzer.FixRequiresNonNull:
+						context.RegisterCodeFix(
+							CodeAction.Create(
+								"Replace with 'if' check.",
+								c => FixRequiresNotNull(context.Document, diagnostic, c),
 								equivalenceKey: "FIX"),
 							diagnostic);
 						break;
@@ -89,6 +100,51 @@ namespace WTG.Analyzers
 			}
 		}
 
+		static async Task<Document> FixRequiresNotNull(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		{
+			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
+			var invokeNode = (InvocationExpressionSyntax)statementNode.Expression;
+			var arguments = invokeNode.ArgumentList.Arguments;
+			var condition = ExpressionSyntaxFactory.LogicalNot(arguments[0].Expression);
+
+			ArgumentListSyntax argumentList;
+
+			if (arguments.Count > 1)
+			{
+				// If an explicit message was provided to Requires(), then keep it.
+				argumentList = SyntaxFactory.ArgumentList(arguments.RemoveAt(0));
+			}
+			else
+			{
+				var paramSyntax = (ExpressionSyntax)invokeNode.FindNode(diagnostic.AdditionalLocations[0].SourceSpan);
+
+				if (paramSyntax.IsKind(SyntaxKind.IdentifierName))
+				{
+					// If we can work out the name of the parameter, create a suitable 'nameof' expression.
+					argumentList = SyntaxFactory.ArgumentList(
+						SyntaxFactory.SeparatedList(new[]
+						{
+							SyntaxFactory.Argument(
+								ExpressionSyntaxFactory.CreateNameof(paramSyntax))
+						}));
+				}
+				else
+				{
+					// If all else fails, use the default constructor and let the developer sort it out.
+					argumentList = SyntaxFactory.ArgumentList();
+				}
+			}
+
+			var replacement = CreateGuardClause(
+				condition,
+				ArgumentNullExceptionTypeName,
+				argumentList);
+
+			return document.WithSyntaxRoot(
+				root.ReplaceNode(statementNode, replacement));
+		}
+
 		static IfStatementSyntax CreateGuardClause(ExpressionSyntax condition, TypeSyntax exceptionType, ArgumentListSyntax argumentList)
 		{
 			return SyntaxFactory.IfStatement(
@@ -101,5 +157,11 @@ namespace WTG.Analyzers
 							null))))
 				.WithAdditionalAnnotations(Formatter.Annotation);
 		}
+
+		static readonly TypeSyntax ArgumentNullExceptionTypeName =
+			SyntaxFactory.QualifiedName(
+				SyntaxFactory.IdentifierName(nameof(System)),
+				SyntaxFactory.IdentifierName(nameof(ArgumentNullException)))
+			.WithAdditionalAnnotations(Simplifier.Annotation);
 	}
 }
