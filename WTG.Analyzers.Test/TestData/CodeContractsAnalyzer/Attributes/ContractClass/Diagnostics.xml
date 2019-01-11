@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <diagnostics id="WTG2004" message="This project does not use CodeContracts." severity="Warning">
+	<suppressId>CS8019</suppressId>
 	<diagnostic>
-		<location>Test0.cs: (3,1-46)</location>
+		<location>Test0.cs: (5,2-47)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (9,1)-(15,2)</location>
+		<location>Test0.cs: (11,2)-(17,3)</location>
 	</diagnostic>
 </diagnostics>

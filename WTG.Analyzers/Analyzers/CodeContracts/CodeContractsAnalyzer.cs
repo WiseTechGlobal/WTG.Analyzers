@@ -11,6 +11,11 @@ namespace WTG.Analyzers
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed partial class CodeContractsAnalyzer : DiagnosticAnalyzer
 	{
+		public const string PropertyProposedFix = "FIX";
+
+		public const string FixUnavailable = "U";
+		public const string FixDelete = "D";
+
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 			Rules.DoNotUseCodeContractsRule);
 
@@ -56,7 +61,8 @@ namespace WTG.Analyzers
 
 			context.ReportDiagnostic(Diagnostic.Create(
 				Rules.DoNotUseCodeContractsRule,
-				syntax.GetLocation()));
+				syntax.GetLocation(),
+				FixUnavailableProperties));
 		}
 
 		void AnalyzeAttribute(SyntaxNodeAnalysisContext context)
@@ -99,7 +105,8 @@ namespace WTG.Analyzers
 
 			context.ReportDiagnostic(Diagnostic.Create(
 				Rules.DoNotUseCodeContractsRule,
-				location));
+				location,
+				FixDeleteProperties));
 		}
 
 		static Location GetAttributedMemberLocation(AttributeSyntax attribute, SyntaxKind expectedKind)
@@ -133,5 +140,8 @@ namespace WTG.Analyzers
 
 			return null;
 		}
+
+		static readonly ImmutableDictionary<string, string> FixUnavailableProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixUnavailable);
+		static readonly ImmutableDictionary<string, string> FixDeleteProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixDelete);
 	}
 }
