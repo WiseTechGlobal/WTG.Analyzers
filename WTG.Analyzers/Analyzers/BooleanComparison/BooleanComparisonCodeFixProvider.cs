@@ -61,7 +61,7 @@ namespace WTG.Analyzers
 
 			if (isEquality != comparand)
 			{
-				newNode = ExpressionSyntaxFactory.LogicalNot(newNode);
+				newNode = ExpressionSyntaxFactory.InvertBoolExpression(newNode);
 			}
 
 			return document.WithSyntaxRoot(
