@@ -33,7 +33,15 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase(1, ExpectedResult = "1")]
 		[TestCase(-1, ExpectedResult = "-1")]
 		[TestCase(65536, ExpectedResult = "65536")]
-		public string CreateLiteral(int value)
+		public string CreateLiteralInt(int value)
+		{
+			return ExpressionSyntaxFactory.CreateLiteral(value).ToString();
+		}
+
+		[TestCase("", ExpectedResult = "\"\"")]
+		[TestCase("Foo", ExpectedResult = "\"Foo\"")]
+		[TestCase("\t", ExpectedResult = "\"\\t\"")]
+		public string CreateLiteralString(string value)
 		{
 			return ExpressionSyntaxFactory.CreateLiteral(value).ToString();
 		}
