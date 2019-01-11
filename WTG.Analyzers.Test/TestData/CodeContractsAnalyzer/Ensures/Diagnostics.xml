@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG2004" message="This project does not use CodeContracts." severity="Warning">
+	<diagnostic>
+		<location>Test0.cs: (7,3-55)</location>
+	</diagnostic>
+</diagnostics>
