@@ -28,6 +28,50 @@ namespace WTG.Analyzers
 			context.RegisterSyntaxNodeAction(AnalyzeInvoke, SyntaxKind.InvocationExpression);
 		}
 
+		void AnalyzeAttribute(SyntaxNodeAnalysisContext context)
+		{
+			var attributeNode = (AttributeSyntax)context.Node;
+			var attributeSymbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(attributeNode, context.CancellationToken).Symbol;
+
+			if (attributeSymbol == null || !attributeSymbol.ContainingNamespace.IsMatch("System.Diagnostics.Contracts"))
+			{
+				return;
+			}
+
+			Location location;
+
+			switch (attributeSymbol.ContainingType.Name)
+			{
+				case nameof(SDC.ContractAbbreviatorAttribute):
+				case nameof(SDC.ContractArgumentValidatorAttribute):
+				case nameof(SDC.ContractClassAttribute):
+				case nameof(SDC.ContractOptionAttribute):
+				case nameof(SDC.ContractPublicPropertyNameAttribute):
+				case nameof(SDC.ContractReferenceAssemblyAttribute):
+				case nameof(SDC.ContractVerificationAttribute):
+				case nameof(SDC.PureAttribute):
+				case nameof(SDC.ContractRuntimeIgnoredAttribute):
+					location = AttributeUtils.GetLocation(attributeNode);
+					break;
+
+				case nameof(SDC.ContractClassForAttribute):
+					location = GetAttributedMemberLocation(attributeNode, SyntaxKind.ClassDeclaration);
+					break;
+
+				case nameof(SDC.ContractInvariantMethodAttribute):
+					location = GetAttributedMemberLocation(attributeNode, SyntaxKind.MethodDeclaration);
+					break;
+
+				default:
+					return;
+			}
+
+			context.ReportDiagnostic(Diagnostic.Create(
+				Rules.DoNotUseCodeContractsRule,
+				location,
+				FixDeleteProperties));
+		}
+
 		void AnalyzeInvoke(SyntaxNodeAnalysisContext context)
 		{
 			var invoke = (InvocationExpressionSyntax)context.Node;
@@ -99,52 +143,6 @@ namespace WTG.Analyzers
 		static IMethodSymbol GetMethodSymbol(SemanticModel model, InvocationExpressionSyntax invoke, CancellationToken cancellationToken)
 			=> (IMethodSymbol)model.GetSymbolInfo(invoke, cancellationToken).Symbol;
 
-		void AnalyzeAttribute(SyntaxNodeAnalysisContext context)
-		{
-			var attributeNode = (AttributeSyntax)context.Node;
-			var attributeSymbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(attributeNode, context.CancellationToken).Symbol;
-
-			if (attributeSymbol == null || !attributeSymbol.ContainingNamespace.IsMatch("System.Diagnostics.Contracts"))
-			{
-				return;
-			}
-
-			Location location;
-
-			switch (attributeSymbol.ContainingType.Name)
-			{
-				case nameof(SDC.ContractAbbreviatorAttribute):
-				case nameof(SDC.ContractArgumentValidatorAttribute):
-				case nameof(SDC.ContractClassAttribute):
-				case nameof(SDC.ContractOptionAttribute):
-				case nameof(SDC.ContractPublicPropertyNameAttribute):
-				case nameof(SDC.ContractReferenceAssemblyAttribute):
-				case nameof(SDC.ContractVerificationAttribute):
-				case nameof(SDC.PureAttribute):
-				case nameof(SDC.ContractRuntimeIgnoredAttribute):
-					location = AttributeUtils.GetLocation(attributeNode);
-					break;
-
-				case nameof(SDC.ContractClassForAttribute):
-					location = GetAttributedMemberLocation(attributeNode, SyntaxKind.ClassDeclaration);
-					break;
-
-				case nameof(SDC.ContractInvariantMethodAttribute):
-					location = GetAttributedMemberLocation(attributeNode, SyntaxKind.MethodDeclaration);
-					break;
-
-				default:
-					return;
-			}
-
-			context.ReportDiagnostic(Diagnostic.Create(
-				Rules.DoNotUseCodeContractsRule,
-				location,
-				FixDeleteProperties));
-		}
-
-		static bool IsContractMethod(IMethodSymbol methodSymbol) => methodSymbol.ContainingType.IsMatch("System.Diagnostics.Contracts.Contract");
-
 		static Location GetAttributedMemberLocation(AttributeSyntax attribute, SyntaxKind expectedKind)
 		{
 			var attributeList = attribute.Parent;
@@ -161,6 +159,8 @@ namespace WTG.Analyzers
 
 			return AttributeUtils.GetLocation(attribute);
 		}
+
+		static bool IsContractMethod(IMethodSymbol methodSymbol) => methodSymbol.ContainingType.IsMatch("System.Diagnostics.Contracts.Contract");
 
 		static readonly ImmutableDictionary<string, string> FixUnavailableProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixUnavailable);
 		static readonly ImmutableDictionary<string, string> FixDeleteProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixDelete);
