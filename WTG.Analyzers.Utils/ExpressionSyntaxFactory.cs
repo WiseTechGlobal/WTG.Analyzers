@@ -28,7 +28,7 @@ namespace WTG.Analyzers.Utils
 			}
 		}
 
-		public static ExpressionSyntax LogicalNot(ExpressionSyntax expression)
+		public static ExpressionSyntax InvertBoolExpression(ExpressionSyntax expression)
 		{
 			switch (expression.Kind())
 			{
@@ -50,10 +50,34 @@ namespace WTG.Analyzers.Utils
 				case SyntaxKind.GreaterThanOrEqualExpression:
 					return ReplaceBinaryOperator(SyntaxKind.LessThanToken);
 
+				case SyntaxKind.TrueLiteralExpression:
+					return SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression);
+
+				case SyntaxKind.FalseLiteralExpression:
+					return SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression);
+
 				case SyntaxKind.LogicalNotExpression:
 					return RemoveBang();
+
+				default:
+					return LogicalNot(expression);
 			}
 
+			ExpressionSyntax ReplaceBinaryOperator(SyntaxKind operatorKind)
+			{
+				var b = (BinaryExpressionSyntax)expression;
+				return b.WithOperatorToken(SyntaxFactory.Token(operatorKind).WithTriviaFrom(b.OperatorToken));
+			}
+
+			ExpressionSyntax RemoveBang()
+			{
+				var p = (PrefixUnaryExpressionSyntax)expression;
+				return p.Operand.WithLeadingTrivia(p.GetLeadingTrivia());
+			}
+		}
+
+		public static ExpressionSyntax LogicalNot(ExpressionSyntax expression)
+		{
 			if (HasPrimaryOrUnaryPrecedence(expression))
 			{
 				return SyntaxFactory.PrefixUnaryExpression(
@@ -68,18 +92,6 @@ namespace WTG.Analyzers.Utils
 					SyntaxFactory.ParenthesizedExpression(
 						expression.WithoutTrivia()))
 					.WithTriviaFrom(expression);
-			}
-
-			ExpressionSyntax ReplaceBinaryOperator(SyntaxKind operatorKind)
-			{
-				var b = (BinaryExpressionSyntax)expression;
-				return b.WithOperatorToken(SyntaxFactory.Token(operatorKind).WithTriviaFrom(b.OperatorToken));
-			}
-
-			ExpressionSyntax RemoveBang()
-			{
-				var p = (PrefixUnaryExpressionSyntax)expression;
-				return p.Operand.WithLeadingTrivia(p.GetLeadingTrivia());
 			}
 		}
 
@@ -171,22 +183,6 @@ namespace WTG.Analyzers.Utils
 
 				default:
 					return false;
-			}
-		}
-
-		static SyntaxTriviaList ConcatTrivia(SyntaxTriviaList triviaList1, SyntaxTriviaList triviaList2)
-		{
-			if (triviaList1.Count == 0)
-			{
-				return triviaList2;
-			}
-			else if (triviaList2.Count == 0)
-			{
-				return triviaList1;
-			}
-			else
-			{
-				return triviaList1.AddRange(new[] { SyntaxFactory.ElasticMarker }.Concat(triviaList2));
 			}
 		}
 

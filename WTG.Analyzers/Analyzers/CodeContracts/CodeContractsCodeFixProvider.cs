@@ -90,7 +90,7 @@ namespace WTG.Analyzers
 			var invokeNode = (InvocationExpressionSyntax)statementNode.Expression;
 			var exceptionType = GetGenericTypeArgument(invokeNode);
 			var arguments = invokeNode.ArgumentList.Arguments;
-			var condition = ExpressionSyntaxFactory.LogicalNot(arguments[0].Expression);
+			var condition = ExpressionSyntaxFactory.InvertBoolExpression(arguments[0].Expression);
 
 			var replacement = CreateGuardClause(
 				condition,
@@ -115,7 +115,7 @@ namespace WTG.Analyzers
 			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
 			var invokeNode = (InvocationExpressionSyntax)statementNode.Expression;
 			var arguments = invokeNode.ArgumentList.Arguments;
-			var condition = ExpressionSyntaxFactory.LogicalNot(arguments[0].Expression);
+			var condition = ExpressionSyntaxFactory.InvertBoolExpression(arguments[0].Expression);
 
 			ArgumentListSyntax argumentList;
 
@@ -160,7 +160,7 @@ namespace WTG.Analyzers
 			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
 			var invokeNode = (InvocationExpressionSyntax)statementNode.Expression;
 			var arguments = invokeNode.ArgumentList.Arguments;
-			var condition = ExpressionSyntaxFactory.LogicalNot(arguments[0].Expression);
+			var condition = ExpressionSyntaxFactory.InvertBoolExpression(arguments[0].Expression);
 
 			var message = GetMessageArgument(arguments);
 			var paramSyntax = (ExpressionSyntax)invokeNode.FindNode(diagnostic.AdditionalLocations[0].SourceSpan, getInnermostNodeForTie: true);

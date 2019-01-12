@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -101,7 +100,7 @@ namespace WTG.Analyzers.Utils
 						}
 						else if (whenTrue.IsKind(SyntaxKind.FalseLiteralExpression))
 						{
-							newExpression = ExpressionSyntaxFactory.LogicalNot(newExpression);
+							newExpression = ExpressionSyntaxFactory.InvertBoolExpression(newExpression);
 						}
 
 						return newExpression.WithTriviaFrom(node);
@@ -119,7 +118,7 @@ namespace WTG.Analyzers.Utils
 					{
 						opKind = SyntaxKind.AmpersandAmpersandToken;
 						nodeKind = SyntaxKind.LogicalAndExpression;
-						conditionExpression = ExpressionSyntaxFactory.LogicalNot(conditionExpression);
+						conditionExpression = ExpressionSyntaxFactory.InvertBoolExpression(conditionExpression);
 					}
 
 					return SyntaxFactory.BinaryExpression(
@@ -139,7 +138,7 @@ namespace WTG.Analyzers.Utils
 					{
 						opKind = SyntaxKind.BarBarToken;
 						nodeKind = SyntaxKind.LogicalOrExpression;
-						conditionExpression = ExpressionSyntaxFactory.LogicalNot(conditionExpression);
+						conditionExpression = ExpressionSyntaxFactory.InvertBoolExpression(conditionExpression);
 					}
 					else
 					{

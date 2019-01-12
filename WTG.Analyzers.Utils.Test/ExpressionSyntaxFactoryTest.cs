@@ -12,16 +12,31 @@ namespace WTG.Analyzers.Utils.Test
 	{
 		[TestCase("42", ExpectedResult = "!42")]
 		[TestCase("!42", ExpectedResult = "42")]
+		[TestCase("identifier", ExpectedResult = "!identifier")]
+		[TestCase("identifier1.identifier2", ExpectedResult = "!identifier1.identifier2")]
+		[TestCase("a && b", ExpectedResult = "!(a && b)")]
+		[TestCase("a || b", ExpectedResult = "!(a || b)")]
+		[TestCase("a == b", ExpectedResult = "a != b")]
+		[TestCase("a != b", ExpectedResult = "a == b")]
+		[TestCase("a > b", ExpectedResult = "a <= b")]
+		[TestCase("a < b", ExpectedResult = "a >= b")]
+		[TestCase("a >= b", ExpectedResult = "a < b")]
+		[TestCase("a <= b", ExpectedResult = "a > b")]
+		[TestCase("true", ExpectedResult = "false")]
+		[TestCase("false", ExpectedResult = "true")]
+		public string InvertBoolExpression(string expressionString)
+		{
+			var baseExpression = SyntaxFactory.ParseExpression(expressionString);
+			var expression = ExpressionSyntaxFactory.InvertBoolExpression(baseExpression);
+			return expression.ToFullString();
+		}
+
+		[TestCase("42", ExpectedResult = "!42")]
 		[TestCase("~42", ExpectedResult = "!~42")]
 		[TestCase("identifier", ExpectedResult = "!identifier")]
 		[TestCase("identifier1.identifier2", ExpectedResult = "!identifier1.identifier2")]
 		[TestCase("21 * 2", ExpectedResult = "!(21 * 2)")]
 		[TestCase("40 + 2", ExpectedResult = "!(40 + 2)")]
-		[TestCase("a == b", ExpectedResult = "a != b")]
-		[TestCase("a > b", ExpectedResult = "a <= b")]
-		[TestCase("a < b", ExpectedResult = "a >= b")]
-		[TestCase("a >= b", ExpectedResult = "a < b")]
-		[TestCase("a <= b", ExpectedResult = "a > b")]
 		public string LogicalNot(string expressionString)
 		{
 			var baseExpression = SyntaxFactory.ParseExpression(expressionString);
