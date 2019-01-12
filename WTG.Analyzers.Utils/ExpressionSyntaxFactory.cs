@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -24,6 +25,54 @@ namespace WTG.Analyzers.Utils
 				}
 
 				return nameofSyntax;
+			}
+		}
+
+		public static ExpressionSyntax InvertBoolExpression(ExpressionSyntax expression)
+		{
+			switch (expression.Kind())
+			{
+				case SyntaxKind.EqualsExpression:
+					return ReplaceBinaryOperator(SyntaxKind.ExclamationEqualsToken);
+
+				case SyntaxKind.NotEqualsExpression:
+					return ReplaceBinaryOperator(SyntaxKind.EqualsEqualsToken);
+
+				case SyntaxKind.LessThanExpression:
+					return ReplaceBinaryOperator(SyntaxKind.GreaterThanEqualsToken);
+
+				case SyntaxKind.GreaterThanExpression:
+					return ReplaceBinaryOperator(SyntaxKind.LessThanEqualsToken);
+
+				case SyntaxKind.LessThanOrEqualExpression:
+					return ReplaceBinaryOperator(SyntaxKind.GreaterThanToken);
+
+				case SyntaxKind.GreaterThanOrEqualExpression:
+					return ReplaceBinaryOperator(SyntaxKind.LessThanToken);
+
+				case SyntaxKind.TrueLiteralExpression:
+					return SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression);
+
+				case SyntaxKind.FalseLiteralExpression:
+					return SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression);
+
+				case SyntaxKind.LogicalNotExpression:
+					return RemoveBang();
+
+				default:
+					return LogicalNot(expression);
+			}
+
+			ExpressionSyntax ReplaceBinaryOperator(SyntaxKind operatorKind)
+			{
+				var b = (BinaryExpressionSyntax)expression;
+				return b.WithOperatorToken(SyntaxFactory.Token(operatorKind).WithTriviaFrom(b.OperatorToken));
+			}
+
+			ExpressionSyntax RemoveBang()
+			{
+				var p = (PrefixUnaryExpressionSyntax)expression;
+				return p.Operand.WithLeadingTrivia(p.GetLeadingTrivia());
 			}
 		}
 
@@ -121,6 +170,8 @@ namespace WTG.Analyzers.Utils
 				case SyntaxKind.PreIncrementExpression:
 				case SyntaxKind.UnaryMinusExpression:
 				case SyntaxKind.UnaryPlusExpression:
+				case SyntaxKind.BitwiseNotExpression:
+				case SyntaxKind.LogicalNotExpression:
 					return true;
 
 				default:
