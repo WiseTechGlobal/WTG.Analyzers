@@ -21,7 +21,7 @@ init:
 
 before_build:
   - .paket\paket.exe restore
-  - dotnet restore WTG.Analyzers.sln
+  - dotnet restore
 
 build:
   parallel: true
@@ -31,10 +31,8 @@ build:
 after_build:
   - build-packages.cmd %WTG_ANALYZERS_VERSION%
 
-test:
-  assemblies:
-    only:
-      - '**\*.Test.dll'
+test_script:
+  - dotnet test
 
 artifacts:
   - path: bin\WTG.Analyzers.$(WTG_ANALYZERS_VERSION).nupkg
