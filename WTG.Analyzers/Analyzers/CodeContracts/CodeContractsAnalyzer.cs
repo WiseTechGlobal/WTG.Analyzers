@@ -19,6 +19,7 @@ namespace WTG.Analyzers
 		public const string FixGenericRequires = "RG";
 		public const string FixRequiresNonNull = "RN";
 		public const string FixRequiresNonEmptyString = "RS";
+		public const string FixRequires = "R";
 
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 			Rules.DoNotUseCodeContractsRule);
@@ -139,6 +140,10 @@ namespace WTG.Analyzers
 				{
 					context.ReportDiagnostic(FixRequiresNonEmptyStringDiagnostic(statement.GetLocation(), identifierLocation));
 				}
+				else if (RequiresParameter(context.SemanticModel, invoke, out identifierLocation, context.CancellationToken))
+				{
+					context.ReportDiagnostic(FixRequiresDiagnostic(statement.GetLocation(), identifierLocation));
+				}
 				else
 				{
 					context.ReportDiagnostic(FixUnavailableDiagnostic(statement.GetLocation()));
@@ -256,6 +261,14 @@ namespace WTG.Analyzers
 			return true;
 		}
 
+		static bool RequiresParameter(SemanticModel model, InvocationExpressionSyntax invoke, out Location identifierLocation, CancellationToken cancellationToken)
+		{
+			var locator = new ParameterLocator(model, cancellationToken);
+			invoke.ArgumentList.Accept(locator);
+			identifierLocation = locator.ParameterLocation;
+			return identifierLocation != null;
+		}
+
 		static bool IsInPrivateMember(SemanticModel model, SyntaxNode node, CancellationToken cancellationToken)
 		{
 			while (node != null)
@@ -332,10 +345,62 @@ namespace WTG.Analyzers
 		static Diagnostic FixRequiresNonEmptyStringDiagnostic(Location location, Location identifierLocation)
 			=> Diagnostic.Create(Rules.DoNotUseCodeContractsRule, location, new[] { identifierLocation }, FixRequiresNonEmptyStringProperties);
 
+		static Diagnostic FixRequiresDiagnostic(Location location, Location identifierLocation)
+			=> Diagnostic.Create(Rules.DoNotUseCodeContractsRule, location, new[] { identifierLocation }, FixRequiresProperties);
+
 		static readonly ImmutableDictionary<string, string> FixUnavailableProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixUnavailable);
 		static readonly ImmutableDictionary<string, string> FixDeleteProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixDelete);
 		static readonly ImmutableDictionary<string, string> FixGenericRequiresProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixGenericRequires);
 		static readonly ImmutableDictionary<string, string> FixRequiresNonNullProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixRequiresNonNull);
 		static readonly ImmutableDictionary<string, string> FixRequiresNonEmptyStringProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixRequiresNonEmptyString);
+		static readonly ImmutableDictionary<string, string> FixRequiresProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixRequires);
+
+		sealed class ParameterLocator : CSharpSyntaxWalker
+		{
+			public ParameterLocator(SemanticModel model, CancellationToken cancellationToken)
+			{
+				this.model = model;
+				this.cancellationToken = cancellationToken;
+			}
+
+			public Location ParameterLocation { get; private set; }
+
+			public override void Visit(SyntaxNode node)
+			{
+				if (ParameterLocation == null)
+				{
+					base.Visit(node);
+				}
+			}
+
+			public override void VisitIdentifierName(IdentifierNameSyntax node)
+			{
+				var symbol = model.GetSymbolInfo(node, cancellationToken).Symbol;
+
+				if (symbol != null && symbol.Kind == SymbolKind.Parameter)
+				{
+					ParameterLocation = node.GetLocation();
+				}
+			}
+
+			public override void VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
+			{
+			}
+
+			public override void VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
+			{
+			}
+
+			public override void VisitAnonymousMethodExpression(AnonymousMethodExpressionSyntax node)
+			{
+			}
+
+			public override void VisitLocalFunctionStatement(LocalFunctionStatementSyntax node)
+			{
+			}
+
+			readonly SemanticModel model;
+			readonly CancellationToken cancellationToken;
+		}
 	}
 }

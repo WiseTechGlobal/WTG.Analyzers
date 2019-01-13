@@ -11,7 +11,7 @@ public class Bob : IBob
 
 	protected void Method2(int value)
 	{
-		Contract.Requires(value > 3);
+		Contract.Requires(value > 3, "Message");
 
 		value.GetType();
 	}

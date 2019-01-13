@@ -67,6 +67,15 @@ namespace WTG.Analyzers
 								equivalenceKey: "FIX"),
 							diagnostic);
 						break;
+
+					case CodeContractsAnalyzer.FixRequires:
+						context.RegisterCodeFix(
+							CodeAction.Create(
+								"Replace with 'if' check.",
+								c => FixRequires(context.Document, diagnostic, c),
+								equivalenceKey: "FIX"),
+							diagnostic);
+						break;
 				}
 			}
 
@@ -209,6 +218,35 @@ namespace WTG.Analyzers
 				// default message.
 				return ExpressionSyntaxFactory.CreateLiteral("Value cannot be null or empty.");
 			}
+		}
+
+		static async Task<Document> FixRequires(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		{
+			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
+			var invokeNode = (InvocationExpressionSyntax)statementNode.Expression;
+			var arguments = invokeNode.ArgumentList.Arguments;
+			var condition = ExpressionSyntaxFactory.InvertBoolExpression(arguments[0].Expression);
+			var paramSyntax = (ExpressionSyntax)invokeNode.FindNode(diagnostic.AdditionalLocations[0].SourceSpan, getInnermostNodeForTie: true);
+
+			var message = arguments.Count > 1
+				? arguments[1].Expression
+				: ExpressionSyntaxFactory.CreateLiteral("Invalid Argument.");
+
+			var argumentList = SyntaxFactory.ArgumentList(
+				SyntaxFactory.SeparatedList(new[]
+				{
+					SyntaxFactory.Argument(message),
+					SyntaxFactory.Argument(ExpressionSyntaxFactory.CreateNameof(paramSyntax)),
+				}));
+
+			var replacement = CreateGuardClause(
+				condition,
+				ArgumentExceptionTypeName,
+				argumentList);
+
+			return document.WithSyntaxRoot(
+				root.ReplaceNode(statementNode, replacement));
 		}
 
 		static IfStatementSyntax CreateGuardClause(ExpressionSyntax condition, TypeSyntax exceptionType, ArgumentListSyntax argumentList)
