@@ -97,9 +97,9 @@
 			<description>The auto-generated values for enums don't work well for flag enums, so you should specify the value explicitly.</description>
 		</rule>
 		<rule id="4" name="DoNotUseCodeContracts" severity="Warning">
-			<title>This project does not use CodeContracts.</title>
-			<message>This project does not use CodeContracts.</message>
-			<description>References to CodeContracs should be replaced with alternate forms of checking or deleted.</description>
+			<title>This project does not use Code Contracts.</title>
+			<message>This project does not use Code Contracts.</message>
+			<description>References to Code Contracs should be replaced with alternate forms of checking or should be deleted.</description>
 			<tag>Unnecessary</tag>
 		</rule>
 	</category>

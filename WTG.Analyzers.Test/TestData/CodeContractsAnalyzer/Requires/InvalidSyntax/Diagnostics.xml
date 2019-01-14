@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<diagnostics id="WTG2004" message="This project does not use CodeContracts." severity="Warning">
+<diagnostics id="WTG2004" message="This project does not use Code Contracts." severity="Warning">
 	<suppressId>CS0305</suppressId>
 	<suppressId>CS0839</suppressId>
 	<suppressId>CS1002</suppressId>

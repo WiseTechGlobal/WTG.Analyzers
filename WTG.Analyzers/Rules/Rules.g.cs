@@ -225,12 +225,12 @@ namespace WTG.Analyzers
 
 		public static readonly DiagnosticDescriptor DoNotUseCodeContractsRule = new DiagnosticDescriptor(
 			DoNotUseCodeContractsDiagnosticID,
-			"This project does not use CodeContracts.",
-			"This project does not use CodeContracts.",
+			"This project does not use Code Contracts.",
+			"This project does not use Code Contracts.",
 			CorrectnessCategory,
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
-			description: "References to CodeContracs should be replaced with alternate forms of checking or deleted.",
+			description: "References to Code Contracs should be replaced with alternate forms of checking or should be deleted.",
 			customTags: new[]
 			{
 				WellKnownDiagnosticTags.Unnecessary,
@@ -571,7 +571,7 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
-		/// This project does not use CodeContracts.
+		/// This project does not use Code Contracts.
 		/// </summary>
 		public static Diagnostic CreateDoNotUseCodeContractsDiagnostic(Location location)
 		{
