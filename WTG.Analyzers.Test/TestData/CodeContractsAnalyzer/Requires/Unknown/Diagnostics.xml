@@ -3,15 +3,12 @@
 	<suppressId>CS8019</suppressId>
 	<diagnostic>
 		<location>Test0.cs: (7,3-32)</location>
-		<location>Test0.cs: (7,21-26)</location>
 	</diagnostic>
 	<diagnostic>
 		<location>Test0.cs: (14,3-43)</location>
-		<location>Test0.cs: (14,21-26)</location>
 	</diagnostic>
 	<diagnostic>
 		<location>Test0.cs: (21,3-32)</location>
-		<location>Test0.cs: (21,21-26)</location>
 	</diagnostic>
 	<diagnostic>
 		<location>Test0.cs: (28,3-32)</location>
