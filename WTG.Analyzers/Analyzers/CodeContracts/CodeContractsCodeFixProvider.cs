@@ -49,7 +49,7 @@ namespace WTG.Analyzers
 			var cancellationToken = context.CancellationToken;
 			var document = context.Document;
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-			var node = GetNode(root, diagnostic);
+			var node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
 
 			if (!node.IsKind(SyntaxKind.ExpressionStatement))
 			{
@@ -99,7 +99,7 @@ namespace WTG.Analyzers
 
 			return document.WithSyntaxRoot(
 				root.RemoveNode(
-					GetNode(root, diagnostic),
+					root.FindNode(diagnostic.Location.SourceSpan),
 					SyntaxRemoveOptions.AddElasticMarker | SyntaxRemoveOptions.KeepExteriorTrivia));
 		}
 
@@ -370,12 +370,6 @@ namespace WTG.Analyzers
 				"Replace with 'if' check.",
 				createChangedDocument,
 				equivalenceKey: "ReplaceWithIf");
-		}
-
-		static SyntaxNode GetNode(SyntaxNode root, Diagnostic diagnostic)
-		{
-			var diagnosticSpan = diagnostic.Location.SourceSpan;
-			return root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 		}
 
 		static StatementSyntax CreateArgumentExceptionGuardClause(ExpressionSyntax condition, ExpressionSyntax message, ExpressionSyntax parameterName)
