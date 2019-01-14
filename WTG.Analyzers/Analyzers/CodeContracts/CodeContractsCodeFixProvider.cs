@@ -118,7 +118,7 @@ namespace WTG.Analyzers
 				arguments.Count > 1 ? SyntaxFactory.ArgumentList(arguments.RemoveAt(0)) : SyntaxFactory.ArgumentList());
 
 			return document.WithSyntaxRoot(
-				root.ReplaceNode(statementNode, replacement));
+				root.ReplaceNode(statementNode, WithElasticTriviaFrom(replacement, statementNode)));
 		}
 
 		static async Task<Document> FixRequiresNotNull(Document document, Diagnostic diagnostic, Location identifierLocation, CancellationToken cancellationToken)
@@ -152,7 +152,7 @@ namespace WTG.Analyzers
 				argumentList);
 
 			return document.WithSyntaxRoot(
-				root.ReplaceNode(statementNode, replacement));
+				root.ReplaceNode(statementNode, WithElasticTriviaFrom(replacement, statementNode)));
 		}
 
 		static async Task<Document> FixRequires(Document document, Diagnostic diagnostic, Location identifierLocation, string defaultMessage, CancellationToken cancellationToken)
@@ -171,7 +171,7 @@ namespace WTG.Analyzers
 				ExpressionSyntaxFactory.CreateNameof(paramSyntax));
 
 			return document.WithSyntaxRoot(
-				root.ReplaceNode(statementNode, replacement));
+				root.ReplaceNode(statementNode, WithElasticTriviaFrom(replacement, statementNode)));
 		}
 
 		static bool IsGenericMethod(InvocationExpressionSyntax invoke, out Location typeLocation)
@@ -378,6 +378,13 @@ namespace WTG.Analyzers
 			invoke.ArgumentList.Accept(locator);
 			identifierLocation = locator.ParameterLocation;
 			return identifierLocation != null;
+		}
+
+		static SyntaxNode WithElasticTriviaFrom(SyntaxNode target, SyntaxNode source)
+		{
+			return target
+				.WithLeadingTrivia(source.GetLeadingTrivia().Insert(0, SyntaxFactory.ElasticMarker))
+				.WithTrailingTrivia(source.GetTrailingTrivia().Add(SyntaxFactory.ElasticMarker));
 		}
 
 		static CodeAction CreateDeleteAction(Document document, Diagnostic diagnostic)

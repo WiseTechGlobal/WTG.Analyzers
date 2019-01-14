@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG2004" message="This project does not use Code Contracts." severity="Warning">
+	<suppressId>CS8019</suppressId>
+	<diagnostic>
+		<location>Test0.cs: (9,3-38)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (12,3-78)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (15,3-53)</location>
+	</diagnostic>
+</diagnostics>
