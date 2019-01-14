@@ -183,7 +183,7 @@ namespace WTG.Analyzers
 				var name = (GenericNameSyntax)access.Name;
 				var typeArgs = name.TypeArgumentList.Arguments;
 
-				if (typeArgs.Count > 0)
+				if (typeArgs.Count > 0 && !typeArgs[0].IsKind(SyntaxKind.OmittedTypeArgument))
 				{
 					typeLocation = typeArgs[0].GetLocation();
 					return true;

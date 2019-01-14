@@ -12,6 +12,10 @@
     <EmbeddedResource Include="TestData\**\*.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="TestData\CodeContractsAnalyzer\Requires\Generic\Diagnostics.xml" />
+    <None Remove="TestData\CodeContractsAnalyzer\Requires\InvalidSyntax\Diagnostics.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\WTG.Analyzers.TestFramework\WTG.Analyzers.TestFramework.csproj" />
     <ProjectReference Include="..\WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj" />
     <ProjectReference Include="..\WTG.Analyzers\WTG.Analyzers.csproj" />
