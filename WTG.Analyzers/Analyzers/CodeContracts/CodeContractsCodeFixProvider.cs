@@ -9,9 +9,6 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.CodeAnalysis.Simplification;
-using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
@@ -22,7 +19,7 @@ namespace WTG.Analyzers
 		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
 			Rules.DoNotUseCodeContractsDiagnosticID);
 
-		public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+		public sealed override FixAllProvider GetFixAllProvider() => CodeContractsFixAllProvider.Instance;
 
 		public override Task RegisterCodeFixesAsync(CodeFixContext context)
 		{
@@ -58,7 +55,7 @@ namespace WTG.Analyzers
 
 			var invoke = (InvocationExpressionSyntax)((ExpressionStatementSyntax)node).Expression;
 
-			if (IsGenericMethod(invoke, out var supplementalLocation))
+			if (CodeContractsHelper.IsGenericMethod(invoke, out var supplementalLocation))
 			{
 				context.RegisterCodeFix(
 					CreateReplaceWithIfAction(c => FixGenericRequires(document, diagnostic, supplementalLocation, c)),
@@ -68,23 +65,23 @@ namespace WTG.Analyzers
 			{
 				var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-				if (IsInPrivateMember(semanticModel, invoke, context.CancellationToken))
+				if (CodeContractsHelper.IsInPrivateMember(semanticModel, invoke, context.CancellationToken))
 				{
 					context.RegisterCodeFix(CreateDeleteAction(context.Document, diagnostic), diagnostic);
 				}
-				else if (IsNullArgumentCheck(semanticModel, invoke, out supplementalLocation, context.CancellationToken))
+				else if (CodeContractsHelper.IsNullArgumentCheck(semanticModel, invoke, out supplementalLocation, context.CancellationToken))
 				{
 					context.RegisterCodeFix(
 						CreateReplaceWithIfAction(c => FixRequiresNotNull(document, diagnostic, supplementalLocation, c)),
 						diagnostic);
 				}
-				else if (IsNonEmptyStringArgumentCheck(semanticModel, invoke, out supplementalLocation, context.CancellationToken))
+				else if (CodeContractsHelper.IsNonEmptyStringArgumentCheck(semanticModel, invoke, out supplementalLocation, context.CancellationToken))
 				{
 					context.RegisterCodeFix(
 						CreateReplaceWithIfAction(c => FixRequires(document, diagnostic, supplementalLocation, "Value cannot be null or empty.", c)),
 						diagnostic);
 				}
-				else if (AccessesParameter(semanticModel, invoke, out supplementalLocation, context.CancellationToken))
+				else if (CodeContractsHelper.AccessesParameter(semanticModel, invoke, out supplementalLocation, context.CancellationToken))
 				{
 					context.RegisterCodeFix(
 						CreateReplaceWithIfAction(c => FixRequires(document, diagnostic, supplementalLocation, "Invalid Argument.", c)),
@@ -98,9 +95,10 @@ namespace WTG.Analyzers
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
 			return document.WithSyntaxRoot(
-				root.RemoveNode(
-					root.FindNode(diagnostic.Location.SourceSpan),
-					SyntaxRemoveOptions.AddElasticMarker | SyntaxRemoveOptions.KeepExteriorTrivia));
+				CodeContractsUsingSimplifier.Instance.Visit(
+					root.RemoveNode(
+						root.FindNode(diagnostic.Location.SourceSpan),
+						SyntaxRemoveOptions.AddElasticMarker | SyntaxRemoveOptions.KeepExteriorTrivia)));
 		}
 
 		static async Task<Document> FixGenericRequires(Document document, Diagnostic diagnostic, Location typeLocation, CancellationToken cancellationToken)
@@ -108,17 +106,11 @@ namespace WTG.Analyzers
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
 			var invoke = (InvocationExpressionSyntax)statementNode.Expression;
-			var exceptionType = (TypeSyntax)invoke.FindNode(typeLocation.SourceSpan);
-			var arguments = invoke.ArgumentList.Arguments;
-			var condition = ExpressionSyntaxFactory.InvertBoolExpression(arguments[0].Expression);
-
-			var replacement = CreateGuardClause(
-				condition,
-				exceptionType,
-				arguments.Count > 1 ? SyntaxFactory.ArgumentList(arguments.RemoveAt(0)) : SyntaxFactory.ArgumentList());
+			var replacement = CodeContractsHelper.ConvertGenericRequires(invoke, typeLocation);
 
 			return document.WithSyntaxRoot(
-				root.ReplaceNode(statementNode, WithElasticTriviaFrom(replacement, statementNode)));
+				CodeContractsUsingSimplifier.Instance.Visit(
+					root.ReplaceNode(statementNode, CodeContractsHelper.WithElasticTriviaFrom(replacement, statementNode))));
 		}
 
 		static async Task<Document> FixRequiresNotNull(Document document, Diagnostic diagnostic, Location identifierLocation, CancellationToken cancellationToken)
@@ -126,33 +118,11 @@ namespace WTG.Analyzers
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
 			var invokeNode = (InvocationExpressionSyntax)statementNode.Expression;
-			var arguments = invokeNode.ArgumentList.Arguments;
-			var condition = ExpressionSyntaxFactory.InvertBoolExpression(arguments[0].Expression);
-
-			ArgumentListSyntax argumentList;
-
-			if (arguments.Count > 1)
-			{
-				// If an explicit parameter name was provided to Requires(), then keep it.
-				argumentList = SyntaxFactory.ArgumentList(arguments.RemoveAt(0));
-			}
-			else
-			{
-				var paramSyntax = (ExpressionSyntax)invokeNode.FindNode(identifierLocation.SourceSpan);
-				argumentList = SyntaxFactory.ArgumentList(
-					SyntaxFactory.SeparatedList(new[]
-					{
-						SyntaxFactory.Argument(ExpressionSyntaxFactory.CreateNameof(paramSyntax))
-					}));
-			}
-
-			var replacement = CreateGuardClause(
-				condition,
-				ArgumentNullExceptionTypeName,
-				argumentList);
+			var replacement = CodeContractsHelper.ConvertRequiresNotNull(invokeNode, identifierLocation);
 
 			return document.WithSyntaxRoot(
-				root.ReplaceNode(statementNode, WithElasticTriviaFrom(replacement, statementNode)));
+				CodeContractsUsingSimplifier.Instance.Visit(
+					root.ReplaceNode(statementNode, CodeContractsHelper.WithElasticTriviaFrom(replacement, statementNode))));
 		}
 
 		static async Task<Document> FixRequires(Document document, Diagnostic diagnostic, Location identifierLocation, string defaultMessage, CancellationToken cancellationToken)
@@ -160,231 +130,11 @@ namespace WTG.Analyzers
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
 			var invokeNode = (InvocationExpressionSyntax)statementNode.Expression;
-			var arguments = invokeNode.ArgumentList.Arguments;
-			var paramSyntax = (ExpressionSyntax)invokeNode.FindNode(identifierLocation.SourceSpan, getInnermostNodeForTie: true);
-
-			var replacement = CreateArgumentExceptionGuardClause(
-				ExpressionSyntaxFactory.InvertBoolExpression(arguments[0].Expression),
-				arguments.Count > 1
-					? arguments[1].Expression
-					: ExpressionSyntaxFactory.CreateLiteral(defaultMessage),
-				ExpressionSyntaxFactory.CreateNameof(paramSyntax));
+			var replacement = CodeContractsHelper.ConvertRequires(invokeNode, identifierLocation, defaultMessage);
 
 			return document.WithSyntaxRoot(
-				root.ReplaceNode(statementNode, WithElasticTriviaFrom(replacement, statementNode)));
-		}
-
-		static bool IsGenericMethod(InvocationExpressionSyntax invoke, out Location typeLocation)
-		{
-			var access = (MemberAccessExpressionSyntax)invoke.Expression;
-
-			if (access.Name.IsKind(SyntaxKind.GenericName))
-			{
-				var name = (GenericNameSyntax)access.Name;
-				var typeArgs = name.TypeArgumentList.Arguments;
-
-				if (typeArgs.Count > 0 && !typeArgs[0].IsKind(SyntaxKind.OmittedTypeArgument))
-				{
-					typeLocation = typeArgs[0].GetLocation();
-					return true;
-				}
-			}
-
-			typeLocation = null;
-			return false;
-		}
-
-		static bool IsInPrivateMember(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
-		{
-			while (node != null)
-			{
-				switch (node.Kind())
-				{
-					case SyntaxKind.MethodDeclaration:
-						var methodDecl = (MethodDeclarationSyntax)node;
-						return methodDecl.ExplicitInterfaceSpecifier == null && IsPrivate(semanticModel.GetDeclaredSymbol(methodDecl));
-
-					case SyntaxKind.ConstructorDeclaration:
-						return IsPrivate(semanticModel.GetDeclaredSymbol((ConstructorDeclarationSyntax)node, cancellationToken));
-
-					case SyntaxKind.DestructorDeclaration:
-						return IsPrivate(semanticModel.GetDeclaredSymbol((DestructorDeclarationSyntax)node, cancellationToken));
-
-					case SyntaxKind.PropertyDeclaration:
-						var propertyDecl = (PropertyDeclarationSyntax)node;
-						return propertyDecl.ExplicitInterfaceSpecifier == null && IsPrivate(semanticModel.GetDeclaredSymbol(propertyDecl, cancellationToken));
-
-					case SyntaxKind.EventDeclaration:
-						var eventDecl = (EventDeclarationSyntax)node;
-						return eventDecl.ExplicitInterfaceSpecifier == null && IsPrivate(semanticModel.GetDeclaredSymbol(eventDecl, cancellationToken));
-
-					case SyntaxKind.AddAccessorDeclaration:
-					case SyntaxKind.RemoveAccessorDeclaration:
-					case SyntaxKind.GetAccessorDeclaration:
-					case SyntaxKind.SetAccessorDeclaration:
-					case SyntaxKind.UnknownAccessorDeclaration:
-						var accessor = (AccessorDeclarationSyntax)node;
-						bool isPrivate = false;
-
-						foreach (var modifier in accessor.Modifiers)
-						{
-							switch (modifier.Kind())
-							{
-								case SyntaxKind.PublicKeyword:
-								case SyntaxKind.ProtectedKeyword:
-								case SyntaxKind.InternalKeyword:
-									return false;
-
-								case SyntaxKind.PrivateKeyword:
-									isPrivate = true;
-									break;
-							}
-						}
-
-						if (isPrivate)
-						{
-							return true;
-						}
-						break;
-
-					case SyntaxKind.NamespaceDeclaration:
-					case SyntaxKind.CompilationUnit:
-					case SyntaxKind.ClassDeclaration:
-					case SyntaxKind.StructDeclaration:
-						return false;
-				}
-
-				node = node.Parent;
-			}
-
-			return false;
-
-			bool IsPrivate(ISymbol symbol) => symbol != null && symbol.DeclaredAccessibility == Accessibility.Private;
-		}
-
-		static bool IsNullArgumentCheck(SemanticModel semanticModel, InvocationExpressionSyntax invoke, out Location identifierLocation, CancellationToken cancellationToken)
-		{
-			var arguments = invoke.ArgumentList.Arguments;
-
-			if (arguments.Count == 0)
-			{
-				identifierLocation = null;
-				return false;
-			}
-
-			var comparand = GetComparand(arguments[0].Expression);
-
-			if (comparand == null)
-			{
-				identifierLocation = null;
-				return false;
-			}
-
-			var symbol = semanticModel.GetSymbolInfo(comparand, cancellationToken).Symbol;
-
-			if (symbol == null || symbol.Kind != SymbolKind.Parameter)
-			{
-				identifierLocation = null;
-				return false;
-			}
-
-			identifierLocation = comparand.GetLocation();
-			return true;
-
-			ExpressionSyntax GetComparand(ExpressionSyntax condition)
-			{
-				if (!condition.IsKind(SyntaxKind.NotEqualsExpression))
-				{
-					return null;
-				}
-
-				var b = (BinaryExpressionSyntax)condition;
-
-				if (b.Right.IsKind(SyntaxKind.NullLiteralExpression))
-				{
-					return b.Left;
-				}
-				else if (b.Left.IsKind(SyntaxKind.NullLiteralExpression))
-				{
-					return b.Right;
-				}
-				else
-				{
-					return null;
-				}
-			}
-		}
-
-		static bool IsNonEmptyStringArgumentCheck(SemanticModel semanticModel, InvocationExpressionSyntax invoke, out Location identifierLocation, CancellationToken cancellationToken)
-		{
-			var arguments = invoke.ArgumentList.Arguments;
-
-			if (arguments.Count == 0)
-			{
-				identifierLocation = null;
-				return false;
-			}
-
-			var expression = arguments[0].Expression;
-
-			if (!expression.IsKind(SyntaxKind.LogicalNotExpression))
-			{
-				identifierLocation = null;
-				return false;
-			}
-
-			expression = ((PrefixUnaryExpressionSyntax)expression).Operand;
-
-			if (!expression.IsKind(SyntaxKind.InvocationExpression))
-			{
-				identifierLocation = null;
-				return false;
-			}
-
-			var checkInvoke = (InvocationExpressionSyntax)expression;
-			var checkArguments = checkInvoke.ArgumentList.Arguments;
-
-			if (ExpressionHelper.GetMethodName(checkInvoke).Identifier.Text != nameof(string.IsNullOrEmpty) ||
-				checkArguments.Count != 1)
-			{
-				identifierLocation = null;
-				return false;
-			}
-
-			var checkMethodSymbol = (IMethodSymbol)semanticModel.GetSymbolInfo(checkInvoke, cancellationToken).Symbol;
-
-			if (checkMethodSymbol == null || checkMethodSymbol.ContainingType.SpecialType != SpecialType.System_String)
-			{
-				identifierLocation = null;
-				return false;
-			}
-
-			expression = checkArguments[0].Expression;
-			var paramSymbol = semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
-
-			if (paramSymbol == null || paramSymbol.Kind != SymbolKind.Parameter)
-			{
-				identifierLocation = null;
-				return false;
-			}
-
-			identifierLocation = expression.GetLocation();
-			return true;
-		}
-
-		static bool AccessesParameter(SemanticModel semanticModel, InvocationExpressionSyntax invoke, out Location identifierLocation, CancellationToken cancellationToken)
-		{
-			var locator = new ParameterLocator(semanticModel, cancellationToken);
-			invoke.ArgumentList.Accept(locator);
-			identifierLocation = locator.ParameterLocation;
-			return identifierLocation != null;
-		}
-
-		static SyntaxNode WithElasticTriviaFrom(SyntaxNode target, SyntaxNode source)
-		{
-			return target
-				.WithLeadingTrivia(source.GetLeadingTrivia().Insert(0, SyntaxFactory.ElasticMarker))
-				.WithTrailingTrivia(source.GetTrailingTrivia().Add(SyntaxFactory.ElasticMarker));
+				CodeContractsUsingSimplifier.Instance.Visit(
+					root.ReplaceNode(statementNode, CodeContractsHelper.WithElasticTriviaFrom(replacement, statementNode))));
 		}
 
 		static CodeAction CreateDeleteAction(Document document, Diagnostic diagnostic)
@@ -401,92 +151,6 @@ namespace WTG.Analyzers
 				"Replace with 'if' check.",
 				createChangedDocument,
 				equivalenceKey: "ReplaceWithIf");
-		}
-
-		static StatementSyntax CreateArgumentExceptionGuardClause(ExpressionSyntax condition, ExpressionSyntax message, ExpressionSyntax parameterName)
-		{
-			return CreateGuardClause(
-				condition,
-				ArgumentExceptionTypeName,
-				SyntaxFactory.ArgumentList(
-					SyntaxFactory.SeparatedList(new[]
-					{
-						SyntaxFactory.Argument(message),
-						SyntaxFactory.Argument(parameterName),
-					})));
-		}
-
-		static StatementSyntax CreateGuardClause(ExpressionSyntax condition, TypeSyntax exceptionType, ArgumentListSyntax argumentList)
-		{
-			return SyntaxFactory.IfStatement(
-				condition,
-				SyntaxFactory.Block(
-					SyntaxFactory.ThrowStatement(
-						SyntaxFactory.ObjectCreationExpression(
-							exceptionType,
-							argumentList,
-							null))))
-				.WithAdditionalAnnotations(Formatter.Annotation);
-		}
-
-		static readonly TypeSyntax ArgumentNullExceptionTypeName =
-			SyntaxFactory.QualifiedName(
-				SyntaxFactory.IdentifierName(nameof(System)),
-				SyntaxFactory.IdentifierName(nameof(ArgumentNullException)))
-			.WithAdditionalAnnotations(Simplifier.Annotation);
-
-		static readonly TypeSyntax ArgumentExceptionTypeName =
-			SyntaxFactory.QualifiedName(
-				SyntaxFactory.IdentifierName(nameof(System)),
-				SyntaxFactory.IdentifierName(nameof(ArgumentException)))
-			.WithAdditionalAnnotations(Simplifier.Annotation);
-
-		sealed class ParameterLocator : CSharpSyntaxWalker
-		{
-			public ParameterLocator(SemanticModel model, CancellationToken cancellationToken)
-			{
-				this.model = model;
-				this.cancellationToken = cancellationToken;
-			}
-
-			public Location ParameterLocation { get; private set; }
-
-			public override void Visit(SyntaxNode node)
-			{
-				if (ParameterLocation == null)
-				{
-					base.Visit(node);
-				}
-			}
-
-			public override void VisitIdentifierName(IdentifierNameSyntax node)
-			{
-				var symbol = model.GetSymbolInfo(node, cancellationToken).Symbol;
-
-				if (symbol != null && symbol.Kind == SymbolKind.Parameter)
-				{
-					ParameterLocation = node.GetLocation();
-				}
-			}
-
-			public override void VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
-			{
-			}
-
-			public override void VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
-			{
-			}
-
-			public override void VisitAnonymousMethodExpression(AnonymousMethodExpressionSyntax node)
-			{
-			}
-
-			public override void VisitLocalFunctionStatement(LocalFunctionStatementSyntax node)
-			{
-			}
-
-			readonly SemanticModel model;
-			readonly CancellationToken cancellationToken;
 		}
 	}
 }

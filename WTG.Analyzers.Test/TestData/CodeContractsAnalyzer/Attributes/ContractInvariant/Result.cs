@@ -1,4 +1,3 @@
-using System.Diagnostics.Contracts;
 
 public class Bob
 {

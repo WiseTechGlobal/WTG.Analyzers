@@ -1,4 +1,3 @@
-using System.Diagnostics.Contracts;
 
 namespace Foo
 {

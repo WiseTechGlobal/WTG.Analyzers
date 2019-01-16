@@ -7,6 +7,6 @@ public static class Bob
 	{
 		Contract.EnsuresOnThrow<InvalidOperationException>(Contract.ValueAtReturn(out value) != null);
 		value = new object();
-		throw new System.InvalidOperationException();
+		throw new InvalidOperationException();
 	}
 }
