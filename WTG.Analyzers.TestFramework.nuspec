@@ -7,6 +7,7 @@
 		<owners>WiseTech Global</owners>
 		<description>Support library for testing Roslyn Analyzers.</description>
 		<copyright>Copyright 2018</copyright>
+		<repository type="git" url="https://github.com/WiseTechGlobal/WTG.Analyzers" commit="$commitid$" />
 		<developmentDependency>true</developmentDependency>
 	</metadata>
 
