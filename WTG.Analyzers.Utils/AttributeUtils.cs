@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace WTG.Analyzers.Utils
 {
@@ -36,6 +37,21 @@ namespace WTG.Analyzers.Utils
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// Get the location of the attribute or the attribute list if its the only attribute in the list.
+		/// </summary>
+		public static Location GetLocation(AttributeSyntax attribute)
+		{
+			var attributeList = (AttributeListSyntax)attribute.Parent;
+
+			if (attributeList == null || attributeList.Attributes.Count > 1)
+			{
+				return attribute.GetLocation();
+			}
+
+			return attributeList.GetLocation();
 		}
 	}
 }

@@ -96,6 +96,12 @@
 			<message>This member does not specify an explicit value.</message>
 			<description>The auto-generated values for enums don't work well for flag enums, so you should specify the value explicitly.</description>
 		</rule>
+		<rule id="4" name="DoNotUseCodeContracts" severity="Warning">
+			<title>This project does not use Code Contracts.</title>
+			<message>This project does not use Code Contracts.</message>
+			<description>References to Code Contracs should be replaced with alternate forms of checking or should be deleted.</description>
+			<tag>Unnecessary</tag>
+		</rule>
 	</category>
 	<category name="Decruftification" id="3000">
 		<rule id="1" name="RemovedOrphanedSuppressions" severity="Info">

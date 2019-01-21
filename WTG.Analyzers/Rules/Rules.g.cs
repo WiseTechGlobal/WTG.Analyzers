@@ -25,6 +25,7 @@ namespace WTG.Analyzers
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string FlagEnumsShouldSpecifyExplicitValuesDiagnosticID = "WTG2003";
+		public const string DoNotUseCodeContractsDiagnosticID = "WTG2004";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 		public const string PreferDirectMemberAccessOverLinqDiagnosticID = "WTG3002";
 		public const string PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID = "WTG3003";
@@ -221,6 +222,19 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
 			description: "The auto-generated values for enums don't work well for flag enums, so you should specify the value explicitly.");
+
+		public static readonly DiagnosticDescriptor DoNotUseCodeContractsRule = new DiagnosticDescriptor(
+			DoNotUseCodeContractsDiagnosticID,
+			"This project does not use Code Contracts.",
+			"This project does not use Code Contracts.",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "References to Code Contracs should be replaced with alternate forms of checking or should be deleted.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
 
 		public static readonly DiagnosticDescriptor RemovedOrphanedSuppressionsRule = new DiagnosticDescriptor(
 			RemovedOrphanedSuppressionsDiagnosticID,
@@ -554,6 +568,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateFlagEnumsShouldSpecifyExplicitValuesDiagnostic(Location location)
 		{
 			return Diagnostic.Create(FlagEnumsShouldSpecifyExplicitValuesRule, location);
+		}
+
+		/// <summary>
+		/// This project does not use Code Contracts.
+		/// </summary>
+		public static Diagnostic CreateDoNotUseCodeContractsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DoNotUseCodeContractsRule, location);
 		}
 
 		/// <summary>
