@@ -2,9 +2,11 @@
 <package>
 	<metadata>
 		<id>WTG.Analyzers.Utils</id>
-		<version>2.0.5</version>
+		<version>$version$</version>
 		<authors>WiseTech Global</authors>
 		<owners>WiseTech Global</owners>
+		<licenseUrl>https://raw.githubusercontent.com/WiseTechGlobal/WTG.Analyzers/master/LICENSE.md</licenseUrl>
+		<projectUrl>https://github.com/WiseTechGlobal/WTG.Analyzers</projectUrl>
 		<description>Support library for Roslyn Analyzers.</description>
 		<copyright>Copyright 2018</copyright>
 		<repository type="git" url="https://github.com/WiseTechGlobal/WTG.Analyzers" commit="$commitid$" />
