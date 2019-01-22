@@ -33,7 +33,7 @@ public class Bob
 
 	public void Method5(string str)
 	{
-		Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(str), "Must provide str.");
+		Contract.Requires<System.ArgumentException>(!string.IsNullOrEmpty(str), "Must provide str.");
 
 		str.GetType();
 	}
