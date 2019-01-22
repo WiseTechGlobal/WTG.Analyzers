@@ -89,6 +89,12 @@ namespace WTG.Analyzers
 					case SyntaxKind.ClassDeclaration:
 					case SyntaxKind.StructDeclaration:
 						return false;
+
+					case SyntaxKind.LocalFunctionStatement:
+					case SyntaxKind.AnonymousMethodExpression:
+					case SyntaxKind.ParenthesizedLambdaExpression:
+					case SyntaxKind.SimpleLambdaExpression:
+						return true;
 				}
 
 				node = node.Parent;
