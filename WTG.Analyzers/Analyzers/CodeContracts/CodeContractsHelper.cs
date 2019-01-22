@@ -225,7 +225,9 @@ namespace WTG.Analyzers
 
 		public static StatementSyntax ConvertGenericRequires(InvocationExpressionSyntax invoke, Location typeLocation)
 		{
-			var exceptionType = (TypeSyntax)invoke.FindNode(typeLocation.SourceSpan);
+			var exceptionType = (TypeSyntax)invoke.FindNode(typeLocation.SourceSpan)
+				.WithAdditionalAnnotations(Simplifier.Annotation);
+
 			var arguments = invoke.ArgumentList.Arguments;
 			var condition = ExpressionSyntaxFactory.InvertBoolExpression(arguments[0].Expression);
 
