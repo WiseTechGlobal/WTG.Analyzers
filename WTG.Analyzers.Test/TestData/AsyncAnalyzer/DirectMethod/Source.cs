@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,14 +9,14 @@ public static class Bob
 	{
 		await Stuff();
 		await Stuff().ConfigureAwait(false); // async void - not ok
-		await Stuff().ConfigureAwait(true); // async void - not ok
+		await Stuff().ConfigureAwait(true);
 	}
 
 	public static async Task ATMethodAsync()
 	{
 		await Stuff();
 		await Stuff().ConfigureAwait(false); // async Task - ok
-		await Stuff().ConfigureAwait(true); // async Task - ok
+		await Stuff().ConfigureAwait(true);
 	}
 
 	static Task Stuff()
