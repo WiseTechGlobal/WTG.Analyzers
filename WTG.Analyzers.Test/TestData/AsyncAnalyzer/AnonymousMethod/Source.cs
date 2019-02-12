@@ -9,14 +9,14 @@ public static class Bob
 	{
 		Munch(async delegate { await Stuff(); });
 		Munch(async delegate { await Stuff().ConfigureAwait(false); }); // async void - not ok
-		Munch(async delegate { await Stuff().ConfigureAwait(true); }); // async void - not ok
+		Munch(async delegate { await Stuff().ConfigureAwait(true); });
 	}
 
 	public static async Task ATMethodAsync()
 	{
 		AsyncMunch(async delegate { await Stuff(); });
 		AsyncMunch(async delegate { await Stuff().ConfigureAwait(false); }); // async Task - ok
-		AsyncMunch(async delegate { await Stuff().ConfigureAwait(true); }); // async Task - ok
+		AsyncMunch(async delegate { await Stuff().ConfigureAwait(true); });
 	}
 
 	static Task Stuff()
