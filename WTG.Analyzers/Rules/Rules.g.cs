@@ -22,6 +22,7 @@ namespace WTG.Analyzers
 		public const string DeconstructWithSingleVarDiagnosticID = "WTG1011";
 		public const string DeconstructWithVarDiagnosticID = "WTG1012";
 		public const string AvoidTupleTypesInPublicInterfacesDiagnosticID = "WTG1013";
+		public const string DontNestConditionalOperatorsDiagnosticID = "WTG1014";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string FlagEnumsShouldSpecifyExplicitValuesDiagnosticID = "WTG2003";
@@ -195,6 +196,15 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
 			description: "Replace with a dedicated type.");
+
+		public static readonly DiagnosticDescriptor DontNestConditionalOperatorsRule = new DiagnosticDescriptor(
+			DontNestConditionalOperatorsDiagnosticID,
+			"Don't nest conditional operators.",
+			"Nesting conditional operators makes the code harder to read, use an 'if' statement instead.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Replace the outer conditional operator with an 'if' statement.");
 
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
@@ -544,6 +554,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateAvoidTupleTypesInPublicInterfacesDiagnostic(Location location)
 		{
 			return Diagnostic.Create(AvoidTupleTypesInPublicInterfacesRule, location);
+		}
+
+		/// <summary>
+		/// Nesting conditional operators makes the code harder to read, use an 'if' statement instead.
+		/// </summary>
+		public static Diagnostic CreateDontNestConditionalOperatorsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DontNestConditionalOperatorsRule, location);
 		}
 
 		/// <summary>
