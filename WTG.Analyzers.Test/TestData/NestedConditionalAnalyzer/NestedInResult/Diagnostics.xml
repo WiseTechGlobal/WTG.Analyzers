@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG1014" message="Nesting conditional operators makes the code harder to read, use an 'if' statement instead." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (3,59-76)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (4,66-83)</location>
+	</diagnostic>
+</diagnostics>

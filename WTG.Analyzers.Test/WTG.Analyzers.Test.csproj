@@ -12,7 +12,9 @@
     <EmbeddedResource Include="TestData\**\*.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="TestData\NestedConditionalAnalyzer\Nested\Diagnostics.xml" />
+    <None Remove="TestData\NestedConditionalAnalyzer\NestedInCondition\Diagnostics.xml" />
+    <None Remove="TestData\NestedConditionalAnalyzer\NestedViaLambda\Diagnostics.xml" />
+    <None Remove="TestData\NestedConditionalAnalyzer\NestedInResult\Diagnostics.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WTG.Analyzers.TestFramework\WTG.Analyzers.TestFramework.csproj" />
