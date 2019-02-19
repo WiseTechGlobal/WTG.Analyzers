@@ -12,7 +12,7 @@ namespace WTG.Analyzers
 	public sealed class ConditionalOperandAnalyzer : DiagnosticAnalyzer
 	{
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-			Rules.ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalesRule,
+			Rules.ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseRule,
 			Rules.ConditionalOperatorsShouldNotHaveMultilineValues_WhenTrueRule);
 
 		public override void Initialize(AnalysisContext context)
@@ -46,7 +46,7 @@ namespace WTG.Analyzers
 
 			CheckOperand(
 				ref context,
-				Rules.ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalesRule,
+				Rules.ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseRule,
 				node.ColonToken,
 				node.WhenFalse);
 		}

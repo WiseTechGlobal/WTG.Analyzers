@@ -216,7 +216,7 @@ namespace WTG.Analyzers
 			isEnabledByDefault: true,
 			description: "If you cannot fit the operand on a single line, then an 'if' statement will be a more readable option.");
 
-		public static readonly DiagnosticDescriptor ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalesRule = new DiagnosticDescriptor(
+		public static readonly DiagnosticDescriptor ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseRule = new DiagnosticDescriptor(
 			ConditionalOperatorsShouldNotHaveMultilineValuesDiagnosticID,
 			"Conditional operators should not have multiline values.",
 			"The false operand of a conditional operator should occupy a single line, the same line as the ':' symbol.",
@@ -594,9 +594,9 @@ namespace WTG.Analyzers
 		/// <summary>
 		/// The false operand of a conditional operator should occupy a single line, the same line as the ':' symbol.
 		/// </summary>
-		public static Diagnostic CreateConditionalOperatorsShouldNotHaveMultilineValues_WhenFalesDiagnostic(Location location)
+		public static Diagnostic CreateConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseDiagnostic(Location location)
 		{
-			return Diagnostic.Create(ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalesRule, location);
+			return Diagnostic.Create(ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseRule, location);
 		}
 
 		/// <summary>
