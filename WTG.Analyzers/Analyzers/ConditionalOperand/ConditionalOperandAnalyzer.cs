@@ -69,12 +69,5 @@ namespace WTG.Analyzers
 						Location.Create(l1.SourceTree, TextSpan.FromBounds(l1.SourceSpan.Start, l2.SourceSpan.End))));
 			}
 		}
-
-		static bool AreOnSameLine(SyntaxToken token1, SyntaxToken token2)
-		{
-			var l1 = token1.GetLocation().GetMappedLineSpan();
-			var l2 = token2.GetLocation().GetMappedLineSpan();
-			return l1.EndLinePosition == l2.StartLinePosition;
-		}
 	}
 }
