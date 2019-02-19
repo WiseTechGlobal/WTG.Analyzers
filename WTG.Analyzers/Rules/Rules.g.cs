@@ -23,6 +23,7 @@ namespace WTG.Analyzers
 		public const string DeconstructWithVarDiagnosticID = "WTG1012";
 		public const string AvoidTupleTypesInPublicInterfacesDiagnosticID = "WTG1013";
 		public const string DontNestConditionalOperatorsDiagnosticID = "WTG1014";
+		public const string ConditionalOperatorsShouldNotHaveMultilineValuesDiagnosticID = "WTG1015";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string FlagEnumsShouldSpecifyExplicitValuesDiagnosticID = "WTG2003";
@@ -205,6 +206,24 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
 			description: "Replace the outer conditional operator with an 'if' statement.");
+
+		public static readonly DiagnosticDescriptor ConditionalOperatorsShouldNotHaveMultilineValues_WhenTrueRule = new DiagnosticDescriptor(
+			ConditionalOperatorsShouldNotHaveMultilineValuesDiagnosticID,
+			"Conditional operators should not have multiline values.",
+			"The true operand of a conditional operator should occupy a single line, the same line as the '?' symbol.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "If you cannot fit the operand on a single line, then an 'if' statement will be a more readable option.");
+
+		public static readonly DiagnosticDescriptor ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseRule = new DiagnosticDescriptor(
+			ConditionalOperatorsShouldNotHaveMultilineValuesDiagnosticID,
+			"Conditional operators should not have multiline values.",
+			"The false operand of a conditional operator should occupy a single line, the same line as the ':' symbol.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "If you cannot fit the operand on a single line, then an 'if' statement will be a more readable option.");
 
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
@@ -562,6 +581,22 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDontNestConditionalOperatorsDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DontNestConditionalOperatorsRule, location);
+		}
+
+		/// <summary>
+		/// The true operand of a conditional operator should occupy a single line, the same line as the '?' symbol.
+		/// </summary>
+		public static Diagnostic CreateConditionalOperatorsShouldNotHaveMultilineValues_WhenTrueDiagnostic(Location location)
+		{
+			return Diagnostic.Create(ConditionalOperatorsShouldNotHaveMultilineValues_WhenTrueRule, location);
+		}
+
+		/// <summary>
+		/// The false operand of a conditional operator should occupy a single line, the same line as the ':' symbol.
+		/// </summary>
+		public static Diagnostic CreateConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseDiagnostic(Location location)
+		{
+			return Diagnostic.Create(ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseRule, location);
 		}
 
 		/// <summary>

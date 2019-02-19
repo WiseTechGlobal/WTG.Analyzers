@@ -84,6 +84,12 @@
 			<message>Nesting conditional operators makes the code harder to read, use an 'if' statement instead.</message>
 			<description>Replace the outer conditional operator with an 'if' statement.</description>
 		</rule>
+		<rule id="15" name="ConditionalOperatorsShouldNotHaveMultilineValues" severity="Info">
+			<title>Conditional operators should not have multiline values.</title>
+			<message name="WhenTrue">The true operand of a conditional operator should occupy a single line, the same line as the '?' symbol.</message>
+			<message name="WhenFalse">The false operand of a conditional operator should occupy a single line, the same line as the ':' symbol.</message>
+			<description>If you cannot fit the operand on a single line, then an 'if' statement will be a more readable option.</description>
+		</rule>
 	</category>
 	<category name="Correctness" id="2000">
 		<rule id="1" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">
