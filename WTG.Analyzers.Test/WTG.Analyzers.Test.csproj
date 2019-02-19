@@ -12,10 +12,6 @@
     <EmbeddedResource Include="TestData\**\*.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="TestData\ConditionalOperandAnalyzer\IncorrectLine\Diagnostics.xml" />
-    <None Remove="TestData\ConditionalOperandAnalyzer\MultilineOperands\Diagnostics.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\WTG.Analyzers.TestFramework\WTG.Analyzers.TestFramework.csproj" />
     <ProjectReference Include="..\WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj" />
     <ProjectReference Include="..\WTG.Analyzers\WTG.Analyzers.csproj" />
