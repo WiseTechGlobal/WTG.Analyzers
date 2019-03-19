@@ -95,7 +95,7 @@ namespace WTG.Analyzers
 		{
 			var languageVersion = ((CSharpParseOptions)syntaxTree.Options).LanguageVersion;
 
-			return languageVersion == LanguageVersion.Default || languageVersion > LanguageVersion.CSharp5;
+			return languageVersion >= LanguageVersion.CSharp6;
 		}
 
 		static bool IsEnumLiteral(ExpressionSyntax expression, SemanticModel model, CancellationToken cancellationToken)
