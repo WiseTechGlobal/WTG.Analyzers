@@ -39,6 +39,7 @@ namespace WTG.Analyzers
 			}
 
 			var invoke = (InvocationExpressionSyntax)context.Node;
+			var supportsNameof = SupportsNameof(context.SemanticModel.SyntaxTree);
 
 			switch (invoke.Expression.Kind())
 			{
@@ -59,7 +60,8 @@ namespace WTG.Analyzers
 										break;
 
 									case SpecialType.System_Enum:
-										if (symbol.Parameters.Length == 0 &&
+										if (supportsNameof &&
+											symbol.Parameters.Length == 0 &&
 											IsEnumLiteral(member.Expression, context.SemanticModel, context.CancellationToken))
 										{
 											context.ReportDiagnostic(Rules.CreatePreferNameofOverCallingToStringOnAnEnumDiagnostic(invoke.GetLocation()));
@@ -87,6 +89,13 @@ namespace WTG.Analyzers
 					}
 					break;
 			}
+		}
+
+		static bool SupportsNameof(SyntaxTree syntaxTree)
+		{
+			var languageVersion = ((CSharpParseOptions)syntaxTree.Options).LanguageVersion;
+
+			return languageVersion == LanguageVersion.Default || languageVersion > LanguageVersion.CSharp5;
 		}
 
 		static bool IsEnumLiteral(ExpressionSyntax expression, SemanticModel model, CancellationToken cancellationToken)

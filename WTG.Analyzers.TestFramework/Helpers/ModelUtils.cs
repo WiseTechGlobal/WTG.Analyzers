@@ -13,12 +13,23 @@ namespace WTG.Analyzers.TestFramework
 {
 	public static class ModelUtils
 	{
+		public static Document CreateDocument(SampleDataSet dataSet)
+		{
+			var document = CreateDocument(dataSet.Source);
+			var project = document.Project;
+
+			project = project.WithParseOptions(
+				((CSharpParseOptions)project.ParseOptions).WithLanguageVersion(dataSet.LanguageVersion));
+
+			return project.GetDocument(document.Id);
+		}
+
 		public static Document CreateDocument(string source)
 		{
 			return CreateProject(new[] { source }).Documents.First();
 		}
 
-		public static Document[] GetDocuments(string[] sources)
+		public static Document[] CreateDocument(params string[] sources)
 		{
 			var project = CreateProject(sources);
 			var documents = project.Documents.ToArray();
@@ -68,10 +79,6 @@ namespace WTG.Analyzers.TestFramework
 				.WithAllowUnsafe(enabled: true)
 				.WithOutputKind(OutputKind.DynamicallyLinkedLibrary);
 			project = project.WithCompilationOptions(compilationOptions);
-
-			var parseOptions = (CSharpParseOptions)project.ParseOptions;
-			parseOptions = parseOptions.WithLanguageVersion(LanguageVersion.CSharp7_3);
-			project = project.WithParseOptions(parseOptions);
 
 			solution = project.Solution;
 

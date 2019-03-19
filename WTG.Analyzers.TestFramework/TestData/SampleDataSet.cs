@@ -8,14 +8,16 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace WTG.Analyzers.TestFramework
 {
 	public sealed class SampleDataSet
 	{
-		SampleDataSet(string name, string source, string result, ImmutableArray<DiagnosticResult> diagnostics, ImmutableHashSet<string> suppressedIds)
+		SampleDataSet(string name, LanguageVersion languageVersion, string source, string result, ImmutableArray<DiagnosticResult> diagnostics, ImmutableHashSet<string> suppressedIds)
 		{
 			Name = name;
+			LanguageVersion = languageVersion;
 			Source = source;
 			Result = result;
 			Diagnostics = diagnostics;
@@ -23,6 +25,7 @@ namespace WTG.Analyzers.TestFramework
 		}
 
 		public string Name { get; }
+		public LanguageVersion LanguageVersion { get; }
 		public string Source { get; }
 		public string Result { get; }
 		public ImmutableArray<DiagnosticResult> Diagnostics { get; }
@@ -67,6 +70,7 @@ namespace WTG.Analyzers.TestFramework
 			string result = null;
 			var diagnostics = ImmutableArray<DiagnosticResult>.Empty;
 			var suppressedIds = ImmutableHashSet<string>.Empty;
+			var languageVersion = LanguageVersion.Default;
 
 			foreach (var pair in resourceNames)
 			{
@@ -81,12 +85,12 @@ namespace WTG.Analyzers.TestFramework
 						break;
 
 					case "Diagnostics.xml":
-						LoadResults(assembly, pair.Value, ref diagnostics, ref suppressedIds);
+						LoadResults(assembly, pair.Value, ref languageVersion, ref diagnostics, ref suppressedIds);
 						break;
 				}
 			}
 
-			return new SampleDataSet(name, source ?? string.Empty, result ?? source ?? string.Empty, diagnostics, suppressedIds);
+			return new SampleDataSet(name, languageVersion, source ?? string.Empty, result ?? source ?? string.Empty, diagnostics, suppressedIds);
 		}
 
 		static string LoadResource(Assembly assembly, string name)
@@ -105,7 +109,7 @@ namespace WTG.Analyzers.TestFramework
 			}
 		}
 
-		static void LoadResults(Assembly assembly, string name, ref ImmutableArray<DiagnosticResult> diagnostics, ref ImmutableHashSet<string> suppressedIds)
+		static void LoadResults(Assembly assembly, string name, ref LanguageVersion languageVersion, ref ImmutableArray<DiagnosticResult> diagnostics, ref ImmutableHashSet<string> suppressedIds)
 		{
 			var text = LoadResource(assembly, name);
 
@@ -114,6 +118,13 @@ namespace WTG.Analyzers.TestFramework
 				var root = XElement.Parse(text);
 				diagnostics = root.Descendants("diagnostic").Select(LoadResult).ToImmutableArray();
 				suppressedIds = root.Elements("suppressId").Select(x => x.Value).ToImmutableHashSet();
+
+				var languageVersionStr = root.Element("languageVersion")?.Value;
+
+				if (languageVersionStr != null && Enum.TryParse<LanguageVersion>(languageVersionStr, out var tmp))
+				{
+					languageVersion = tmp;
+				}
 			}
 		}
 

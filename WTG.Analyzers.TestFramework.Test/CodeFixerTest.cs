@@ -24,13 +24,14 @@ namespace WTG.Analyzers.Framework.Test
 
 			var fixer = new CodeFixer(analyzerMock, fixProviderMock);
 			await fixer.VerifyFixAsync(
+				ModelUtils.CreateDocument(
 				@"using System;
 				namespace MyNamespace
 				{
 					public class MyClass1 { }
 					public class MyClass2 { }
 					public class MyClass3 { }
-				}",
+				}"),
 				@"using System;
 				namespace MyNamespace
 				{

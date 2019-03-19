@@ -21,7 +21,7 @@ namespace WTG.Analyzers.Test
 		public async Task NoErrorOnEmptyInput()
 		{
 			var analyzer = new TAnalyzer();
-			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, string.Empty).ConfigureAwait(false);
+			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, ModelUtils.CreateDocument(string.Empty)).ConfigureAwait(false);
 			Assert.That(diagnostics, IsDiagnostic.Empty);
 		}
 
@@ -30,7 +30,7 @@ namespace WTG.Analyzers.Test
 		{
 			var filter = CreateFilter(data);
 			var analyzer = new TAnalyzer();
-			var actual = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, data.Source).ConfigureAwait(false);
+			var actual = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, ModelUtils.CreateDocument(data)).ConfigureAwait(false);
 
 			Assert.That(actual.Where(filter), IsDiagnostic.EqualTo(data.Diagnostics));
 		}

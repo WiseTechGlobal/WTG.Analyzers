@@ -9,11 +9,6 @@ namespace WTG.Analyzers.TestFramework
 {
 	public static partial class DiagnosticUtils
 	{
-		public static async Task<Diagnostic[]> GetDiagnosticsAsync(DiagnosticAnalyzer analyzer, params string[] sources)
-		{
-			return await GetDiagnosticsAsync(analyzer, ModelUtils.GetDocuments(sources)).ConfigureAwait(false);
-		}
-
 		public static async Task<Diagnostic[]> GetDiagnosticsAsync(DiagnosticAnalyzer analyzer, params Document[] documents)
 		{
 			var ids = new HashSet<string>(analyzer.SupportedDiagnostics.Select(x => x.Id));
