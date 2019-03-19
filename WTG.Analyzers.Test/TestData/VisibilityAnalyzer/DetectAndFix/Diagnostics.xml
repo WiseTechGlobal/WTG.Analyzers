@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <diagnostics id="WTG1001" message="Our convention is to omit the 'private' modifier where it is already the default." severity="Hidden">
 	<suppressId>CS0107</suppressId>
-	<languageVersion>CSharp7_3</languageVersion>
+	<languageVersion>7.3</languageVersion>
 	<diagnostic>
 		<location>Test0.cs: (29,2-9)</location>
 	</diagnostic>

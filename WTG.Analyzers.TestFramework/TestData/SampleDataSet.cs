@@ -121,7 +121,7 @@ namespace WTG.Analyzers.TestFramework
 
 				var languageVersionStr = root.Element("languageVersion")?.Value;
 
-				if (languageVersionStr != null && Enum.TryParse<LanguageVersion>(languageVersionStr, out var tmp))
+				if (LanguageVersionFacts.TryParse(languageVersionStr, out var tmp))
 				{
 					languageVersion = tmp;
 				}
