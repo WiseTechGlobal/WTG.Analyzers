@@ -25,11 +25,6 @@ namespace WTG.Analyzers.TestFramework
 		public CodeFixProvider CodeFixProvider { get; }
 		public Func<Diagnostic, bool> DiagnosticFilter { get; set; }
 
-		public Task VerifyFixAsync(string oldSource, string newSource)
-		{
-			return VerifyFixAsync(ModelUtils.CreateDocument(oldSource), newSource);
-		}
-
 		public async Task VerifyFixAsync(Document document, string newSource)
 		{
 			document = await FixDocumentAsync(document).ConfigureAwait(false);
@@ -37,9 +32,8 @@ namespace WTG.Analyzers.TestFramework
 			Assert.That(actual, Is.EqualTo(newSource));
 		}
 
-		public async Task VerifyBulkFixAsync(string oldSource, string newSource)
+		public async Task VerifyBulkFixAsync(Document document, string newSource)
 		{
-			var document = ModelUtils.CreateDocument(oldSource);
 			document = await BulkFixDocumentAsync(document).ConfigureAwait(false);
 			var actual = await GetReducedStringFromDocumentAsync(document).ConfigureAwait(false);
 			Assert.That(actual, Is.EqualTo(newSource));
