@@ -24,6 +24,7 @@ namespace WTG.Analyzers
 		public const string AvoidTupleTypesInPublicInterfacesDiagnosticID = "WTG1013";
 		public const string DontNestConditionalOperatorsDiagnosticID = "WTG1014";
 		public const string ConditionalOperatorsShouldNotHaveMultilineValuesDiagnosticID = "WTG1015";
+		public const string AvoidDiscardCoalesceThrowDiagnosticID = "WTG1016";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string FlagEnumsShouldSpecifyExplicitValuesDiagnosticID = "WTG2003";
@@ -224,6 +225,15 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
 			description: "If you cannot fit the operand on a single line, then an 'if' statement will be a more readable option.");
+
+		public static readonly DiagnosticDescriptor AvoidDiscardCoalesceThrowRule = new DiagnosticDescriptor(
+			AvoidDiscardCoalesceThrowDiagnosticID,
+			"Avoid the discard-coalesce-throw pattern.",
+			"Prefer an if-throw over assigning a coalesce-throw expression to the discard symbol.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Prefer an if-throw over assigning a coalesce-throw expression to the discard symbol.");
 
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
@@ -597,6 +607,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseDiagnostic(Location location)
 		{
 			return Diagnostic.Create(ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseRule, location);
+		}
+
+		/// <summary>
+		/// Prefer an if-throw over assigning a coalesce-throw expression to the discard symbol.
+		/// </summary>
+		public static Diagnostic CreateAvoidDiscardCoalesceThrowDiagnostic(Location location)
+		{
+			return Diagnostic.Create(AvoidDiscardCoalesceThrowRule, location);
 		}
 
 		/// <summary>

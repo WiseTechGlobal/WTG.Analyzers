@@ -90,6 +90,11 @@
 			<message name="WhenFalse">The false operand of a conditional operator should occupy a single line, the same line as the ':' symbol.</message>
 			<description>If you cannot fit the operand on a single line, then an 'if' statement will be a more readable option.</description>
 		</rule>
+		<rule id="16" name="AvoidDiscardCoalesceThrow" severity="Info">
+			<title>Avoid the discard-coalesce-throw pattern.</title>
+			<message>Prefer an if-throw over assigning a coalesce-throw expression to the discard symbol.</message>
+			<description>Prefer an if-throw over assigning a coalesce-throw expression to the discard symbol.</description>
+		</rule>
 	</category>
 	<category name="Correctness" id="2000">
 		<rule id="1" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">
