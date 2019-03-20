@@ -50,17 +50,19 @@ namespace WTG.Analyzers
 			var assignment = (AssignmentExpressionSyntax)node.Expression;
 			var coalesce = (BinaryExpressionSyntax)assignment.Right;
 			var throwExpression = (ThrowExpressionSyntax)coalesce.Right;
-			var subject = coalesce.Left;
 
 			return SyntaxFactory.IfStatement(
 				SyntaxFactory.BinaryExpression(
 					SyntaxKind.EqualsExpression,
-					subject.WithoutTrivia(),
+					coalesce.Left.WithoutTrivia(),
 					SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
 				SyntaxFactory.Block(
 					SyntaxFactory.ThrowStatement(
-						throwExpression.Expression.WithoutTrivia())))
-				.WithTriviaFrom(node)
+						throwExpression.ThrowKeyword,
+						throwExpression.Expression,
+						node.SemicolonToken)))
+				.WithLeadingTrivia(node.GetLeadingTrivia())
+				.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed)
 				.WithAdditionalAnnotations(Formatter.Annotation);
 		}
 	}
