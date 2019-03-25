@@ -32,7 +32,7 @@ after_build:
   - build-packages.cmd %WTG_ANALYZERS_VERSION% %APPVEYOR_REPO_COMMIT%
 
 test_script:
-  - dotnet test --test-adapter-path:. --logger:Appveyor
+  - ps: If ($env:CONFIGURATION -eq 'Debug') { dotnet test --test-adapter-path:. --logger:Appveyor }
 
 artifacts:
   - path: bin\WTG.Analyzers.$(WTG_ANALYZERS_VERSION).nupkg
