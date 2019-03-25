@@ -22,9 +22,13 @@ namespace WTG.Analyzers
 		public const string DeconstructWithSingleVarDiagnosticID = "WTG1011";
 		public const string DeconstructWithVarDiagnosticID = "WTG1012";
 		public const string AvoidTupleTypesInPublicInterfacesDiagnosticID = "WTG1013";
+		public const string DontNestConditionalOperatorsDiagnosticID = "WTG1014";
+		public const string ConditionalOperatorsShouldNotHaveMultilineValuesDiagnosticID = "WTG1015";
+		public const string AvoidDiscardCoalesceThrowDiagnosticID = "WTG1016";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string FlagEnumsShouldSpecifyExplicitValuesDiagnosticID = "WTG2003";
+		public const string DoNotUseCodeContractsDiagnosticID = "WTG2004";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 		public const string PreferDirectMemberAccessOverLinqDiagnosticID = "WTG3002";
 		public const string PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID = "WTG3003";
@@ -195,6 +199,42 @@ namespace WTG.Analyzers
 			isEnabledByDefault: true,
 			description: "Replace with a dedicated type.");
 
+		public static readonly DiagnosticDescriptor DontNestConditionalOperatorsRule = new DiagnosticDescriptor(
+			DontNestConditionalOperatorsDiagnosticID,
+			"Don't nest conditional operators.",
+			"Nesting conditional operators makes the code harder to read, use an 'if' statement instead.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Replace the outer conditional operator with an 'if' statement.");
+
+		public static readonly DiagnosticDescriptor ConditionalOperatorsShouldNotHaveMultilineValues_WhenTrueRule = new DiagnosticDescriptor(
+			ConditionalOperatorsShouldNotHaveMultilineValuesDiagnosticID,
+			"Conditional operators should not have multiline values.",
+			"The true operand of a conditional operator should occupy a single line, the same line as the '?' symbol.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "If you cannot fit the operand on a single line, then an 'if' statement will be a more readable option.");
+
+		public static readonly DiagnosticDescriptor ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseRule = new DiagnosticDescriptor(
+			ConditionalOperatorsShouldNotHaveMultilineValuesDiagnosticID,
+			"Conditional operators should not have multiline values.",
+			"The false operand of a conditional operator should occupy a single line, the same line as the ':' symbol.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "If you cannot fit the operand on a single line, then an 'if' statement will be a more readable option.");
+
+		public static readonly DiagnosticDescriptor AvoidDiscardCoalesceThrowRule = new DiagnosticDescriptor(
+			AvoidDiscardCoalesceThrowDiagnosticID,
+			"Avoid the discard-coalesce-throw pattern.",
+			"Prefer an if-throw over assigning a coalesce-throw expression to the discard symbol.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Prefer an if-throw over assigning a coalesce-throw expression to the discard symbol.");
+
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
 			"Do not use ConfigureAwait from an async void method.",
@@ -221,6 +261,19 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
 			description: "The auto-generated values for enums don't work well for flag enums, so you should specify the value explicitly.");
+
+		public static readonly DiagnosticDescriptor DoNotUseCodeContractsRule = new DiagnosticDescriptor(
+			DoNotUseCodeContractsDiagnosticID,
+			"This project does not use Code Contracts.",
+			"This project does not use Code Contracts.",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "References to Code Contracs should be replaced with alternate forms of checking or should be deleted.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
 
 		public static readonly DiagnosticDescriptor RemovedOrphanedSuppressionsRule = new DiagnosticDescriptor(
 			RemovedOrphanedSuppressionsDiagnosticID,
@@ -533,6 +586,38 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
+		/// Nesting conditional operators makes the code harder to read, use an 'if' statement instead.
+		/// </summary>
+		public static Diagnostic CreateDontNestConditionalOperatorsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DontNestConditionalOperatorsRule, location);
+		}
+
+		/// <summary>
+		/// The true operand of a conditional operator should occupy a single line, the same line as the '?' symbol.
+		/// </summary>
+		public static Diagnostic CreateConditionalOperatorsShouldNotHaveMultilineValues_WhenTrueDiagnostic(Location location)
+		{
+			return Diagnostic.Create(ConditionalOperatorsShouldNotHaveMultilineValues_WhenTrueRule, location);
+		}
+
+		/// <summary>
+		/// The false operand of a conditional operator should occupy a single line, the same line as the ':' symbol.
+		/// </summary>
+		public static Diagnostic CreateConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseDiagnostic(Location location)
+		{
+			return Diagnostic.Create(ConditionalOperatorsShouldNotHaveMultilineValues_WhenFalseRule, location);
+		}
+
+		/// <summary>
+		/// Prefer an if-throw over assigning a coalesce-throw expression to the discard symbol.
+		/// </summary>
+		public static Diagnostic CreateAvoidDiscardCoalesceThrowDiagnostic(Location location)
+		{
+			return Diagnostic.Create(AvoidDiscardCoalesceThrowRule, location);
+		}
+
+		/// <summary>
 		/// ConfigureAwait(false) may result in the async method resuming on a non-deterministic thread, and if an exception is then thrown, it will likely be unhandled and result in process termination.
 		/// </summary>
 		public static Diagnostic CreateDoNotConfigureAwaitFromAsyncVoidDiagnostic(Location location)
@@ -554,6 +639,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateFlagEnumsShouldSpecifyExplicitValuesDiagnostic(Location location)
 		{
 			return Diagnostic.Create(FlagEnumsShouldSpecifyExplicitValuesRule, location);
+		}
+
+		/// <summary>
+		/// This project does not use Code Contracts.
+		/// </summary>
+		public static Diagnostic CreateDoNotUseCodeContractsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DoNotUseCodeContractsRule, location);
 		}
 
 		/// <summary>

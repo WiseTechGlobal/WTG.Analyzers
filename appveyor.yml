@@ -29,7 +29,7 @@ build:
   verbosity: minimal
 
 after_build:
-  - build-packages.cmd %WTG_ANALYZERS_VERSION%
+  - build-packages.cmd %WTG_ANALYZERS_VERSION% %APPVEYOR_REPO_COMMIT%
 
 test_script:
   - dotnet test

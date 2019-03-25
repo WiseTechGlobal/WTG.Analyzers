@@ -27,6 +27,8 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(PointlessOverrideAnalyzer), typeof(PointlessOverrideCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(NullComparisonAnalyzer), typeof(NullComparisonCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(CompletedTaskAnalyzer), typeof(CompletedTaskCodeFixProvider) })]
+	[TestFixture(TypeArgs = new[] { typeof(CodeContractsAnalyzer), typeof(CodeContractsCodeFixProvider) })]
+	[TestFixture(TypeArgs = new[] { typeof(DiscardThrowAnalyzer), typeof(DiscardThrowCodeFixProvider) })]
 	class AnalyzerAndCodeFixTest<TAnalyzer, TCodeFix>
 		where TAnalyzer : DiagnosticAnalyzer, new()
 		where TCodeFix : CodeFixProvider, new()
@@ -44,7 +46,7 @@ namespace WTG.Analyzers.Test
 		public async Task NoErrorOnEmptyInput()
 		{
 			var analyzer = new TAnalyzer();
-			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, string.Empty).ConfigureAwait(false);
+			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, ModelUtils.CreateDocument(string.Empty)).ConfigureAwait(false);
 			Assert.That(diagnostics, IsDiagnostic.Empty);
 		}
 
@@ -61,25 +63,27 @@ namespace WTG.Analyzers.Test
 		{
 			var filter = CreateFilter(data);
 			var analyzer = new TAnalyzer();
-			var actual = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, data.Source).ConfigureAwait(false);
+			var document = ModelUtils.CreateDocument(data);
+			var actual = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, document).ConfigureAwait(false);
 
 			Assert.That(actual.Where(filter), IsDiagnostic.EqualTo(data.Diagnostics));
 
 			var fixer = new CodeFixer(analyzer, new TCodeFix());
 			fixer.DiagnosticFilter = filter;
 
-			await fixer.VerifyFixAsync(data.Source, data.Result).ConfigureAwait(false);
+			await fixer.VerifyFixAsync(document, data.Result).ConfigureAwait(false);
 		}
 
 		[Test]
 		public async Task BulkUpdate([ValueSource(nameof(Samples))] SampleDataSet data)
 		{
 			var analyzer = new TAnalyzer();
-			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, data.Source).ConfigureAwait(false);
+			var document = ModelUtils.CreateDocument(data);
+			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, document).ConfigureAwait(false);
 
 			var fixer = new CodeFixer(analyzer, new TCodeFix());
 			fixer.DiagnosticFilter = CreateFilter(data);
-			await fixer.VerifyBulkFixAsync(data.Source, data.Result).ConfigureAwait(false);
+			await fixer.VerifyBulkFixAsync(document, data.Result).ConfigureAwait(false);
 		}
 
 		#region Implementation

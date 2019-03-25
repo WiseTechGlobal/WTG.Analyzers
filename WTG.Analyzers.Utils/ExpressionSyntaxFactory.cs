@@ -111,6 +111,13 @@ namespace WTG.Analyzers.Utils
 				SyntaxFactory.Literal(value));
 		}
 
+		public static ExpressionSyntax CreateLiteral(string value)
+		{
+			return SyntaxFactory.LiteralExpression(
+				SyntaxKind.StringLiteralExpression,
+				SyntaxFactory.Literal(value));
+		}
+
 		public static InvocationExpressionSyntax CreateNameof(ExpressionSyntax argument)
 		{
 			return SyntaxFactory.InvocationExpression(

@@ -26,7 +26,8 @@ namespace WTG.Analyzers
 			var invoke = (InvocationExpressionSyntax)context.Node;
 
 			if (invoke.Expression is MemberAccessExpressionSyntax member &&
-			member.Name.Identifier.Text == nameof(Task.ConfigureAwait) && // quick check before hitting the SemanticModel.
+				member.Name.Identifier.Text == nameof(Task.ConfigureAwait) && // quick check before hitting the SemanticModel.
+				!HasLiteralTrueArgument(invoke) &&
 				IsConfigureAwait(context.SemanticModel, invoke) &&
 				IsWithinAsyncVoidMethod(context.SemanticModel, invoke))
 			{
@@ -66,6 +67,14 @@ namespace WTG.Analyzers
 		{
 			var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(invoke).Symbol;
 			return symbol != null && symbol.IsMatch("System.Threading.Tasks.Task", nameof(Task.ConfigureAwait));
+		}
+
+		static bool HasLiteralTrueArgument(InvocationExpressionSyntax invoke)
+		{
+			var arguments = invoke.ArgumentList.Arguments;
+
+			return arguments.Count == 1
+				&& arguments[0].Expression.IsKind(SyntaxKind.TrueLiteralExpression);
 		}
 	}
 }
