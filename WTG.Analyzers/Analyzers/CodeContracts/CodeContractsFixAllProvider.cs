@@ -68,6 +68,10 @@ namespace WTG.Analyzers
 						{
 							modified = CodeContractsHelper.ConvertRequires(invoke, location, "Value cannot be null or empty.");
 						}
+						else if (CodeContractsHelper.InvokesContractForAll(semanticModel, invoke, CancellationToken.None))
+						{
+							return modified.WithAdditionalAnnotations(DeleteMEAnnotation);
+						}
 						else if (CodeContractsHelper.AccessesParameter(semanticModel, invoke, out location, cancellationToken))
 						{
 							modified = CodeContractsHelper.ConvertRequires(invoke, location, "Invalid Argument.");
