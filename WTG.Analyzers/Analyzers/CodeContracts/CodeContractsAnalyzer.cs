@@ -31,37 +31,48 @@ namespace WTG.Analyzers
 			var attributeNode = (AttributeSyntax)context.Node;
 			var attributeSymbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(attributeNode, context.CancellationToken).Symbol;
 
-			if (attributeSymbol == null || !attributeSymbol.ContainingNamespace.IsMatch("System.Diagnostics.Contracts"))
+			if (attributeSymbol == null)
 			{
 				return;
 			}
 
 			Location location;
 
-			switch (attributeSymbol.ContainingType.Name)
+			if (attributeSymbol.ContainingType.IsMatch("System.Diagnostics.CodeAnalysis.SuppressMessageAttribute") && CodeContractsHelper.IsCodeContractsSuppression(context.SemanticModel, attributeNode))
 			{
-				case nameof(SDC.ContractAbbreviatorAttribute):
-				case nameof(SDC.ContractArgumentValidatorAttribute):
-				case nameof(SDC.ContractClassAttribute):
-				case nameof(SDC.ContractOptionAttribute):
-				case nameof(SDC.ContractPublicPropertyNameAttribute):
-				case nameof(SDC.ContractReferenceAssemblyAttribute):
-				case nameof(SDC.ContractVerificationAttribute):
-				case nameof(SDC.PureAttribute):
-				case nameof(SDC.ContractRuntimeIgnoredAttribute):
-					location = AttributeUtils.GetLocation(attributeNode);
-					break;
+				location = AttributeUtils.GetLocation(attributeNode);
+			}
+			else if (attributeSymbol.ContainingNamespace.IsMatch("System.Diagnostics.Contracts"))
+			{
+				switch (attributeSymbol.ContainingType.Name)
+				{
+					case nameof(SDC.ContractAbbreviatorAttribute):
+					case nameof(SDC.ContractArgumentValidatorAttribute):
+					case nameof(SDC.ContractClassAttribute):
+					case nameof(SDC.ContractOptionAttribute):
+					case nameof(SDC.ContractPublicPropertyNameAttribute):
+					case nameof(SDC.ContractReferenceAssemblyAttribute):
+					case nameof(SDC.ContractVerificationAttribute):
+					case nameof(SDC.PureAttribute):
+					case nameof(SDC.ContractRuntimeIgnoredAttribute):
+						location = AttributeUtils.GetLocation(attributeNode);
+						break;
 
-				case nameof(SDC.ContractClassForAttribute):
-					location = GetAttributedMemberLocation(attributeNode, SyntaxKind.ClassDeclaration);
-					break;
+					case nameof(SDC.ContractClassForAttribute):
+						location = GetAttributedMemberLocation(attributeNode, SyntaxKind.ClassDeclaration);
+						break;
 
-				case nameof(SDC.ContractInvariantMethodAttribute):
-					location = GetAttributedMemberLocation(attributeNode, SyntaxKind.MethodDeclaration);
-					break;
+					case nameof(SDC.ContractInvariantMethodAttribute):
+						location = GetAttributedMemberLocation(attributeNode, SyntaxKind.MethodDeclaration);
+						break;
 
-				default:
-					return;
+					default:
+						return;
+				}
+			}
+			else
+			{
+				return;
 			}
 
 			context.ReportDiagnostic(Diagnostic.Create(Rules.DoNotUseCodeContractsRule, location, FixDeleteProperties));
