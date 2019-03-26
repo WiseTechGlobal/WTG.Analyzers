@@ -81,6 +81,10 @@ namespace WTG.Analyzers
 						CreateReplaceWithIfAction(c => FixRequires(document, diagnostic, supplementalLocation, "Value cannot be null or empty.", c)),
 						diagnostic);
 				}
+				else if (CodeContractsHelper.InvokesContractForAll(semanticModel, invoke, CancellationToken.None))
+				{
+					context.RegisterCodeFix(CreateDeleteAction(context.Document, diagnostic), diagnostic);
+				}
 				else if (CodeContractsHelper.AccessesParameter(semanticModel, invoke, out supplementalLocation, context.CancellationToken))
 				{
 					context.RegisterCodeFix(
