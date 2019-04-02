@@ -23,7 +23,7 @@ namespace WTG.Analyzers
 
 		public override SyntaxNode VisitUsingDirective(UsingDirectiveSyntax node)
 		{
-			if (!node.HasAnnotation(Simplifier.Annotation) && node.Name.IsMatch("System.Diagnostics.Contracts"))
+			if (!node.HasAnnotation(Simplifier.Annotation) && (node.Name.IsMatch("System.Diagnostics.Contracts") || node.Name.IsMatch("System.Diagnostics.CodeAnalysis")))
 			{
 				return node.WithAdditionalAnnotations(Simplifier.Annotation);
 			}

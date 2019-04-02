@@ -223,6 +223,13 @@ namespace WTG.Analyzers
 			return identifierLocation != null;
 		}
 
+		public static bool InvokesContractForAll(SemanticModel semanticModel, InvocationExpressionSyntax invoke, CancellationToken cancellationToken)
+		{
+			var visitor = new ContractForAllVisitor(semanticModel, cancellationToken);
+			invoke.ArgumentList.Accept(visitor);
+			return visitor.EncounteredContractForAll;
+		}
+
 		public static StatementSyntax ConvertGenericRequires(InvocationExpressionSyntax invoke, Location typeLocation)
 		{
 			var exceptionType = (TypeSyntax)invoke.FindNode(typeLocation.SourceSpan)
@@ -276,6 +283,25 @@ namespace WTG.Analyzers
 				arguments.Count > 1
 					? arguments[1].Expression
 					: ExpressionSyntaxFactory.CreateLiteral(defaultMessage));
+		}
+
+		public static bool IsCodeContractsSuppression(SemanticModel semanticModel, AttributeSyntax attribute)
+		{
+			var attributeArguments = attribute.ArgumentList?.Arguments;
+
+			if (attributeArguments == null || attributeArguments.Value.Count == 0)
+			{
+				return false;
+			}
+
+			var firstArgument = attributeArguments.Value[0];
+			if (!firstArgument.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+			{
+				return false;
+			}
+
+			var literal = semanticModel.GetConstantValue(firstArgument.Expression);
+			return literal.HasValue && literal.Value is string literalValue && literalValue == "Microsoft.Contracts";
 		}
 
 		public static SyntaxNode WithElasticTriviaFrom(SyntaxNode target, SyntaxNode source)
@@ -365,6 +391,40 @@ namespace WTG.Analyzers
 
 			public override void VisitLocalFunctionStatement(LocalFunctionStatementSyntax node)
 			{
+			}
+
+			readonly SemanticModel model;
+			readonly CancellationToken cancellationToken;
+		}
+
+		sealed class ContractForAllVisitor : CSharpSyntaxWalker
+		{
+			public ContractForAllVisitor(SemanticModel model, CancellationToken cancellationToken)
+			{
+				this.model = model;
+				this.cancellationToken = cancellationToken;
+			}
+
+			public bool EncounteredContractForAll { get; private set; }
+
+			public override void Visit(SyntaxNode node)
+			{
+				if (!EncounteredContractForAll)
+				{
+					base.Visit(node);
+				}
+			}
+
+			public override void VisitInvocationExpression(InvocationExpressionSyntax node)
+			{
+				var symbol = model.GetSymbolInfo(node, cancellationToken).Symbol;
+				if (symbol != null && symbol.Name == "ForAll" && symbol.ContainingType.IsMatch("System.Diagnostics.Contracts.Contract"))
+				{
+					EncounteredContractForAll = true;
+					return;
+				}
+
+				base.VisitInvocationExpression(node);
 			}
 
 			readonly SemanticModel model;
