@@ -4,7 +4,7 @@
     <AssemblyTitle>WTG Analyzers Test Framework Test</AssemblyTitle>
     <TargetFrameworks>net46;netcoreapp2.1</TargetFrameworks>
     <OutputPath>..\bin</OutputPath>
-    <TargetName>$(AssemblyName)-$(TargetFramework)</TargetName>
+    <AssemblyName>$(AssemblyName)-$(TargetFramework)</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\WTG.Analyzers\WTG.Analyzers.csproj" />
