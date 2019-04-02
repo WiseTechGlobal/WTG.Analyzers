@@ -2,6 +2,6 @@
 <RuleSet Name="Test Assembly Rules" ToolsVersion="16.0">
   <Include Path="CodeAnalysis.ruleset" Action="Default" />
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
-    <Rule Id="CA1812" Action="None" />
+    <Rule Id="CA1707" Action="None" />
   </Rules>
 </RuleSet>

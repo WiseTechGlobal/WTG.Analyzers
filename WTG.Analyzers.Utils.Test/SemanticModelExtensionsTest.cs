@@ -8,7 +8,7 @@ using WTG.Analyzers.TestFramework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	class SemanticModelExtensionsTest
+	public class SemanticModelExtensionsTest
 	{
 		[TestCase("0", ExpectedResult = true)]
 		[TestCase("0u", ExpectedResult = true)]

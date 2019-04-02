@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	class TypeSyntaxExtensionsTest
+	public class TypeSyntaxExtensionsTest
 	{
 		[TestCase("System", "System", ExpectedResult = true)]
 		[TestCase("System", "Syste", ExpectedResult = false)]

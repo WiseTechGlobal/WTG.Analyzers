@@ -8,7 +8,7 @@ using WTG.Analyzers.TestFramework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	class AttributeUtilsTest
+	public class AttributeUtilsTest
 	{
 		[TestCase(0, ExpectedResult = "1")]
 		[TestCase(1, ExpectedResult = "2")]

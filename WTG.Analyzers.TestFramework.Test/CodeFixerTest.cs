@@ -14,7 +14,7 @@ using WTG.Analyzers.TestFramework;
 namespace WTG.Analyzers.Framework.Test
 {
 	[TestFixture]
-	class CodeFixerTest
+	public class CodeFixerTest
 	{
 		[Test]
 		public async Task FixDocumentAsync_FixNotAlwaysProvided()

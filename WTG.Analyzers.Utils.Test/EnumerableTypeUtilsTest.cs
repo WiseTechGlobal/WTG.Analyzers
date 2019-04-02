@@ -8,7 +8,7 @@ using WTG.Analyzers.TestFramework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	class EnumerableTypeUtilsTest
+	public class EnumerableTypeUtilsTest
 	{
 		[TestCase("int[]", ExpectedResult = "int")]
 		[TestCase("IEnumerable<double>", ExpectedResult = "double")]

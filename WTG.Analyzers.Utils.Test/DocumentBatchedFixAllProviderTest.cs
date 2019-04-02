@@ -15,7 +15,7 @@ using WTG.Analyzers.TestFramework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	class DocumentBatchedFixAllProviderTest
+	public class DocumentBatchedFixAllProviderTest
 	{
 		[TestCase(FixAllScope.Document, ExpectedResult = FixedDocument)]
 		[TestCase(FixAllScope.Project, ExpectedResult = FixedProject)]

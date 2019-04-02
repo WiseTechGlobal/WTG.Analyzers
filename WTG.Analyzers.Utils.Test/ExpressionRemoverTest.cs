@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	class ExpressionRemoverTest
+	public class ExpressionRemoverTest
 	{
 		[TestCase("__TRUE__ && exp", ExpectedResult = "exp")]
 		[TestCase("__FALSE__ && exp", ExpectedResult = "false")]
