@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	class ExpressionHelperTest
+	public class ExpressionHelperTest
 	{
 		[TestCase("Method()", ExpectedResult = "Method")]
 		[TestCase("Instance.MethodName(42)", ExpectedResult = "MethodName")]

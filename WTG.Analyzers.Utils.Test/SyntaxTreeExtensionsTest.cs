@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	class SyntaxTreeExtensionsTest
+	public class SyntaxTreeExtensionsTest
 	{
 		[TestCase("Barry.cs", ExpectedResult = false)]
 		[TestCase("Barry.g.cs", ExpectedResult = true)]

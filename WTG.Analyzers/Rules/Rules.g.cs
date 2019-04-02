@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 
 namespace WTG.Analyzers
 {
-	static class Rules
+	public static class Rules
 	{
 		public const string CodingConventionCategory = "CodingConvention";
 		public const string CorrectnessCategory = "Correctness";

@@ -6,7 +6,8 @@ using NUnit.Framework;
 
 namespace WTG.Analyzers.Test
 {
-	class VersioningTest
+	[TestFixture]
+	public class VersioningTest
 	{
 		[Test]
 		public void AssemblyMajorMinorVersionMatchesRoslynMajorMinorVersion()

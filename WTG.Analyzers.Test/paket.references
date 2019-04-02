@@ -3,6 +3,7 @@ group Analyzers
 	Microsoft.CodeAnalysis.FxCopAnalyzers
 
 group Test
+	Appveyor.TestLogger
 	Microsoft.CodeAnalysis.CSharp.Workspaces
 	Microsoft.Composition
 	Microsoft.NET.Test.Sdk

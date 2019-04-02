@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace WTG.Analyzers.Test
 {
 	[TestFixture]
-	class RuleSetTest
+	public class RuleSetTest
 	{
 		[Test]
 		public void WarnAll()

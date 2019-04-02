@@ -10,7 +10,7 @@ using WTG.Analyzers.TestFramework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	class SymbolExtensionsTest
+	public class SymbolExtensionsTest
 	{
 		[Test]
 		public void IsValueTuple()

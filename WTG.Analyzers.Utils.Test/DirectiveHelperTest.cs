@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	class DirectiveHelperTest
+	public class DirectiveHelperTest
 	{
 		[TestCase("A", "H", ExpectedResult = false)]
 		[TestCase("A", "D", ExpectedResult = false)]

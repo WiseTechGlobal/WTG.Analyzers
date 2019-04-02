@@ -8,7 +8,7 @@ using WTG.Analyzers.TestFramework;
 namespace WTG.Analyzers.Utils.Test
 {
 	[TestFixture]
-	class ExpressionSyntaxFactoryTest
+	public class ExpressionSyntaxFactoryTest
 	{
 		[TestCase("42", ExpectedResult = "!42")]
 		[TestCase("!42", ExpectedResult = "42")]
