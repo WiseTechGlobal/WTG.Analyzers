@@ -11,7 +11,7 @@ namespace WTG.Analyzers
 {
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(PointlessOverrideCodeFixProvider))]
 	[Shared]
-	class PointlessOverrideCodeFixProvider : CodeFixProvider
+	public sealed class PointlessOverrideCodeFixProvider : CodeFixProvider
 	{
 		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
 			Rules.RemovePointlessOverridesDiagnosticID);

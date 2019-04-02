@@ -9,7 +9,7 @@ using WTG.Analyzers.Utils;
 namespace WTG.Analyzers
 {
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
-	class PointlessOverrideAnalyzer : DiagnosticAnalyzer
+	public sealed class PointlessOverrideAnalyzer : DiagnosticAnalyzer
 	{
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 			Rules.RemovePointlessOverridesRule);
