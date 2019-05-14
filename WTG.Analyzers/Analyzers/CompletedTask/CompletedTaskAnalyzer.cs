@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -19,8 +20,13 @@ namespace WTG.Analyzers
 			context.RegisterCompilationStartAction(CompilationStart);
 		}
 
-		void CompilationStart(CompilationStartAnalysisContext context)
+		static void CompilationStart(CompilationStartAnalysisContext context)
 		{
+			if (!HasCompletedTask(context.Compilation))
+			{
+				return;
+			}
+
 			var cache = new FileDetailCache();
 
 			context.RegisterSyntaxNodeAction(
@@ -40,7 +46,7 @@ namespace WTG.Analyzers
 
 			switch (ExpressionHelper.GetMethodName(invoke)?.Identifier.Text)
 			{
-				case "Delay":
+				case nameof(Task.Delay):
 					var arguments = invoke.ArgumentList.Arguments;
 
 					if (arguments.Count != 1)
@@ -51,24 +57,24 @@ namespace WTG.Analyzers
 					symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
 
 					if (symbol == null ||
-						!symbol.IsMatch("System.Threading.Tasks.Task", "Delay") ||
+						!symbol.IsMatch(TaskFullName, nameof(Task.Delay)) ||
 						!context.SemanticModel.IsConstantZero(arguments[0].Expression, context.CancellationToken))
 					{
 						return;
 					}
 					break;
 
-				case "FromResult":
+				case nameof(Task.FromResult):
 					symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
 
-					if (symbol == null || !symbol.IsMatch("System.Threading.Tasks.Task", "FromResult"))
+					if (symbol == null || !symbol.IsMatch(TaskFullName, nameof(Task.FromResult)))
 					{
 						return;
 					}
 
 					var convertedType = context.SemanticModel.GetTypeInfo(invoke, context.CancellationToken).ConvertedType;
 
-					if (convertedType == null || !convertedType.IsMatch("System.Threading.Tasks.Task"))
+					if (convertedType == null || !convertedType.IsMatch(TaskFullName))
 					{
 						return;
 					}
@@ -80,5 +86,20 @@ namespace WTG.Analyzers
 
 			context.ReportDiagnostic(Rules.CreatePreferCompletedTaskDiagnostic(invoke.GetLocation()));
 		}
+
+		static bool HasCompletedTask(Compilation compilation)
+		{
+			foreach (var symbol in compilation.GetTypeByMetadataName(TaskFullName).GetMembers(nameof(Task.CompletedTask)))
+			{
+				if (symbol.Kind == SymbolKind.Property)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		const string TaskFullName = "System.Threading.Tasks.Task";
 	}
 }
