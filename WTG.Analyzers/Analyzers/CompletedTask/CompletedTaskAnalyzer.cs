@@ -19,8 +19,13 @@ namespace WTG.Analyzers
 			context.RegisterCompilationStartAction(CompilationStart);
 		}
 
-		void CompilationStart(CompilationStartAnalysisContext context)
+		static void CompilationStart(CompilationStartAnalysisContext context)
 		{
+			if (!HasCompletedTask(context.Compilation))
+			{
+				return;
+			}
+
 			var cache = new FileDetailCache();
 
 			context.RegisterSyntaxNodeAction(
@@ -79,6 +84,19 @@ namespace WTG.Analyzers
 			}
 
 			context.ReportDiagnostic(Rules.CreatePreferCompletedTaskDiagnostic(invoke.GetLocation()));
+		}
+
+		static bool HasCompletedTask(Compilation compilation)
+		{
+			foreach (var symbol in compilation.GetTypeByMetadataName(typeof(System.Threading.Tasks.Task).FullName).GetMembers(nameof(System.Threading.Tasks.Task.CompletedTask)))
+			{
+				if (symbol.Kind == SymbolKind.Property)
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }
