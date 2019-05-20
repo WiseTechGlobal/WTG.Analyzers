@@ -86,7 +86,7 @@ namespace WTG.Analyzers
 
 			var property = (IPropertySymbol)symbol;
 
-			return property.IsMatch("System.Threading.Tasks.Task", nameof(Task.CompletedTask));
+			return property.IsMatch(WellKnownTypeNames.Task, nameof(Task.CompletedTask));
 		}
 
 		static bool IsFromResult(SemanticModel model, InvocationExpressionSyntax expression, out Location innerValueLocation, CancellationToken cancellationToken)
@@ -115,7 +115,7 @@ namespace WTG.Analyzers
 
 			innerValueLocation = expression.ArgumentList.Arguments[0].Expression.GetLocation();
 
-			return ((IMethodSymbol)symbol).IsMatch("System.Threading.Tasks.Task", nameof(Task.FromResult));
+			return ((IMethodSymbol)symbol).IsMatch(WellKnownTypeNames.Task, nameof(Task.FromResult));
 		}
 	}
 }

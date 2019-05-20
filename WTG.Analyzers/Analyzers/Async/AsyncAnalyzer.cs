@@ -66,7 +66,7 @@ namespace WTG.Analyzers
 		static bool IsConfigureAwait(SemanticModel semanticModel, InvocationExpressionSyntax invoke)
 		{
 			var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(invoke).Symbol;
-			return symbol != null && symbol.IsMatch("System.Threading.Tasks.Task", nameof(Task.ConfigureAwait));
+			return symbol != null && symbol.IsMatch(WellKnownTypeNames.Task, nameof(Task.ConfigureAwait));
 		}
 
 		static bool HasLiteralTrueArgument(InvocationExpressionSyntax invoke)
