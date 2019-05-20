@@ -56,18 +56,60 @@ namespace WTG.Analyzers
 
 		static bool IsAwaitTargetTrivial(SemanticModel model, AwaitExpressionSyntax expression, out Location innerValueLocation, CancellationToken cancellationToken)
 		{
-			switch (expression.Expression.Kind())
+			if (!TryUnwrapConfigureAwait(model, expression.Expression, out var taskExpression, cancellationToken))
+			{
+				taskExpression = expression.Expression;
+			}
+
+			switch (taskExpression.Kind())
 			{
 				case SyntaxKind.SimpleMemberAccessExpression:
 					innerValueLocation = null;
-					return IsCompletedTask(model, (MemberAccessExpressionSyntax)expression.Expression, cancellationToken);
+					return IsCompletedTask(model, (MemberAccessExpressionSyntax)taskExpression, cancellationToken);
 
 				case SyntaxKind.InvocationExpression:
-					return IsFromResult(model, (InvocationExpressionSyntax)expression.Expression, out innerValueLocation, cancellationToken);
+					return IsFromResult(model, (InvocationExpressionSyntax)taskExpression, out innerValueLocation, cancellationToken);
 			}
 
 			innerValueLocation = null;
 			return false;
+		}
+
+		static bool TryUnwrapConfigureAwait(SemanticModel semanticModel, ExpressionSyntax node, out ExpressionSyntax taskExpression, CancellationToken cancellationToken)
+		{
+			if (node.IsKind(SyntaxKind.InvocationExpression))
+			{
+				var invoke = (InvocationExpressionSyntax)node;
+
+				if (invoke.Expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+				{
+					var member = (MemberAccessExpressionSyntax)invoke.Expression;
+
+					if (member.Name.Identifier.Text == nameof(Task.ConfigureAwait) && IsConfigureAwait(invoke))
+					{
+						taskExpression = member.Expression;
+						return true;
+					}
+				}
+			}
+
+			taskExpression = node;
+			return false;
+
+			bool IsConfigureAwait(InvocationExpressionSyntax invoke)
+			{
+				var symbol = semanticModel.GetSymbolInfo(invoke, cancellationToken).Symbol;
+
+				if (symbol == null || symbol.Kind != SymbolKind.Method)
+				{
+					return false;
+				}
+
+				var method = (IMethodSymbol)symbol;
+
+				return method.Name == nameof(Task.ConfigureAwait)
+					&& method.ContainingType.IsMatchAnyArity(WellKnownTypeNames.Task);
+			}
 		}
 
 		static bool IsCompletedTask(SemanticModel model, MemberAccessExpressionSyntax expression, CancellationToken cancellationToken)
