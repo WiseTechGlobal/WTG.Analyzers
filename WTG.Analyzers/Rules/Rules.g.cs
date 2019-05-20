@@ -38,6 +38,7 @@ namespace WTG.Analyzers
 		public const string RemovePointlessOverridesDiagnosticID = "WTG3007";
 		public const string DontEquateValueTypesWithNullDiagnosticID = "WTG3008";
 		public const string PreferCompletedTaskDiagnosticID = "WTG3009";
+		public const string DontAwaitTriviallyCompletedTasksDiagnosticID = "WTG3010";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -446,6 +447,19 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor DontAwaitTriviallyCompletedTasksRule = new DiagnosticDescriptor(
+			DontAwaitTriviallyCompletedTasksDiagnosticID,
+			"Don't await a trivially completed task.",
+			"The task is trivially completed and so there is no point awaiting it.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "You can skip the task altogether.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -767,6 +781,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreatePreferCompletedTaskDiagnostic(Location location)
 		{
 			return Diagnostic.Create(PreferCompletedTaskRule, location);
+		}
+
+		/// <summary>
+		/// The task is trivially completed and so there is no point awaiting it.
+		/// </summary>
+		public static Diagnostic CreateDontAwaitTriviallyCompletedTasksDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DontAwaitTriviallyCompletedTasksRule, location);
 		}
 
 		/// <summary>

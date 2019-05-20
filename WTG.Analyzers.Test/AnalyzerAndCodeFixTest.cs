@@ -29,6 +29,7 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(CompletedTaskAnalyzer), typeof(CompletedTaskCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(CodeContractsAnalyzer), typeof(CodeContractsCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(DiscardThrowAnalyzer), typeof(DiscardThrowCodeFixProvider) })]
+	[TestFixture(TypeArgs = new[] { typeof(AwaitCompletedAnalyzer), typeof(AwaitCompletedCodeFixProvider) })]
 	public class AnalyzerAndCodeFixTest<TAnalyzer, TCodeFix>
 		where TAnalyzer : DiagnosticAnalyzer, new()
 		where TCodeFix : CodeFixProvider, new()

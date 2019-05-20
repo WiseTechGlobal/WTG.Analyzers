@@ -51,6 +51,13 @@ namespace WTG.Analyzers.Utils.Test
 			return SingleMatchIndex(methods, x => x.IsMatch(typeName, methodName));
 		}
 
+		[TestCase("System.Threading.Tasks.Task", "CompletedTask", ExpectedResult = 0)]
+		[TestCase("System.Threading.CancellationToken", "None", ExpectedResult = 1)]
+		public int MatchProperty(string typeName, string propertyName)
+		{
+			return SingleMatchIndex(properties, x => x.IsMatch(typeName, propertyName));
+		}
+
 		[TestCase("public class Foo { public void Method(); }", ExpectedResult = true)]
 		[TestCase("public class Foo { public class Bar { public void Method(); } }", ExpectedResult = true)]
 		[TestCase("public class Foo { public class Bar { void Method(); } }", ExpectedResult = false)]
@@ -116,6 +123,7 @@ namespace WTG.Analyzers.Utils.Test
 @"using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 ";
 
@@ -138,6 +146,12 @@ using System.Threading.Tasks;
 			{
 				(IMethodSymbol)GetExpressionSymbol("Task.FromResult(42)"),
 				(IMethodSymbol)GetExpressionSymbol("Task.FromException(default(Exception))"),
+			};
+
+			properties = new[]
+			{
+				(IPropertySymbol)GetExpressionSymbol("Task.CompletedTask"),
+				(IPropertySymbol)GetExpressionSymbol("CancellationToken.None"),
 			};
 		}
 
@@ -196,6 +210,7 @@ using System.Threading.Tasks;
 		int pos;
 		ITypeSymbol[] types;
 		IMethodSymbol[] methods;
+		IPropertySymbol[] properties;
 
 		#endregion
 	}

@@ -178,6 +178,12 @@
 			<description>Prefer Task.CompletedTask when applicable.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="10" name="DontAwaitTriviallyCompletedTasks" severity="Info">
+			<title>Don't await a trivially completed task.</title>
+			<message>The task is trivially completed and so there is no point awaiting it.</message>
+			<description>You can skip the task altogether.</description>
+			<tag>Unnecessary</tag>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">
