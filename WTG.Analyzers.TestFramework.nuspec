@@ -5,7 +5,7 @@
 		<version>$version$</version>
 		<authors>WiseTech Global</authors>
 		<owners>WiseTech Global</owners>
-		<licenseUrl>https://raw.githubusercontent.com/WiseTechGlobal/WTG.Analyzers/master/LICENSE.md</licenseUrl>
+		<license type="file">LICENSE.md</license>
 		<projectUrl>https://github.com/WiseTechGlobal/WTG.Analyzers</projectUrl>
 		<description>Support library for testing Roslyn Analyzers.</description>
 		<copyright>Copyright 2018</copyright>
@@ -16,5 +16,8 @@
 	<files>
 		<!-- Binaries -->
 		<file src="bin\net46\WTG.Analyzers.TestFramework.dll" target="lib\net46" />
+
+		<!-- Other -->
+		<file src="LICENSE.md" target="" />
 	</files>
 </package>
