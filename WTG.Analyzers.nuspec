@@ -5,7 +5,7 @@
 		<version>$version$</version>
 		<authors>WiseTech Global</authors>
 		<owners>WiseTech Global</owners>
-		<licenseUrl>https://raw.githubusercontent.com/WiseTechGlobal/WTG.Analyzers/master/LICENSE.md</licenseUrl>
+		<license type="file">LICENSE.md</license>
 		<projectUrl>https://github.com/WiseTechGlobal/WTG.Analyzers</projectUrl>
 		<description>Roslyn Code Analyzers to enforce WiseTech Global coding standards and catch common mistakes.</description>
 		<copyright>Copyright 2018</copyright>
@@ -21,5 +21,8 @@
 		<!-- MSBuild Properties and Targets -->
 		<file src="WTG.Analyzers\build\WTG.Analyzers.props" target="build\" />
 		<file src="WTG.Analyzers\build\WarnAll.ruleset" target="build\" />
+
+		<!-- Other -->
+		<file src="LICENSE.md" target="" />
 	</files>
 </package>
