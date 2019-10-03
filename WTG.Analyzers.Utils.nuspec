@@ -19,7 +19,7 @@
 		<!-- Binaries -->
 		<file src="bin\netstandard1.3\WTG.Analyzers.Utils.dll" target="lib\netstandard1.3" />
 
-				<!-- Other -->
+		<!-- Other -->
 		<file src="LICENSE.md" target="" />
 	</files>
 </package>
