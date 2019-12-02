@@ -113,7 +113,7 @@ namespace WTG.Analyzers.TestFramework
 				typeof(object),
 				typeof(Enumerable),
 				typeof(CSharpCompilation),
-				typeof(Compilation)
+				typeof(Compilation),
 			};
 
 			var wellKnownAssemblyNames = new[]
@@ -124,7 +124,7 @@ namespace WTG.Analyzers.TestFramework
 				"System.Console",
 				"System.Linq.Expressions",
 				"System.Linq.Queryable",
-				"System.Runtime"
+				"System.Runtime",
 			};
 
 			var builder = ImmutableArray.CreateBuilder<MetadataReference>(initialCapacity: types.Length + wellKnownAssemblyNames.Length);

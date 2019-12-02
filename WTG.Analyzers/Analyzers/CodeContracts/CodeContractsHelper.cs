@@ -262,7 +262,7 @@ namespace WTG.Analyzers
 				argumentList = SyntaxFactory.ArgumentList(
 					SyntaxFactory.SeparatedList(new[]
 					{
-						SyntaxFactory.Argument(ExpressionSyntaxFactory.CreateNameof(paramSyntax))
+						SyntaxFactory.Argument(ExpressionSyntaxFactory.CreateNameof(paramSyntax)),
 					}));
 			}
 

@@ -14,7 +14,7 @@ NUGET
     Microsoft.CodeQuality.Analyzers (2.6.2)
     Microsoft.NetCore.Analyzers (2.6.2)
     Microsoft.NetFramework.Analyzers (2.6.2)
-    StyleCop.Analyzers (1.0.2)
+    StyleCop.Analyzers (1.1.118)
     Text.Analyzers (2.6.2)
 
 GROUP Roslyn
