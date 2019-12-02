@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
@@ -31,14 +31,16 @@ namespace WTG.Analyzers.Utils.Test
 
 		static async Task<bool> Check(string filename, string content)
 		{
-			var document =
-				new AdhocWorkspace()
-				.CurrentSolution
-				.AddProject("Barry", "Barry", LanguageNames.CSharp)
-				.AddDocument(filename, SourceText.From(content));
+			using (var workspace = new AdhocWorkspace())
+			{
+				var document = workspace
+					.CurrentSolution
+					.AddProject("Barry", "Barry", LanguageNames.CSharp)
+					.AddDocument(filename, SourceText.From(content));
 
-			var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
-			return tree.IsGenerated(default(CancellationToken));
+				var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
+				return tree.IsGenerated(default(CancellationToken));
+			}
 		}
 
 		#endregion

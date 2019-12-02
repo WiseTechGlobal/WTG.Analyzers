@@ -54,7 +54,9 @@ namespace WTG.Analyzers.TestFramework
 
 		public static Project CreateProject(params string[] sources)
 		{
+#pragma warning disable CA2000 // Dispose objects before losing scope
 			return AddProject(CreateWorkspace().CurrentSolution, TestProjectName, sources);
+#pragma warning restore CA2000 // Dispose objects before losing scope
 		}
 
 		public static Project AddAdHocDependency(this Project project, string assemblyName, params string[] sources)

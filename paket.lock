@@ -6,16 +6,16 @@ GROUP Analyzers
 STORAGE: NONE
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    Microsoft.CodeAnalysis.FxCopAnalyzers (2.6.2)
-      Microsoft.CodeQuality.Analyzers (2.6.2)
-      Microsoft.NetCore.Analyzers (2.6.2)
-      Microsoft.NetFramework.Analyzers (2.6.2)
-      Text.Analyzers (2.6.2)
-    Microsoft.CodeQuality.Analyzers (2.6.2)
-    Microsoft.NetCore.Analyzers (2.6.2)
-    Microsoft.NetFramework.Analyzers (2.6.2)
+    Microsoft.CodeAnalysis.FxCopAnalyzers (2.9.8)
+      Microsoft.CodeAnalysis.VersionCheckAnalyzer (2.9.8)
+      Microsoft.CodeQuality.Analyzers (2.9.8)
+      Microsoft.NetCore.Analyzers (2.9.8)
+      Microsoft.NetFramework.Analyzers (2.9.8)
+    Microsoft.CodeAnalysis.VersionCheckAnalyzer (2.9.8)
+    Microsoft.CodeQuality.Analyzers (2.9.8)
+    Microsoft.NetCore.Analyzers (2.9.8)
+    Microsoft.NetFramework.Analyzers (2.9.8)
     StyleCop.Analyzers (1.1.118)
-    Text.Analyzers (2.6.2)
 
 GROUP Roslyn
 STORAGE: NONE
