@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -20,16 +20,14 @@ namespace WTG.Analyzers.TestFramework
 				return new ConstraintResult(this, actual, Arguments[0] == null);
 			}
 
-			var tmp = actual as IEnumerable<Diagnostic>;
-
-			if (tmp == null)
+			if (actual is IEnumerable<Diagnostic> tmp)
 			{
-				return new ConstraintResult(this, actual);
+				return ApplyTo(
+					tmp.Select(DiagnosticConversion.Convert),
+					(IEnumerable<DiagnosticResult>)Arguments[0]);
 			}
 
-			return ApplyTo(
-				tmp.Select(DiagnosticConversion.Convert),
-				(IEnumerable<DiagnosticResult>)Arguments[0]);
+			return new ConstraintResult(this, actual);
 		}
 
 		ConstraintResult ApplyTo(IEnumerable<DiagnosticResult> actual, IEnumerable<DiagnosticResult> expected)

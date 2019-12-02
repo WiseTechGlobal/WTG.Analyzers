@@ -84,11 +84,6 @@ namespace WTG.Analyzers
 			return false;
 		}
 
-		static bool IsBaseMemberAccess(ExpressionSyntax node)
-			=> node != null
-				&& node.IsKind(SyntaxKind.SimpleMemberAccessExpression)
-				&& IsBaseMemberAccess((MemberAccessExpressionSyntax)node);
-
 		static bool IsBaseMemberAccess(MemberAccessExpressionSyntax node)
 			=> node.Expression.IsKind(SyntaxKind.BaseExpression);
 

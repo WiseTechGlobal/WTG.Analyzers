@@ -53,7 +53,7 @@ namespace WTG.Analyzers.Utils.Test
 				"key",
 				new[] { TestCodeFixProvider.ID },
 				result,
-				default(CancellationToken));
+				default);
 		}
 
 		static async Task<string> Format(Solution solution)

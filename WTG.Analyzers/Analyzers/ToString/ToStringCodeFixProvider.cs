@@ -107,7 +107,6 @@ namespace WTG.Analyzers
 							{
 								// value?.ToString()[0] --> value?[0]
 								var member = (ElementAccessExpressionSyntax)invoke.Parent;
-								var binding = (MemberBindingExpressionSyntax)invoke.Expression;
 
 								return document.WithSyntaxRoot(
 									root.ReplaceNode(

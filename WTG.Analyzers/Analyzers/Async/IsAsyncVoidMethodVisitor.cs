@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -58,14 +58,13 @@ namespace WTG.Analyzers
 					return false;
 				}
 
-				var type = model.GetTypeInfo(node).ConvertedType as INamedTypeSymbol;
-
-				if (type == null || type.Kind == SymbolKind.ErrorType)
+				if (model.GetTypeInfo(node).ConvertedType is INamedTypeSymbol type &&
+					type.Kind != SymbolKind.ErrorType)
 				{
-					return false;
+					return GetInvokeMethod(type).ReturnsVoid;
 				}
 
-				return GetInvokeMethod(type).ReturnsVoid;
+				return false;
 			}
 
 			static IMethodSymbol GetInvokeMethod(INamedTypeSymbol delegateType)

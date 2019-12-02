@@ -134,12 +134,6 @@ using System.Threading.Tasks;
 				GetType("ValueTuple<string, int>"),
 			};
 
-			assemblies = new[]
-			{
-				types[0].ContainingAssembly,
-				types[1].ContainingAssembly,
-			};
-
 			methods = new[]
 			{
 				(IMethodSymbol)GetExpressionSymbol("Task.FromResult(42)"),
@@ -200,7 +194,6 @@ using System.Threading.Tasks;
 
 		SemanticModel semanticModel;
 		int pos;
-		IAssemblySymbol[] assemblies;
 		ITypeSymbol[] types;
 		IMethodSymbol[] methods;
 

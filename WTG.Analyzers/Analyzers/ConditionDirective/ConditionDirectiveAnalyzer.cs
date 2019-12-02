@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
@@ -60,23 +60,6 @@ namespace WTG.Analyzers
 			{
 				context.ReportDiagnostic(Rules.CreateConditionalCompilationDirectivesShouldNotSplitStructuresDiagnostic(start.GetLocation()));
 			}
-		}
-
-		static IEnumerable<SyntaxTrivia> TriviaSequence(ConditionDirective directive)
-		{
-			yield return directive.If;
-
-			foreach (var trivia in directive.ElseIf)
-			{
-				yield return trivia;
-			}
-
-			if (!directive.Else.IsKind(SyntaxKind.None))
-			{
-				yield return directive.Else;
-			}
-
-			yield return directive.End;
 		}
 
 		sealed class ConditionValidator : CSharpSyntaxWalker

@@ -39,7 +39,7 @@ namespace WTG.Analyzers.Utils.Test
 					.AddDocument(filename, SourceText.From(content));
 
 				var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
-				return tree.IsGenerated(default(CancellationToken));
+				return tree.IsGenerated(default);
 			}
 		}
 

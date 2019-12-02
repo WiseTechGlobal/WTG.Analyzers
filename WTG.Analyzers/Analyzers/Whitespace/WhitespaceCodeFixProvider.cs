@@ -173,7 +173,7 @@ namespace WTG.Analyzers
 				{
 					// Round up to the nearest multiple of AssumedTabSize.
 					column = (column + AssumedTabSize);
-					column = column - (column % AssumedTabSize);
+					column -= (column % AssumedTabSize);
 				}
 				else if (char.IsWhiteSpace(text, i))
 				{
@@ -205,7 +205,7 @@ namespace WTG.Analyzers
 
 		const int AssumedTabSize = 4;
 
-		static string[] cachedTabStrings =
+		static readonly string[] cachedTabStrings =
 		{
 			string.Empty,
 			"\t",
@@ -216,7 +216,7 @@ namespace WTG.Analyzers
 			"\t\t\t\t\t\t",
 		};
 
-		static string[] cachedSpaceStrings = new string[AssumedTabSize]
+		static readonly string[] cachedSpaceStrings = new string[AssumedTabSize]
 		{
 			string.Empty,
 			" ",

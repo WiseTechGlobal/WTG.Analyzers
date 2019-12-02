@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
@@ -74,9 +74,8 @@ namespace WTG.Analyzers.Utils
 						continue;
 					}
 
-					var property = member as IPropertySymbol;
-
-					if (property != null && property.Name == nameof(IEnumerator.Current))
+					if (member is IPropertySymbol property &&
+						property.Name == nameof(IEnumerator.Current))
 					{
 						if (itemType != null)
 						{
@@ -101,18 +100,14 @@ namespace WTG.Analyzers.Utils
 
 		static ITypeSymbol GetElementTypeFromEnumerableInterface(ITypeSymbol type)
 		{
-			var namedType = type as INamedTypeSymbol;
-
-			if (namedType == null)
+			if (type is INamedTypeSymbol namedType)
 			{
-				return null;
-			}
-
-			switch (namedType.OriginalDefinition.SpecialType)
-			{
-				case SpecialType.System_Collections_IEnumerable:
-				case SpecialType.System_Collections_Generic_IEnumerable_T:
-					return GetExplicitElementType(type);
+				switch (namedType.OriginalDefinition.SpecialType)
+				{
+					case SpecialType.System_Collections_IEnumerable:
+					case SpecialType.System_Collections_Generic_IEnumerable_T:
+						return GetExplicitElementType(type);
+				}
 			}
 
 			return null;

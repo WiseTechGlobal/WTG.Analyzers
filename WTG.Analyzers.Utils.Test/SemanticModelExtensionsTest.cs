@@ -50,7 +50,7 @@ namespace WTG.Analyzers.Utils.Test
 
 			var exp = tree.GetRoot().DescendantNodes().OfType<ArrowExpressionClauseSyntax>().FirstOrDefault().Expression;
 
-			return semanticModel.IsConstantZero(exp, default(CancellationToken));
+			return semanticModel.IsConstantZero(exp, default);
 		}
 	}
 }
