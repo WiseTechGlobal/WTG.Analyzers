@@ -1,3 +1,24 @@
+NUGET
+  remote: https://api.nuget.org/v3/index.json
+    NuGet.CommandLine (4.9.2)
+
+GROUP Analyzers
+STORAGE: NONE
+NUGET
+  remote: https://api.nuget.org/v3/index.json
+    Microsoft.CodeAnalysis.FxCopAnalyzers (2.6.2)
+      Microsoft.CodeQuality.Analyzers (2.6.2)
+      Microsoft.NetCore.Analyzers (2.6.2)
+      Microsoft.NetFramework.Analyzers (2.6.2)
+      Text.Analyzers (2.6.2)
+    Microsoft.CodeQuality.Analyzers (2.6.2)
+    Microsoft.NetCore.Analyzers (2.6.2)
+    Microsoft.NetFramework.Analyzers (2.6.2)
+    StyleCop.Analyzers (1.0.2)
+    Text.Analyzers (2.6.2)
+
+GROUP Roslyn
+STORAGE: NONE
 STRATEGY: MIN
 NUGET
   remote: https://api.nuget.org/v3/index.json
@@ -70,7 +91,6 @@ NUGET
     Microsoft.Composition (1.0.27) - restriction: >= netstandard1.3
     Microsoft.NETCore.Platforms (1.1) - restriction: || (&& (>= dnxcore50) (>= netstandard1.3)) (&& (>= dnxcore50) (>= netstandard1.6)) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.6) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< monotouch) (< net46) (>= netstandard1.3) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos))
     Microsoft.NETCore.Targets (1.1) - restriction: || (&& (>= dnxcore50) (>= netstandard1.3)) (&& (>= dnxcore50) (>= netstandard1.6)) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.6) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< monotouch) (< net46) (>= netstandard1.3) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos))
-    NuGet.CommandLine (4.9.2)
     runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - restriction: && (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
     runtime.fedora.23-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - restriction: && (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
     runtime.fedora.24-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - restriction: && (< monotouch) (< net46) (>= netstandard1.6) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
@@ -566,21 +586,8 @@ NUGET
       System.Xml.XDocument (>= 4.3) - restriction: && (< monoandroid) (< monotouch) (< net46) (>= netstandard1.3) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
       System.Xml.XPath (>= 4.3) - restriction: || (&& (< monoandroid) (< monotouch) (>= netstandard1.3) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (>= net46)
 
-GROUP Analyzers
-NUGET
-  remote: https://api.nuget.org/v3/index.json
-    Microsoft.CodeAnalysis.FxCopAnalyzers (2.6.2)
-      Microsoft.CodeQuality.Analyzers (2.6.2)
-      Microsoft.NetCore.Analyzers (2.6.2)
-      Microsoft.NetFramework.Analyzers (2.6.2)
-      Text.Analyzers (2.6.2)
-    Microsoft.CodeQuality.Analyzers (2.6.2)
-    Microsoft.NetCore.Analyzers (2.6.2)
-    Microsoft.NetFramework.Analyzers (2.6.2)
-    StyleCop.Analyzers (1.0.2)
-    Text.Analyzers (2.6.2)
-
 GROUP Test
+STORAGE: NONE
 NUGET
   remote: https://api.nuget.org/v3/index.json
     Appveyor.TestLogger (2.0)

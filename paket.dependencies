@@ -1,5 +1,4 @@
 version 5.176.3
-strategy: min
 
 # All packages come from the public NuGet Gallery
 source https://api.nuget.org/v3/index.json
@@ -14,15 +13,22 @@ source https://api.nuget.org/v3/index.json
 #
 
 nuget NuGet.CommandLine
-nuget Microsoft.CodeAnalysis 2.0
+
+group Roslyn
+	source https://api.nuget.org/v3/index.json
+	storage: none
+	strategy: min
+	nuget Microsoft.CodeAnalysis 2.0
 
 group Analyzers
 	source https://api.nuget.org/v3/index.json
+	storage: none
 	nuget StyleCop.Analyzers
 	nuget Microsoft.CodeAnalysis.FxCopAnalyzers
 
 group Test
 	source https://api.nuget.org/v3/index.json
+	storage: none
 	nuget Appveyor.TestLogger
 	nuget Microsoft.CodeAnalysis 2.8
 	nuget Microsoft.Composition >= 1.0.31
