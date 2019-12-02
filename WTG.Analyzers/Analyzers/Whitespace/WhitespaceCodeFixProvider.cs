@@ -127,25 +127,20 @@ namespace WTG.Analyzers
 
 		static SyntaxTrivia RewriteIndentingUsingTabs(SyntaxTrivia originalTrivia, SyntaxTrivia targetTrivia)
 		{
-			switch (originalTrivia.Kind())
+			return originalTrivia.Kind() switch
 			{
-				case SyntaxKind.WhitespaceTrivia:
-					return ModifyWhitespaceTrivia(originalTrivia);
+				SyntaxKind.WhitespaceTrivia => ModifyWhitespaceTrivia(originalTrivia),
+				SyntaxKind.DocumentationCommentExteriorTrivia => ModifyDocumentationCommentExteriorTrivia(originalTrivia),
+				_ => targetTrivia,
+			};
 
-				case SyntaxKind.DocumentationCommentExteriorTrivia:
-					return ModifyDocumentationCommentExteriorTrivia(originalTrivia);
-
-				default:
-					return targetTrivia;
-			}
-
-			SyntaxTrivia ModifyWhitespaceTrivia(SyntaxTrivia trivia)
+			static SyntaxTrivia ModifyWhitespaceTrivia(SyntaxTrivia trivia)
 			{
 				var (column, _) = CalculateColumn(trivia.ToString());
 				return SyntaxFactory.Whitespace(StringFromIndentColumn(column));
 			}
 
-			SyntaxTrivia ModifyDocumentationCommentExteriorTrivia(SyntaxTrivia trivia)
+			static SyntaxTrivia ModifyDocumentationCommentExteriorTrivia(SyntaxTrivia trivia)
 			{
 				var originalText = trivia.ToString();
 				var (column, length) = CalculateColumn(originalText);

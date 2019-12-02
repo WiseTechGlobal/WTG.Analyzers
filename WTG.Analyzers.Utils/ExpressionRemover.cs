@@ -46,26 +46,21 @@ namespace WTG.Analyzers.Utils
 
 			public override SyntaxNode VisitBinaryExpression(BinaryExpressionSyntax node)
 			{
-				switch (node.Kind())
+				return node.Kind() switch
 				{
-					case SyntaxKind.LogicalAndExpression:
-						return VisitAndOrExpression(node, false);
-					case SyntaxKind.LogicalOrExpression:
-						return VisitAndOrExpression(node, true);
-				}
-
-				return base.VisitBinaryExpression(node);
+					SyntaxKind.LogicalAndExpression => VisitAndOrExpression(node, false),
+					SyntaxKind.LogicalOrExpression => VisitAndOrExpression(node, true),
+					_ => base.VisitBinaryExpression(node),
+				};
 			}
 
 			public override SyntaxNode VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node)
 			{
-				switch (node.Kind())
+				return node.Kind() switch
 				{
-					case SyntaxKind.LogicalNotExpression:
-						return VisitNotExpression(node);
-				}
-
-				return base.VisitPrefixUnaryExpression(node);
+					SyntaxKind.LogicalNotExpression => VisitNotExpression(node),
+					_ => base.VisitPrefixUnaryExpression(node),
+				};
 			}
 
 			public override SyntaxNode VisitConditionalExpression(ConditionalExpressionSyntax node)

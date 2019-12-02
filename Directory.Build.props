@@ -5,6 +5,7 @@
 
 		<WTGIsTestProject Condition="$(MSBuildProjectFile.Contains('.Test.'))">True</WTGIsTestProject>
 		<WTGIsTestProject Condition="$(MSBuildProjectFile.Contains('.TestFramework.'))">True</WTGIsTestProject>
+		<LangVersion>8.0</LangVersion>
 		<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
 		<ErrorReport>prompt</ErrorReport>
 		<WarningLevel>4</WarningLevel>

@@ -49,24 +49,16 @@ namespace WTG.Analyzers
 
 		static Diagnostic CreateDiagnostic(CSharpSyntaxNode node)
 		{
-			switch (node.Kind())
+			return node.Kind() switch
 			{
-				case SyntaxKind.PropertyDeclaration:
-					return Rules.CreateRemovePointlessOverrides_PropertyDiagnostic(node.GetLocation());
+				SyntaxKind.PropertyDeclaration => Rules.CreateRemovePointlessOverrides_PropertyDiagnostic(node.GetLocation()),
+				SyntaxKind.MethodDeclaration => Rules.CreateRemovePointlessOverrides_MethodDiagnostic(node.GetLocation()),
+				SyntaxKind.IndexerDeclaration => Rules.CreateRemovePointlessOverrides_IndexerDiagnostic(node.GetLocation()),
+				SyntaxKind.EventDeclaration => Rules.CreateRemovePointlessOverrides_EventDiagnostic(node.GetLocation()),
 
-				case SyntaxKind.MethodDeclaration:
-					return Rules.CreateRemovePointlessOverrides_MethodDiagnostic(node.GetLocation());
-
-				case SyntaxKind.IndexerDeclaration:
-					return Rules.CreateRemovePointlessOverrides_IndexerDiagnostic(node.GetLocation());
-
-				case SyntaxKind.EventDeclaration:
-					return Rules.CreateRemovePointlessOverrides_EventDiagnostic(node.GetLocation());
-
-				default:
-					// shouldn't happen, but just in case.
-					return Rules.CreateRemovePointlessOverridesDiagnostic(node.GetLocation());
-			}
+				// shouldn't happen, but just in case.
+				_ => Rules.CreateRemovePointlessOverridesDiagnostic(node.GetLocation()),
+			};
 		}
 
 		static bool IsOverride(CSharpSyntaxNode node)

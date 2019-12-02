@@ -9,32 +9,22 @@ namespace WTG.Analyzers
 	{
 		public static SyntaxList<UsingDirectiveSyntax> ExtractUsings(SyntaxNode node)
 		{
-			switch (node.Kind())
+			return node.Kind() switch
 			{
-				case SyntaxKind.CompilationUnit:
-					return ((CompilationUnitSyntax)node).Usings;
-
-				case SyntaxKind.NamespaceDeclaration:
-					return ((NamespaceDeclarationSyntax)node).Usings;
-
-				default:
-					throw new ArgumentException("Syntax Node is not known to contain usings: " + node.GetType().Name, nameof(node));
-			}
+				SyntaxKind.CompilationUnit => ((CompilationUnitSyntax)node).Usings,
+				SyntaxKind.NamespaceDeclaration => ((NamespaceDeclarationSyntax)node).Usings,
+				_ => throw new ArgumentException("Syntax Node is not known to contain usings: " + node.GetType().Name, nameof(node)),
+			};
 		}
 
 		public static SyntaxNode WithUsings(SyntaxNode node, SyntaxList<UsingDirectiveSyntax> usings)
 		{
-			switch (node.Kind())
+			return node.Kind() switch
 			{
-				case SyntaxKind.CompilationUnit:
-					return ((CompilationUnitSyntax)node).WithUsings(usings);
-
-				case SyntaxKind.NamespaceDeclaration:
-					return ((NamespaceDeclarationSyntax)node).WithUsings(usings);
-
-				default:
-					throw new ArgumentException("Syntax Node is not known to contain usings: " + node.GetType().Name, nameof(node));
-			}
+				SyntaxKind.CompilationUnit => ((CompilationUnitSyntax)node).WithUsings(usings),
+				SyntaxKind.NamespaceDeclaration => ((NamespaceDeclarationSyntax)node).WithUsings(usings),
+				_ => throw new ArgumentException("Syntax Node is not known to contain usings: " + node.GetType().Name, nameof(node)),
+			};
 		}
 
 		public static UsingDirectiveKind GetUsingDirectiveKind(UsingDirectiveSyntax syntax)

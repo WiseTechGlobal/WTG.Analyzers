@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit.Framework;
@@ -16,21 +16,13 @@ namespace WTG.Analyzers.Utils.Test
 		public string GetMethodName(string expression)
 		{
 			var syntax = SyntaxFactory.ParseExpression(expression);
-			InvocationExpressionSyntax invoke;
 
-			switch (syntax.Kind())
+			var invoke = syntax.Kind() switch
 			{
-				case SyntaxKind.InvocationExpression:
-					invoke = (InvocationExpressionSyntax)syntax;
-					break;
-
-				case SyntaxKind.ConditionalAccessExpression:
-					invoke = (InvocationExpressionSyntax)((ConditionalAccessExpressionSyntax)syntax).WhenNotNull;
-					break;
-
-				default:
-					throw new ArgumentException("Invalid expression.", nameof(expression));
-			}
+				SyntaxKind.InvocationExpression => (InvocationExpressionSyntax)syntax,
+				SyntaxKind.ConditionalAccessExpression => (InvocationExpressionSyntax)((ConditionalAccessExpressionSyntax)syntax).WhenNotNull,
+				_ => throw new ArgumentException("Invalid expression.", nameof(expression)),
+			};
 
 			return ExpressionHelper.GetMethodName(invoke).Identifier.Text;
 		}

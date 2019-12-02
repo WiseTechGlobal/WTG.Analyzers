@@ -21,38 +21,19 @@ namespace WTG.Analyzers.Utils
 
 		static bool IsZeroLiteral(object value)
 		{
-			switch (value)
+			return value switch
 			{
-				case int s:
-					return s == 0;
-
-				case uint s:
-					return s == 0;
-
-				case long s:
-					return s == 0;
-
-				case ulong s:
-					return s == 0;
-
-				case byte s:
-					return s == 0;
-
-				case short s:
-					return s == 0;
-
-				case ushort s:
-					return s == 0;
-
-				case sbyte s:
-					return s == 0;
-
-				case char s:
-					return s == 0;
-
-				default:
-					return false;
-			}
+				int s => s == 0,
+				uint s => s == 0,
+				long s => s == 0,
+				ulong s => s == 0,
+				byte s => s == 0,
+				short s => s == 0,
+				ushort s => s == 0,
+				sbyte s => s == 0,
+				char s => s == 0,
+				_ => false,
+			};
 		}
 
 		sealed class IsLiteralVisitor : CSharpSyntaxVisitor<bool>
