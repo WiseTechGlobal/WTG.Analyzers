@@ -164,6 +164,10 @@ namespace WTG.Analyzers
 					properties = FromExceptionProperties;
 					break;
 
+				case nameof(Task.FromCanceled):
+					properties = ImmutableDictionary<string, string>.Empty;
+					break;
+
 				default:
 					properties = null;
 					return false;
