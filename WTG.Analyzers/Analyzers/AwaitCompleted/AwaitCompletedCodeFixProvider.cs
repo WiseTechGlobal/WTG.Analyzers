@@ -24,31 +24,55 @@ namespace WTG.Analyzers
 		{
 			var diagnostic = context.Diagnostics.First();
 
-			context.RegisterCodeFix(
-				CodeAction.Create(
-					title: "Remove ConfigureAwait()",
-					createChangedDocument: c => RemoveAwaitAsync(context.Document, diagnostic, c),
-					equivalenceKey: "RemoveConfigureAwait"),
-				diagnostic: diagnostic);
+			if (!diagnostic.Properties.TryGetValue(AwaitCompletedAnalyzer.SourcePropertyName, out var source))
+			{
+				return Task.CompletedTask;
+			}
 
-			return Task.FromResult<object>(null);
+			switch (source)
+			{
+				case nameof(Task.CompletedTask):
+					context.RegisterCodeFix(
+						CodeAction.Create(
+							title: "Remove",
+							createChangedDocument: c => RemoveAwaitCompletedTaskAsync(context.Document, diagnostic, c),
+							equivalenceKey: "RemoveAwait"),
+						diagnostic: diagnostic);
+					break;
+
+				case nameof(Task.FromResult):
+					if (diagnostic.AdditionalLocations.Count == 1)
+					{
+						context.RegisterCodeFix(
+							CodeAction.Create(
+								title: "Unwrap value.",
+								createChangedDocument: c => UnwrapValueAsync(context.Document, diagnostic, c),
+								equivalenceKey: "RemoveAwait"),
+							diagnostic: diagnostic);
+					}
+					break;
+
+				case nameof(Task.FromException):
+					if (diagnostic.AdditionalLocations.Count == 1)
+					{
+						context.RegisterCodeFix(
+							CodeAction.Create(
+								title: "Unwrap throw.",
+								createChangedDocument: c => UnwrapThrowAsync(context.Document, diagnostic, c),
+								equivalenceKey: "RemoveAwait"),
+							diagnostic: diagnostic);
+					}
+					break;
+			}
+
+			return Task.CompletedTask;
 		}
 
-		static async Task<Document> RemoveAwaitAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		static async Task<Document> RemoveAwaitCompletedTaskAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = (AwaitExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
-
-			if (diagnostic.AdditionalLocations.Count == 1)
-			{
-				var replacementNode = node.FindNode(diagnostic.AdditionalLocations[0].SourceSpan, getInnermostNodeForTie: true);
-
-				return document.WithSyntaxRoot(
-					root.ReplaceNode(
-						node,
-						replacementNode));
-			}
 
 			return document.WithSyntaxRoot(
 				root.RemoveNode(
@@ -56,6 +80,48 @@ namespace WTG.Analyzers
 						? node.Parent
 						: node,
 					SyntaxRemoveOptions.KeepExteriorTrivia | SyntaxRemoveOptions.AddElasticMarker));
+		}
+
+		static async Task<Document> UnwrapValueAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		{
+			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var diagnosticSpan = diagnostic.Location.SourceSpan;
+			var node = (AwaitExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
+
+			var replacementNode = node.FindNode(diagnostic.AdditionalLocations[0].SourceSpan, getInnermostNodeForTie: true);
+
+			return document.WithSyntaxRoot(
+				root.ReplaceNode(
+					node,
+					replacementNode));
+		}
+
+		static async Task<Document> UnwrapThrowAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		{
+			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var diagnosticSpan = diagnostic.Location.SourceSpan;
+			var node = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
+			var exceptionNode = (ExpressionSyntax)node.FindNode(diagnostic.AdditionalLocations[0].SourceSpan, getInnermostNodeForTie: true).WithoutTrivia();
+
+			SyntaxNode replacementNode;
+
+			switch (node.Parent.Kind())
+			{
+				case SyntaxKind.ExpressionStatement:
+				case SyntaxKind.ReturnStatement:
+					node = node.Parent;
+					replacementNode = SyntaxFactory.ThrowStatement(exceptionNode);
+					break;
+
+				default:
+					replacementNode = SyntaxFactory.ThrowExpression(exceptionNode);
+					break;
+			}
+
+			return document.WithSyntaxRoot(
+				root.ReplaceNode(
+					node,
+					replacementNode.WithTriviaFrom(node)));
 		}
 	}
 }

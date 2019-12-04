@@ -13,6 +13,8 @@ namespace WTG.Analyzers
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed partial class AwaitCompletedAnalyzer : DiagnosticAnalyzer
 	{
+		public const string SourcePropertyName = "source";
+
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 			Rules.DontAwaitTriviallyCompletedTasksRule);
 
@@ -40,21 +42,22 @@ namespace WTG.Analyzers
 
 			var node = (AwaitExpressionSyntax)context.Node;
 
-			if (IsAwaitTargetTrivial(context.SemanticModel, node, out var innerValueLocation, context.CancellationToken))
+			if (IsAwaitTargetTrivial(context.SemanticModel, node, out var properties, out var innerValueLocation, context.CancellationToken))
 			{
 				var additionalLocations = innerValueLocation == null
 					? Enumerable.Empty<Location>()
 					: new[] { innerValueLocation };
 
 				context.ReportDiagnostic(
-				Diagnostic.Create(
-					Rules.DontAwaitTriviallyCompletedTasksRule,
-					node.GetLocation(),
-					additionalLocations));
+					Diagnostic.Create(
+						Rules.DontAwaitTriviallyCompletedTasksRule,
+						node.GetLocation(),
+						additionalLocations,
+						properties));
 			}
 		}
 
-		static bool IsAwaitTargetTrivial(SemanticModel model, AwaitExpressionSyntax expression, out Location innerValueLocation, CancellationToken cancellationToken)
+		static bool IsAwaitTargetTrivial(SemanticModel model, AwaitExpressionSyntax expression, out ImmutableDictionary<string, string> properties, out Location innerValueLocation, CancellationToken cancellationToken)
 		{
 			if (!TryUnwrapConfigureAwait(model, expression.Expression, out var taskExpression, cancellationToken))
 			{
@@ -65,13 +68,23 @@ namespace WTG.Analyzers
 			{
 				case SyntaxKind.SimpleMemberAccessExpression:
 					innerValueLocation = null;
-					return IsCompletedTask(model, (MemberAccessExpressionSyntax)taskExpression, cancellationToken);
+					properties = CompletedTaskProperties;
+					return IsCompletedTaskProperty(model, (MemberAccessExpressionSyntax)taskExpression, cancellationToken);
 
 				case SyntaxKind.InvocationExpression:
-					return IsFromResult(model, (InvocationExpressionSyntax)taskExpression, out innerValueLocation, cancellationToken);
+					var invoke = (InvocationExpressionSyntax)taskExpression;
+
+					if (IsCompletedTaskFactoryMethod(model, invoke, out properties, cancellationToken))
+					{
+						innerValueLocation = invoke.ArgumentList.Arguments[0].Expression.GetLocation();
+						return true;
+					}
+
+					break;
 			}
 
 			innerValueLocation = null;
+			properties = null;
 			return false;
 		}
 
@@ -112,7 +125,7 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool IsCompletedTask(SemanticModel model, MemberAccessExpressionSyntax expression, CancellationToken cancellationToken)
+		static bool IsCompletedTaskProperty(SemanticModel model, MemberAccessExpressionSyntax expression, CancellationToken cancellationToken)
 		{
 			if (expression.Name.Identifier.Text != nameof(Task.CompletedTask))
 			{
@@ -131,33 +144,40 @@ namespace WTG.Analyzers
 			return property.IsMatch(WellKnownTypeNames.Task, nameof(Task.CompletedTask));
 		}
 
-		static bool IsFromResult(SemanticModel model, InvocationExpressionSyntax expression, out Location innerValueLocation, CancellationToken cancellationToken)
+		static bool IsCompletedTaskFactoryMethod(SemanticModel model, InvocationExpressionSyntax expression, out ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
 		{
 			if (!expression.Expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
 			{
-				innerValueLocation = null;
+				properties = null;
 				return false;
 			}
 
-			var member = (MemberAccessExpressionSyntax)expression.Expression;
+			var memberExpression = (MemberAccessExpressionSyntax)expression.Expression;
 
-			if (member.Name.Identifier.Text != nameof(Task.FromResult))
+			switch (memberExpression.Name.Identifier.Text)
 			{
-				innerValueLocation = null;
-				return false;
+				case nameof(Task.FromResult):
+					properties = FromResultProperties;
+					break;
+
+				case nameof(Task.FromException):
+					properties = FromExceptionProperties;
+					break;
+
+				default:
+					properties = null;
+					return false;
 			}
 
 			var symbol = model.GetSymbolInfo(expression, cancellationToken).Symbol;
 
-			if (symbol == null || symbol.Kind != SymbolKind.Method)
-			{
-				innerValueLocation = null;
-				return false;
-			}
-
-			innerValueLocation = expression.ArgumentList.Arguments[0].Expression.GetLocation();
-
-			return ((IMethodSymbol)symbol).IsMatch(WellKnownTypeNames.Task, nameof(Task.FromResult));
+			return symbol != null
+				&& symbol.Kind == SymbolKind.Method
+				&& symbol.ContainingType.IsMatch(WellKnownTypeNames.Task);
 		}
+
+		static readonly ImmutableDictionary<string, string> CompletedTaskProperties = ImmutableDictionary<string, string>.Empty.Add(SourcePropertyName, nameof(Task.CompletedTask));
+		static readonly ImmutableDictionary<string, string> FromResultProperties = ImmutableDictionary<string, string>.Empty.Add(SourcePropertyName, nameof(Task.FromResult));
+		static readonly ImmutableDictionary<string, string> FromExceptionProperties = ImmutableDictionary<string, string>.Empty.Add(SourcePropertyName, nameof(Task.FromException));
 	}
 }
