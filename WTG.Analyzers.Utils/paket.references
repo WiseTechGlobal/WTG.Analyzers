@@ -1,4 +1,5 @@
-Microsoft.CodeAnalysis.CSharp.Workspaces
+group Roslyn
+	Microsoft.CodeAnalysis.CSharp.Workspaces
 
 group Analyzers
 	StyleCop.Analyzers
