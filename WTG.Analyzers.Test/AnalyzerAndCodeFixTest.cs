@@ -68,8 +68,10 @@ namespace WTG.Analyzers.Test
 
 			Assert.That(actual.Where(filter), IsDiagnostic.EqualTo(data.Diagnostics));
 
-			var fixer = new CodeFixer(analyzer, new TCodeFix());
-			fixer.DiagnosticFilter = filter;
+			var fixer = new CodeFixer(analyzer, new TCodeFix())
+			{
+				DiagnosticFilter = filter,
+			};
 
 			await fixer.VerifyFixAsync(document, data.Result).ConfigureAwait(false);
 		}
@@ -79,10 +81,12 @@ namespace WTG.Analyzers.Test
 		{
 			var analyzer = new TAnalyzer();
 			var document = ModelUtils.CreateDocument(data);
-			var diagnostics = await DiagnosticUtils.GetDiagnosticsAsync(analyzer, document).ConfigureAwait(false);
 
-			var fixer = new CodeFixer(analyzer, new TCodeFix());
-			fixer.DiagnosticFilter = CreateFilter(data);
+			var fixer = new CodeFixer(analyzer, new TCodeFix())
+			{
+				DiagnosticFilter = CreateFilter(data),
+			};
+
 			await fixer.VerifyBulkFixAsync(document, data.Result).ConfigureAwait(false);
 		}
 

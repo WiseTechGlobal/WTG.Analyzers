@@ -95,18 +95,15 @@ namespace WTG.Analyzers.TestFramework
 
 		static string LoadResource(Assembly assembly, string name)
 		{
-			using (var stream = assembly.GetManifestResourceStream(name))
-			{
-				if (stream == null)
-				{
-					return null;
-				}
+			using var stream = assembly.GetManifestResourceStream(name);
 
-				using (var reader = new StreamReader(stream))
-				{
-					return reader.ReadToEnd();
-				}
+			if (stream == null)
+			{
+				return null;
 			}
+
+			using var reader = new StreamReader(stream);
+			return reader.ReadToEnd();
 		}
 
 		static void LoadResults(Assembly assembly, string name, ref LanguageVersion languageVersion, ref ImmutableArray<DiagnosticResult> diagnostics, ref ImmutableHashSet<string> suppressedIds)

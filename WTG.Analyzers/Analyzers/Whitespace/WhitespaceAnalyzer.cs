@@ -115,7 +115,7 @@ namespace WTG.Analyzers
 
 				if (index < 0)
 				{
-					precedingTrivia = default(SyntaxTrivia);
+					precedingTrivia = default;
 					return false;
 				}
 			}
@@ -126,7 +126,7 @@ namespace WTG.Analyzers
 				return true;
 			}
 
-			precedingTrivia = default(SyntaxTrivia);
+			precedingTrivia = default;
 			return false;
 		}
 

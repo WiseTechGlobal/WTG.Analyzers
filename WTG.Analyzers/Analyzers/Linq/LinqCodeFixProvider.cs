@@ -24,22 +24,12 @@ namespace WTG.Analyzers
 		{
 			var diagnostic = context.Diagnostics.First();
 
-			string equivalenceKey;
-
-			switch (diagnostic.Id)
+			var equivalenceKey = diagnostic.Id switch
 			{
-				case Rules.PreferDirectMemberAccessOverLinqDiagnosticID:
-					equivalenceKey = "ReplaceWithCorrectPreferredReference";
-					break;
-
-				case Rules.PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID:
-					equivalenceKey = "ReplaceWithCorrectPreferredReferenceInAnExpression";
-					break;
-
-				default:
-					equivalenceKey = null;
-					break;
-			}
+				Rules.PreferDirectMemberAccessOverLinqDiagnosticID => "ReplaceWithCorrectPreferredReference",
+				Rules.PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID => "ReplaceWithCorrectPreferredReferenceInAnExpression",
+				_ => null,
+			};
 
 			context.RegisterCodeFix(
 				CodeAction.Create(

@@ -30,38 +30,19 @@ namespace WTG.Analyzers.Utils
 
 		public static ExpressionSyntax InvertBoolExpression(ExpressionSyntax expression)
 		{
-			switch (expression.Kind())
+			return expression.Kind() switch
 			{
-				case SyntaxKind.EqualsExpression:
-					return ReplaceBinaryOperator(SyntaxKind.ExclamationEqualsToken);
-
-				case SyntaxKind.NotEqualsExpression:
-					return ReplaceBinaryOperator(SyntaxKind.EqualsEqualsToken);
-
-				case SyntaxKind.LessThanExpression:
-					return ReplaceBinaryOperator(SyntaxKind.GreaterThanEqualsToken);
-
-				case SyntaxKind.GreaterThanExpression:
-					return ReplaceBinaryOperator(SyntaxKind.LessThanEqualsToken);
-
-				case SyntaxKind.LessThanOrEqualExpression:
-					return ReplaceBinaryOperator(SyntaxKind.GreaterThanToken);
-
-				case SyntaxKind.GreaterThanOrEqualExpression:
-					return ReplaceBinaryOperator(SyntaxKind.LessThanToken);
-
-				case SyntaxKind.TrueLiteralExpression:
-					return SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression);
-
-				case SyntaxKind.FalseLiteralExpression:
-					return SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression);
-
-				case SyntaxKind.LogicalNotExpression:
-					return RemoveBang();
-
-				default:
-					return LogicalNot(expression);
-			}
+				SyntaxKind.EqualsExpression => ReplaceBinaryOperator(SyntaxKind.ExclamationEqualsToken),
+				SyntaxKind.NotEqualsExpression => ReplaceBinaryOperator(SyntaxKind.EqualsEqualsToken),
+				SyntaxKind.LessThanExpression => ReplaceBinaryOperator(SyntaxKind.GreaterThanEqualsToken),
+				SyntaxKind.GreaterThanExpression => ReplaceBinaryOperator(SyntaxKind.LessThanEqualsToken),
+				SyntaxKind.LessThanOrEqualExpression => ReplaceBinaryOperator(SyntaxKind.GreaterThanToken),
+				SyntaxKind.GreaterThanOrEqualExpression => ReplaceBinaryOperator(SyntaxKind.LessThanToken),
+				SyntaxKind.TrueLiteralExpression => SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression),
+				SyntaxKind.FalseLiteralExpression => SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression),
+				SyntaxKind.LogicalNotExpression => RemoveBang(),
+				_ => LogicalNot(expression),
+			};
 
 			ExpressionSyntax ReplaceBinaryOperator(SyntaxKind operatorKind)
 			{

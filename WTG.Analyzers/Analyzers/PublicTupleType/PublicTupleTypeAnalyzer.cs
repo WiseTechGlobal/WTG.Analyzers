@@ -210,16 +210,12 @@ namespace WTG.Analyzers
 					return true;
 				}
 
-				switch (symbol.TypeKind)
+				return symbol.TypeKind switch
 				{
-					case TypeKind.Class:
-						return symbol.IsMatchAnyArity("System.Tuple");
-
-					case TypeKind.Struct:
-						return symbol.IsMatchAnyArity("System.ValueTuple");
-				}
-
-				return false;
+					TypeKind.Class => symbol.IsMatchAnyArity("System.Tuple"),
+					TypeKind.Struct => symbol.IsMatchAnyArity("System.ValueTuple"),
+					_ => false,
+				};
 			}
 
 			readonly SemanticModel model;

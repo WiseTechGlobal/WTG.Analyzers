@@ -16,19 +16,14 @@ namespace WTG.Analyzers
 
 		public static LinqMethod Find(string methodName)
 		{
-			switch (methodName)
+			return methodName switch
 			{
-				case nameof(Enumerable.Any):
-					return Any;
-				case nameof(Enumerable.Count):
-					return Count;
-				case nameof(Enumerable.ElementAt):
-					return ElementAt;
-				case nameof(Enumerable.First):
-					return First;
-				default:
-					return null;
-			}
+				nameof(Enumerable.Any) => Any,
+				nameof(Enumerable.Count) => Count,
+				nameof(Enumerable.ElementAt) => ElementAt,
+				nameof(Enumerable.First) => First,
+				_ => null,
+			};
 		}
 
 		protected LinqMethod()

@@ -42,21 +42,12 @@ namespace WTG.Analyzers
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = (BinaryExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
-			bool value;
-
-			switch (node.Kind())
+			var value = node.Kind() switch
 			{
-				case SyntaxKind.EqualsExpression:
-					value = false;
-					break;
-
-				case SyntaxKind.NotEqualsExpression:
-					value = true;
-					break;
-
-				default:
-					throw new InvalidOperationException("Unreachable - encountered unexpected syntax node " + node.Kind());
-			}
+				SyntaxKind.EqualsExpression => false,
+				SyntaxKind.NotEqualsExpression => true,
+				_ => throw new InvalidOperationException("Unreachable - encountered unexpected syntax node " + node.Kind()),
+			};
 
 			return document.WithSyntaxRoot(ExpressionRemover.ReplaceWithConstantBool(root, node, value));
 		}

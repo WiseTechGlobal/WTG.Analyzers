@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,9 +18,7 @@ namespace WTG.Analyzers
 
 		public bool NamespaceExists(string namespaceID)
 		{
-			bool result;
-
-			if (!namespaceCache.TryGetValue(namespaceID, out result))
+			if (!namespaceCache.TryGetValue(namespaceID, out var result))
 			{
 				namespaceCache.Add(namespaceID, result = NamespaceExistsCore(namespaceID));
 			}
@@ -30,9 +28,7 @@ namespace WTG.Analyzers
 
 		public bool TypeExists(string typeID)
 		{
-			bool result;
-
-			if (!typeCache.TryGetValue(typeID, out result))
+			if (!typeCache.TryGetValue(typeID, out var result))
 			{
 				typeCache.Add(typeID, result = TypeExistsCore(typeID));
 			}
@@ -51,9 +47,7 @@ namespace WTG.Analyzers
 
 			var typeID = memberID.Substring(0, index - 1);
 
-			HashSet<string> set;
-
-			if (!memberCache.TryGetValue(typeID, out set))
+			if (!memberCache.TryGetValue(typeID, out var set))
 			{
 				memberCache.Add(typeID, set = ConstructMemberSet(typeID, index - 1));
 			}
@@ -284,17 +278,16 @@ namespace WTG.Analyzers
 
 		static void WriteParameters(StringBuilder builder, IEnumerable<IParameterSymbol> parameters)
 		{
-			using (var enumerator = parameters.GetEnumerator())
-			{
-				if (enumerator.MoveNext())
-				{
-					WriteParameter(builder, enumerator.Current);
+			using var enumerator = parameters.GetEnumerator();
 
-					while (enumerator.MoveNext())
-					{
-						builder.Append(',');
-						WriteParameter(builder, enumerator.Current);
-					}
+			if (enumerator.MoveNext())
+			{
+				WriteParameter(builder, enumerator.Current);
+
+				while (enumerator.MoveNext())
+				{
+					builder.Append(',');
+					WriteParameter(builder, enumerator.Current);
 				}
 			}
 		}
@@ -311,17 +304,16 @@ namespace WTG.Analyzers
 
 		static void WriteTypes(StringBuilder builder, IEnumerable<ITypeSymbol> types)
 		{
-			using (var enumerator = types.GetEnumerator())
-			{
-				if (enumerator.MoveNext())
-				{
-					WriteType(builder, enumerator.Current);
+			using var enumerator = types.GetEnumerator();
 
-					while (enumerator.MoveNext())
-					{
-						builder.Append(',');
-						WriteType(builder, enumerator.Current);
-					}
+			if (enumerator.MoveNext())
+			{
+				WriteType(builder, enumerator.Current);
+
+				while (enumerator.MoveNext())
+				{
+					builder.Append(',');
+					WriteType(builder, enumerator.Current);
 				}
 			}
 		}

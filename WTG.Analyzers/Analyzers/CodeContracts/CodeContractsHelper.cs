@@ -102,7 +102,7 @@ namespace WTG.Analyzers
 
 			return false;
 
-			bool IsPrivate(ISymbol symbol) => symbol != null && symbol.DeclaredAccessibility == Accessibility.Private;
+			static bool IsPrivate(ISymbol symbol) => symbol != null && symbol.DeclaredAccessibility == Accessibility.Private;
 		}
 
 		public static bool IsNullArgumentCheck(SemanticModel semanticModel, InvocationExpressionSyntax invoke, out Location identifierLocation, CancellationToken cancellationToken)
@@ -134,7 +134,7 @@ namespace WTG.Analyzers
 			identifierLocation = comparand.GetLocation();
 			return true;
 
-			ExpressionSyntax GetComparand(ExpressionSyntax condition)
+			static ExpressionSyntax GetComparand(ExpressionSyntax condition)
 			{
 				if (!condition.IsKind(SyntaxKind.NotEqualsExpression))
 				{

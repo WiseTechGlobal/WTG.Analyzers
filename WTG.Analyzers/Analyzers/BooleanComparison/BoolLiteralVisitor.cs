@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -17,12 +17,12 @@ namespace WTG.Analyzers
 
 		public override bool? VisitLiteralExpression(LiteralExpressionSyntax node)
 		{
-			switch (node.Kind())
+			return node.Kind() switch
 			{
-				case SyntaxKind.TrueLiteralExpression: return true;
-				case SyntaxKind.FalseLiteralExpression: return false;
-				default: return null;
-			}
+				SyntaxKind.TrueLiteralExpression => true,
+				SyntaxKind.FalseLiteralExpression => false,
+				_ => default(bool?),
+			};
 		}
 	}
 }

@@ -127,25 +127,20 @@ namespace WTG.Analyzers
 
 		static SyntaxTrivia RewriteIndentingUsingTabs(SyntaxTrivia originalTrivia, SyntaxTrivia targetTrivia)
 		{
-			switch (originalTrivia.Kind())
+			return originalTrivia.Kind() switch
 			{
-				case SyntaxKind.WhitespaceTrivia:
-					return ModifyWhitespaceTrivia(originalTrivia);
+				SyntaxKind.WhitespaceTrivia => ModifyWhitespaceTrivia(originalTrivia),
+				SyntaxKind.DocumentationCommentExteriorTrivia => ModifyDocumentationCommentExteriorTrivia(originalTrivia),
+				_ => targetTrivia,
+			};
 
-				case SyntaxKind.DocumentationCommentExteriorTrivia:
-					return ModifyDocumentationCommentExteriorTrivia(originalTrivia);
-
-				default:
-					return targetTrivia;
-			}
-
-			SyntaxTrivia ModifyWhitespaceTrivia(SyntaxTrivia trivia)
+			static SyntaxTrivia ModifyWhitespaceTrivia(SyntaxTrivia trivia)
 			{
 				var (column, _) = CalculateColumn(trivia.ToString());
 				return SyntaxFactory.Whitespace(StringFromIndentColumn(column));
 			}
 
-			SyntaxTrivia ModifyDocumentationCommentExteriorTrivia(SyntaxTrivia trivia)
+			static SyntaxTrivia ModifyDocumentationCommentExteriorTrivia(SyntaxTrivia trivia)
 			{
 				var originalText = trivia.ToString();
 				var (column, length) = CalculateColumn(originalText);
@@ -173,7 +168,7 @@ namespace WTG.Analyzers
 				{
 					// Round up to the nearest multiple of AssumedTabSize.
 					column = (column + AssumedTabSize);
-					column = column - (column % AssumedTabSize);
+					column -= (column % AssumedTabSize);
 				}
 				else if (char.IsWhiteSpace(text, i))
 				{
@@ -205,7 +200,7 @@ namespace WTG.Analyzers
 
 		const int AssumedTabSize = 4;
 
-		static string[] cachedTabStrings =
+		static readonly string[] cachedTabStrings =
 		{
 			string.Empty,
 			"\t",
@@ -216,7 +211,7 @@ namespace WTG.Analyzers
 			"\t\t\t\t\t\t",
 		};
 
-		static string[] cachedSpaceStrings = new string[AssumedTabSize]
+		static readonly string[] cachedSpaceStrings = new string[AssumedTabSize]
 		{
 			string.Empty,
 			" ",

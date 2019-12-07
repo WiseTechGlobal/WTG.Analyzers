@@ -231,10 +231,8 @@ namespace WTG.Analyzers.Utils.Test
 
 			if (reformat)
 			{
-				using (var workspace = new AdhocWorkspace())
-				{
-					node = Formatter.Format(node, Formatter.Annotation, workspace);
-				}
+				using var workspace = new AdhocWorkspace();
+				node = Formatter.Format(node, Formatter.Annotation, workspace);
 			}
 
 			return node.ToString();

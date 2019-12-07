@@ -122,17 +122,13 @@ namespace WTG.Analyzers
 
 		static SuppressionScope TranslateScope(string scope)
 		{
-			switch (scope)
+			return scope switch
 			{
-				case "namespace":
-					return SuppressionScope.Namespace;
-				case "type":
-					return SuppressionScope.Type;
-				case "member":
-					return SuppressionScope.Member;
-				default:
-					return SuppressionScope.Unknown;
-			}
+				"namespace" => SuppressionScope.Namespace,
+				"type" => SuppressionScope.Type,
+				"member" => SuppressionScope.Member,
+				_ => SuppressionScope.Unknown,
+			};
 		}
 
 		internal enum SuppressionScope
