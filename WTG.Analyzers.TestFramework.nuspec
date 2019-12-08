@@ -15,7 +15,7 @@
 
 	<files>
 		<!-- Binaries -->
-		<file src="bin\net46\WTG.Analyzers.TestFramework.dll" target="lib\net46" />
+		<file src="bin\netstandard2.0\WTG.Analyzers.TestFramework.dll" target="lib\netstandard2.0" />
 
 		<!-- Other -->
 		<file src="LICENSE.md" target="" />

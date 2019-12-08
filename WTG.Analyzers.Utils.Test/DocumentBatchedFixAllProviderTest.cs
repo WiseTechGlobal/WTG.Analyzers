@@ -113,6 +113,7 @@ namespace WTG.Analyzers.Utils.Test
 		{
 			public const string ID = "TestDiagnosticID";
 
+			public override FixAllProvider GetFixAllProvider() => null;
 			public override ImmutableArray<string> FixableDiagnosticIds => throw new NotImplementedException();
 			public override Task RegisterCodeFixesAsync(CodeFixContext context) => throw new NotImplementedException();
 		}

@@ -47,8 +47,11 @@ namespace WTG.Analyzers.Framework.Test
 
 			public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Error);
 
+#pragma warning disable RS1026 // Enable concurrent execution
 			public override void Initialize(AnalysisContext context)
+#pragma warning restore RS1026 // Enable concurrent execution
 			{
+				context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 				context.RegisterSyntaxNodeAction(Analyze, SyntaxKind.ClassDeclaration);
 			}
 
