@@ -61,6 +61,35 @@ namespace WTG.Analyzers.Utils.Test
 			return ExpressionSyntaxFactory.CreateLiteral(value).ToString();
 		}
 
+		[TestCase(0, ExpectedResult = "0L")]
+		[TestCase(1, ExpectedResult = "1L")]
+		[TestCase(-1, ExpectedResult = "-1L")]
+		[TestCase(65536, ExpectedResult = "65536L")]
+		public string CreateLiteralLong(long value)
+		{
+			return ExpressionSyntaxFactory.CreateLiteral(value).ToString();
+		}
+
+		[TestCase(0, ExpectedResult = "0f")]
+		[TestCase(1, ExpectedResult = "1f")]
+		[TestCase(-1, ExpectedResult = "-1f")]
+		[TestCase(23.1406f, ExpectedResult = "23.1406f")]
+		[TestCase(-23.1406f, ExpectedResult = "-23.1406f")]
+		public string CreateLiteralFloat(float value)
+		{
+			return ExpressionSyntaxFactory.CreateLiteral(value).ToString();
+		}
+
+		[TestCase(0, ExpectedResult = "0d")]
+		[TestCase(1, ExpectedResult = "1d")]
+		[TestCase(-1, ExpectedResult = "-1d")]
+		[TestCase(23.1406d, ExpectedResult = "23.1406d")]
+		[TestCase(-23.1406d, ExpectedResult = "-23.1406d")]
+		public string CreateLiteralDouble(double value)
+		{
+			return ExpressionSyntaxFactory.CreateLiteral(value).ToString();
+		}
+
 		[TestCase(0, ExpectedResult = "1 << 0")]
 		[TestCase(1, ExpectedResult = "1 << 1")]
 		[TestCase(32, ExpectedResult = "1 << 32")]

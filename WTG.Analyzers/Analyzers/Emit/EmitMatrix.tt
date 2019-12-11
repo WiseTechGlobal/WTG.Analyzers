@@ -1,0 +1,209 @@
+<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.Reflection.Emit" #>
+<#@ output extension=".g.cs" #>
+<#
+var fields = Enumerable.ToArray(
+	from field in typeof(OpCodes).GetFields()
+	where field.IsStatic && field.FieldType == typeof(OpCode)
+	orderby field.Name
+	let opCode = (OpCode)field.GetValue(null)
+	where opCode.OpCodeType != OpCodeType.Nternal
+	select new
+	{
+		Name = field.Name,
+		Mnumonic = opCode.Name,
+		OperandType = opCode.OperandType,
+		MethodNames = GetMethodNames(opCode),
+	});
+
+var fieldsByOperand = Enumerable.ToArray(
+	from field in fields
+	group field by field.OperandType into g
+	let result = new
+	{
+		Key = g.Key.ToString(),
+		Fields = g.ToArray(),
+	}
+	orderby result.Key
+	select result);
+
+var allMethodsNames = methodOverride
+	.Values
+	.Concat(methodDefault.Values)
+	.SelectMany(x => x)
+	.Distinct()
+	.OrderBy(x => x)
+	.ToArray();
+
+var opCodeOperandBits = RequiredBits(fieldsByOperand.Length);
+var methodBits = allMethodsNames.Length;
+#>
+using System;
+
+namespace WTG.Analyzers
+{
+	enum OpCodeOperand
+	{
+		Invalid = 0,
+<#
+var index = 0;
+
+foreach (var fieldGroup in fieldsByOperand)
+{
+#>
+		<#=fieldGroup.Key#> = <#=++index#>,
+<#
+}
+#>
+	}
+
+	[Flags]
+	enum EmitMethod
+	{
+		None = 0,
+<#
+
+{
+	var i = 0;
+
+	foreach (var methodName in allMethodsNames)
+	{
+#>
+		<#=methodName#> = 1 << <#=i++#>,
+<#
+	}
+}
+#>
+	}
+
+	enum OpCode
+	{
+		Invalid = 0,
+<#
+foreach (var fieldGroup in fieldsByOperand)
+{
+#>
+		#region <#=fieldGroup.Key#>
+<#
+	foreach (var field in fieldGroup.Fields)
+	{
+#>
+
+		/// <summary>
+		/// <#=field.Mnumonic#>
+		/// </summary>
+		<#=field.Name#> = OpCodeOperand.<#=field.OperandType#><#
+		foreach (var methodName in field.MethodNames)
+		{
+			#>
+
+			| (EmitMethod.<#=methodName#> << <#=opCodeOperandBits#>)<#
+		}
+			#>,
+<#
+	}
+#>
+		#endregion
+<#
+}
+#>
+	}
+
+	static partial class EmitMatrix
+	{
+		public static OpCodeOperand GetOperand(this OpCode opCode) => (OpCodeOperand)((int)opCode & 0x<#=((1 << opCodeOperandBits) - 1).ToString("X")#>);
+		public static EmitMethod GetSupportedMethods(this OpCode opCode) => (EmitMethod)((int)opCode >> <#=opCodeOperandBits#> & 0x<#=((1 << methodBits) - 1).ToString("X")#>);
+
+		public static OpCode GetOpCode(string field)
+		{
+			return field switch
+			{
+<#
+foreach (var field in fields)
+{
+#>
+				nameof(OpCode.<#=field.Name#>) => OpCode.<#=field.Name#>,
+<#
+}
+#>
+				_ => OpCode.Invalid,
+			};
+		}
+	}
+}
+<#+
+static int RequiredBits(int value)
+{
+	var count = 0;
+	var tmp = unchecked((uint)value);
+
+	while (tmp != 0)
+	{
+		count++;
+		tmp >>= 1;
+	}
+
+	return count;
+}
+
+IEnumerable<string> GetMethodNames(OpCode opcode)
+{
+	IEnumerable<string> result;
+
+	if (!methodOverride.TryGetValue(opcode.Name, out result) &&
+		!methodDefault.TryGetValue(opcode.OperandType, out result))
+	{
+		result = Enumerable.Empty<string>();
+	}
+
+	return result;
+}
+
+static readonly IReadOnlyDictionary<string, IEnumerable<string>> methodOverride = new Dictionary<string, IEnumerable<string>>()
+{
+	{ "ldvirtftn", new[] { "Emit_MethodInfo" }},
+	{ "newobj",    new[] { "Emit_ConstructorInfo" }},
+
+	{ "ldarg",     new[] { "Emit_Int16" }},
+	{ "ldarga",    new[] { "Emit_Int16" }},
+	{ "starg",     new[] { "Emit_Int16" }},
+
+	{ "ldarg.s",   new[] { "Emit_Byte" }},
+	{ "ldarga.s",  new[] { "Emit_Byte" }},
+	{ "starg.s",   new[] { "Emit_Byte" }},
+
+	{ "call",      new[] { "EmitCall", "Emit_MethodInfo", "Emit_ConstructorInfo" }},
+	{ "callvirt",  new[] { "EmitCall", "Emit_MethodInfo" }},
+	{ "calli",     new[] { "EmitCalli", "Emit_SignatureHelper" }},
+};
+
+static readonly IReadOnlyDictionary<OperandType, IEnumerable<string>> methodDefault = new Dictionary<OperandType, IEnumerable<string>>()
+{
+	{ OperandType.InlineNone,          new[] { "Emit" }},
+
+	{ OperandType.InlineI,             new[] { "Emit_Int32" }},
+	{ OperandType.InlineI8,            new[] { "Emit_Int64" }},
+	{ OperandType.InlineR,             new[] { "Emit_Double" }},
+	{ OperandType.ShortInlineI,        new[] { "Emit_SByte" }},
+	{ OperandType.ShortInlineR,        new[] { "Emit_Single" }},
+
+	{ OperandType.InlineVar,           new[] { "Emit_Int16", "Emit_LocalBuilder" }},
+	{ OperandType.ShortInlineVar,      new[] { "Emit_Byte",  "Emit_LocalBuilder" }},
+
+	{ OperandType.InlineBrTarget,      new[] { "Emit_Label" }},
+	{ OperandType.InlineSwitch,        new[] { "Emit_LabelArray" }},
+	{ OperandType.ShortInlineBrTarget, new[] { "Emit_Label" }},
+
+	{ OperandType.InlineString,        new[] { "Emit_String" }},
+	{ OperandType.InlineTok,           new[] { "Emit_Type", "Emit_FieldInfo", "Emit_MethodInfo" }},
+	{ OperandType.InlineType,          new[] { "Emit_Type" }},
+	{ OperandType.InlineField,         new[] { "Emit_FieldInfo" }},
+	{ OperandType.InlineMethod,        new[] { "Emit_MethodInfo" }},
+	{ OperandType.InlineSig,           new[] { "Emit_SignatureHelper" }},
+};
+#>

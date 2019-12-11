@@ -1,0 +1,14 @@
+<diagnostics id="WTG2005" severity="Warning">
+	<diagnostic message="The Ldc_I4 opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (7, 3-34)</location>
+	</diagnostic>
+	<diagnostic message="The Ldc_I8 opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (8, 3-34)</location>
+	</diagnostic>
+	<diagnostic message="The Ldc_R4 opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (9, 3-34)</location>
+	</diagnostic>
+	<diagnostic message="The Ldc_R8 opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (10, 3-34)</location>
+	</diagnostic>
+</diagnostics>

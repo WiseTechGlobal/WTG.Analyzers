@@ -1,0 +1,44 @@
+<diagnostics id="WTG2005" severity="Warning">
+	<diagnostic message="The Ldarg_0 opcode does not take an argument.">
+		<location>Test0.cs: (7, 3-29)</location>
+	</diagnostic>
+	<diagnostic message="The Ldarg_S opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (8, 3-29)</location>
+	</diagnostic>
+	<diagnostic message="The Ldarg opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (9, 3-27)</location>
+	</diagnostic>
+
+	<diagnostic message="The Ldc_I4_S opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (11, 3-30)</location>
+	</diagnostic>
+	<diagnostic message="The Ldc_I8 opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (12, 3-28)</location>
+	</diagnostic>
+	<diagnostic message="The Ldc_R4 opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (13, 3-28)</location>
+	</diagnostic>
+	<diagnostic message="The Ldc_R8 opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (14, 3-28)</location>
+	</diagnostic>
+
+	<diagnostic message="The Ldarg_S opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (19, 3-33)</location>
+	</diagnostic>
+	<diagnostic message="The Ldarg opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (20, 3-31)</location>
+	</diagnostic>
+
+	<diagnostic message="The Ldc_I4_S opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (22, 3-34)</location>
+	</diagnostic>
+	<diagnostic message="The Ldc_I8 opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (23, 3-32)</location>
+	</diagnostic>
+	<diagnostic message="The Ldc_R4 opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (24, 3-32)</location>
+	</diagnostic>
+	<diagnostic message="The Ldc_R8 opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (25, 3-32)</location>
+	</diagnostic>
+</diagnostics>

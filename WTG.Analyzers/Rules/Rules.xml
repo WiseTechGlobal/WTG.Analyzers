@@ -118,6 +118,12 @@
 			<description>References to Code Contracs should be replaced with alternate forms of checking or should be deleted.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="5" name="UseCorrectEmitOverload" severity="Warning">
+			<title>Use Correct Emit Overload</title>
+			<message>The {opcode} opcode cannot be used with this emit overload.</message>
+			<message name="None">The {opcode} opcode does not take an argument.</message>
+			<description>The emit methods generally don't pay attention to the opcode when emitting the operand, so using the wrong overload may result in unexpected behaviour that is difficult to debug.</description>
+		</rule>
 	</category>
 	<category name="Decruftification" id="3000">
 		<rule id="1" name="RemovedOrphanedSuppressions" severity="Info">
