@@ -1,0 +1,11 @@
+<diagnostics id="WTG2006" severity="Warning" message="This format string is invalid.">
+	<diagnostic>
+		<location>Test0.cs: (3, 18-29)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (9, 18-29)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (15, 18-39)</location>
+	</diagnostic>
+</diagnostics>

@@ -1,0 +1,5 @@
+<diagnostics id="WTG2007" severity="Warning">
+	<diagnostic message="MissingProperty is not a recognised member on List`1.">
+		<location>Test0.cs: (4, 18-64)</location>
+	</diagnostic>
+</diagnostics>

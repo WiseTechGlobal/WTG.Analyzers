@@ -1,0 +1,11 @@
+<diagnostics id="WTG2007" severity="Warning">
+	<diagnostic message="Property is not a recognised member on this object.">
+		<location>Test0.cs: (9, 18-38)</location>
+	</diagnostic>
+	<diagnostic message="Property is not a recognised member on this object.">
+		<location>Test0.cs: (9, 47-66)</location>
+	</diagnostic>
+	<diagnostic message="Property is not a recognised member on this object.">
+		<location>Test0.cs: (9, 75-94)</location>
+	</diagnostic>
+</diagnostics>

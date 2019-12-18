@@ -32,6 +32,8 @@ namespace WTG.Analyzers
 		public const string DoNotUseCodeContractsDiagnosticID = "WTG2004";
 		public const string UseCorrectEmitOverloadDiagnosticID = "WTG2005";
 		public const string ForbidCompiledInStaticRegexMethodsDiagnosticID = "WTG2006";
+		public const string InvalidDebuggerDisplayFormatDiagnosticID = "WTG2007";
+		public const string DebuggerDisplayCouldNotResolveReferenceDiagnosticID = "WTG2008";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 		public const string PreferDirectMemberAccessOverLinqDiagnosticID = "WTG3002";
 		public const string PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID = "WTG3003";
@@ -314,6 +316,33 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
 			description: "The static methods on Regex will discard the regex object, largely negating the benifits of the Compiled option and leaving you with just the increased costs.");
+
+		public static readonly DiagnosticDescriptor InvalidDebuggerDisplayFormatRule = new DiagnosticDescriptor(
+			InvalidDebuggerDisplayFormatDiagnosticID,
+			"Invalid DebuggerDisplay Format.",
+			"This format string is invalid.",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "This format string is invalid.");
+
+		public static readonly DiagnosticDescriptor DebuggerDisplayCouldNotResolveReference_MemberRule = new DiagnosticDescriptor(
+			DebuggerDisplayCouldNotResolveReferenceDiagnosticID,
+			"DebuggerDisplay could not resolve reference.",
+			"{0} is not a recognised member on {1}.",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "This format string contains references that could not be resolved.");
+
+		public static readonly DiagnosticDescriptor DebuggerDisplayCouldNotResolveReference_IndexerRule = new DiagnosticDescriptor(
+			DebuggerDisplayCouldNotResolveReferenceDiagnosticID,
+			"DebuggerDisplay could not resolve reference.",
+			"No matching indexer on {0}.",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "This format string contains references that could not be resolved.");
 
 		public static readonly DiagnosticDescriptor RemovedOrphanedSuppressionsRule = new DiagnosticDescriptor(
 			RemovedOrphanedSuppressionsDiagnosticID,
@@ -732,6 +761,30 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateForbidCompiledInStaticRegexMethodsDiagnostic(Location location)
 		{
 			return Diagnostic.Create(ForbidCompiledInStaticRegexMethodsRule, location);
+		}
+
+		/// <summary>
+		/// This format string is invalid.
+		/// </summary>
+		public static Diagnostic CreateInvalidDebuggerDisplayFormatDiagnostic(Location location)
+		{
+			return Diagnostic.Create(InvalidDebuggerDisplayFormatRule, location);
+		}
+
+		/// <summary>
+		/// {member} is not a recognised member on {type}.
+		/// </summary>
+		public static Diagnostic CreateDebuggerDisplayCouldNotResolveReference_MemberDiagnostic(Location location, object member, object type)
+		{
+			return Diagnostic.Create(DebuggerDisplayCouldNotResolveReference_MemberRule, location, member, type);
+		}
+
+		/// <summary>
+		/// No matching indexer on {type}.
+		/// </summary>
+		public static Diagnostic CreateDebuggerDisplayCouldNotResolveReference_IndexerDiagnostic(Location location, object type)
+		{
+			return Diagnostic.Create(DebuggerDisplayCouldNotResolveReference_IndexerRule, location, type);
 		}
 
 		/// <summary>

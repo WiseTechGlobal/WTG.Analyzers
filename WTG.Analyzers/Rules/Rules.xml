@@ -134,6 +134,17 @@
 			<message>Do not use the Compiled option when calling static methods on Regex.</message>
 			<description>The static methods on Regex will discard the regex object, largely negating the benifits of the Compiled option and leaving you with just the increased costs.</description>
 		</rule>
+		<rule id="7" name="InvalidDebuggerDisplayFormat" severity="Warning">
+			<title>Invalid DebuggerDisplay Format.</title>
+			<message>This format string is invalid.</message>
+			<description>This format string is invalid.</description>
+		</rule>
+		<rule id="8" name="DebuggerDisplayCouldNotResolveReference" severity="Warning">
+			<title>DebuggerDisplay could not resolve reference.</title>
+			<message name="Member">{member} is not a recognised member on {type}.</message>
+			<message name="Indexer">No matching indexer on {type}.</message>
+			<description>This format string contains references that could not be resolved.</description>
+		</rule>
 	</category>
 	<category name="Decruftification" id="3000">
 		<rule id="1" name="RemovedOrphanedSuppressions" severity="Info">
