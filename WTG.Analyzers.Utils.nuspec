@@ -11,7 +11,9 @@
 		<copyright>Copyright 2018</copyright>
 		<repository type="git" url="https://github.com/WiseTechGlobal/WTG.Analyzers" commit="$commitid$" />
 		<dependencies>
-			<dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="2.0.0" />
+			<group targetFramework=".NETStandard1.3">
+				<dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="2.0.0" />
+			</group>
 		</dependencies>
 	</metadata>
 
