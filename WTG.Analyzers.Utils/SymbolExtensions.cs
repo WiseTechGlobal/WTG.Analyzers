@@ -18,6 +18,12 @@ namespace WTG.Analyzers.Utils
 				&& methodSymbol.ContainingType.IsMatch(fullTypeName);
 		}
 
+		public static bool IsMatch(this IPropertySymbol propertySymbol, string fullTypeName, string propertyName)
+		{
+			return propertySymbol.MetadataName == propertyName
+				&& propertySymbol.ContainingType.IsMatch(fullTypeName);
+		}
+
 		public static bool IsMatch(this ITypeSymbol typeSymbol, string fullName)
 		{
 			ISymbol symbol = typeSymbol;

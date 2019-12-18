@@ -57,7 +57,7 @@ namespace WTG.Analyzers
 					symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
 
 					if (symbol == null ||
-						!symbol.IsMatch(TaskFullName, nameof(Task.Delay)) ||
+						!symbol.IsMatch(WellKnownTypeNames.Task, nameof(Task.Delay)) ||
 						!context.SemanticModel.IsConstantZero(arguments[0].Expression, context.CancellationToken))
 					{
 						return;
@@ -67,14 +67,14 @@ namespace WTG.Analyzers
 				case nameof(Task.FromResult):
 					symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
 
-					if (symbol == null || !symbol.IsMatch(TaskFullName, nameof(Task.FromResult)))
+					if (symbol == null || !symbol.IsMatch(WellKnownTypeNames.Task, nameof(Task.FromResult)))
 					{
 						return;
 					}
 
 					var convertedType = context.SemanticModel.GetTypeInfo(invoke, context.CancellationToken).ConvertedType;
 
-					if (convertedType == null || !convertedType.IsMatch(TaskFullName))
+					if (convertedType == null || !convertedType.IsMatch(WellKnownTypeNames.Task))
 					{
 						return;
 					}
@@ -89,7 +89,7 @@ namespace WTG.Analyzers
 
 		static bool HasCompletedTask(Compilation compilation)
 		{
-			foreach (var symbol in compilation.GetTypeByMetadataName(TaskFullName).GetMembers(nameof(Task.CompletedTask)))
+			foreach (var symbol in compilation.GetTypeByMetadataName(WellKnownTypeNames.Task).GetMembers(nameof(Task.CompletedTask)))
 			{
 				if (symbol.Kind == SymbolKind.Property)
 				{
@@ -99,7 +99,5 @@ namespace WTG.Analyzers
 
 			return false;
 		}
-
-		const string TaskFullName = "System.Threading.Tasks.Task";
 	}
 }

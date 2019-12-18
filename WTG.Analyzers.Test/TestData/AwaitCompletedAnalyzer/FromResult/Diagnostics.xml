@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3010" message="The task is trivially completed and so there is no point awaiting it." severity="Info">
+	<suppressId>CS1998</suppressId>
+	<diagnostic>
+		<location>Test0.cs: (9,15-40)</location>
+		<location>Test0.cs: (9,37-39)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (18,10-35)</location>
+		<location>Test0.cs: (18,32-34)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (24,15-40)</location>
+		<location>Test0.cs: (24,37-39)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (32,10-35)</location>
+		<location>Test0.cs: (32,32-34)</location>
+	</diagnostic>
+</diagnostics>
