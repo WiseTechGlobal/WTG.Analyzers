@@ -10,10 +10,20 @@
     <ProjectReference Include="..\WTG.Analyzers.Utils\WTG.Analyzers.Utils.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Analyzers\Emit\EmitMatrix.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EmitMatrix.g.cs</LastGenOutput>
+    </None>
     <None Update="Rules\Rules.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Rules.g.cs</LastGenOutput>
     </None>
+    <Compile Update="Analyzers\Emit\EmitMatrix.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EmitMatrix.tt</DependentUpon>
+    </Compile>
+
     <Compile Update="Rules\Rules.g.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

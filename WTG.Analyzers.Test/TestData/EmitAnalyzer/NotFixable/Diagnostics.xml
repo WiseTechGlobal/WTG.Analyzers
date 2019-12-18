@@ -1,0 +1,14 @@
+<diagnostics id="WTG2005" severity="Warning">
+	<diagnostic message="The Ldarg_S opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (8, 3-32)</location>
+	</diagnostic>
+	<diagnostic message="The Newarr opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (9, 3-31)</location>
+	</diagnostic>
+	<diagnostic message="The Ldloc opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (10, 3-30)</location>
+	</diagnostic>
+	<diagnostic message="The Calli opcode cannot be used with this emit overload.">
+		<location>Test0.cs: (11, 3-30)</location>
+	</diagnostic>
+</diagnostics>

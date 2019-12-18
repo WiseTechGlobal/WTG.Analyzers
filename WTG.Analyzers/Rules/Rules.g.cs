@@ -29,6 +29,7 @@ namespace WTG.Analyzers
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string FlagEnumsShouldSpecifyExplicitValuesDiagnosticID = "WTG2003";
 		public const string DoNotUseCodeContractsDiagnosticID = "WTG2004";
+		public const string UseCorrectEmitOverloadDiagnosticID = "WTG2005";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 		public const string PreferDirectMemberAccessOverLinqDiagnosticID = "WTG3002";
 		public const string PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID = "WTG3003";
@@ -275,6 +276,24 @@ namespace WTG.Analyzers
 			{
 				WellKnownDiagnosticTags.Unnecessary,
 			});
+
+		public static readonly DiagnosticDescriptor UseCorrectEmitOverloadRule = new DiagnosticDescriptor(
+			UseCorrectEmitOverloadDiagnosticID,
+			"Use Correct Emit Overload",
+			"The {0} opcode cannot be used with this emit overload.",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "The emit methods generally don't pay attention to the opcode when emitting the operand, so using the wrong overload may result in unexpected behaviour that is difficult to debug.");
+
+		public static readonly DiagnosticDescriptor UseCorrectEmitOverload_NoneRule = new DiagnosticDescriptor(
+			UseCorrectEmitOverloadDiagnosticID,
+			"Use Correct Emit Overload",
+			"The {0} opcode does not take an argument.",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "The emit methods generally don't pay attention to the opcode when emitting the operand, so using the wrong overload may result in unexpected behaviour that is difficult to debug.");
 
 		public static readonly DiagnosticDescriptor RemovedOrphanedSuppressionsRule = new DiagnosticDescriptor(
 			RemovedOrphanedSuppressionsDiagnosticID,
@@ -661,6 +680,22 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDoNotUseCodeContractsDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DoNotUseCodeContractsRule, location);
+		}
+
+		/// <summary>
+		/// The {opcode} opcode cannot be used with this emit overload.
+		/// </summary>
+		public static Diagnostic CreateUseCorrectEmitOverloadDiagnostic(Location location, object opcode)
+		{
+			return Diagnostic.Create(UseCorrectEmitOverloadRule, location, opcode);
+		}
+
+		/// <summary>
+		/// The {opcode} opcode does not take an argument.
+		/// </summary>
+		public static Diagnostic CreateUseCorrectEmitOverload_NoneDiagnostic(Location location, object opcode)
+		{
+			return Diagnostic.Create(UseCorrectEmitOverload_NoneRule, location, opcode);
 		}
 
 		/// <summary>

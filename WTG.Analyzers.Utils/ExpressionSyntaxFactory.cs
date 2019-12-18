@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -97,6 +98,27 @@ namespace WTG.Analyzers.Utils
 			return SyntaxFactory.LiteralExpression(
 				SyntaxKind.StringLiteralExpression,
 				SyntaxFactory.Literal(value));
+		}
+
+		public static LiteralExpressionSyntax CreateLiteral(long value)
+		{
+			return SyntaxFactory.LiteralExpression(
+				SyntaxKind.NumericLiteralExpression,
+				SyntaxFactory.Literal(value.ToString(CultureInfo.InvariantCulture) + "L", value));
+		}
+
+		public static LiteralExpressionSyntax CreateLiteral(float value)
+		{
+			return SyntaxFactory.LiteralExpression(
+				SyntaxKind.NumericLiteralExpression,
+				SyntaxFactory.Literal(value.ToString(CultureInfo.InvariantCulture) + "f", value));
+		}
+
+		public static LiteralExpressionSyntax CreateLiteral(double value)
+		{
+			return SyntaxFactory.LiteralExpression(
+				SyntaxKind.NumericLiteralExpression,
+				SyntaxFactory.Literal(value.ToString(CultureInfo.InvariantCulture) + "d", value));
 		}
 
 		public static InvocationExpressionSyntax CreateNameof(ExpressionSyntax argument)
