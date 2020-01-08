@@ -1,39 +1,38 @@
 ﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup>
-		<BuildDirectory>$(MSBuildThisFileDirectory)build\</BuildDirectory>
-		<MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  <PropertyGroup>
+    <BuildDirectory>$(MSBuildThisFileDirectory)build\</BuildDirectory>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
 
-		<WTGIsTestProject Condition="$(MSBuildProjectFile.Contains('.Test.'))">True</WTGIsTestProject>
-		<WTGIsTestProject Condition="$(MSBuildProjectFile.Contains('.TestFramework.'))">True</WTGIsTestProject>
-		<LangVersion>8.0</LangVersion>
-		<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-		<CodeAnalysisRuleSet>$(BuildDirectory)CodeAnalysis.ruleset</CodeAnalysisRuleSet>
+    <WTGIsTestProject Condition="$(MSBuildProjectFile.Contains('.Test.'))">True</WTGIsTestProject>
+    <WTGIsTestProject Condition="$(MSBuildProjectFile.Contains('.TestFramework.'))">True</WTGIsTestProject>
+    <LangVersion>8.0</LangVersion>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>$(BuildDirectory)CodeAnalysis.ruleset</CodeAnalysisRuleSet>
 
-		<!--
-		  - The major and minor versions should match the Roslyn API version,
-		  - and the major/minor/build versions should match the NuGet package version (NuGet is x.y.z only)
-		  - Revision should be incremented whenever you want to publish a new version.
-		  -->
-		<Version Condition="'$(APPVEYOR_BUILD_VERSION)' != ''">$(APPVEYOR_BUILD_VERSION)</Version>
-		<Version Condition="'$(Version)' == ''">2.0.7.0</Version>
+    <!--
+      - The major and minor versions should match the Roslyn API version,
+      - and the major/minor/build versions should match the NuGet package version (NuGet is x.y.z only)
+      - Revision should be incremented whenever you want to publish a new version.
+      -->
+    <Version Condition="'$(APPVEYOR_BUILD_VERSION)' != ''">$(APPVEYOR_BUILD_VERSION)</Version>
+    <ShortVersion>2.0.7</ShortVersion>
+    <Version Condition="'$(Version)' == ''">$(ShortVersion).0</Version>
 
-		<Company>WiseTech Global Pty Ltd</Company>
-		<Product>WTG Analyzers</Product>
-		<Copyright>Copyright © WiseTech Global 2016-2018</Copyright>
-		<AssemblyVersion>$(Version)</AssemblyVersion>
-		<FileVersion>$(Version)</FileVersion>
-	</PropertyGroup>
+    <Company>WiseTech Global Pty Ltd</Company>
+    <Product>WTG Analyzers</Product>
+    <Copyright>Copyright © WiseTech Global 2016-2018</Copyright>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+  </PropertyGroup>
 
-	<PropertyGroup  Condition="'$(WTGIsTestProject)' == 'True'">
-		<CodeAnalysisRuleSet>$(BuildDirectory)CodeAnalysis.Test.ruleset</CodeAnalysisRuleSet>
-	</PropertyGroup>
+  <PropertyGroup  Condition="'$(WTGIsTestProject)' == 'True'">
+    <CodeAnalysisRuleSet>$(BuildDirectory)CodeAnalysis.Test.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
 
-	<PropertyGroup Condition="'$(RunCodeAnalysis)' == 'True'">
-		<DebugType>full</DebugType>
-	</PropertyGroup>
-
-	<Import Project="$(MSBuildThisFileDirectory).paket\Paket.Restore.targets" />
+  <PropertyGroup Condition="'$(RunCodeAnalysis)' == 'True'">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
 </Project>

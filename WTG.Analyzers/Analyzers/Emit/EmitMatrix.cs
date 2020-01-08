@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using System.Reflection.Emit;
 using Microsoft.CodeAnalysis;
 using WTG.Analyzers.Utils;
 
@@ -8,6 +7,10 @@ namespace WTG.Analyzers
 {
 	partial class EmitMatrix
 	{
+		public const string Emit = "Emit";
+		public const string EmitCall = "EmitCall";
+		public const string EmitCalli = "EmitCalli";
+
 		public static bool TryGetEmitMethod(IMethodSymbol method, out EmitMethod emitMethod)
 		{
 			if (!method.ContainingType.IsMatch("System.Reflection.Emit.ILGenerator"))
@@ -18,15 +21,15 @@ namespace WTG.Analyzers
 
 			switch (method.Name)
 			{
-				case nameof(ILGenerator.EmitCall):
+				case EmitCall:
 					emitMethod = EmitMethod.EmitCall;
 					break;
 
-				case nameof(ILGenerator.EmitCalli):
+				case EmitCalli:
 					emitMethod = EmitMethod.EmitCalli;
 					break;
 
-				case nameof(ILGenerator.Emit):
+				case Emit:
 					emitMethod = GetPlainEmitMethod(method);
 					break;
 
@@ -69,16 +72,16 @@ namespace WTG.Analyzers
 				nameof(Int16) => EmitMethod.Emit_Int16,
 				nameof(Int32) => EmitMethod.Emit_Int32,
 				nameof(MethodInfo) => EmitMethod.Emit_MethodInfo,
-				nameof(SignatureHelper) => EmitMethod.Emit_SignatureHelper,
+				"SignatureHelper" => EmitMethod.Emit_SignatureHelper,
 				nameof(ConstructorInfo) => EmitMethod.Emit_ConstructorInfo,
 				nameof(Type) => EmitMethod.Emit_Type,
 				nameof(Int64) => EmitMethod.Emit_Int64,
 				nameof(Single) => EmitMethod.Emit_Single,
 				nameof(Double) => EmitMethod.Emit_Double,
-				nameof(Label) => EmitMethod.Emit_Label,
+				"Label" => EmitMethod.Emit_Label,
 				nameof(FieldInfo) => EmitMethod.Emit_FieldInfo,
 				nameof(String) => EmitMethod.Emit_String,
-				nameof(LocalBuilder) => EmitMethod.Emit_LocalBuilder,
+				"LocalBuilder" => EmitMethod.Emit_LocalBuilder,
 				_ => EmitMethod.None,
 			};
 		}

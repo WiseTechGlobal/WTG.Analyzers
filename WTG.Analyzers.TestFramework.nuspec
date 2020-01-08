@@ -3,12 +3,12 @@
 	<metadata>
 		<id>WTG.Analyzers.TestFramework</id>
 		<version>$version$</version>
-		<authors>WiseTech Global</authors>
-		<owners>WiseTech Global</owners>
+		<authors>$company$</authors>
+		<owners>$company$</owners>
 		<license type="file">LICENSE.md</license>
 		<projectUrl>https://github.com/WiseTechGlobal/WTG.Analyzers</projectUrl>
 		<description>Support library for testing Roslyn Analyzers.</description>
-		<copyright>Copyright 2018</copyright>
+		<copyright>$copyright$</copyright>
 		<repository type="git" url="https://github.com/WiseTechGlobal/WTG.Analyzers" commit="$commitid$" />
 		<developmentDependency>true</developmentDependency>
 		<dependencies>
