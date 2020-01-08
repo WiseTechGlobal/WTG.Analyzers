@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Reflection.Emit;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -67,7 +66,7 @@ namespace WTG.Analyzers
 		{
 			var name = ExpressionHelper.GetMethodName(invoke)?.Identifier.Text;
 
-			if (name == nameof(ILGenerator.Emit) || name == nameof(ILGenerator.EmitCall) || name == nameof(ILGenerator.EmitCalli))
+			if (name == EmitMatrix.Emit || name == EmitMatrix.EmitCall || name == EmitMatrix.EmitCalli)
 			{
 				var methodSymbol = (IMethodSymbol)model.GetSymbolInfo(invoke, cancellationToken).Symbol;
 

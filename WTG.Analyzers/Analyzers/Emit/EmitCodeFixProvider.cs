@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -78,13 +77,13 @@ namespace WTG.Analyzers
 			var argList = invoke.ArgumentList;
 
 			if (invoke.Expression is MemberAccessExpressionSyntax expression &&
-				expression.Name.Identifier.Text != nameof(ILGenerator.Emit))
+				expression.Name.Identifier.Text != EmitMatrix.Emit)
 			{
 				invoke = invoke.WithExpression(
 					SyntaxFactory.MemberAccessExpression(
 						SyntaxKind.SimpleMemberAccessExpression,
 						expression.Expression,
-						SyntaxFactory.IdentifierName(nameof(ILGenerator.Emit))));
+						SyntaxFactory.IdentifierName(EmitMatrix.Emit)));
 			}
 
 			return invoke.WithArgumentList(
