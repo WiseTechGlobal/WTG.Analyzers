@@ -16,7 +16,7 @@ public class Bob
 	{
 		if (action == null)
 		{
-			throw new ArgumentNullException();
+			throw new ArgumentNullException(nameof(action));
 		}
 
 		action();
@@ -36,7 +36,7 @@ public class Bob
 	{
 		if (string.IsNullOrEmpty(str))
 		{
-			throw new ArgumentException();
+			throw new ArgumentException("Value cannot be null or empty.", nameof(str));
 		}
 
 		str.GetType();
