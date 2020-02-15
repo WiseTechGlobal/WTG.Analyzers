@@ -11,6 +11,9 @@ namespace WTG.Analyzers
 {
 	static class CodeContractsHelper
 	{
+		public const string DefaultMessage = "Invalid Argument.";
+		public const string NotNullOrEmptyMessage = "Value cannot be null or empty.";
+
 		public static bool IsGenericMethod(InvocationExpressionSyntax invoke, out Location typeLocation)
 		{
 			var access = (MemberAccessExpressionSyntax)invoke.Expression;
@@ -230,7 +233,7 @@ namespace WTG.Analyzers
 			return visitor.EncounteredContractForAll;
 		}
 
-		public static StatementSyntax ConvertGenericRequires(InvocationExpressionSyntax invoke, Location typeLocation)
+		public static StatementSyntax ConvertGenericRequires(SemanticModel semanticModel, InvocationExpressionSyntax invoke, Location typeLocation, CancellationToken cancellationToken)
 		{
 			var exceptionType = (TypeSyntax)invoke.FindNode(typeLocation.SourceSpan)
 				.WithAdditionalAnnotations(Simplifier.Annotation);
@@ -238,10 +241,27 @@ namespace WTG.Analyzers
 			var arguments = invoke.ArgumentList.Arguments;
 			var condition = ExpressionSyntaxFactory.InvertBoolExpression(arguments[0].Expression);
 
+			if (arguments.Count > 1)
+			{
+				arguments = arguments.RemoveAt(0);
+			}
+			else if (IsNullArgumentCheck(semanticModel, invoke, out var identifierLocation, cancellationToken))
+			{
+				return ConvertRequiresNotNull(invoke, identifierLocation);
+			}
+			else if (IsNonEmptyStringArgumentCheck(semanticModel, invoke, out identifierLocation, cancellationToken))
+			{
+				return ConvertRequires(invoke, identifierLocation, NotNullOrEmptyMessage);
+			}
+			else
+			{
+				arguments = default;
+			}
+
 			return CreateGuardClause(
 				condition,
 				exceptionType,
-				arguments.Count > 1 ? SyntaxFactory.ArgumentList(arguments.RemoveAt(0)) : SyntaxFactory.ArgumentList());
+				SyntaxFactory.ArgumentList(arguments));
 		}
 
 		public static StatementSyntax ConvertRequiresNotNull(InvocationExpressionSyntax invoke, Location identifierLocation)

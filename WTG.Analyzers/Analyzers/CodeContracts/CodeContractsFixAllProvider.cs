@@ -54,7 +54,7 @@ namespace WTG.Analyzers
 
 						if (CodeContractsHelper.IsGenericMethod(invoke, out var location))
 						{
-							modified = CodeContractsHelper.ConvertGenericRequires(invoke, location);
+							modified = CodeContractsHelper.ConvertGenericRequires(semanticModel, invoke, location, cancellationToken);
 						}
 						else if (CodeContractsHelper.IsInPrivateMember(semanticModel, statement, cancellationToken))
 						{
@@ -66,7 +66,7 @@ namespace WTG.Analyzers
 						}
 						else if (CodeContractsHelper.IsNonEmptyStringArgumentCheck(semanticModel, invoke, out location, cancellationToken))
 						{
-							modified = CodeContractsHelper.ConvertRequires(invoke, location, "Value cannot be null or empty.");
+							modified = CodeContractsHelper.ConvertRequires(invoke, location, CodeContractsHelper.NotNullOrEmptyMessage);
 						}
 						else if (CodeContractsHelper.InvokesContractForAll(semanticModel, invoke, CancellationToken.None))
 						{
@@ -74,7 +74,7 @@ namespace WTG.Analyzers
 						}
 						else if (CodeContractsHelper.AccessesParameter(semanticModel, invoke, out location, cancellationToken))
 						{
-							modified = CodeContractsHelper.ConvertRequires(invoke, location, "Invalid Argument.");
+							modified = CodeContractsHelper.ConvertRequires(invoke, location, CodeContractsHelper.DefaultMessage);
 						}
 						else
 						{

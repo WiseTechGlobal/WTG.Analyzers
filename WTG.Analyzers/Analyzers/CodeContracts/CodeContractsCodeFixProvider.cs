@@ -110,7 +110,9 @@ namespace WTG.Analyzers
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
 			var invoke = (InvocationExpressionSyntax)statementNode.Expression;
-			var replacement = CodeContractsHelper.ConvertGenericRequires(invoke, typeLocation);
+
+			var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+			var replacement = CodeContractsHelper.ConvertGenericRequires(semanticModel, invoke, typeLocation, cancellationToken);
 
 			return document.WithSyntaxRoot(
 				CodeContractsUsingSimplifier.Instance.Visit(
