@@ -19,7 +19,8 @@ namespace WTG.Analyzers
 
 		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
 			Rules.UseVarWherePossibleDiagnosticID,
-			Rules.UseOutVarWherePossibleDiagnosticID);
+			Rules.UseOutVarWherePossibleDiagnosticID,
+			Rules.DeconstructWithVarDiagnosticID);
 
 		public sealed override FixAllProvider GetFixAllProvider() => VarFixAllProvider.Instance;
 
