@@ -124,6 +124,11 @@
 			<message name="None">The {opcode} opcode does not take an argument.</message>
 			<description>The emit methods generally don't pay attention to the opcode when emitting the operand, so using the wrong overload may result in unexpected behaviour that is difficult to debug.</description>
 		</rule>
+		<rule id="6" name="ForbidCompiledInStaticRegexMethods" severity="Warning">
+			<title>Do not pass the Compiled option into static methods on Regex.</title>
+			<message>Do not use the Compiled option when calling static methods on Regex.</message>
+			<description>The static methods on Regex will discard the regex object, largely negating the benifits of the Compiled option and leaving you with just the increased costs.</description>
+		</rule>
 	</category>
 	<category name="Decruftification" id="3000">
 		<rule id="1" name="RemovedOrphanedSuppressions" severity="Info">

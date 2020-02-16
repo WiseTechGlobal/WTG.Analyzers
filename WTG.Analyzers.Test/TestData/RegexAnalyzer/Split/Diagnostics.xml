@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG2006" message="Do not use the Compiled option when calling static methods on Regex." severity="Warning">
+	<diagnostic>
+		<location>Test0.cs: (10,56-77)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (11,30-51)</location>
+	</diagnostic>
+</diagnostics>
