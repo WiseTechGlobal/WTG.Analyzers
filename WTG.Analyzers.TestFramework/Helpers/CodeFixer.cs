@@ -171,8 +171,13 @@ namespace WTG.Analyzers.TestFramework
 		async Task<List<CodeAction>> RequestFixes(Document document, Diagnostic diagnostic)
 		{
 			var actions = new List<CodeAction>();
-			var context = new CodeFixContext(document, diagnostic, (a, d) => actions.Add(a), CancellationToken.None);
-			await CodeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+
+			if (IsFixable(diagnostic))
+			{
+				var context = new CodeFixContext(document, diagnostic, (a, d) => actions.Add(a), CancellationToken.None);
+				await CodeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+			}
+
 			return actions;
 		}
 
@@ -182,12 +187,17 @@ namespace WTG.Analyzers.TestFramework
 
 			foreach (var diagnostic in diagnostics)
 			{
-				var context = new CodeFixContext(document, diagnostic, (a, b) => actions.Add(Tuple.Create(diagnostic, a)), CancellationToken.None);
-				await CodeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+				if (IsFixable(diagnostic))
+				{
+					var context = new CodeFixContext(document, diagnostic, (a, b) => actions.Add(Tuple.Create(diagnostic, a)), CancellationToken.None);
+					await CodeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+				}
 			}
 
 			return actions;
 		}
+
+		bool IsFixable(Diagnostic diagnostic) => CodeFixProvider.FixableDiagnosticIds.Contains(diagnostic.Id);
 
 		static async Task ReportNewCompilerDiagnosticAsync(Document document, IEnumerable<Diagnostic> existingCompilerDiagnostics)
 		{
