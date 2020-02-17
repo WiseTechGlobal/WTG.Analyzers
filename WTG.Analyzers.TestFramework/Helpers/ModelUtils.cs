@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Formatting;
@@ -113,6 +114,7 @@ namespace WTG.Analyzers.TestFramework
 			var types = new[]
 			{
 				typeof(object),
+				typeof(Regex),
 				typeof(Enumerable),
 				typeof(CSharpCompilation),
 				typeof(Compilation),

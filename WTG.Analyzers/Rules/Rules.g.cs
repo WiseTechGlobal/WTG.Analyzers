@@ -30,6 +30,7 @@ namespace WTG.Analyzers
 		public const string FlagEnumsShouldSpecifyExplicitValuesDiagnosticID = "WTG2003";
 		public const string DoNotUseCodeContractsDiagnosticID = "WTG2004";
 		public const string UseCorrectEmitOverloadDiagnosticID = "WTG2005";
+		public const string ForbidCompiledInStaticRegexMethodsDiagnosticID = "WTG2006";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 		public const string PreferDirectMemberAccessOverLinqDiagnosticID = "WTG3002";
 		public const string PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID = "WTG3003";
@@ -294,6 +295,15 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
 			description: "The emit methods generally don't pay attention to the opcode when emitting the operand, so using the wrong overload may result in unexpected behaviour that is difficult to debug.");
+
+		public static readonly DiagnosticDescriptor ForbidCompiledInStaticRegexMethodsRule = new DiagnosticDescriptor(
+			ForbidCompiledInStaticRegexMethodsDiagnosticID,
+			"Do not pass the Compiled option into static methods on Regex.",
+			"Do not use the Compiled option when calling static methods on Regex.",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "The static methods on Regex will discard the regex object, largely negating the benifits of the Compiled option and leaving you with just the increased costs.");
 
 		public static readonly DiagnosticDescriptor RemovedOrphanedSuppressionsRule = new DiagnosticDescriptor(
 			RemovedOrphanedSuppressionsDiagnosticID,
@@ -696,6 +706,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateUseCorrectEmitOverload_NoneDiagnostic(Location location, object opcode)
 		{
 			return Diagnostic.Create(UseCorrectEmitOverload_NoneRule, location, opcode);
+		}
+
+		/// <summary>
+		/// Do not use the Compiled option when calling static methods on Regex.
+		/// </summary>
+		public static Diagnostic CreateForbidCompiledInStaticRegexMethodsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(ForbidCompiledInStaticRegexMethodsRule, location);
 		}
 
 		/// <summary>
