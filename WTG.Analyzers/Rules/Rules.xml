@@ -95,6 +95,11 @@
 			<message>Prefer an if-throw over assigning a coalesce-throw expression to the discard symbol.</message>
 			<description>Prefer an if-throw over assigning a coalesce-throw expression to the discard symbol.</description>
 		</rule>
+		<rule id="17" name="VariableCouldBeConfusedWithDiscard" severity="Info">
+			<title>Don't define variables that could be confused with discards.</title>
+			<message>This variable could be confused with a discard.</message>
+			<description>Improve clarity by choosing a better name.</description>
+		</rule>
 	</category>
 	<category name="Correctness" id="2000">
 		<rule id="1" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">

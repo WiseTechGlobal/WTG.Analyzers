@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG1017" message="This variable could be confused with a discard." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (5,13-14)</location>
+	</diagnostic>
+</diagnostics>
