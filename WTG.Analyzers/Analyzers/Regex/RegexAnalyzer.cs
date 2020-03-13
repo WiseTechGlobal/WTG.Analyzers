@@ -52,7 +52,7 @@ namespace WTG.Analyzers
 
 		static bool IsTargetMethod(SemanticModel model, InvocationExpressionSyntax invoke, out int index, CancellationToken cancellationToken)
 		{
-			var name = ExpressionHelper.GetMethodName(invoke).Identifier.Text;
+			var name = ExpressionHelper.GetMethodName(invoke)?.Identifier.Text;
 
 			switch (name)
 			{
