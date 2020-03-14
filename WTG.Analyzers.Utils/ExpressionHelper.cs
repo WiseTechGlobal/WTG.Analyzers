@@ -7,7 +7,7 @@ namespace WTG.Analyzers.Utils
 {
 	public static class ExpressionHelper
 	{
-		public static SimpleNameSyntax GetMethodName(InvocationExpressionSyntax invoke) => invoke?.Expression?.Accept(MethodNameAccessor.Instance);
+		public static SimpleNameSyntax? GetMethodName(InvocationExpressionSyntax invoke) => invoke?.Expression?.Accept(MethodNameAccessor.Instance);
 
 		public static bool IsContainedInExpressionTree(SemanticModel model, ExpressionSyntax expression, CancellationToken cancellationToken)
 		{
@@ -26,7 +26,7 @@ namespace WTG.Analyzers.Utils
 			return false;
 		}
 
-		sealed class MethodNameAccessor : CSharpSyntaxVisitor<SimpleNameSyntax>
+		sealed class MethodNameAccessor : CSharpSyntaxVisitor<SimpleNameSyntax?>
 		{
 			public static MethodNameAccessor Instance { get; } = new MethodNameAccessor();
 
@@ -34,11 +34,11 @@ namespace WTG.Analyzers.Utils
 			{
 			}
 
-			public override SimpleNameSyntax VisitIdentifierName(IdentifierNameSyntax node) => node;
-			public override SimpleNameSyntax VisitGenericName(GenericNameSyntax node) => node;
-			public override SimpleNameSyntax VisitAliasQualifiedName(AliasQualifiedNameSyntax node) => node.Name;
-			public override SimpleNameSyntax VisitMemberAccessExpression(MemberAccessExpressionSyntax node) => node.Name;
-			public override SimpleNameSyntax VisitMemberBindingExpression(MemberBindingExpressionSyntax node) => node.Name;
+			public override SimpleNameSyntax? VisitIdentifierName(IdentifierNameSyntax node) => node;
+			public override SimpleNameSyntax? VisitGenericName(GenericNameSyntax node) => node;
+			public override SimpleNameSyntax? VisitAliasQualifiedName(AliasQualifiedNameSyntax node) => node.Name;
+			public override SimpleNameSyntax? VisitMemberAccessExpression(MemberAccessExpressionSyntax node) => node.Name;
+			public override SimpleNameSyntax? VisitMemberBindingExpression(MemberBindingExpressionSyntax node) => node.Name;
 		}
 
 		sealed class IsContainedInExpressionTreeVisitor : CSharpSyntaxVisitor<bool?>

@@ -5,7 +5,7 @@ namespace WTG.Analyzers.Utils
 {
 	public static class AttributeUtils
 	{
-		public static ExpressionSyntax GetArgumentValue(this AttributeSyntax att, int index)
+		public static ExpressionSyntax? GetArgumentValue(this AttributeSyntax att, int index)
 		{
 			var arguments = att.ArgumentList.Arguments;
 
@@ -24,7 +24,7 @@ namespace WTG.Analyzers.Utils
 			return arg.Expression;
 		}
 
-		public static ExpressionSyntax GetPropertyValue(this AttributeSyntax att, string name)
+		public static ExpressionSyntax? GetPropertyValue(this AttributeSyntax att, string name)
 		{
 			var arguments = att.ArgumentList.Arguments;
 
