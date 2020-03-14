@@ -50,7 +50,7 @@ namespace WTG.Analyzers
 					break;
 			}
 
-			return Task.FromResult<object>(null);
+			return Task.CompletedTask;
 		}
 
 		static async Task<Document> ReplaceWithVar(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

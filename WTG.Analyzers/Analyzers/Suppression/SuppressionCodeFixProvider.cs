@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
@@ -31,7 +31,7 @@ namespace WTG.Analyzers
 					equivalenceKey: "RemoveSuppression"),
 				diagnostic);
 
-			return Task.FromResult<object>(null);
+			return Task.CompletedTask;
 		}
 
 		static async Task<Document> RemoveSuppresson(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

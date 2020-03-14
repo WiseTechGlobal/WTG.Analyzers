@@ -32,7 +32,7 @@ namespace WTG.Analyzers
 					equivalenceKey: "ReplaceWithIfThrowCheck"),
 				diagnostic: diagnostic);
 
-			return Task.FromResult<object>(null);
+			return Task.CompletedTask;
 		}
 
 		static async Task<Document> Fix(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

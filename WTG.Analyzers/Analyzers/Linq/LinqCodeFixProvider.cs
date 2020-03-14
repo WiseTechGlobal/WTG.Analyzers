@@ -38,7 +38,7 @@ namespace WTG.Analyzers
 					equivalenceKey: equivalenceKey),
 				diagnostic: diagnostic);
 
-			return Task.FromResult<object>(null);
+			return Task.CompletedTask;
 		}
 
 		static async Task<Document> ReplaceWithMemberReference(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

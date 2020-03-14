@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
@@ -45,7 +45,7 @@ namespace WTG.Analyzers
 					break;
 			}
 
-			return Task.FromResult<object>(null);
+			return Task.CompletedTask;
 		}
 
 		static async Task<Document> RemoveKeyword(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

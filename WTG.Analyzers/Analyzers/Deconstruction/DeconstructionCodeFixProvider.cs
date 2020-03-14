@@ -38,7 +38,7 @@ namespace WTG.Analyzers
 					break;
 			}
 
-			return Task.FromResult<object>(null);
+			return Task.CompletedTask;
 		}
 
 		static async Task<Document> MoveVarOutsideDeconstructionsAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

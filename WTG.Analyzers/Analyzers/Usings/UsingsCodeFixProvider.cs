@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -32,7 +32,7 @@ namespace WTG.Analyzers
 					equivalenceKey: "RearrangeUsingsByKind"),
 				diagnostic);
 
-			return Task.FromResult<object>(null);
+			return Task.CompletedTask;
 		}
 
 		static async Task<Document> FixBySortingUsingsAsync(Diagnostic diagnostic, Document document, CancellationToken cancellationToken)

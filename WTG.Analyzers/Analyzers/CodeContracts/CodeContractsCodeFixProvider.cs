@@ -38,7 +38,7 @@ namespace WTG.Analyzers
 				}
 			}
 
-			return Task.FromResult<object>(null);
+			return Task.CompletedTask;
 		}
 
 		static async Task RegisterCodeFixesForRequiresAsync(CodeFixContext context, Diagnostic diagnostic)

@@ -56,7 +56,7 @@ namespace WTG.Analyzers
 					break;
 			}
 
-			return Task.FromResult<object>(null);
+			return Task.CompletedTask;
 		}
 
 		static async Task<Document> FixTrailingWhitespace(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
