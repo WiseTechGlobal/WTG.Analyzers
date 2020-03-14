@@ -5,6 +5,7 @@
     <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
     <OutputPath>..\bin</OutputPath>
     <NuspecFile>..\WTG.Analyzers.TestFramework.nuspec</NuspecFile>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.8.0" />

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -68,7 +68,7 @@ namespace WTG.Analyzers.TestFramework
 			return 0;
 		}
 
-		static int Compare(DiagnosticResultLocation x, DiagnosticResultLocation y)
+		static int Compare(DiagnosticResultLocation? x, DiagnosticResultLocation? y)
 		{
 			if (x == null)
 			{

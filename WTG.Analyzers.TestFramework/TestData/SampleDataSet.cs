@@ -66,8 +66,8 @@ namespace WTG.Analyzers.TestFramework
 
 		static SampleDataSet GetSampleData(Assembly assembly, string name, IEnumerable<KeyValuePair<string, string>> resourceNames)
 		{
-			string source = null;
-			string result = null;
+			string? source = null;
+			string? result = null;
 			var diagnostics = ImmutableArray<DiagnosticResult>.Empty;
 			var suppressedIds = ImmutableHashSet<string>.Empty;
 			var languageVersion = LanguageVersion.Default;
@@ -90,10 +90,16 @@ namespace WTG.Analyzers.TestFramework
 				}
 			}
 
-			return new SampleDataSet(name, languageVersion, source ?? string.Empty, result ?? source ?? string.Empty, diagnostics, suppressedIds);
+			return new SampleDataSet(
+				name,
+				languageVersion,
+				source ?? string.Empty,
+				result ?? source ?? string.Empty,
+				diagnostics,
+				suppressedIds);
 		}
 
-		static string LoadResource(Assembly assembly, string name)
+		static string? LoadResource(Assembly assembly, string name)
 		{
 			using var stream = assembly.GetManifestResourceStream(name);
 
@@ -127,10 +133,13 @@ namespace WTG.Analyzers.TestFramework
 
 		static DiagnosticResult LoadResult(XElement element)
 		{
+			var id = GetStringValue(element, "id") ?? throw new FormatException("Could not find a suitable 'id' attribute.");
+			var message = GetStringValue(element, "message") ?? throw new FormatException("Could not find a suitable 'message' attribute.");
+
 			return new DiagnosticResult(
-				GetStringValue(element, "id"),
+				id,
 				GetEnumValue<DiagnosticSeverity>(element, "severity"),
-				GetStringValue(element, "message"),
+				message,
 				element.Elements("location").Select(LoadLocation).ToImmutableArray());
 		}
 
@@ -140,7 +149,7 @@ namespace WTG.Analyzers.TestFramework
 			return (T)Enum.Parse(typeof(T), GetStringValue(element, name));
 		}
 
-		static string GetStringValue(XElement element, string name)
+		static string? GetStringValue(XElement element, string name)
 		{
 			while (element != null)
 			{

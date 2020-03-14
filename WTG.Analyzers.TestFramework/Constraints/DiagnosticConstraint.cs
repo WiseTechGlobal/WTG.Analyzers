@@ -32,7 +32,7 @@ namespace WTG.Analyzers.TestFramework
 
 		ConstraintResult ApplyTo(IEnumerable<DiagnosticResult> actual, IEnumerable<DiagnosticResult> expected)
 		{
-			var result = new List<Tuple<DiagnosticResult, DiagnosticResult>>();
+			var result = new List<Tuple<DiagnosticResult?, DiagnosticResult?>>();
 
 			using (var a = actual.OrderBy(x => x, DiagnosticResultComparer.Instance).GetEnumerator())
 			using (var e = expected.OrderBy(x => x, DiagnosticResultComparer.Instance).GetEnumerator())
@@ -46,12 +46,12 @@ namespace WTG.Analyzers.TestFramework
 
 					if (diff < 0)
 					{
-						result.Add(Tuple.Create<DiagnosticResult, DiagnosticResult>(a.Current, null));
+						result.Add(Tuple.Create<DiagnosticResult?, DiagnosticResult?>(a.Current, null));
 						hasActual = a.MoveNext();
 					}
 					else if (diff > 0)
 					{
-						result.Add(Tuple.Create<DiagnosticResult, DiagnosticResult>(null, e.Current));
+						result.Add(Tuple.Create<DiagnosticResult?, DiagnosticResult?>(null, e.Current));
 						hasExpected = e.MoveNext();
 					}
 					else
@@ -65,7 +65,7 @@ namespace WTG.Analyzers.TestFramework
 				{
 					do
 					{
-						result.Add(Tuple.Create<DiagnosticResult, DiagnosticResult>(a.Current, null));
+						result.Add(Tuple.Create<DiagnosticResult?, DiagnosticResult?>(a.Current, null));
 					}
 					while (a.MoveNext());
 				}
@@ -73,7 +73,7 @@ namespace WTG.Analyzers.TestFramework
 				{
 					do
 					{
-						result.Add(Tuple.Create<DiagnosticResult, DiagnosticResult>(null, e.Current));
+						result.Add(Tuple.Create<DiagnosticResult?, DiagnosticResult?>(null, e.Current));
 					}
 					while (e.MoveNext());
 				}
@@ -89,7 +89,7 @@ namespace WTG.Analyzers.TestFramework
 
 		sealed class DiagnosticConstraintResult : ConstraintResult
 		{
-			public DiagnosticConstraintResult(Constraint constraint, List<Tuple<DiagnosticResult, DiagnosticResult>> differences)
+			public DiagnosticConstraintResult(Constraint constraint, List<Tuple<DiagnosticResult?, DiagnosticResult?>> differences)
 				: base(constraint, differences)
 			{
 				this.differences = differences;
@@ -102,7 +102,7 @@ namespace WTG.Analyzers.TestFramework
 					if (tuple.Item1 == null)
 					{
 						writer.Write('-');
-						Write(writer, tuple.Item2);
+						Write(writer, tuple.Item2!);
 					}
 					else
 					{
@@ -135,7 +135,7 @@ namespace WTG.Analyzers.TestFramework
 				}
 			}
 
-			readonly List<Tuple<DiagnosticResult, DiagnosticResult>> differences;
+			readonly List<Tuple<DiagnosticResult?, DiagnosticResult?>> differences;
 		}
 	}
 }
