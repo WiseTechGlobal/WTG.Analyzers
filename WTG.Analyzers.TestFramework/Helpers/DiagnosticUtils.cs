@@ -54,13 +54,24 @@ namespace WTG.Analyzers.TestFramework
 		{
 			var descriptor = diag.Descriptor;
 
-			return descriptor.DefaultSeverity == DiagnosticSeverity.Error
-				&& descriptor.CustomTags.Any(x => CriticalTags.Contains(x));
-		}
+			foreach (var tag in descriptor.CustomTags)
+			{
+				switch (tag)
+				{
+					case WellKnownDiagnosticTags.AnalyzerException:
+						return true;
 
-		static readonly ImmutableHashSet<string> CriticalTags = ImmutableHashSet.Create(
-			WellKnownDiagnosticTags.Build,
-			WellKnownDiagnosticTags.Compiler,
-			WellKnownDiagnosticTags.AnalyzerException);
+					case WellKnownDiagnosticTags.Build:
+					case WellKnownDiagnosticTags.Compiler:
+						if (descriptor.DefaultSeverity == DiagnosticSeverity.Error)
+						{
+							return true;
+						}
+						break;
+				}
+			}
+
+			return false;
+		}
 	}
 }
