@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -7,7 +7,7 @@ namespace WTG.Analyzers
 	sealed class CountLinqMethod : LinqMethod
 	{
 		public override bool IsMatch(IMethodSymbol method) => IsEnumerableLinqMethod(method, nameof(Enumerable.Count), 1);
-		public override LinqResolution GetResolution(ITypeSymbol sourceType)
+		public override LinqResolution? GetResolution(ITypeSymbol sourceType)
 		{
 			if (sourceType.Kind == SymbolKind.ArrayType)
 			{

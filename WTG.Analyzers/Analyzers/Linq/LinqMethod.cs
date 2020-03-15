@@ -14,7 +14,7 @@ namespace WTG.Analyzers
 		public static LinqMethod ElementAt { get; } = new ElementAtLinqMethod();
 		public static LinqMethod First { get; } = new FirstLinqMethod();
 
-		public static LinqMethod Find(string methodName)
+		public static LinqMethod? Find(string methodName)
 		{
 			return methodName switch
 			{
@@ -31,7 +31,7 @@ namespace WTG.Analyzers
 		}
 
 		public abstract bool IsMatch(IMethodSymbol method);
-		public abstract LinqResolution GetResolution(ITypeSymbol sourceType);
+		public abstract LinqResolution? GetResolution(ITypeSymbol sourceType);
 
 		protected static bool IsEnumerableLinqMethod(IMethodSymbol method, string methodName, int paramCount)
 		{
@@ -101,7 +101,7 @@ namespace WTG.Analyzers
 		/// </summary>
 		static Location GetInvokeLocation(InvocationExpressionSyntax invoke)
 		{
-			var name = ExpressionHelper.GetMethodName(invoke);
+			var name = ExpressionHelper.GetMethodName(invoke)!;
 			var argSpan = invoke.ArgumentList.Span;
 
 			return Location.Create(

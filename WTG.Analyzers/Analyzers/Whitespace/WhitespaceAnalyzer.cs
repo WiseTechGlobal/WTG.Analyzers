@@ -32,7 +32,7 @@ namespace WTG.Analyzers
 			}
 
 			var root = context.Tree.GetRoot(context.CancellationToken);
-			List<Location> brokenIndentation = null;
+			List<Location>? brokenIndentation = null;
 
 			foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
 			{

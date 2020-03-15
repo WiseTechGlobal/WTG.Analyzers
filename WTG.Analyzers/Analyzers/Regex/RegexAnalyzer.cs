@@ -95,7 +95,7 @@ namespace WTG.Analyzers
 			return false;
 		}
 
-		sealed class FlagLocator : CSharpSyntaxVisitor<Location>
+		sealed class FlagLocator : CSharpSyntaxVisitor<Location?>
 		{
 			public FlagLocator(SemanticModel semanticModel, CancellationToken cancellationToken)
 			{
@@ -103,11 +103,11 @@ namespace WTG.Analyzers
 				this.cancellationToken = cancellationToken;
 			}
 
-			public override Location DefaultVisit(SyntaxNode node) => null;
-			public override Location VisitParenthesizedExpression(ParenthesizedExpressionSyntax node) => node.Expression.Accept(this);
-			public override Location VisitArgument(ArgumentSyntax node) => node.Expression.Accept(this);
+			public override Location? DefaultVisit(SyntaxNode node) => null;
+			public override Location? VisitParenthesizedExpression(ParenthesizedExpressionSyntax node) => node.Expression.Accept(this);
+			public override Location? VisitArgument(ArgumentSyntax node) => node.Expression.Accept(this);
 
-			public override Location VisitBinaryExpression(BinaryExpressionSyntax node)
+			public override Location? VisitBinaryExpression(BinaryExpressionSyntax node)
 			{
 				switch (node.Kind())
 				{
@@ -120,7 +120,7 @@ namespace WTG.Analyzers
 				}
 			}
 
-			public override Location VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+			public override Location? VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
 			{
 				if (node.Name.Identifier.Text == nameof(RegexOptions.Compiled))
 				{

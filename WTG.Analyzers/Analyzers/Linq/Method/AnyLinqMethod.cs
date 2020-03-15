@@ -10,7 +10,7 @@ namespace WTG.Analyzers
 	{
 		public override bool IsMatch(IMethodSymbol method) => IsEnumerableLinqMethod(method, nameof(Enumerable.Any), 1);
 
-		public override LinqResolution GetResolution(ITypeSymbol sourceType)
+		public override LinqResolution? GetResolution(ITypeSymbol sourceType)
 		{
 			if (sourceType.Kind == SymbolKind.ArrayType)
 			{

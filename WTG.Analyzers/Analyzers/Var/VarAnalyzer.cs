@@ -58,7 +58,7 @@ namespace WTG.Analyzers
 
 			var model = context.SemanticModel;
 			var typeSymbol = (ITypeSymbol)model.GetSymbolInfo(candidate.Type, context.CancellationToken).Symbol;
-			var expressionType = model.GetTypeInfo(candidate.ValueSource, context.CancellationToken).Type;
+			ITypeSymbol? expressionType = model.GetTypeInfo(candidate.ValueSource, context.CancellationToken).Type;
 
 			if (typeSymbol == null || expressionType == null)
 			{
@@ -94,7 +94,7 @@ namespace WTG.Analyzers
 			}
 
 			var invoke = (InvocationExpressionSyntax)context.Node;
-			IMethodSymbol knownMethod = null;
+			IMethodSymbol? knownMethod = null;
 
 			foreach (var arg in invoke.ArgumentList.Arguments)
 			{
@@ -212,16 +212,16 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool TypeEquals(ITypeSymbol x, ITypeSymbol y)
+		static bool TypeEquals(ITypeSymbol? x, ITypeSymbol? y)
 		{
 			return x == y || (x != null && x.Equals(y));
 		}
 
-		sealed class Visitor : CSharpSyntaxVisitor<Candidate>
+		sealed class Visitor : CSharpSyntaxVisitor<Candidate?>
 		{
 			public static Visitor Instance { get; } = new Visitor();
 
-			public override Candidate VisitForEachStatement(ForEachStatementSyntax node)
+			public override Candidate? VisitForEachStatement(ForEachStatementSyntax node)
 			{
 				if (!node.Type.IsVar)
 				{
@@ -231,12 +231,12 @@ namespace WTG.Analyzers
 				return null;
 			}
 
-			public override Candidate VisitForStatement(ForStatementSyntax node)
+			public override Candidate? VisitForStatement(ForStatementSyntax node)
 			{
 				return ExtractFromVariableDecl(node.Declaration);
 			}
 
-			public override Candidate VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
+			public override Candidate? VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
 			{
 				if (node.IsConst)
 				{
@@ -246,12 +246,12 @@ namespace WTG.Analyzers
 				return ExtractFromVariableDecl(node.Declaration);
 			}
 
-			public override Candidate VisitUsingStatement(UsingStatementSyntax node)
+			public override Candidate? VisitUsingStatement(UsingStatementSyntax node)
 			{
 				return ExtractFromVariableDecl(node.Declaration);
 			}
 
-			static Candidate ExtractFromVariableDecl(VariableDeclarationSyntax decl)
+			static Candidate? ExtractFromVariableDecl(VariableDeclarationSyntax decl)
 			{
 				if (decl != null && !decl.Type.IsVar && decl.Variables.Count == 1)
 				{

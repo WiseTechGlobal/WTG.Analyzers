@@ -114,7 +114,7 @@ namespace WTG.Analyzers
 		HashSet<string> ConstructMemberSet(string id, int length)
 		{
 			var set = new HashSet<string>();
-			StringBuilder builder = null;
+			StringBuilder? builder = null;
 			var len = 0;
 
 			foreach (var scope in EnumerateMatchingTypes(id, length))
@@ -262,7 +262,7 @@ namespace WTG.Analyzers
 			WriteMemberSymbolCore(builder, symbol, null);
 		}
 
-		static void WriteMemberSymbolCore(StringBuilder builder, ISymbol memberSymbol, ISymbol explicitSymbol)
+		static void WriteMemberSymbolCore(StringBuilder builder, ISymbol memberSymbol, ISymbol? explicitSymbol)
 		{
 			if (explicitSymbol != null)
 			{

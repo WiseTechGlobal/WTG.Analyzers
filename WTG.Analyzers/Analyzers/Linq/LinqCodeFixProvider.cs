@@ -58,7 +58,7 @@ namespace WTG.Analyzers
 
 		static ExpressionSyntax UpdateInvoke(SemanticModel model, InvocationExpressionSyntax invoke)
 		{
-			return LinqUtils.GetResolution(model, invoke).ApplyFix(invoke);
+			return LinqUtils.GetResolution(model, invoke)!.ApplyFix(invoke);
 		}
 	}
 }

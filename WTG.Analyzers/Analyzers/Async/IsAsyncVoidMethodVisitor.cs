@@ -61,13 +61,14 @@ namespace WTG.Analyzers
 				if (model.GetTypeInfo(node).ConvertedType is INamedTypeSymbol type &&
 					type.Kind != SymbolKind.ErrorType)
 				{
-					return GetInvokeMethod(type).ReturnsVoid;
+					var methodSymbol = GetInvokeMethod(type);
+					return methodSymbol != null && methodSymbol.ReturnsVoid;
 				}
 
 				return false;
 			}
 
-			static IMethodSymbol GetInvokeMethod(INamedTypeSymbol delegateType)
+			static IMethodSymbol? GetInvokeMethod(INamedTypeSymbol delegateType)
 			{
 				foreach (var member in delegateType.GetMembers())
 				{

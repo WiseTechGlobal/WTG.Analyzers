@@ -55,7 +55,8 @@ namespace WTG.Analyzers
 			{
 				if (node == null)
 				{
-					return null;
+					// Roslyn will occasionally pass null in, and when that happens, the only thing we can do is return null.
+					return null!;
 				}
 				else if (node == syntax)
 				{

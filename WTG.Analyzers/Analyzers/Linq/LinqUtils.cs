@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -9,7 +9,7 @@ namespace WTG.Analyzers
 		/// <summary>
 		/// This can only work if you have already ruled out the possibility that you might be invoking a delegate.
 		/// </summary>
-		public static ExpressionSyntax GetInstanceExpression(InvocationExpressionSyntax invoke)
+		public static ExpressionSyntax? GetInstanceExpression(InvocationExpressionSyntax invoke)
 		{
 			var inner = invoke.Expression;
 			var kind = inner.Kind();
@@ -22,7 +22,7 @@ namespace WTG.Analyzers
 			return null;
 		}
 
-		public static LinqResolution GetResolution(SemanticModel model, InvocationExpressionSyntax invoke)
+		public static LinqResolution? GetResolution(SemanticModel model, InvocationExpressionSyntax invoke)
 		{
 			var symbol = (IMethodSymbol)model.GetSymbolInfo(invoke).Symbol;
 
@@ -31,7 +31,7 @@ namespace WTG.Analyzers
 				: GetInstanceExpression(invoke);
 
 			var sourceType = model.GetTypeInfo(sourceExpression).Type;
-			return LinqMethod.Find(symbol.Name).GetResolution(sourceType.OriginalDefinition);
+			return LinqMethod.Find(symbol.Name)?.GetResolution(sourceType.OriginalDefinition);
 		}
 	}
 }

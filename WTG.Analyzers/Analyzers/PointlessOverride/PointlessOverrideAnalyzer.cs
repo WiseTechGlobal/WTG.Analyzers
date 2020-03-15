@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -79,6 +80,8 @@ namespace WTG.Analyzers
 		static bool IsBaseMemberAccess(MemberAccessExpressionSyntax node)
 			=> node.Expression.IsKind(SyntaxKind.BaseExpression);
 
+		static bool IsKind([NotNullWhen(true)] SyntaxNode? node, SyntaxKind kind) => node.IsKind(kind);
+
 		sealed class IsMeaningfulVisitor : CSharpSyntaxVisitor<bool>
 		{
 			public static IsMeaningfulVisitor Instance { get; } = new IsMeaningfulVisitor();
@@ -152,9 +155,9 @@ namespace WTG.Analyzers
 
 				return false;
 
-				bool IsMatchingSelf(ExpressionSyntax expression)
+				bool IsMatchingSelf(ExpressionSyntax? expression)
 				{
-					if (!expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+					if (!IsKind(expression, SyntaxKind.SimpleMemberAccessExpression))
 					{
 						return false;
 					}
@@ -210,9 +213,9 @@ namespace WTG.Analyzers
 
 				return false;
 
-				bool IsMatchingSelf(ExpressionSyntax expression)
+				bool IsMatchingSelf(ExpressionSyntax? expression)
 				{
-					if (!expression.IsKind(SyntaxKind.ElementAccessExpression))
+					if (!IsKind(expression, SyntaxKind.ElementAccessExpression))
 					{
 						return false;
 					}
@@ -264,9 +267,9 @@ namespace WTG.Analyzers
 
 				return false;
 
-				bool IsMatchingSelf(ExpressionSyntax expression)
+				bool IsMatchingSelf(ExpressionSyntax? expression)
 				{
-					if (!expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+					if (!IsKind(expression, SyntaxKind.SimpleMemberAccessExpression))
 					{
 						return false;
 					}
@@ -282,9 +285,9 @@ namespace WTG.Analyzers
 				}
 			}
 
-			static ExpressionSyntax GetAssignmentTarget(ExpressionSyntax expression, SyntaxKind kind = SyntaxKind.SimpleAssignmentExpression)
+			static ExpressionSyntax? GetAssignmentTarget(ExpressionSyntax? expression, SyntaxKind kind = SyntaxKind.SimpleAssignmentExpression)
 			{
-				if (expression.IsKind(kind))
+				if (IsKind(expression, kind))
 				{
 					var assignment = (AssignmentExpressionSyntax)expression;
 
@@ -354,7 +357,7 @@ namespace WTG.Analyzers
 				=> declaration.Identifier.Text == expression.Name.Identifier.Text;
 		}
 
-		sealed class SolitaryExpressionLocator : CSharpSyntaxVisitor<ExpressionSyntax>
+		sealed class SolitaryExpressionLocator : CSharpSyntaxVisitor<ExpressionSyntax?>
 		{
 			public static SolitaryExpressionLocator Instance { get; } = new SolitaryExpressionLocator();
 
@@ -362,15 +365,15 @@ namespace WTG.Analyzers
 			{
 			}
 
-			public override ExpressionSyntax DefaultVisit(SyntaxNode node) => null;
+			public override ExpressionSyntax? DefaultVisit(SyntaxNode node) => null;
 
-			public override ExpressionSyntax VisitMethodDeclaration(MethodDeclarationSyntax node)
+			public override ExpressionSyntax? VisitMethodDeclaration(MethodDeclarationSyntax node)
 				=> node.ExpressionBody?.Accept(this) ?? node.Body?.Accept(this);
 
-			public override ExpressionSyntax VisitAccessorDeclaration(AccessorDeclarationSyntax node)
+			public override ExpressionSyntax? VisitAccessorDeclaration(AccessorDeclarationSyntax node)
 				=> node.ExpressionBody?.Accept(this) ?? node.Body?.Accept(this);
 
-			public override ExpressionSyntax VisitBlock(BlockSyntax node)
+			public override ExpressionSyntax? VisitBlock(BlockSyntax node)
 			{
 				if (node.Statements.Count == 1)
 				{
@@ -380,7 +383,7 @@ namespace WTG.Analyzers
 				return null;
 			}
 
-			public override ExpressionSyntax VisitAwaitExpression(AwaitExpressionSyntax node)
+			public override ExpressionSyntax? VisitAwaitExpression(AwaitExpressionSyntax node)
 			{
 				if (node.Expression.IsKind(SyntaxKind.InvocationExpression))
 				{
@@ -400,10 +403,10 @@ namespace WTG.Analyzers
 				return node.Expression.Accept(this);
 			}
 
-			public override ExpressionSyntax VisitArrowExpressionClause(ArrowExpressionClauseSyntax node) => node.Expression?.Accept(this);
-			public override ExpressionSyntax VisitExpressionStatement(ExpressionStatementSyntax node) => node.Expression?.Accept(this);
-			public override ExpressionSyntax VisitParenthesizedExpression(ParenthesizedExpressionSyntax node) => node.Expression?.Accept(this);
-			public override ExpressionSyntax VisitReturnStatement(ReturnStatementSyntax node) => node.Expression?.Accept(this);
+			public override ExpressionSyntax? VisitArrowExpressionClause(ArrowExpressionClauseSyntax node) => node.Expression?.Accept(this);
+			public override ExpressionSyntax? VisitExpressionStatement(ExpressionStatementSyntax node) => node.Expression?.Accept(this);
+			public override ExpressionSyntax? VisitParenthesizedExpression(ParenthesizedExpressionSyntax node) => node.Expression?.Accept(this);
+			public override ExpressionSyntax? VisitReturnStatement(ReturnStatementSyntax node) => node.Expression?.Accept(this);
 
 			public override ExpressionSyntax VisitAssignmentExpression(AssignmentExpressionSyntax node) => node;
 			public override ExpressionSyntax VisitElementAccessExpression(ElementAccessExpressionSyntax node) => node;

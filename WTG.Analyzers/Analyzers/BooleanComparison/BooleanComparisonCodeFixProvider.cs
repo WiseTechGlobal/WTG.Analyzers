@@ -56,7 +56,7 @@ namespace WTG.Analyzers
 				newNode = node.Left.WithTrailingTrivia(discardNode.GetTrailingTrivia());
 			}
 
-			var comparand = BoolLiteralVisitor.Instance.Visit(discardNode).Value;
+			var comparand = BoolLiteralVisitor.Instance.Visit(discardNode).GetValueOrDefault();
 			var isEquality = node.OperatorToken.IsKind(SyntaxKind.EqualsEqualsToken);
 
 			if (isEquality != comparand)
