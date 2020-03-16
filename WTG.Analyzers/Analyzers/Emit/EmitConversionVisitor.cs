@@ -45,7 +45,7 @@ namespace WTG.Analyzers
 
 		public override ExpressionSyntax VisitCastExpression(CastExpressionSyntax node) => node.Expression.Accept(this);
 
-		TypeSyntax GetCastType()
+		TypeSyntax? GetCastType()
 		{
 			return operandType switch
 			{

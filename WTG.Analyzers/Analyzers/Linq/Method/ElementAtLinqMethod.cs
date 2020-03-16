@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using WTG.Analyzers.Utils;
@@ -8,7 +8,7 @@ namespace WTG.Analyzers
 	sealed class ElementAtLinqMethod : LinqMethod
 	{
 		public override bool IsMatch(IMethodSymbol method) => IsEnumerableLinqMethod(method, nameof(Enumerable.ElementAt), 2);
-		public override LinqResolution GetResolution(ITypeSymbol sourceType)
+		public override LinqResolution? GetResolution(ITypeSymbol sourceType)
 		{
 			if (sourceType.Kind == SymbolKind.ArrayType || HasIndexer(sourceType))
 			{
@@ -44,7 +44,7 @@ namespace WTG.Analyzers
 				else
 				{
 					return ExpressionSyntaxFactory.CreateElementAccessExpression(
-						LinqUtils.GetInstanceExpression(invoke),
+						LinqUtils.GetInstanceExpression(invoke)!,
 						arguments[0].Expression);
 				}
 			}

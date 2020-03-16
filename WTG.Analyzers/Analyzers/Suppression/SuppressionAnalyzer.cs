@@ -23,7 +23,7 @@ namespace WTG.Analyzers
 
 		static void Analyze(SyntaxNodeAnalysisContext context)
 		{
-			SuppressionTargetLookup lookup = null;
+			SuppressionTargetLookup? lookup = null;
 
 			foreach (var attribute in FindGlobalSuppressionAttributes((CompilationUnitSyntax)context.Node, context.SemanticModel))
 			{
@@ -89,7 +89,7 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool TryDecodeAttribute(AttributeSyntax att, out SuppressionScope scope, out string target)
+		static bool TryDecodeAttribute(AttributeSyntax att, out SuppressionScope scope, [NotNullWhen(true)] out string? target)
 		{
 			if (TryGetStringValue(att.GetPropertyValue(nameof(SuppressMessageAttribute.Scope)), out var scopeStr) &&
 				TryGetStringValue(att.GetPropertyValue(nameof(SuppressMessageAttribute.Target)), out var targetStr))
@@ -108,7 +108,7 @@ namespace WTG.Analyzers
 			return false;
 		}
 
-		static bool TryGetStringValue(ExpressionSyntax expression, out string value)
+		static bool TryGetStringValue(ExpressionSyntax? expression, [NotNullWhen(true)] out string? value)
 		{
 			if (expression is LiteralExpressionSyntax literal)
 			{

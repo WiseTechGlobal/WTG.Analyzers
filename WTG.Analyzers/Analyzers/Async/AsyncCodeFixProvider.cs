@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
@@ -30,7 +30,7 @@ namespace WTG.Analyzers
 					equivalenceKey: "RemoveConfigureAwait"),
 				diagnostic: diagnostic);
 
-			return Task.FromResult<object>(null);
+			return Task.CompletedTask;
 		}
 
 		static async Task<Document> RemoveConfigureAwait(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

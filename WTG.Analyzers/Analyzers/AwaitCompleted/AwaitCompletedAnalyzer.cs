@@ -57,7 +57,7 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool IsAwaitTargetTrivial(SemanticModel model, AwaitExpressionSyntax expression, out ImmutableDictionary<string, string> properties, out Location innerValueLocation, CancellationToken cancellationToken)
+		static bool IsAwaitTargetTrivial(SemanticModel model, AwaitExpressionSyntax expression, out ImmutableDictionary<string, string>? properties, out Location? innerValueLocation, CancellationToken cancellationToken)
 		{
 			if (!TryUnwrapConfigureAwait(model, expression.Expression, out var taskExpression, cancellationToken))
 			{
@@ -144,7 +144,7 @@ namespace WTG.Analyzers
 			return property.IsMatch(WellKnownTypeNames.Task, nameof(Task.CompletedTask));
 		}
 
-		static bool IsCompletedTaskFactoryMethod(SemanticModel model, InvocationExpressionSyntax expression, out ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
+		static bool IsCompletedTaskFactoryMethod(SemanticModel model, InvocationExpressionSyntax expression, out ImmutableDictionary<string, string>? properties, CancellationToken cancellationToken)
 		{
 			if (!expression.Expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
 			{

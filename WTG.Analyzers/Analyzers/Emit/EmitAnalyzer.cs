@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -80,7 +81,7 @@ namespace WTG.Analyzers
 			return false;
 		}
 
-		static bool TryGetOpCodeFieldFromEmitCall(SemanticModel model, InvocationExpressionSyntax emitCall, out IFieldSymbol opCodeSymbol, CancellationToken cancellation)
+		static bool TryGetOpCodeFieldFromEmitCall(SemanticModel model, InvocationExpressionSyntax emitCall, [NotNullWhen(true)] out IFieldSymbol? opCodeSymbol, CancellationToken cancellation)
 		{
 			if (emitCall.ArgumentList.Arguments[0].Accept(FieldAccessor.Instance) is var fieldIdentifier &&
 				fieldIdentifier != null &&

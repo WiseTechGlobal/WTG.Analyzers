@@ -23,7 +23,7 @@ namespace WTG.Analyzers.TestFramework
 
 		public DiagnosticAnalyzer Analyzer { get; }
 		public CodeFixProvider CodeFixProvider { get; }
-		public Func<Diagnostic, bool> DiagnosticFilter { get; set; }
+		public Func<Diagnostic, bool>? DiagnosticFilter { get; set; }
 
 		public async Task VerifyFixAsync(Document document, string newSource)
 		{
@@ -48,13 +48,14 @@ namespace WTG.Analyzers.TestFramework
 			// keep applying fixes until all the problems go away (assuming an upper bound of one fix per issue.)
 			for (var i = 0; i < attempts; ++i)
 			{
-				CodeAction actionToRun = null;
+				CodeAction? actionToRun = null;
 				var diagnosticWithNoActionCount = 0;
 
 				while (actionToRun == null && diagnosticWithNoActionCount < analyzerDiagnostics.Length)
 				{
 					var actions = await RequestFixes(document, analyzerDiagnostics[diagnosticWithNoActionCount]).ConfigureAwait(false);
 					actionToRun = actions.FirstOrDefault();
+
 					if (actionToRun != null)
 					{
 						document = await ApplyFixAsync(document, actionToRun).ConfigureAwait(false);

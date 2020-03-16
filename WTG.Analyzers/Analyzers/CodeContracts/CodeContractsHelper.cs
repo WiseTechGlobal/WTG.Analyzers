@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -14,7 +15,7 @@ namespace WTG.Analyzers
 		public const string DefaultMessage = "Invalid Argument.";
 		public const string NotNullOrEmptyMessage = "Value cannot be null or empty.";
 
-		public static bool IsGenericMethod(InvocationExpressionSyntax invoke, out Location typeLocation)
+		public static bool IsGenericMethod(InvocationExpressionSyntax invoke, [NotNullWhen(true)] out Location? typeLocation)
 		{
 			var access = (MemberAccessExpressionSyntax)invoke.Expression;
 
@@ -108,7 +109,7 @@ namespace WTG.Analyzers
 			static bool IsPrivate(ISymbol symbol) => symbol != null && symbol.DeclaredAccessibility == Accessibility.Private;
 		}
 
-		public static bool IsNullArgumentCheck(SemanticModel semanticModel, InvocationExpressionSyntax invoke, out Location identifierLocation, CancellationToken cancellationToken)
+		public static bool IsNullArgumentCheck(SemanticModel semanticModel, InvocationExpressionSyntax invoke, [NotNullWhen(true)] out Location? identifierLocation, CancellationToken cancellationToken)
 		{
 			var arguments = invoke.ArgumentList.Arguments;
 
@@ -137,7 +138,7 @@ namespace WTG.Analyzers
 			identifierLocation = comparand.GetLocation();
 			return true;
 
-			static ExpressionSyntax GetComparand(ExpressionSyntax condition)
+			static ExpressionSyntax? GetComparand(ExpressionSyntax condition)
 			{
 				if (!condition.IsKind(SyntaxKind.NotEqualsExpression))
 				{
@@ -161,7 +162,7 @@ namespace WTG.Analyzers
 			}
 		}
 
-		public static bool IsNonEmptyStringArgumentCheck(SemanticModel semanticModel, InvocationExpressionSyntax invoke, out Location identifierLocation, CancellationToken cancellationToken)
+		public static bool IsNonEmptyStringArgumentCheck(SemanticModel semanticModel, InvocationExpressionSyntax invoke, [NotNullWhen(true)] out Location? identifierLocation, CancellationToken cancellationToken)
 		{
 			var arguments = invoke.ArgumentList.Arguments;
 
@@ -190,7 +191,7 @@ namespace WTG.Analyzers
 			var checkInvoke = (InvocationExpressionSyntax)expression;
 			var checkArguments = checkInvoke.ArgumentList.Arguments;
 
-			if (ExpressionHelper.GetMethodName(checkInvoke).Identifier.Text != nameof(string.IsNullOrEmpty) ||
+			if (ExpressionHelper.GetMethodName(checkInvoke)?.Identifier.Text != nameof(string.IsNullOrEmpty) ||
 				checkArguments.Count != 1)
 			{
 				identifierLocation = null;
@@ -218,7 +219,7 @@ namespace WTG.Analyzers
 			return true;
 		}
 
-		public static bool AccessesParameter(SemanticModel semanticModel, InvocationExpressionSyntax invoke, out Location identifierLocation, CancellationToken cancellationToken)
+		public static bool AccessesParameter(SemanticModel semanticModel, InvocationExpressionSyntax invoke, [NotNullWhen(true)] out Location? identifierLocation, CancellationToken cancellationToken)
 		{
 			var locator = new ParameterLocator(semanticModel, cancellationToken);
 			invoke.ArgumentList.Accept(locator);
@@ -377,7 +378,7 @@ namespace WTG.Analyzers
 				this.cancellationToken = cancellationToken;
 			}
 
-			public Location ParameterLocation { get; private set; }
+			public Location? ParameterLocation { get; private set; }
 
 			public override void Visit(SyntaxNode node)
 			{

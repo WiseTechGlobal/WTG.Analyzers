@@ -33,7 +33,7 @@ namespace WTG.Analyzers
 					equivalenceKey: "RemoveRegion"),
 				diagnostic);
 
-			return Task.FromResult<object>(null);
+			return Task.CompletedTask;
 		}
 
 		static async Task<Document> RemoveRegionFixAsync(Diagnostic diagnostic, Document document, CancellationToken cancellationToken)

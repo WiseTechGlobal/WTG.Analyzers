@@ -33,7 +33,7 @@ namespace WTG.Analyzers
 					equivalenceKey: "Simplify"),
 				diagnostic: diagnostic);
 
-			return Task.FromResult<object>(null);
+			return Task.CompletedTask;
 		}
 
 		static async Task<Document> Fix(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
@@ -56,7 +56,7 @@ namespace WTG.Analyzers
 				newNode = node.Left.WithTrailingTrivia(discardNode.GetTrailingTrivia());
 			}
 
-			var comparand = BoolLiteralVisitor.Instance.Visit(discardNode).Value;
+			var comparand = BoolLiteralVisitor.Instance.Visit(discardNode).GetValueOrDefault();
 			var isEquality = node.OperatorToken.IsKind(SyntaxKind.EqualsEqualsToken);
 
 			if (isEquality != comparand)

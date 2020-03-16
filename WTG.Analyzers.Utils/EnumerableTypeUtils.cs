@@ -10,7 +10,7 @@ namespace WTG.Analyzers.Utils
 		/// Get the element type from an enumerable using the same logic as foreach
 		/// (foreach does not require the enumerable to implement IEnumerable<>)
 		/// </summary>
-		public static ITypeSymbol GetElementType(ITypeSymbol enumerableType)
+		public static ITypeSymbol? GetElementType(ITypeSymbol enumerableType)
 		{
 			if (enumerableType.Kind == SymbolKind.ArrayType)
 			{
@@ -20,7 +20,7 @@ namespace WTG.Analyzers.Utils
 			return GetExplicitElementType(enumerableType) ?? GetImplicitElementType(enumerableType);
 		}
 
-		static ITypeSymbol GetExplicitElementType(ITypeSymbol enumerableType)
+		static ITypeSymbol? GetExplicitElementType(ITypeSymbol enumerableType)
 		{
 			foreach (var method in enumerableType.GetMembers(nameof(IEnumerable.GetEnumerator)).OfType<IMethodSymbol>())
 			{
@@ -35,7 +35,7 @@ namespace WTG.Analyzers.Utils
 			return null;
 		}
 
-		static ITypeSymbol GetImplicitElementType(ITypeSymbol enumerableType)
+		static ITypeSymbol? GetImplicitElementType(ITypeSymbol enumerableType)
 		{
 			var candidateTypes = Enumerable.ToArray(
 				from iface in enumerableType.AllInterfaces
@@ -43,7 +43,7 @@ namespace WTG.Analyzers.Utils
 				where elementType != null
 				select elementType);
 
-			ITypeSymbol suggestedType = null;
+			ITypeSymbol? suggestedType = null;
 
 			foreach (var type in candidateTypes)
 			{
@@ -61,11 +61,11 @@ namespace WTG.Analyzers.Utils
 			return suggestedType;
 		}
 
-		static ITypeSymbol GetElementTypeFromEnumeratorType(ITypeSymbol enumeratorType)
+		static ITypeSymbol? GetElementTypeFromEnumeratorType(ITypeSymbol enumeratorType)
 		{
 			do
 			{
-				ITypeSymbol itemType = null;
+				ITypeSymbol? itemType = null;
 
 				foreach (var member in enumeratorType.GetMembers())
 				{
@@ -98,7 +98,7 @@ namespace WTG.Analyzers.Utils
 			return null;
 		}
 
-		static ITypeSymbol GetElementTypeFromEnumerableInterface(ITypeSymbol type)
+		static ITypeSymbol? GetElementTypeFromEnumerableInterface(ITypeSymbol type)
 		{
 			if (type is INamedTypeSymbol namedType)
 			{
