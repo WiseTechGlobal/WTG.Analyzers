@@ -289,7 +289,7 @@ namespace WTG.Analyzers
 
 			return CreateGuardClause(
 				condition,
-				ArgumentNullExceptionTypeName,
+				ExceptionTypeSyntax.ArgumentNullExceptionTypeName,
 				argumentList);
 		}
 
@@ -336,7 +336,7 @@ namespace WTG.Analyzers
 		{
 			return CreateGuardClause(
 				condition,
-				ArgumentExceptionTypeName,
+				ExceptionTypeSyntax.ArgumentExceptionTypeName,
 				SyntaxFactory.ArgumentList(
 					SyntaxFactory.SeparatedList(new[]
 					{
@@ -358,17 +358,49 @@ namespace WTG.Analyzers
 				.WithAdditionalAnnotations(Formatter.Annotation);
 		}
 
-		static readonly TypeSyntax ArgumentNullExceptionTypeName =
-			SyntaxFactory.QualifiedName(
-				SyntaxFactory.IdentifierName(nameof(System)),
-				SyntaxFactory.IdentifierName(nameof(ArgumentNullException)))
-			.WithAdditionalAnnotations(Simplifier.Annotation);
+		static class ExceptionTypeSyntax
+		{
+			public static TypeSyntax ArgumentNullExceptionTypeName
+			{
+				get
+				{
+					if (argumentNullExceptionTypeName == null)
+					{
+						Interlocked.CompareExchange(
+							ref argumentNullExceptionTypeName,
+							SyntaxFactory.QualifiedName(
+								SyntaxFactory.IdentifierName(nameof(System)),
+								SyntaxFactory.IdentifierName(nameof(ArgumentNullException)))
+							.WithAdditionalAnnotations(Simplifier.Annotation),
+							null);
+					}
 
-		static readonly TypeSyntax ArgumentExceptionTypeName =
-			SyntaxFactory.QualifiedName(
-				SyntaxFactory.IdentifierName(nameof(System)),
-				SyntaxFactory.IdentifierName(nameof(ArgumentException)))
-			.WithAdditionalAnnotations(Simplifier.Annotation);
+					return argumentNullExceptionTypeName;
+				}
+			}
+
+			public static TypeSyntax ArgumentExceptionTypeName
+			{
+				get
+				{
+					if (argumentExceptionTypeName == null)
+					{
+						Interlocked.CompareExchange(
+							ref argumentExceptionTypeName,
+							SyntaxFactory.QualifiedName(
+								SyntaxFactory.IdentifierName(nameof(System)),
+								SyntaxFactory.IdentifierName(nameof(ArgumentException)))
+							.WithAdditionalAnnotations(Simplifier.Annotation),
+							null);
+					}
+
+					return argumentExceptionTypeName;
+				}
+			}
+
+			static TypeSyntax? argumentNullExceptionTypeName;
+			static TypeSyntax? argumentExceptionTypeName;
+		}
 
 		sealed class ParameterLocator : CSharpSyntaxWalker
 		{
