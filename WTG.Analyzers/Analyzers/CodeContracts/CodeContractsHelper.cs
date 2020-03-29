@@ -306,25 +306,6 @@ namespace WTG.Analyzers
 					: ExpressionSyntaxFactory.CreateLiteral(defaultMessage));
 		}
 
-		public static bool IsCodeContractsSuppression(SemanticModel semanticModel, AttributeSyntax attribute)
-		{
-			var attributeArguments = attribute.ArgumentList?.Arguments;
-
-			if (attributeArguments == null || attributeArguments.Value.Count == 0)
-			{
-				return false;
-			}
-
-			var firstArgument = attributeArguments.Value[0];
-			if (!firstArgument.Expression.IsKind(SyntaxKind.StringLiteralExpression))
-			{
-				return false;
-			}
-
-			var literal = semanticModel.GetConstantValue(firstArgument.Expression);
-			return literal.HasValue && literal.Value is string literalValue && literalValue == "Microsoft.Contracts";
-		}
-
 		public static SyntaxNode WithElasticTriviaFrom(SyntaxNode target, SyntaxNode source)
 		{
 			return target

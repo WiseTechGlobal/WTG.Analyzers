@@ -18,7 +18,7 @@
       - Revision should be incremented whenever you want to publish a new version.
       -->
     <Version Condition="'$(APPVEYOR_BUILD_VERSION)' != ''">$(APPVEYOR_BUILD_VERSION)</Version>
-    <ShortVersion>2.0.8</ShortVersion>
+    <ShortVersion>2.10.0</ShortVersion>
     <Version Condition="'$(Version)' == ''">$(ShortVersion).0</Version>
 
     <Company>WiseTech Global Pty Ltd</Company>

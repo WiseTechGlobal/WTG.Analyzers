@@ -38,7 +38,7 @@ namespace WTG.Analyzers
 
 			Location location;
 
-			if (attributeSymbol.ContainingType.IsMatch("System.Diagnostics.CodeAnalysis.SuppressMessageAttribute") && CodeContractsHelper.IsCodeContractsSuppression(context.SemanticModel, attributeNode))
+			if (attributeSymbol.ContainingType.IsMatch("System.Diagnostics.CodeAnalysis.SuppressMessageAttribute") && IsCodeContractsSuppression(context.SemanticModel, attributeNode))
 			{
 				location = AttributeUtils.GetLocation(attributeNode);
 			}
@@ -121,6 +121,25 @@ namespace WTG.Analyzers
 				: invoke.GetLocation();
 
 			context.ReportDiagnostic(Diagnostic.Create(Rules.DoNotUseCodeContractsRule, location, properties));
+		}
+
+		static bool IsCodeContractsSuppression(SemanticModel semanticModel, AttributeSyntax attribute)
+		{
+			var attributeArguments = attribute.ArgumentList?.Arguments;
+
+			if (attributeArguments == null || attributeArguments.Value.Count == 0)
+			{
+				return false;
+			}
+
+			var firstArgument = attributeArguments.Value[0];
+			if (!firstArgument.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+			{
+				return false;
+			}
+
+			var literal = semanticModel.GetConstantValue(firstArgument.Expression);
+			return literal.HasValue && literal.Value is string literalValue && literalValue == "Microsoft.Contracts";
 		}
 
 		static Location GetAttributedMemberLocation(AttributeSyntax attribute, SyntaxKind expectedKind)
