@@ -27,16 +27,22 @@ namespace WTG.Analyzers
 		{
 			if (node.Kind() == SyntaxKind.NumericLiteralExpression)
 			{
-				switch (operandType)
+				try
 				{
-					case OpCodeOperand.InlineI:
-						return ExpressionSyntaxFactory.CreateLiteral(Convert.ToInt32(node.Token.Value, CultureInfo.InvariantCulture));
-					case OpCodeOperand.InlineI8:
-						return ExpressionSyntaxFactory.CreateLiteral(Convert.ToInt64(node.Token.Value, CultureInfo.InvariantCulture));
-					case OpCodeOperand.ShortInlineR:
-						return ExpressionSyntaxFactory.CreateLiteral(Convert.ToSingle(node.Token.Value, CultureInfo.InvariantCulture));
-					case OpCodeOperand.InlineR:
-						return ExpressionSyntaxFactory.CreateLiteral(Convert.ToDouble(node.Token.Value, CultureInfo.InvariantCulture));
+					switch (operandType)
+					{
+						case OpCodeOperand.InlineI:
+							return ExpressionSyntaxFactory.CreateLiteral(Convert.ToInt32(node.Token.Value, CultureInfo.InvariantCulture));
+						case OpCodeOperand.InlineI8:
+							return ExpressionSyntaxFactory.CreateLiteral(Convert.ToInt64(node.Token.Value, CultureInfo.InvariantCulture));
+						case OpCodeOperand.ShortInlineR:
+							return ExpressionSyntaxFactory.CreateLiteral(Convert.ToSingle(node.Token.Value, CultureInfo.InvariantCulture));
+						case OpCodeOperand.InlineR:
+							return ExpressionSyntaxFactory.CreateLiteral(Convert.ToDouble(node.Token.Value, CultureInfo.InvariantCulture));
+					}
+				}
+				catch (OverflowException)
+				{
 				}
 			}
 
