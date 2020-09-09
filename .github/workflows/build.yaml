@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ windows-latest, macos-latest, ubuntu-latest ]
+        os: [ windows-latest ]
         sdk: [ 3.1.402, 5.0.100-preview.8.20417.9 ]
         configuration: [ Debug, Release ]
 
