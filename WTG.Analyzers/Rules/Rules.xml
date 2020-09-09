@@ -27,7 +27,7 @@
 		</rule>
 		<rule id="5" name="UseConsistentLineEndings" severity="Info">
 			<title>Use consistent line endings.</title>
-			<message>All line endings should be using CRLF, this issue usually occures when copying code from another source.</message>
+			<message>All line endings should be using CRLF, this issue usually occurs when copying code from another source.</message>
 			<description>Replace the line ending character sequence with CRLF.</description>
 		</rule>
 		<rule id="6" name="DoNotUseTheInternalKeywordForTopLevelTypes" severity="Hidden">

@@ -101,7 +101,7 @@ namespace WTG.Analyzers
 		public static readonly DiagnosticDescriptor UseConsistentLineEndingsRule = new DiagnosticDescriptor(
 			UseConsistentLineEndingsDiagnosticID,
 			"Use consistent line endings.",
-			"All line endings should be using CRLF, this issue usually occures when copying code from another source.",
+			"All line endings should be using CRLF, this issue usually occurs when copying code from another source.",
 			CodingConventionCategory,
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
@@ -567,7 +567,7 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
-		/// All line endings should be using CRLF, this issue usually occures when copying code from another source.
+		/// All line endings should be using CRLF, this issue usually occurs when copying code from another source.
 		/// </summary>
 		public static Diagnostic CreateUseConsistentLineEndingsDiagnostic(Location location)
 		{
