@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using NUnit.Framework;
+using WTG.Analyzers.TestFramework;
 
 namespace WTG.Analyzers.Utils.Test
 {
@@ -231,7 +232,7 @@ namespace WTG.Analyzers.Utils.Test
 
 			if (reformat)
 			{
-				using var workspace = new AdhocWorkspace();
+				using var workspace = ModelUtils.CreateWorkspace();
 				node = Formatter.Format(node, Formatter.Annotation, workspace);
 			}
 

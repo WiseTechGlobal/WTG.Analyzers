@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace WTG.Analyzers
 							context.ReportDiagnostic(Rules.CreateDoNotLeaveWhitespaceOnTheEndOfTheLineDiagnostic(precedingTrivia.GetLocation()));
 						}
 
-						if (trivia.ToString() != "\r\n")
+						if (trivia.ToString() != Environment.NewLine)
 						{
 							context.ReportDiagnostic(Rules.CreateUseConsistentLineEndingsDiagnostic(trivia.GetLocation()));
 						}
