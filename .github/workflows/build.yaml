@@ -29,6 +29,9 @@ jobs:
     - name: Build WTG.Analyzers
       run: dotnet build --configuration ${{ matrix.configuration }}
 
+    - name: Build NuGet Package
+      run: dotnet pack --configuration ${{ matrix.configuration }} --no-build -p:CommitID=%GITHUB_SHA%s
+
     - name: Run Tests
       if: matrix.configuration == 'Debug'
       run: dotnet test
