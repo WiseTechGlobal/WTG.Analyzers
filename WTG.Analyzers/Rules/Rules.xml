@@ -100,6 +100,11 @@
 			<message>This variable could be confused with a discard.</message>
 			<description>Improve clarity by choosing a better name.</description>
 		</rule>
+		<rule id="18" name="UseNamedArgumentsWhenPassingBooleanLiterals" severity="Info">
+			<title>Boolean literals as method arguments should be passed as named arguments.</title>
+			<message>The meaning of the boolean literal may not be easy to understand at the call-site.</message>
+			<description>Improve clarity by using named arguments.</description>
+		</rule>
 	</category>
 	<category name="Correctness" id="2000">
 		<rule id="1" name="DoNotConfigureAwaitFromAsyncVoid" severity="Error">
