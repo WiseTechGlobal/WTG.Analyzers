@@ -41,9 +41,12 @@ namespace WTG.Analyzers
 			var literal = (LiteralExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
 			var argument = (ArgumentSyntax)literal.Parent;
+			var argumentList = (ArgumentListSyntax)argument.Parent;
+			var index = argumentList.FindIndexOfArgument(argument);
+
 			var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-			if (argument.TryFindCorrespondingParameterSymbol(semanticModel, cancellationToken) is { } argumentSymbol)
+			if (argumentList.TryFindCorrespondingParameterSymbol(index, semanticModel, cancellationToken) is { } argumentSymbol)
 			{
 				root = root.ReplaceNode(
 					argument,

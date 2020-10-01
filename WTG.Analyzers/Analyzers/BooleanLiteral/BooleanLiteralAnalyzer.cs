@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using WTG.Analyzers.Analyzers.BooleanLiteral;
 using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
@@ -48,7 +49,14 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			var argumentSymbol = argument.TryFindCorrespondingParameterSymbol(context.SemanticModel, context.CancellationToken);
+			var argumentList = (ArgumentListSyntax)argument.Parent;
+			var index = argumentList.FindIndexOfArgument(argument);
+			if (index + 1 < argumentList.Arguments.Count && !context.Compilation.IsCSharpVersionOrGreater(LanguageVersion.CSharp7_2))
+			{
+				return;
+			}
+
+			var argumentSymbol = argumentList.TryFindCorrespondingParameterSymbol(index, context.SemanticModel, context.CancellationToken);
 
 			if (argumentSymbol is null || argumentSymbol.OriginalDefinition.Type.TypeKind == TypeKind.TypeParameter)
 			{

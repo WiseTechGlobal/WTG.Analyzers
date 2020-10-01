@@ -6,11 +6,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace WTG.Analyzers
 {
-	static class ArgumentExtensions
+	static class ArgumentListExtensions
 	{
-		public static IParameterSymbol? TryFindCorrespondingParameterSymbol(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken)
+		public static IParameterSymbol? TryFindCorrespondingParameterSymbol(this ArgumentListSyntax argumentList, int index, SemanticModel semanticModel, CancellationToken cancellationToken)
 		{
-			var methodInvocation = argument.FirstAncestorOrSelf<InvocationExpressionSyntax>();
+			var methodInvocation = argumentList.FirstAncestorOrSelf<InvocationExpressionSyntax>();
 			if (methodInvocation is null)
 			{
 				return null;
@@ -22,8 +22,6 @@ namespace WTG.Analyzers
 				return null;
 			}
 
-			var argumentList = (ArgumentListSyntax)argument.Parent;
-			var index = argumentList.FindIndexOfArgument(argument);
 			var argumentSymbol = methodSymbol.Parameters[index];
 			return argumentSymbol;
 		}
