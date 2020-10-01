@@ -4,7 +4,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace WTG.Analyzers.Analyzers.BooleanLiteral
+namespace WTG.Analyzers
 {
 	static class ArgumentExtensions
 	{
