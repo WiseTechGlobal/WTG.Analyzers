@@ -5,10 +5,10 @@ public static class Bob
 
 	public static void Method()
 	{
-		Bar(thing1: TrueConst, thing2: FalseConst);
+		Bar(TrueConst, FalseConst);
 
-		Bar(thing1: TrueConst,
-			thing2: FalseConst);
+		Bar(TrueConst,
+			FalseConst);
 	}
 
 	public static void Bar(bool thing1, bool thing2)
