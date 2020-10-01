@@ -251,8 +251,8 @@ namespace WTG.Analyzers
 
 		public static readonly DiagnosticDescriptor UseNamedArgumentsWhenPassingBooleanLiteralsRule = new DiagnosticDescriptor(
 			UseNamedArgumentsWhenPassingBooleanLiteralsDiagnosticID,
+			"The meaning of boolean literals may not be easy to understand at the call-site.",
 			"Boolean literals as method arguments should be passed as named arguments.",
-			"The meaning of the boolean literal may not be easy to understand at the call-site.",
 			CodingConventionCategory,
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
@@ -689,7 +689,7 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
-		/// The meaning of the boolean literal may not be easy to understand at the call-site.
+		/// Boolean literals as method arguments should be passed as named arguments.
 		/// </summary>
 		public static Diagnostic CreateUseNamedArgumentsWhenPassingBooleanLiteralsDiagnostic(Location location)
 		{
