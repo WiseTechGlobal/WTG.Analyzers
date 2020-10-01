@@ -46,6 +46,7 @@ namespace WTG.Analyzers
 			var argument = (ArgumentSyntax)expression.Parent;
 			if (argument.NameColon != null)
 			{
+				// We already are a named parameter.
 				return;
 			}
 
@@ -53,6 +54,8 @@ namespace WTG.Analyzers
 			var index = argumentList.FindIndexOfArgument(argument);
 			if (index + 1 < argumentList.Arguments.Count && !context.Compilation.IsCSharpVersionOrGreater(LanguageVersion.CSharp7_2))
 			{
+				// C# 7.2 introduced the ability to name parameters other than the last one.
+				// Before that, we probably shouldn't require the user to name all their other parameters, or to upgrade.
 				return;
 			}
 

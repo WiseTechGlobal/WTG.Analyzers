@@ -28,10 +28,11 @@ namespace WTG.Analyzers
 
 		public static int FindIndexOfArgument(this ArgumentListSyntax haystack, ArgumentSyntax needle)
 		{
-			Debug.Assert(needle.Parent == haystack, "Argument should be a child of the ArgumentList.");
+			Debug.Assert(haystack == needle.Parent, "Argument should be a child of the ArgumentList.");
 
 			var i = 0;
 			var enumerator = haystack.Arguments.GetEnumerator();
+
 			while (enumerator.MoveNext())
 			{
 				if (enumerator.Current == needle)
