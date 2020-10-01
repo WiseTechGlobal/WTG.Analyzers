@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using WTG.Analyzers.Utils;
+using WTG.Analyzers.Analyzers.BooleanLiteral;
 
 namespace WTG.Analyzers
 {
@@ -35,11 +35,28 @@ namespace WTG.Analyzers
 			return Task.CompletedTask;
 		}
 
-		static Task<Document> Fix(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		static async Task<Document> Fix(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			_ = diagnostic;
-			_ = cancellationToken;
-			return Task.FromResult(document);
+			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var diagnosticSpan = diagnostic.Location.SourceSpan;
+			var literal = (LiteralExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
+
+			var argument = (ArgumentSyntax)literal.Parent;
+			var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+
+			if (argument.TryFindCorrespondingParameterSymbol(semanticModel, cancellationToken) is { } argumentSymbol)
+			{
+				root = root.ReplaceNode(
+					argument,
+					argument.WithNameColon(
+						SyntaxFactory.NameColon(
+							SyntaxFactory.IdentifierName(argumentSymbol.Name)))
+						.WithTriviaFrom(argument));
+
+				document = document.WithSyntaxRoot(root);
+			}
+
+			return document;
 		}
 	}
 }
