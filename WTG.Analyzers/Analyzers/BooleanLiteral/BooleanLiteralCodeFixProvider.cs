@@ -46,7 +46,7 @@ namespace WTG.Analyzers
 
 			var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-			if (argumentList.TryFindCorrespondingParameterSymbol(index, semanticModel, cancellationToken) is { } argumentSymbol)
+			if (argumentList.TryFindCorrespondingParameterSymbol(semanticModel, index, cancellationToken) is { } argumentSymbol)
 			{
 				root = root.ReplaceNode(
 					argument,

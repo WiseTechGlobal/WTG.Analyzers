@@ -60,7 +60,7 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			var argumentSymbol = argumentList.TryFindCorrespondingParameterSymbol(index, context.SemanticModel, context.CancellationToken);
+			var argumentSymbol = argumentList.TryFindCorrespondingParameterSymbol(context.SemanticModel, index, context.CancellationToken);
 
 			if (argumentSymbol is null || argumentSymbol.OriginalDefinition.Type.TypeKind == TypeKind.TypeParameter)
 			{

@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -8,7 +6,7 @@ namespace WTG.Analyzers
 {
 	static class ArgumentListExtensions
 	{
-		public static IParameterSymbol? TryFindCorrespondingParameterSymbol(this ArgumentListSyntax argumentList, int index, SemanticModel semanticModel, CancellationToken cancellationToken)
+		public static IParameterSymbol? TryFindCorrespondingParameterSymbol(this ArgumentListSyntax argumentList, SemanticModel semanticModel, int index, CancellationToken cancellationToken)
 		{
 			var methodInvocation = argumentList.FirstAncestorOrSelf<InvocationExpressionSyntax>();
 			if (methodInvocation is null)
