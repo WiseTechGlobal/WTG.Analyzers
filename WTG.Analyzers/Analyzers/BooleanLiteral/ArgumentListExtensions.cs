@@ -1,5 +1,6 @@
 using System.Threading;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace WTG.Analyzers
@@ -8,7 +9,12 @@ namespace WTG.Analyzers
 	{
 		public static IParameterSymbol? TryFindCorrespondingParameterSymbol(this ArgumentListSyntax argumentList, SemanticModel semanticModel, int index, CancellationToken cancellationToken)
 		{
-			var methodInvocation = argumentList.FirstAncestorOrSelf<InvocationExpressionSyntax>();
+			if (!argumentList.Parent.IsKind(SyntaxKind.InvocationExpression))
+			{
+				return null;
+			}
+
+			var methodInvocation = (InvocationExpressionSyntax)argumentList.Parent;
 			if (methodInvocation is null)
 			{
 				return null;
