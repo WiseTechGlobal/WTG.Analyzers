@@ -42,7 +42,7 @@ namespace WTG.Analyzers
 
 			var argument = (ArgumentSyntax)literal.Parent;
 			var argumentList = (ArgumentListSyntax)argument.Parent;
-			var index = argumentList.FindIndexOfArgument(argument);
+			var index = argumentList.Arguments.IndexOf(argument);
 
 			var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 

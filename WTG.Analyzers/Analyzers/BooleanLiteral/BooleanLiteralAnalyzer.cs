@@ -51,7 +51,8 @@ namespace WTG.Analyzers
 			}
 
 			var argumentList = (ArgumentListSyntax)argument.Parent;
-			var index = argumentList.FindIndexOfArgument(argument);
+			var index = argumentList.Arguments.IndexOf(argument);
+
 			if (index + 1 < argumentList.Arguments.Count && !context.Compilation.IsCSharpVersionOrGreater(LanguageVersion.CSharp7_2))
 			{
 				// C# 7.2 introduced the ability to name parameters other than the last one.

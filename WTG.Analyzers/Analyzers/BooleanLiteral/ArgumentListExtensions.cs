@@ -25,25 +25,5 @@ namespace WTG.Analyzers
 			var argumentSymbol = methodSymbol.Parameters[index];
 			return argumentSymbol;
 		}
-
-		public static int FindIndexOfArgument(this ArgumentListSyntax haystack, ArgumentSyntax needle)
-		{
-			Debug.Assert(haystack == needle.Parent, "Argument should be a child of the ArgumentList.");
-
-			var i = 0;
-			var enumerator = haystack.Arguments.GetEnumerator();
-
-			while (enumerator.MoveNext())
-			{
-				if (enumerator.Current == needle)
-				{
-					return i;
-				}
-
-				i++;
-			}
-
-			throw new InvalidOperationException("Failed to find Argument in its parent ArgumentList.");
-		}
 	}
 }
