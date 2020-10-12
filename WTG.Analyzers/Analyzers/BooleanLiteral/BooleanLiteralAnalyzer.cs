@@ -67,7 +67,7 @@ namespace WTG.Analyzers
 
 			var argumentSymbol = argumentList.TryFindCorrespondingParameterSymbol(context.SemanticModel, index, context.CancellationToken);
 
-			if (argumentSymbol is null || argumentSymbol.OriginalDefinition.Type.TypeKind == TypeKind.TypeParameter)
+			if (argumentSymbol is null || argumentSymbol.IsParams || argumentSymbol.OriginalDefinition.Type.TypeKind == TypeKind.TypeParameter)
 			{
 				return;
 			}
