@@ -6,6 +6,6 @@ public static class Bob
 	}
 
 	public static void Foo((bool, bool) args)
-    {
-    }
+	{
+	}
 }
