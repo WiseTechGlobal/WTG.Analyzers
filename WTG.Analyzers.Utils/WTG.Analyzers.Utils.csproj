@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyTitle>WTG Analyzers Utils</AssemblyTitle>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <OutputPath>..\Bin\</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <NuspecFile>..\WTG.Analyzers.Utils.nuspec</NuspecFile>
     <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <Nullable>enable</Nullable>
