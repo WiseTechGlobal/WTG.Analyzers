@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
@@ -14,7 +15,7 @@ namespace WTG.Analyzers.TestFramework
 {
 	public sealed class SampleDataSet
 	{
-		SampleDataSet(string name, LanguageVersion languageVersion, string source, string result, ImmutableArray<DiagnosticResult> diagnostics, ImmutableHashSet<string> suppressedIds)
+		SampleDataSet(string name, LanguageVersion languageVersion, string source, string result, ImmutableArray<DiagnosticResult> diagnostics, ImmutableHashSet<string> suppressedIds, ImmutableArray<OSPlatform> platforms)
 		{
 			Name = name;
 			LanguageVersion = languageVersion;
@@ -22,6 +23,7 @@ namespace WTG.Analyzers.TestFramework
 			Result = result;
 			Diagnostics = diagnostics;
 			SuppressedIds = suppressedIds;
+			Platforms = platforms;
 		}
 
 		public string Name { get; }
@@ -30,8 +32,11 @@ namespace WTG.Analyzers.TestFramework
 		public string Result { get; }
 		public ImmutableArray<DiagnosticResult> Diagnostics { get; }
 		public ImmutableHashSet<string> SuppressedIds { get; }
+		public ImmutableArray<OSPlatform> Platforms { get; }
 
 		public override string ToString() => Name;
+
+		public bool IsApplicableToCurrentPlatform() => Platforms.IsDefaultOrEmpty || Platforms.Any(p => RuntimeInformation.IsOSPlatform(p));
 
 		public static ImmutableArray<SampleDataSet> GetSamples(Assembly assembly, string prefix)
 		{
@@ -47,7 +52,9 @@ namespace WTG.Analyzers.TestFramework
 				where index >= 0
 				let sampleName = name.Substring(prefix.Length, index - prefix.Length)
 				group new KeyValuePair<string, string>(name.Substring(index + 1), name) by sampleName into g
-				select GetSampleData(assembly, g.Key, g);
+				let sampleData = GetSampleData(assembly, g.Key, g)
+				where sampleData.IsApplicableToCurrentPlatform()
+				select sampleData;
 
 			return tmp.ToImmutableArray();
 		}
@@ -71,6 +78,7 @@ namespace WTG.Analyzers.TestFramework
 			var diagnostics = ImmutableArray<DiagnosticResult>.Empty;
 			var suppressedIds = ImmutableHashSet<string>.Empty;
 			var languageVersion = LanguageVersion.Default;
+			var platforms = ImmutableArray<OSPlatform>.Empty;
 
 			foreach (var pair in resourceNames)
 			{
@@ -85,7 +93,7 @@ namespace WTG.Analyzers.TestFramework
 						break;
 
 					case "Diagnostics.xml":
-						LoadResults(assembly, pair.Value, ref languageVersion, ref diagnostics, ref suppressedIds);
+						LoadResults(assembly, pair.Value, ref languageVersion, ref diagnostics, ref suppressedIds, ref platforms);
 						break;
 				}
 			}
@@ -96,7 +104,8 @@ namespace WTG.Analyzers.TestFramework
 				source ?? string.Empty,
 				result ?? source ?? string.Empty,
 				diagnostics,
-				suppressedIds);
+				suppressedIds,
+				platforms);
 		}
 
 		static string? LoadResource(Assembly assembly, string name)
@@ -112,7 +121,7 @@ namespace WTG.Analyzers.TestFramework
 			return reader.ReadToEnd();
 		}
 
-		static void LoadResults(Assembly assembly, string name, ref LanguageVersion languageVersion, ref ImmutableArray<DiagnosticResult> diagnostics, ref ImmutableHashSet<string> suppressedIds)
+		static void LoadResults(Assembly assembly, string name, ref LanguageVersion languageVersion, ref ImmutableArray<DiagnosticResult> diagnostics, ref ImmutableHashSet<string> suppressedIds, ref ImmutableArray<OSPlatform> platforms)
 		{
 			var text = LoadResource(assembly, name);
 
@@ -121,6 +130,7 @@ namespace WTG.Analyzers.TestFramework
 				var root = XElement.Parse(text);
 				diagnostics = root.Descendants("diagnostic").Select(LoadResult).ToImmutableArray();
 				suppressedIds = root.Elements("suppressId").Select(x => x.Value).ToImmutableHashSet();
+				platforms = root.Elements("platform").Select(x => OSPlatform.Create(x.Value)).ToImmutableArray();
 
 				var languageVersionStr = root.Element("languageVersion")?.Value;
 
