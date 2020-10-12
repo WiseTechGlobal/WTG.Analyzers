@@ -12,6 +12,14 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    - name: Extract tag name
+      id: tag_name
+      uses: actions/github-script@0.2.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          return context.payload.ref.replace(/\/refs\/tags\//, '');
+
     - uses: actions/checkout@v2
     
     - name: Setup .NET Core
@@ -20,29 +28,29 @@ jobs:
         dotnet-version: 3.1.402
         
     - name: Create NuGet Packages
-      run: dotnet pack --configuration Release /p:CommitID=%GITHUB_SHA% /p:TagVersion=${{ github.event.release.tag_name }}
+      run: dotnet pack --configuration Release /p:CommitID=%GITHUB_SHA% /p:TagVersion=${{ steps.tag_name.outputs.result }}
 
     - name: Upload WTG.Analyzers nupkg
       uses: actions/upload-artifact@v2
       with:
-        name: WTG.Analyzers.${{ github.event.release.tag_name }}.nupkg
-        path: 'bin/WTG.Analyzers.${{ github.event.release.tag_name }}.nupkg'
+        name: WTG.Analyzers.${{ steps.tag_name.outputs.result }}.nupkg
+        path: 'bin/WTG.Analyzers.${{ steps.tag_name.outputs.result }}.nupkg'
 
     - name: Upload WTG.Analyzers.Utils nupkg
       uses: actions/upload-artifact@v2
       with:
-        name: WTG.Analyzers.Utils.${{ github.event.release.tag_name }}.nupkg
-        path: 'bin/WTG.Analyzers.Utils.${{ github.event.release.tag_name }}.nupkg'
+        name: WTG.Analyzers.Utils.${{ steps.tag_name.outputs.result }}.nupkg
+        path: 'bin/WTG.Analyzers.Utils.${{ steps.tag_name.outputs.result }}.nupkg'
 
     - name: Upload WTG.Analyzers.TestFramework nupkg
       uses: actions/upload-artifact@v2
       with:
-        name: WTG.Analyzers.TestFramework.${{ github.event.release.tag_name }}.nupkg
-        path: 'bin/WTG.Analyzers.TestFramework.${{ github.event.release.tag_name }}.nupkg'
+        name: WTG.Analyzers.TestFramework.${{ steps.tag_name.outputs.result }}.nupkg
+        path: 'bin/WTG.Analyzers.TestFramework.${{ steps.tag_name.outputs.result }}.nupkg'
 
     - name: Publish NuGet Package to NuGet Gallery
       run: | 
         nuget setapikey ${{ secrets.NUGET_API_KEY }}
-        nuget push bin/WTG.Analyzers.${{ github.event.release.tag_name }}.nupkg -Source https://api.nuget.org/v3/index.json
-        nuget push bin/WTG.Analyzers.Utils.${{ github.event.release.tag_name }}.nupkg -Source https://api.nuget.org/v3/index.json
-        nuget push bin/WTG.Analyzers.TestFramework.${{ github.event.release.tag_name }}.nupkg -Source https://api.nuget.org/v3/index.json
+        nuget push bin/WTG.Analyzers.${{ steps.tag_name.outputs.result }}.nupkg -Source https://api.nuget.org/v3/index.json
+        nuget push bin/WTG.Analyzers.Utils.${{ steps.tag_name.outputs.result }}.nupkg -Source https://api.nuget.org/v3/index.json
+        nuget push bin/WTG.Analyzers.TestFramework.${{ steps.tag_name.outputs.result }}.nupkg -Source https://api.nuget.org/v3/index.json
