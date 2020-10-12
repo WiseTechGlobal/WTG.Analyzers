@@ -26,6 +26,7 @@ namespace WTG.Analyzers
 		public const string ConditionalOperatorsShouldNotHaveMultilineValuesDiagnosticID = "WTG1015";
 		public const string AvoidDiscardCoalesceThrowDiagnosticID = "WTG1016";
 		public const string VariableCouldBeConfusedWithDiscardDiagnosticID = "WTG1017";
+		public const string UseNamedArgumentsWhenPassingBooleanLiteralsDiagnosticID = "WTG1018";
 		public const string DoNotConfigureAwaitFromAsyncVoidDiagnosticID = "WTG2001";
 		public const string AvoidConditionalCompilationBasedOnDebugDiagnosticID = "WTG2002";
 		public const string FlagEnumsShouldSpecifyExplicitValuesDiagnosticID = "WTG2003";
@@ -247,6 +248,15 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
 			description: "Improve clarity by choosing a better name.");
+
+		public static readonly DiagnosticDescriptor UseNamedArgumentsWhenPassingBooleanLiteralsRule = new DiagnosticDescriptor(
+			UseNamedArgumentsWhenPassingBooleanLiteralsDiagnosticID,
+			"The meaning of boolean literals may not be easy to understand at the call-site.",
+			"Boolean literals as method arguments should be passed as named arguments.",
+			CodingConventionCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Improve clarity by using named arguments.");
 
 		public static readonly DiagnosticDescriptor DoNotConfigureAwaitFromAsyncVoidRule = new DiagnosticDescriptor(
 			DoNotConfigureAwaitFromAsyncVoidDiagnosticID,
@@ -676,6 +686,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateVariableCouldBeConfusedWithDiscardDiagnostic(Location location)
 		{
 			return Diagnostic.Create(VariableCouldBeConfusedWithDiscardRule, location);
+		}
+
+		/// <summary>
+		/// Boolean literals as method arguments should be passed as named arguments.
+		/// </summary>
+		public static Diagnostic CreateUseNamedArgumentsWhenPassingBooleanLiteralsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(UseNamedArgumentsWhenPassingBooleanLiteralsRule, location);
 		}
 
 		/// <summary>

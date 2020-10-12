@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG1018" message="Boolean literals as method arguments should be passed as named arguments." severity="Info">
+	<languageVersion>7.2</languageVersion>
+	<diagnostic>
+		<location>Test0.cs: (5,7-11)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (5,13-18)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (7,7-11)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (8,4-9)</location>
+	</diagnostic>
+</diagnostics>
