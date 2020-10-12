@@ -8,7 +8,7 @@ public static class Bob
 	}
 
 	public static void Foo(params object[] args)
-    {
+	{
 	}
 
 	public static void Bar(params bool[] args)
