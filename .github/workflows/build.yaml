@@ -1,0 +1,59 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  ci:
+    name: Build on ${{ matrix.os }} - ${{ matrix.configuration }} (SDK ${{ matrix.sdk }}) 
+
+    strategy:
+      matrix:
+        os: [ windows-latest ]
+        sdk: [ 3.1.402 ]
+        configuration: [ Debug, Release ]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ matrix.sdk }}
+
+    - name: Build WTG.Analyzers
+      run: dotnet build --configuration ${{ matrix.configuration }}
+
+    - name: Build NuGet Package
+      run: dotnet pack --configuration ${{ matrix.configuration }} --no-build -p:CommitID=%GITHUB_SHA%
+
+    - name: Run Tests
+      if: matrix.configuration == 'Debug'
+      run: dotnet test
+
+  nupkg:
+    name: Create NuGet Package
+      
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.402
+
+    - name: Build NuGet Package
+      run: dotnet pack -p:CommitID=%GITHUB_SHA%
+
+    - name: Upload NuGet Package
+      uses: actions/upload-artifact@v2
+      with:
+        name: nuget-packages
+        path: 'Bin/*.nupkg'

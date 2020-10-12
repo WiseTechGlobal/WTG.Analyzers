@@ -17,9 +17,12 @@
       - and the major/minor/build versions should match the NuGet package version (NuGet is x.y.z only)
       - Revision should be incremented whenever you want to publish a new version.
       -->
-    <Version Condition="'$(APPVEYOR_BUILD_VERSION)' != ''">$(APPVEYOR_BUILD_VERSION)</Version>
-    <ShortVersion>2.10.0</ShortVersion>
-    <Version Condition="'$(Version)' == ''">$(ShortVersion).0</Version>
+    <ShortVersion Condition=" '$(TagVersion)' == '' ">2.10.0</ShortVersion>
+    <ShortVersion Condition=" '$(TagVersion)' != '' ">$(TagVersion.Split('-', 2)[0])</ShortVersion>
+    <VersionSuffix Condition=" '$(TagVersion)' != '' ">$(TagVersion.Substring($(ShortVersion.Length)))</VersionSuffix>
+
+    <Version Condition=" '$(Version)' == '' and '$(GITHUB_RUN_NUMBER)' != ''">$(ShortVersion).$(GITHUB_RUN_NUMBER)</Version>
+    <Version Condition=" '$(Version)' == '' and '$(GITHUB_RUN_NUMBER)' == ''">$(ShortVersion).0</Version>
 
     <Company>WiseTech Global Pty Ltd</Company>
     <Product>WTG Analyzers</Product>
