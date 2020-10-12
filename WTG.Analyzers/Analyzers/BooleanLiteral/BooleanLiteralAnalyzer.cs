@@ -50,6 +50,11 @@ namespace WTG.Analyzers
 				return;
 			}
 
+			if (!argument.Parent.IsKind(SyntaxKind.ArgumentList))
+			{
+				return;
+			}
+
 			var argumentList = (ArgumentListSyntax)argument.Parent;
 			var index = argumentList.Arguments.IndexOf(argument);
 
