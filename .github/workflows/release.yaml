@@ -30,14 +30,14 @@ jobs:
     - name: Upload WTG.Analyzers.Utils nupkg
       uses: actions/upload-artifact@v2
       with:
-      name: WTG.Analyzers.Utils.${{ github.event.release.tag_name }}.nupkg
-      path: 'bin/WTG.Analyzers.Utils.${{ github.event.release.tag_name }}.nupkg'
+        name: WTG.Analyzers.Utils.${{ github.event.release.tag_name }}.nupkg
+        path: 'bin/WTG.Analyzers.Utils.${{ github.event.release.tag_name }}.nupkg'
 
     - name: Upload WTG.Analyzers.TestFramework nupkg
       uses: actions/upload-artifact@v2
       with:
-      name: WTG.Analyzers.TestFramework.${{ github.event.release.tag_name }}.nupkg
-      path: 'bin/WTG.Analyzers.TestFramework.${{ github.event.release.tag_name }}.nupkg'
+        name: WTG.Analyzers.TestFramework.${{ github.event.release.tag_name }}.nupkg
+        path: 'bin/WTG.Analyzers.TestFramework.${{ github.event.release.tag_name }}.nupkg'
 
     - name: Attach WTG.Analyzers to GitHub Release
       uses: actions/upload-release-asset@v1
@@ -54,20 +54,20 @@ jobs:
       env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-      upload_url: ${{ github.event.release.upload_url }}
-      asset_path: 'bin/WTG.Analyzers.Utils.${{ github.event.release.tag_name }}.nupkg'
-      asset_name: WTG.Analyzers.Utils.${{ github.event.release.tag_name }}.nupkg
-      asset_content_type: application/zip
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: 'bin/WTG.Analyzers.Utils.${{ github.event.release.tag_name }}.nupkg'
+        asset_name: WTG.Analyzers.Utils.${{ github.event.release.tag_name }}.nupkg
+        asset_content_type: application/zip
 
     - name: Attach WTG.Analyzers.TestFramework to GitHub Release
       uses: actions/upload-release-asset@v1
       env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-      upload_url: ${{ github.event.release.upload_url }}
-      asset_path: 'bin/WTG.Analyzers.TestFramework.${{ github.event.release.tag_name }}.nupkg'
-      asset_name: WTG.Analyzers.TestFramework.${{ github.event.release.tag_name }}.nupkg
-      asset_content_type: application/zip
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: 'bin/WTG.Analyzers.TestFramework.${{ github.event.release.tag_name }}.nupkg'
+        asset_name: WTG.Analyzers.TestFramework.${{ github.event.release.tag_name }}.nupkg
+        asset_content_type: application/zip
 
     - name: Publish NuGet Package to NuGet Gallery
       run: | 
