@@ -50,7 +50,20 @@ namespace WTG.Analyzers
 				return;
 			}
 
+			if (!argument.Parent.IsKind(SyntaxKind.ArgumentList))
+			{
+				return;
+			}
+
 			var argumentList = (ArgumentListSyntax)argument.Parent;
+
+			if (argumentList.Arguments.Count < 2)
+			{
+				// Exclude single-parameter calls, hopefully the API designers designed these methods
+				// to be clear and understandable enough at the call-site.
+				return;
+			}
+
 			var index = argumentList.Arguments.IndexOf(argument);
 
 			if (index + 1 < argumentList.Arguments.Count && !context.Compilation.IsCSharpVersionOrGreater(LanguageVersion.CSharp7_2))
@@ -62,7 +75,7 @@ namespace WTG.Analyzers
 
 			var argumentSymbol = argumentList.TryFindCorrespondingParameterSymbol(context.SemanticModel, index, context.CancellationToken);
 
-			if (argumentSymbol is null || argumentSymbol.OriginalDefinition.Type.TypeKind == TypeKind.TypeParameter)
+			if (argumentSymbol is null || argumentSymbol.IsParams || argumentSymbol.Type.SpecialType == SpecialType.System_Object || argumentSymbol.OriginalDefinition.Type.TypeKind == TypeKind.TypeParameter)
 			{
 				return;
 			}

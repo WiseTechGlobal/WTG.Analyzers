@@ -26,7 +26,19 @@ namespace WTG.Analyzers
 				return null;
 			}
 
-			var argumentSymbol = methodSymbol.Parameters[index];
+			var parameterSymbols = methodSymbol.Parameters;
+
+			if (index >= parameterSymbols.Length)
+			{
+				var lastParameter = parameterSymbols[parameterSymbols.Length - 1];
+
+				if (lastParameter.IsParams)
+				{
+					return lastParameter;
+				}
+			}
+
+			var argumentSymbol = parameterSymbols[index];
 			return argumentSymbol;
 		}
 	}
