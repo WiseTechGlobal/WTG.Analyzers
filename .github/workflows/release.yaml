@@ -52,7 +52,7 @@ jobs:
     - name: Attach WTG.Analyzers.Utils to GitHub Release
       uses: actions/upload-release-asset@v1
       env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: 'bin/WTG.Analyzers.Utils.${{ github.event.release.tag_name }}.nupkg'
@@ -62,7 +62,7 @@ jobs:
     - name: Attach WTG.Analyzers.TestFramework to GitHub Release
       uses: actions/upload-release-asset@v1
       env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: 'bin/WTG.Analyzers.TestFramework.${{ github.event.release.tag_name }}.nupkg'
