@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
   push:
-    branches: [ master, gh-ci ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
