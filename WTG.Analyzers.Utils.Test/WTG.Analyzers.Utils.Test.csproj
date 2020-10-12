@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyTitle>WTG Analyzers Utils Test</AssemblyTitle>
-    <TargetFrameworks>net46;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net472;netcoreapp3.1</TargetFrameworks>
     <OutputPath>..\bin</OutputPath>
     <AssemblyName>$(AssemblyName)-$(TargetFramework)</AssemblyName>
   </PropertyGroup>
