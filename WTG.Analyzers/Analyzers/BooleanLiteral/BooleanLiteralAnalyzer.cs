@@ -56,6 +56,14 @@ namespace WTG.Analyzers
 			}
 
 			var argumentList = (ArgumentListSyntax)argument.Parent;
+
+			if (argumentList.Arguments.Count < 2)
+			{
+				// Exclude single-parameter calls, hopefully the API designers designed these methods
+				// to be clear and understandable enough at the call-site.
+				return;
+			}
+
 			var index = argumentList.Arguments.IndexOf(argument);
 
 			if (index + 1 < argumentList.Arguments.Count && !context.Compilation.IsCSharpVersionOrGreater(LanguageVersion.CSharp7_2))
