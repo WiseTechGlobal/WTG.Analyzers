@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG1005" message="All line endings should be using CRLF, this issue usually occurs when copying code from another source." severity="Info">
+	<platform>OSX</platform>
+	<platform>LINUX</platform>
+	<diagnostic>
+		<location>Test0.cs: (1,14) - (2,1)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (3,23) - (4,1)</location>
+	</diagnostic>
+</diagnostics>
