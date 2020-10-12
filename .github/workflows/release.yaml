@@ -19,7 +19,7 @@ jobs:
         dotnet-version: 3.1.402
         
     - name: Create NuGet Packages
-      run: dotnet pack --configuration Release /p:ShortVersion=${{ github.event.release.tag_name }}
+      run: dotnet pack --configuration Release /p:CommitID=%GITHUB_SHA% /p:TagVersion=${{ github.event.release.tag_name }}
 
     - name: Upload WTG.Analyzers nupkg
       uses: actions/upload-artifact@v2

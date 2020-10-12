@@ -50,7 +50,7 @@ jobs:
         dotnet-version: 3.1.402
 
     - name: Build NuGet Package
-      run: dotnet pack -p:CommitID=%GITHUB_SHA%s
+      run: dotnet pack -p:CommitID=%GITHUB_SHA%
 
     - name: Upload NuGet Package
       uses: actions/upload-artifact@v2
