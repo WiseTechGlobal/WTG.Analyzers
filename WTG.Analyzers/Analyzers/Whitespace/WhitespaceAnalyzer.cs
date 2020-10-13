@@ -47,7 +47,7 @@ namespace WTG.Analyzers
 
 						if (trivia.ToString() != Environment.NewLine)
 						{
-							context.ReportDiagnostic(Rules.CreateUseConsistentLineEndingsDiagnostic(trivia.GetLocation(), HumanReadablePlatformNewLine));
+							context.ReportDiagnostic(Rules.CreateUseConsistentLineEndingsDiagnostic(trivia.GetLocation(), humanReadablePlatformNewLine));
 						}
 						break;
 
@@ -148,7 +148,7 @@ namespace WTG.Analyzers
 		// (sometimes visual studio likes to add a few spaces to spaces to align with something on the previous line.)
 		static readonly Regex acceptableLeadingWhitespace = new Regex(@"^\t*[ ]{0,3}$", RegexOptions.ExplicitCapture);
 
-		static string HumanReadablePlatformNewLine { get; } = Environment.NewLine switch
+		static readonly string humanReadablePlatformNewLine = Environment.NewLine switch
 		{
 			"\r\n" => "CRLF",
 			"\r" => "CR",
