@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using NUnit.Framework;
+using WTG.Analyzers.TestFramework;
 
 namespace WTG.Analyzers.Utils.Test
 {
@@ -31,7 +32,7 @@ namespace WTG.Analyzers.Utils.Test
 
 		static async Task<bool> Check(string filename, string content)
 		{
-			using var workspace = new AdhocWorkspace();
+			using var workspace = ModelUtils.CreateWorkspace();
 			var document = workspace
 				.CurrentSolution
 				.AddProject("Barry", "Barry", LanguageNames.CSharp)

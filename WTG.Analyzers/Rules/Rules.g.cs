@@ -102,11 +102,11 @@ namespace WTG.Analyzers
 		public static readonly DiagnosticDescriptor UseConsistentLineEndingsRule = new DiagnosticDescriptor(
 			UseConsistentLineEndingsDiagnosticID,
 			"Use consistent line endings.",
-			"All line endings should be using CRLF, this issue usually occures when copying code from another source.",
+			"All line endings should be using {0}, this issue usually occurs when copying code from another source.",
 			CodingConventionCategory,
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
-			description: "Replace the line ending character sequence with CRLF.");
+			description: "Replace the line ending character sequence with the appropriate sequence for the current platform.");
 
 		public static readonly DiagnosticDescriptor DoNotUseTheInternalKeywordForTopLevelTypesRule = new DiagnosticDescriptor(
 			DoNotUseTheInternalKeywordForTopLevelTypesDiagnosticID,
@@ -577,11 +577,11 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
-		/// All line endings should be using CRLF, this issue usually occures when copying code from another source.
+		/// All line endings should be using {lineTerminator}, this issue usually occurs when copying code from another source.
 		/// </summary>
-		public static Diagnostic CreateUseConsistentLineEndingsDiagnostic(Location location)
+		public static Diagnostic CreateUseConsistentLineEndingsDiagnostic(Location location, object lineTerminator)
 		{
-			return Diagnostic.Create(UseConsistentLineEndingsRule, location);
+			return Diagnostic.Create(UseConsistentLineEndingsRule, location, lineTerminator);
 		}
 
 		/// <summary>

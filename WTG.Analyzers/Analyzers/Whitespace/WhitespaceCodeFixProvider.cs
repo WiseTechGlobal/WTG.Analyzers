@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
+using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
@@ -96,7 +97,7 @@ namespace WTG.Analyzers
 			return document.WithSyntaxRoot(
 				root.ReplaceTrivia(
 					trivia,
-					SyntaxFactory.CarriageReturnLineFeed));
+					TriviaSyntaxFactory.PlatformNewLineTrivia));
 		}
 
 		static SyntaxTrivia FindTrivia(SyntaxNode root, Location location)

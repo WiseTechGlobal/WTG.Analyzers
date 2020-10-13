@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -44,9 +45,9 @@ namespace WTG.Analyzers
 							context.ReportDiagnostic(Rules.CreateDoNotLeaveWhitespaceOnTheEndOfTheLineDiagnostic(precedingTrivia.GetLocation()));
 						}
 
-						if (trivia.ToString() != "\r\n")
+						if (trivia.ToString() != Environment.NewLine)
 						{
-							context.ReportDiagnostic(Rules.CreateUseConsistentLineEndingsDiagnostic(trivia.GetLocation()));
+							context.ReportDiagnostic(Rules.CreateUseConsistentLineEndingsDiagnostic(trivia.GetLocation(), humanReadablePlatformNewLine));
 						}
 						break;
 
@@ -146,5 +147,13 @@ namespace WTG.Analyzers
 		// Must consist of one or more tab followed by up to 3 spaces.
 		// (sometimes visual studio likes to add a few spaces to spaces to align with something on the previous line.)
 		static readonly Regex acceptableLeadingWhitespace = new Regex(@"^\t*[ ]{0,3}$", RegexOptions.ExplicitCapture);
+
+		static readonly string humanReadablePlatformNewLine = Environment.NewLine switch
+		{
+			"\r\n" => "CRLF",
+			"\r" => "CR",
+			"\n" => "LF",
+			_ => throw new PlatformNotSupportedException(),
+		};
 	}
 }

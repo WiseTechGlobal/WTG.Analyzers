@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
@@ -62,7 +63,7 @@ namespace WTG.Analyzers
 						throwExpression.Expression,
 						node.SemicolonToken)))
 				.WithLeadingTrivia(node.GetLeadingTrivia())
-				.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed)
+				.WithTrailingTrivia(TriviaSyntaxFactory.PlatformNewLineTrivia)
 				.WithAdditionalAnnotations(Formatter.Annotation);
 		}
 	}
