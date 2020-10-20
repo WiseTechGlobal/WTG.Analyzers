@@ -14,7 +14,7 @@ class Foo
 	{
 		response.ReasonPhrase = "foo";
 		response.ReasonPhrase += "suffixed";
-		_ = new HttpResponseMessage { ReasonPhrase = "bar " };
+		_ = new HttpResponseMessage { ReasonPhrase = "bar" };
 
 		Log(response.ReasonPhrase);
 	}

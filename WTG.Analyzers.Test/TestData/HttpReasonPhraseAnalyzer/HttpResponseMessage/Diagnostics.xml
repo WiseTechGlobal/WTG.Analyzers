@@ -7,6 +7,6 @@
 		<location>Test0.cs: (16,3-38)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (17,33-54)</location>
+		<location>Test0.cs: (17,33-53)</location>
 	</diagnostic>
 </diagnostics>
