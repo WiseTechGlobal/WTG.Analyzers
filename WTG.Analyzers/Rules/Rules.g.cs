@@ -33,6 +33,7 @@ namespace WTG.Analyzers
 		public const string DoNotUseCodeContractsDiagnosticID = "WTG2004";
 		public const string UseCorrectEmitOverloadDiagnosticID = "WTG2005";
 		public const string ForbidCompiledInStaticRegexMethodsDiagnosticID = "WTG2006";
+		public const string ForbidCustomHttpReasonPhraseValuesDiagnosticID = "WTG2007";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 		public const string PreferDirectMemberAccessOverLinqDiagnosticID = "WTG3002";
 		public const string PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID = "WTG3003";
@@ -324,6 +325,15 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
 			description: "The static methods on Regex will discard the regex object, largely negating the benifits of the Compiled option and leaving you with just the increased costs.");
+
+		public static readonly DiagnosticDescriptor ForbidCustomHttpReasonPhraseValuesRule = new DiagnosticDescriptor(
+			ForbidCustomHttpReasonPhraseValuesDiagnosticID,
+			"Do not set custom values for the HTTP Reason Phrase.",
+			"Do not use custom values for the Reason Phrase portion of a HTTP response..",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "Custom Reason Phrase values may not be passed from a HTTP/1.1 server to the client due to intermediate proxy software, and has been removed entirely from HTTP/2.");
 
 		public static readonly DiagnosticDescriptor RemovedOrphanedSuppressionsRule = new DiagnosticDescriptor(
 			RemovedOrphanedSuppressionsDiagnosticID,
@@ -750,6 +760,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateForbidCompiledInStaticRegexMethodsDiagnostic(Location location)
 		{
 			return Diagnostic.Create(ForbidCompiledInStaticRegexMethodsRule, location);
+		}
+
+		/// <summary>
+		/// Do not use custom values for the Reason Phrase portion of a HTTP response..
+		/// </summary>
+		public static Diagnostic CreateForbidCustomHttpReasonPhraseValuesDiagnostic(Location location)
+		{
+			return Diagnostic.Create(ForbidCustomHttpReasonPhraseValuesRule, location);
 		}
 
 		/// <summary>
