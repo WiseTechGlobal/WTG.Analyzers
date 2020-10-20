@@ -13,6 +13,8 @@ class Foo
 	public void Method(IHttpResponseFeature feature)
 	{
 		feature.ReasonPhrase = "foo";
+		feature.ReasonPhrase += "suffixed";
+
 		Log(feature.ReasonPhrase);
 	}
 

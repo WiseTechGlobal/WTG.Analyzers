@@ -31,7 +31,8 @@ namespace WTG.Analyzers
 
 			context.RegisterSyntaxNodeAction(
 				c => Analyze(c, cache),
-				SyntaxKind.SimpleAssignmentExpression);
+				SyntaxKind.SimpleAssignmentExpression,
+				SyntaxKind.AddAssignmentExpression);
 		}
 
 		static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache)

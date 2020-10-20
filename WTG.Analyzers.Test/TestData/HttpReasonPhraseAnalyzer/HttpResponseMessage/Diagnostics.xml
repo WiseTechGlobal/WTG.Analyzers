@@ -3,4 +3,7 @@
 	<diagnostic>
 		<location>Test0.cs: (15,3-32)</location>
 	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (16,3-38)</location>
+	</diagnostic>
 </diagnostics>

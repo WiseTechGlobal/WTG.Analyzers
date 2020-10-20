@@ -13,6 +13,8 @@ class Foo
 	public void Method(HttpResponseMessage response)
 	{
 		response.ReasonPhrase = "foo";
+		response.ReasonPhrase += "suffixed";
+
 		Log(response.ReasonPhrase);
 	}
 
