@@ -329,7 +329,7 @@ namespace WTG.Analyzers
 		public static readonly DiagnosticDescriptor ForbidCustomHttpReasonPhraseValuesRule = new DiagnosticDescriptor(
 			ForbidCustomHttpReasonPhraseValuesDiagnosticID,
 			"Do not set custom values for the HTTP Reason Phrase.",
-			"Do not use custom values for the Reason Phrase portion of a HTTP response..",
+			"Do not use custom values for the Reason Phrase portion of a HTTP response.",
 			CorrectnessCategory,
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
@@ -763,7 +763,7 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
-		/// Do not use custom values for the Reason Phrase portion of a HTTP response..
+		/// Do not use custom values for the Reason Phrase portion of a HTTP response.
 		/// </summary>
 		public static Diagnostic CreateForbidCustomHttpReasonPhraseValuesDiagnostic(Location location)
 		{
