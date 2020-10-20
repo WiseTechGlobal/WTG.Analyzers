@@ -44,19 +44,19 @@ namespace WTG.Analyzers
 
 			var assignment = (AssignmentExpressionSyntax)context.Node;
 
-			if (!assignment.Left.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+			if (assignment.Left.IsKind(SyntaxKind.SimpleMemberAccessExpression))
 			{
-				return;
+				HandleSimpleMemberAccessExpression((MemberAccessExpressionSyntax)assignment.Left, context);
 			}
-
-			var memberAccess = (MemberAccessExpressionSyntax)assignment.Left;
-
-			if (!memberAccess.OperatorToken.IsKind(SyntaxKind.DotToken))
+			else if (assignment.Left.IsKind(SyntaxKind.IdentifierName) && assignment.Parent.IsKind(SyntaxKind.ObjectInitializerExpression))
 			{
-				return;
+				HandleObjectInitializerExpression((InitializerExpressionSyntax)assignment.Parent, (IdentifierNameSyntax)assignment.Left, context);
 			}
+		}
 
-			if (!string.Equals(memberAccess.Name.Identifier.ValueText, ReasonPhrasePropertyName, StringComparison.Ordinal))
+		static void HandleSimpleMemberAccessExpression(MemberAccessExpressionSyntax memberAccess, SyntaxNodeAnalysisContext context)
+		{
+			if (!IsReasonPhraseIdentifier(memberAccess.Name))
 			{
 				return;
 			}
@@ -64,22 +64,47 @@ namespace WTG.Analyzers
 			var expression = memberAccess.Expression;
 			var typeInfo = context.SemanticModel.GetTypeInfo(expression, context.CancellationToken);
 
-			if (typeInfo.Type is null)
+			if (!ShouldTriggerDiagnosticForContainingType(typeInfo.Type))
 			{
-				// Type could not be found.
-				return;
-			}
-
-			if (!typeInfo.Type.IsMatch(HttpResponseMessageFullTypeName) && !typeInfo.Type.IsMatch(IHttpResponseFeatureFullTypeName))
-			{
-				// These are not the droids that we are looking for.
 				return;
 			}
 
 			context.ReportDiagnostic(
 				Diagnostic.Create(
 					Rules.ForbidCustomHttpReasonPhraseValuesRule,
-					assignment.GetLocation()));
+					context.Node.GetLocation()));
 		}
+
+		static void HandleObjectInitializerExpression(InitializerExpressionSyntax initializer, IdentifierNameSyntax identifier, SyntaxNodeAnalysisContext context)
+		{
+			if (!IsReasonPhraseIdentifier(identifier))
+			{
+				return;
+			}
+
+			if (!initializer.Parent.IsKind(SyntaxKind.ObjectCreationExpression))
+			{
+				// We can worry about C# 9 with-ers another time.
+				return;
+			}
+
+			var creation = (ObjectCreationExpressionSyntax)initializer.Parent;
+
+			var typeInfo = context.SemanticModel.GetTypeInfo(creation, context.CancellationToken);
+
+			if (!ShouldTriggerDiagnosticForContainingType(typeInfo.Type))
+			{
+				return;
+			}
+
+			context.ReportDiagnostic(
+				Diagnostic.Create(
+					Rules.ForbidCustomHttpReasonPhraseValuesRule,
+					context.Node.GetLocation()));
+		}
+
+		static bool IsReasonPhraseIdentifier(SimpleNameSyntax identifier) => string.Equals(identifier.Identifier.ValueText, ReasonPhrasePropertyName, StringComparison.Ordinal);
+
+		static bool ShouldTriggerDiagnosticForContainingType(ITypeSymbol typeSymbol) => typeSymbol is { } && (typeSymbol.IsMatch(HttpResponseMessageFullTypeName) || typeSymbol.IsMatch(IHttpResponseFeatureFullTypeName));
 	}
 }
