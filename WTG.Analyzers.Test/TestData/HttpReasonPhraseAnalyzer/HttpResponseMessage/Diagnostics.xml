@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG2007" message="Do not use custom values for the Reason Phrase portion of a HTTP response." severity="Warning">
+	<diagnostic>
+		<location>Test0.cs: (15,3-32)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (16,3-38)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (17,33-53)</location>
+	</diagnostic>
+</diagnostics>

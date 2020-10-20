@@ -13,6 +13,7 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(ConditionalOperandAnalyzer) })]
 	[TestFixture(TypeArgs = new[] { typeof(ConditionDirectiveAnalyzer) })]
 	[TestFixture(TypeArgs = new[] { typeof(DiscardVariableAnalyzer) })]
+	[TestFixture(TypeArgs = new[] { typeof(HttpReasonPhraseAnalyzer) })]
 	[TestFixture(TypeArgs = new[] { typeof(NestedConditionalAnalyzer) })]
 	[TestFixture(TypeArgs = new[] { typeof(PublicTupleTypeAnalyzer) })]
 	public class AnalyzerTest<TAnalyzer>

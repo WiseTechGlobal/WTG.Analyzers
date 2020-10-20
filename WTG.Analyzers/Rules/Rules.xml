@@ -139,6 +139,11 @@
 			<message>Do not use the Compiled option when calling static methods on Regex.</message>
 			<description>The static methods on Regex will discard the regex object, largely negating the benifits of the Compiled option and leaving you with just the increased costs.</description>
 		</rule>
+		<rule id="7" name="ForbidCustomHttpReasonPhraseValues" severity="Warning">
+			<title>Do not set custom values for the HTTP Reason Phrase.</title>
+			<message>Do not use custom values for the Reason Phrase portion of a HTTP response.</message>
+			<description>Custom Reason Phrase values may not be passed from a HTTP/1.1 server to the client due to intermediate proxy software, and has been removed entirely from HTTP/2.</description>
+		</rule>
 	</category>
 	<category name="Decruftification" id="3000">
 		<rule id="1" name="RemovedOrphanedSuppressions" severity="Info">
