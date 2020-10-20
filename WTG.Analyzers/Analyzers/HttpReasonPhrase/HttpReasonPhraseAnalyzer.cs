@@ -43,11 +43,6 @@ namespace WTG.Analyzers
 
 			var assignment = (AssignmentExpressionSyntax)context.Node;
 
-			if (!assignment.OperatorToken.IsKind(SyntaxKind.EqualsToken))
-			{
-				return;
-			}
-
 			if (!assignment.Left.IsKind(SyntaxKind.SimpleMemberAccessExpression))
 			{
 				return;
