@@ -13,5 +13,10 @@ class Foo
 	public void Method(HttpResponseMessage response)
 	{
 		response.ReasonPhrase = "foo";
+		Log(response.ReasonPhrase);
+	}
+
+	void Log(string value)
+	{
 	}
 }

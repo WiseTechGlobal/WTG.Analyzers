@@ -13,5 +13,10 @@ class Foo
 	public void Method(IHttpResponseFeature feature)
 	{
 		feature.ReasonPhrase = "foo";
+		Log(feature.ReasonPhrase);
+	}
+
+	void Log(string value)
+	{
 	}
 }
