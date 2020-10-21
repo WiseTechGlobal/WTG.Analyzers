@@ -73,6 +73,12 @@ namespace WTG.Analyzers
 				return;
 			}
 
+			if (ExpressionHelper.IsContainedInExpressionTree(context.SemanticModel, expression, context.CancellationToken))
+			{
+				// Avoid error CS0853: An expression tree may not contain a named argument specification.
+				return;
+			}
+
 			var argumentSymbol = argumentList.TryFindCorrespondingParameterSymbol(context.SemanticModel, index, context.CancellationToken);
 
 			if (argumentSymbol is null || argumentSymbol.IsParams || argumentSymbol.Type.SpecialType == SpecialType.System_Object || argumentSymbol.OriginalDefinition.Type.TypeKind == TypeKind.TypeParameter)
