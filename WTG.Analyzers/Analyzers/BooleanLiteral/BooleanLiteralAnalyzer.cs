@@ -22,6 +22,11 @@ namespace WTG.Analyzers
 
 		void CompilationStart(CompilationStartAnalysisContext context)
 		{
+			if (!context.Compilation.IsCSharpVersionOrGreater(LanguageVersion.CSharp4))
+			{
+				return;
+			}
+
 			var cache = new FileDetailCache();
 
 			context.RegisterSyntaxNodeAction(
