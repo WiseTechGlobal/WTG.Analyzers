@@ -3,7 +3,6 @@
 		<WTGAnalyzersPackageRoot Condition="$(WTGAnalyzersPackageRoot) == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..'))</WTGAnalyzersPackageRoot>
 	</PropertyGroup>
 	<ItemGroup>
-		<Analyzer Include="$(WTGAnalyzersPackageRoot)\analyzers\dotnet\cs\WTG.Analyzers.dll" />
-		<Analyzer Include="$(WTGAnalyzersPackageRoot)\analyzers\dotnet\cs\WTG.Analyzers.Utils.dll" />
+		<GlobalAnalyzerConfigFiles Condition="'$(WTGAnalyzersWarnAll)' == 'true'" Include="$(WTGAnalyzersPackageRoot)\build\WarnAll.editorconfig" />
 	</ItemGroup>
 </Project>
