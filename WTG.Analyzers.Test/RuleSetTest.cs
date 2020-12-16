@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using NUnit.Framework;
 
@@ -14,14 +13,18 @@ namespace WTG.Analyzers.Test
 		[Test]
 		public void WarnAll()
 		{
-			var rulesetPath = Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "WTG.Analyzers", "build", "WarnAll.ruleset"));
+			var rulesetPath = Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "WTG.Analyzers", "build", "WarnAll.editorconfig"));
 
-			var ruleSet = XElement.Load(rulesetPath)
-				.Element("Rules")
-				.Elements("Rule")
+			var prefix = "dotnet_diagnostic.";
+			var delimiter = new[] { '=' };
+
+			var ruleSet = File.ReadAllLines(rulesetPath)
+				.Select(line => line.Trim())
+				.Where(line => line.StartsWith(prefix, StringComparison.Ordinal))
+				.Select(line => line.Split(delimiter, count: 2))
 				.ToDictionary(
-					x => x.Attribute("Id").Value,
-					x => (DiagnosticSeverity)Enum.Parse(typeof(DiagnosticSeverity), x.Attribute("Action").Value));
+					parts => parts[0].Substring(prefix.Length, length: parts[0].IndexOf(".", startIndex: prefix.Length, StringComparison.Ordinal) - prefix.Length),
+					parts => (DiagnosticSeverity)Enum.Parse(typeof(DiagnosticSeverity), parts[1].Trim(), ignoreCase: true));
 
 			var descriptors = typeof(Rules).GetFields()
 				.Where(x => x.IsStatic && x.IsInitOnly && typeof(DiagnosticDescriptor).IsAssignableFrom(x.FieldType))

@@ -20,7 +20,7 @@
 
 		<!-- MSBuild Properties and Targets -->
 		<file src="WTG.Analyzers\build\WTG.Analyzers.props" target="build\" />
-		<file src="WTG.Analyzers\build\WarnAll.ruleset" target="build\" />
+		<file src="WTG.Analyzers\build\WarnAll.editorconfig" target="build\" />
 
 		<!-- Other -->
 		<file src="LICENSE.md" target="" />

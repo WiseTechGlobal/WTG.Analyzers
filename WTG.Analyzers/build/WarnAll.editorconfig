@@ -1,0 +1,43 @@
+﻿is_global = true
+
+# Coding Convention
+dotnet_diagnostic.WTG1001.severity = warning
+dotnet_diagnostic.WTG1002.severity = warning
+dotnet_diagnostic.WTG1003.severity = warning
+dotnet_diagnostic.WTG1004.severity = warning
+dotnet_diagnostic.WTG1005.severity = warning
+dotnet_diagnostic.WTG1006.severity = warning
+dotnet_diagnostic.WTG1007.severity = warning
+dotnet_diagnostic.WTG1008.severity = warning
+dotnet_diagnostic.WTG1009.severity = warning
+dotnet_diagnostic.WTG1010.severity = warning
+dotnet_diagnostic.WTG1011.severity = warning
+dotnet_diagnostic.WTG1012.severity = warning
+dotnet_diagnostic.WTG1013.severity = warning
+dotnet_diagnostic.WTG1014.severity = warning
+dotnet_diagnostic.WTG1015.severity = warning
+dotnet_diagnostic.WTG1016.severity = warning
+dotnet_diagnostic.WTG1017.severity = warning
+dotnet_diagnostic.WTG1018.severity = warning
+
+# Correctness
+dotnet_diagnostic.WTG2001.severity = warning
+dotnet_diagnostic.WTG2002.severity = warning
+dotnet_diagnostic.WTG2003.severity = warning
+
+# Decruftification
+dotnet_diagnostic.WTG3001.severity = warning
+dotnet_diagnostic.WTG3002.severity = warning
+dotnet_diagnostic.WTG3003.severity = warning
+dotnet_diagnostic.WTG3004.severity = warning
+dotnet_diagnostic.WTG3005.severity = warning
+dotnet_diagnostic.WTG3006.severity = warning
+dotnet_diagnostic.WTG3007.severity = warning
+dotnet_diagnostic.WTG3008.severity = warning
+dotnet_diagnostic.WTG3009.severity = warning
+dotnet_diagnostic.WTG3010.severity = warning
+
+# Maintainability 
+dotnet_diagnostic.WTG3101.severity = warning
+dotnet_diagnostic.WTG3102.severity = warning
+dotnet_diagnostic.WTG3103.severity = warning
