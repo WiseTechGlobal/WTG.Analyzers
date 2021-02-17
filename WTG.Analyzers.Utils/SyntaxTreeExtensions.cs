@@ -59,6 +59,6 @@ namespace WTG.Analyzers.Utils
 			return false;
 		}
 
-		static readonly Regex IsGeneratedCommentMarkerRegex = new Regex(@"^//\s*<auto-?generated\s*/?>\s*$", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+		static readonly Regex IsGeneratedCommentMarkerRegex = new Regex(@"^//\s*<auto-?generated\s*/?>", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 	}
 }
