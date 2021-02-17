@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest, macos-latest, ubuntu-latest ]
-        sdk: [ 3.1.402 ]
+        sdk: [ 5.0.103 ]
         configuration: [ Debug, Release ]
 
     runs-on: ${{ matrix.os }}
