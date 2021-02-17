@@ -27,6 +27,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.103
+
+    - name: Workaround for https://github.com/dotnet/core/issues/5881
+      run: dotnet nuget locals all --clear
         
     - name: Create NuGet Packages
       run: dotnet pack --configuration Release /p:CommitID=%GITHUB_SHA% /p:TagVersion=${{ steps.tag_name.outputs.result }}
