@@ -26,6 +26,9 @@ jobs:
       with:
         dotnet-version: ${{ matrix.sdk }}
 
+    - name: Workaround for https://github.com/dotnet/core/issues/5881
+      run: dotnet nuget locals all --clear
+
     - name: Build WTG.Analyzers
       run: dotnet build --configuration ${{ matrix.configuration }}
 
@@ -47,7 +50,10 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.402
+        dotnet-version: 5.0.103
+
+    - name: Workaround for https://github.com/dotnet/core/issues/5881
+      run: dotnet nuget locals all --clear
 
     - name: Build NuGet Package
       run: dotnet pack -p:CommitID=%GITHUB_SHA%
