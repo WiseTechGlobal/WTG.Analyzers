@@ -33,7 +33,7 @@ jobs:
       run: dotnet build --configuration ${{ matrix.configuration }}
 
     - name: Build NuGet Package
-      run: dotnet pack --configuration ${{ matrix.configuration }} --no-build -p:CommitID=%GITHUB_SHA%
+      run: dotnet pack --configuration ${{ matrix.configuration }} --no-build -p:CommitID=${{ github.sha }}
 
     - name: Run Tests
       if: matrix.configuration == 'Debug'
@@ -56,7 +56,7 @@ jobs:
       run: dotnet nuget locals all --clear
 
     - name: Build NuGet Package
-      run: dotnet pack -p:CommitID=%GITHUB_SHA%
+      run: dotnet pack -p:CommitID=${{ github.sha }}
 
     - name: Upload NuGet Package
       uses: actions/upload-artifact@v2
