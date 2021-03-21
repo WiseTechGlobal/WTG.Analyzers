@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RuleSet Name="Test Assembly Rules" ToolsVersion="16.0">
   <Include Path="CodeAnalysis.ruleset" Action="Default" />
-  <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.NetAnalyzers" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1707" Action="None" />
   </Rules>
 </RuleSet>

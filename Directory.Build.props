@@ -10,6 +10,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <CodeAnalysisRuleSet>$(BuildDirectory)CodeAnalysis.ruleset</CodeAnalysisRuleSet>
 
     <!--
