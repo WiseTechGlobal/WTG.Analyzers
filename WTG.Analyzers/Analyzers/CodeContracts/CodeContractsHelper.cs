@@ -43,7 +43,7 @@ namespace WTG.Analyzers
 				{
 					case SyntaxKind.MethodDeclaration:
 						var methodDecl = (MethodDeclarationSyntax)node;
-						return methodDecl.ExplicitInterfaceSpecifier == null && IsPrivate(semanticModel.GetDeclaredSymbol(methodDecl));
+						return methodDecl.ExplicitInterfaceSpecifier == null && IsPrivate(semanticModel.GetDeclaredSymbol(methodDecl, cancellationToken));
 
 					case SyntaxKind.ConstructorDeclaration:
 						return IsPrivate(semanticModel.GetDeclaredSymbol((ConstructorDeclarationSyntax)node, cancellationToken));

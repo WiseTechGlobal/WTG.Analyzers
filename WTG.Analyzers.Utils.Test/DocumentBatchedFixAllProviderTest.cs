@@ -93,7 +93,7 @@ namespace WTG.Analyzers.Utils.Test
 		{
 			protected override async Task<Document> ApplyFixesAsync(Document originalDocument, Document documentToFix, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
 			{
-				var source = await documentToFix.GetTextAsync().ConfigureAwait(false);
+				var source = await documentToFix.GetTextAsync(cancellationToken).ConfigureAwait(false);
 				var builder = new StringBuilder(source.ToString());
 				builder.AppendLine();
 				builder.Append("// ---");
