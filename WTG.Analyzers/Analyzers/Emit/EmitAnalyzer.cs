@@ -84,9 +84,7 @@ namespace WTG.Analyzers
 		static bool TryGetOpCodeFieldFromEmitCall(SemanticModel model, InvocationExpressionSyntax emitCall, [NotNullWhen(true)] out IFieldSymbol? opCodeSymbol, CancellationToken cancellation)
 		{
 			if (emitCall.ArgumentList.Arguments[0].Accept(FieldAccessor.Instance) is var fieldIdentifier &&
-				fieldIdentifier != null &&
 				model.GetSymbolInfo(fieldIdentifier, cancellation).Symbol is var fieldSymbol &&
-				fieldSymbol != null &&
 				fieldSymbol.Kind == SymbolKind.Field)
 			{
 				opCodeSymbol = (IFieldSymbol)fieldSymbol;

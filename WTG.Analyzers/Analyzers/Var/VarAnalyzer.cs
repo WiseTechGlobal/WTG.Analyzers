@@ -73,11 +73,6 @@ namespace WTG.Analyzers
 			if (candidate.Unwrap)
 			{
 				expressionType = EnumerableTypeUtils.GetElementType(expressionType);
-
-				if (typeSymbol == null)
-				{
-					return;
-				}
 			}
 
 			if (TypeEquals(expressionType, typeSymbol))

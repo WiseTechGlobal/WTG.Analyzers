@@ -37,7 +37,7 @@ namespace WTG.Analyzers
 			return Task.CompletedTask;
 		}
 
-		async Task<Document> RemoveCompiledOption(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+		static async Task<Document> RemoveCompiledOption(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var member = (MemberAccessExpressionSyntax)root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);

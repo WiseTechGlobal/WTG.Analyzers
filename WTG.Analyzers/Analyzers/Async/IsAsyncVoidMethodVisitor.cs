@@ -53,7 +53,7 @@ namespace WTG.Analyzers
 
 			bool IsAsyncVoid(AnonymousFunctionExpressionSyntax node)
 			{
-				if (node.AsyncKeyword == null)
+				if (node.AsyncKeyword.IsKind(SyntaxKind.None))
 				{
 					return false;
 				}
