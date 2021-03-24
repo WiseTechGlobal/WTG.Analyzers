@@ -69,6 +69,7 @@ namespace WTG.Analyzers
 			switch (expression.Kind())
 			{
 				case SyntaxKind.AddExpression:
+				case SyntaxKind.InterpolatedStringExpression:
 					return true;
 
 				case SyntaxKind.InvocationExpression:
@@ -80,7 +81,6 @@ namespace WTG.Analyzers
 					}
 
 					var member = (MemberAccessExpressionSyntax)invoke.Expression;
-
 					return member.Name.Identifier.Text == nameof(string.Format);
 
 				default:
@@ -108,7 +108,8 @@ namespace WTG.Analyzers
 
 			if (symbol.Name == nameof(StringBuilder.Append))
 			{
-				if (IsStringFormat(semanticModel, firstArgument, cancellationToken))
+				if (firstArgument.IsKind(SyntaxKind.InterpolatedStringExpression) ||
+					IsStringFormat(semanticModel, firstArgument, cancellationToken))
 				{
 					properties = AppendFormatMode;
 				}
@@ -117,7 +118,8 @@ namespace WTG.Analyzers
 					properties = AppendMode;
 				}
 			}
-			else if (IsStringFormat(semanticModel, firstArgument, cancellationToken))
+			else if (firstArgument.IsKind(SyntaxKind.InterpolatedStringExpression) ||
+				IsStringFormat(semanticModel, firstArgument, cancellationToken))
 			{
 				properties = AppendFormatAppendLineMode;
 			}

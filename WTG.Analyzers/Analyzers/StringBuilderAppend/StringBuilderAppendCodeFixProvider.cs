@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -10,6 +11,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
@@ -50,7 +52,12 @@ namespace WTG.Analyzers
 			return document.WithSyntaxRoot(
 				root.ReplaceNode(
 					invocation,
-					Translate(memberExpression.Expression.WithoutTrailingTrivia(), firstArgument, mode)
+					Translate(
+						await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false),
+						memberExpression.Expression.WithoutTrailingTrivia(),
+						firstArgument,
+						mode,
+						cancellationToken)
 						.WithTrailingTrivia(invocation.GetTrailingTrivia())));
 		}
 
@@ -65,19 +72,23 @@ namespace WTG.Analyzers
 			return StringBuilderAppendMode.Append;
 		}
 
-		static ExpressionSyntax Translate(ExpressionSyntax baseExpression, ExpressionSyntax valueExpression, StringBuilderAppendMode mode)
+		static ExpressionSyntax Translate(SemanticModel semanticModel, ExpressionSyntax baseExpression, ExpressionSyntax valueExpression, StringBuilderAppendMode mode, CancellationToken cancellationToken)
 		{
 			if (valueExpression.IsKind(SyntaxKind.AddExpression))
 			{
 				var binaryExpression = (BinaryExpressionSyntax)valueExpression;
 
 				return Translate(
+					semanticModel,
 					Translate(
+						semanticModel,
 						baseExpression,
 						binaryExpression.Left,
-						StringBuilderAppendMode.Append),
+						StringBuilderAppendMode.Append,
+						cancellationToken),
 					binaryExpression.Right,
-					mode);
+					mode,
+					cancellationToken);
 			}
 
 			switch (mode)
@@ -90,24 +101,28 @@ namespace WTG.Analyzers
 					return Invoke(Invoke(baseExpression, Append, valueExpression), AppendLine);
 
 				case StringBuilderAppendMode.AppendFormatMode:
-					return Invoke(baseExpression, AppendFormat, ((InvocationExpressionSyntax)valueExpression).ArgumentList);
+					return Invoke(baseExpression, AppendFormat, GetFormatArguments(semanticModel, valueExpression, cancellationToken));
 				case StringBuilderAppendMode.AppendFormatAppendLineMode:
-					return Invoke(Invoke(baseExpression, AppendFormat, ((InvocationExpressionSyntax)valueExpression).ArgumentList), AppendLine);
+					return Invoke(Invoke(baseExpression, AppendFormat, GetFormatArguments(semanticModel, valueExpression, cancellationToken)), AppendLine);
 
 				default:
 					throw new ArgumentOutOfRangeException(nameof(mode), mode, "Unrecognised mode.");
 			}
 		}
 
-		static ExpressionSyntax CreateAppendExpression(ExpressionSyntax baseExpression, ExpressionSyntax valueExpression, bool appendLine)
+		static ArgumentListSyntax GetFormatArguments(SemanticModel semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken)
 		{
-			return Invoke(
-				baseExpression,
-				appendLine ? AppendLine : Append,
-				valueExpression);
-		}
+			if (expression.IsKind(SyntaxKind.InvocationExpression))
+			{
+				return ((InvocationExpressionSyntax)expression).ArgumentList;
+			}
 
-		static ExpressionSyntax CreateAppendFormatExpression(ExpressionSyntax baseExpression, ArgumentListSyntax arguments) => Invoke(baseExpression, AppendFormat, arguments);
+			var info = InterpolationInfo.Extract(semanticModel, (InterpolatedStringExpressionSyntax)expression, cancellationToken);
+			var arguments = new List<ArgumentSyntax>();
+			arguments.Add(SyntaxFactory.Argument(ExpressionSyntaxFactory.CreateLiteral(info.Format)));
+			arguments.AddRange(info.Expressions.Select(SyntaxFactory.Argument));
+			return SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(arguments));
+		}
 
 		static ExpressionSyntax Invoke(ExpressionSyntax baseExpression, IdentifierNameSyntax method)
 			=> Invoke(baseExpression, method, SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList<ArgumentSyntax>()));
