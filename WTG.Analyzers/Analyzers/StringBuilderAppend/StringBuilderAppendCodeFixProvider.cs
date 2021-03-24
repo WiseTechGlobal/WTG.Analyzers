@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using WTG.Analyzers.Analyzers;
 
 namespace WTG.Analyzers
 {
@@ -84,33 +83,50 @@ namespace WTG.Analyzers
 			switch (mode)
 			{
 				case StringBuilderAppendMode.Append:
-					return CreateAppendExpression(baseExpression, valueExpression, false);
+					return Invoke(baseExpression, Append, valueExpression);
 				case StringBuilderAppendMode.AppendLine:
-					return CreateAppendExpression(baseExpression, valueExpression, true);
+					return Invoke(baseExpression, AppendLine, valueExpression);
 				case StringBuilderAppendMode.AppendAppendLine:
-					return CreateAppendExpression(CreateAppendExpression(baseExpression, valueExpression, false), null, true);
+					return Invoke(Invoke(baseExpression, Append, valueExpression), AppendLine);
+
+				case StringBuilderAppendMode.AppendFormatMode:
+					return Invoke(baseExpression, AppendFormat, ((InvocationExpressionSyntax)valueExpression).ArgumentList);
+				case StringBuilderAppendMode.AppendFormatAppendLineMode:
+					return Invoke(Invoke(baseExpression, AppendFormat, ((InvocationExpressionSyntax)valueExpression).ArgumentList), AppendLine);
 
 				default:
 					throw new ArgumentOutOfRangeException(nameof(mode), mode, "Unrecognised mode.");
 			}
 		}
 
-		static ExpressionSyntax CreateAppendExpression(ExpressionSyntax baseExpression, ExpressionSyntax? valueExpression, bool appendLine)
+		static ExpressionSyntax CreateAppendExpression(ExpressionSyntax baseExpression, ExpressionSyntax valueExpression, bool appendLine)
+		{
+			return Invoke(
+				baseExpression,
+				appendLine ? AppendLine : Append,
+				valueExpression);
+		}
+
+		static ExpressionSyntax CreateAppendFormatExpression(ExpressionSyntax baseExpression, ArgumentListSyntax arguments) => Invoke(baseExpression, AppendFormat, arguments);
+
+		static ExpressionSyntax Invoke(ExpressionSyntax baseExpression, IdentifierNameSyntax method)
+			=> Invoke(baseExpression, method, SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList<ArgumentSyntax>()));
+
+		static ExpressionSyntax Invoke(ExpressionSyntax baseExpression, IdentifierNameSyntax method, ExpressionSyntax argument)
+			=> Invoke(baseExpression, method, SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(argument))));
+
+		static ExpressionSyntax Invoke(ExpressionSyntax baseExpression, IdentifierNameSyntax method, ArgumentListSyntax arguments)
 		{
 			return SyntaxFactory.InvocationExpression(
 				SyntaxFactory.MemberAccessExpression(
 					SyntaxKind.SimpleMemberAccessExpression,
 					baseExpression,
-					appendLine ? AppendLine : Append),
-				valueExpression == null
-					? SyntaxFactory.ArgumentList(
-						SyntaxFactory.SeparatedList<ArgumentSyntax>())
-					: SyntaxFactory.ArgumentList(
-						SyntaxFactory.SingletonSeparatedList(
-							SyntaxFactory.Argument(valueExpression))));
+					method),
+				arguments);
 		}
 
 		static readonly IdentifierNameSyntax Append = SyntaxFactory.IdentifierName(nameof(StringBuilder.Append));
 		static readonly IdentifierNameSyntax AppendLine = SyntaxFactory.IdentifierName(nameof(StringBuilder.AppendLine));
+		static readonly IdentifierNameSyntax AppendFormat = SyntaxFactory.IdentifierName(nameof(StringBuilder.AppendFormat));
 	}
 }

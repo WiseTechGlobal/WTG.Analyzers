@@ -5,5 +5,7 @@ namespace WTG.Analyzers
 		Append,
 		AppendLine,
 		AppendAppendLine,
+		AppendFormatMode,
+		AppendFormatAppendLineMode,
 	}
 }

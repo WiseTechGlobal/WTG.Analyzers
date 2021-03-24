@@ -64,7 +64,29 @@ namespace WTG.Analyzers
 				&& invoke.Expression is MemberAccessExpressionSyntax member
 				&& (member.Name.Identifier.Text == nameof(StringBuilder.Append) || member.Name.Identifier.Text == nameof(StringBuilder.AppendLine));
 
-		static bool LooksLikeMutation(ExpressionSyntax expression) => expression.IsKind(SyntaxKind.AddExpression);
+		static bool LooksLikeMutation(ExpressionSyntax expression)
+		{
+			switch (expression.Kind())
+			{
+				case SyntaxKind.AddExpression:
+					return true;
+
+				case SyntaxKind.InvocationExpression:
+					var invoke = (InvocationExpressionSyntax)expression;
+
+					if (!invoke.Expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+					{
+						return false;
+					}
+
+					var member = (MemberAccessExpressionSyntax)invoke.Expression;
+
+					return member.Name.Identifier.Text == nameof(string.Format);
+
+				default:
+					return false;
+			}
+		}
 
 		static bool IsAppendMethod(SemanticModel semanticModel, InvocationExpressionSyntax invokeExpression, ExpressionSyntax firstArgument, CancellationToken cancellationToken, [NotNullWhen(true)] out ImmutableDictionary<string, string>? properties)
 		{
@@ -86,7 +108,18 @@ namespace WTG.Analyzers
 
 			if (symbol.Name == nameof(StringBuilder.Append))
 			{
-				properties = AppendMode;
+				if (IsStringFormat(semanticModel, firstArgument, cancellationToken))
+				{
+					properties = AppendFormatMode;
+				}
+				else
+				{
+					properties = AppendMode;
+				}
+			}
+			else if (IsStringFormat(semanticModel, firstArgument, cancellationToken))
+			{
+				properties = AppendFormatAppendLineMode;
 			}
 			else if (LastAppendIsString(semanticModel, firstArgument, cancellationToken))
 			{
@@ -98,26 +131,46 @@ namespace WTG.Analyzers
 			}
 
 			return true;
-
-			static bool LastAppendIsString(SemanticModel semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken)
-			{
-				while (expression.IsKind(SyntaxKind.AddExpression))
-				{
-					var binaryExpression = (BinaryExpressionSyntax)expression;
-					expression = binaryExpression.Right;
-				}
-
-				var type = semanticModel.GetTypeInfo(expression, cancellationToken).Type;
-
-				return type != null && type.SpecialType == SpecialType.System_String;
-			}
 		}
 
-		static readonly ImmutableDictionary<string, string> AppendMode = ImmutableDictionary<string, string>.Empty
-			.Add(nameof(StringBuilderAppendMode), nameof(StringBuilderAppendMode.Append));
-		static readonly ImmutableDictionary<string, string> AppendLineMode = ImmutableDictionary<string, string>.Empty
-			.Add(nameof(StringBuilderAppendMode), nameof(StringBuilderAppendMode.AppendLine));
-		static readonly ImmutableDictionary<string, string> AppendAppendLineMode = ImmutableDictionary<string, string>.Empty
-			.Add(nameof(StringBuilderAppendMode), nameof(StringBuilderAppendMode.AppendAppendLine));
+		static bool IsStringFormat(SemanticModel semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken)
+		{
+			if (!expression.IsKind(SyntaxKind.InvocationExpression))
+			{
+				return false;
+			}
+
+			var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
+
+			if (symbol == null || symbol.ContainingType.SpecialType != SpecialType.System_String)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		static bool LastAppendIsString(SemanticModel semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken)
+		{
+			while (expression.IsKind(SyntaxKind.AddExpression))
+			{
+				var binaryExpression = (BinaryExpressionSyntax)expression;
+				expression = binaryExpression.Right;
+			}
+
+			var type = semanticModel.GetTypeInfo(expression, cancellationToken).Type;
+
+			return type != null && type.SpecialType == SpecialType.System_String;
+		}
+
+		static ImmutableDictionary<string, string> CreateProperties(StringBuilderAppendMode mode)
+			=> ImmutableDictionary<string, string>.Empty.Add(nameof(StringBuilderAppendMode), mode.ToString());
+
+		static readonly ImmutableDictionary<string, string> AppendMode = CreateProperties(StringBuilderAppendMode.Append);
+		static readonly ImmutableDictionary<string, string> AppendLineMode = CreateProperties(StringBuilderAppendMode.AppendLine);
+		static readonly ImmutableDictionary<string, string> AppendAppendLineMode = CreateProperties(StringBuilderAppendMode.AppendAppendLine);
+
+		static readonly ImmutableDictionary<string, string> AppendFormatMode = CreateProperties(StringBuilderAppendMode.AppendFormatMode);
+		static readonly ImmutableDictionary<string, string> AppendFormatAppendLineMode = CreateProperties(StringBuilderAppendMode.AppendFormatAppendLineMode);
 	}
 }
