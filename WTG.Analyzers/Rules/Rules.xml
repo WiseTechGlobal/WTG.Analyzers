@@ -210,6 +210,11 @@
 			<description>You can skip the task altogether.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="11" name="DontMutateAppendedStringArguments" severity="Info">
+			<title>Don't mutate string arguments appended to a string builder.</title>
+			<message>Mutating the arguments before appending results in the creation of an unnecessary intermediate string.</message>
+			<description>The intermediate string can be avoided by simply using Append methods correctly.</description>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">

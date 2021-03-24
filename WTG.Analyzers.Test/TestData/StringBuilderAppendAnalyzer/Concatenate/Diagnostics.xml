@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3011" message="Mutating the arguments before appending results in the creation of an unnecessary intermediate string." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (10,4-29)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (11,4-33)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (12,4-33)</location>
+	</diagnostic>
+</diagnostics>
