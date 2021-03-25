@@ -83,27 +83,26 @@ namespace WTG.Analyzers
 			{
 				case Category.Format:
 					baseExpression = Invoke(baseExpression, AppendFormat, GetFormatArguments(semanticModel, valueExpression, cancellationToken));
-
-					if (appendLine)
-					{
-						baseExpression = Invoke(baseExpression, AppendLine);
-					}
-
-					return baseExpression;
+					break;
 
 				case Category.StringValue:
 					return Invoke(baseExpression, appendLine ? AppendLine : Append, valueExpression);
 
+				case Category.Substring:
+					baseExpression = Invoke(baseExpression, Append, GetSubstringArguments((InvocationExpressionSyntax)valueExpression));
+					break;
+
 				default:
 					baseExpression = Invoke(baseExpression, Append, valueExpression);
-
-					if (appendLine)
-					{
-						baseExpression = Invoke(baseExpression, AppendLine);
-					}
-
-					return baseExpression;
+					break;
 			}
+
+			if (appendLine)
+			{
+				baseExpression = Invoke(baseExpression, AppendLine);
+			}
+
+			return baseExpression;
 		}
 
 		static Category GetCategory(SemanticModel semanticModel, ExpressionSyntax valueExpression, CancellationToken cancellationToken)
@@ -121,6 +120,10 @@ namespace WTG.Analyzers
 					if (methodSymbol.Name == nameof(string.Format))
 					{
 						return Category.Format;
+					}
+					else if (methodSymbol.Name == nameof(string.Substring))
+					{
+						return Category.Substring;
 					}
 				}
 
@@ -148,6 +151,37 @@ namespace WTG.Analyzers
 			return SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(arguments));
 		}
 
+		static ArgumentListSyntax GetSubstringArguments(InvocationExpressionSyntax expression)
+		{
+			var member = (MemberAccessExpressionSyntax)expression.Expression;
+
+			var oldArguments = expression.ArgumentList.Arguments;
+			var newArguments = new ArgumentSyntax[3];
+			newArguments[0] = SyntaxFactory.Argument(member.Expression);
+			newArguments[1] = oldArguments[0];
+
+			if (oldArguments.Count == 2)
+			{
+				newArguments[2] = oldArguments[1];
+			}
+			else
+			{
+				// This should work fine when the provided arguments are simple, but will produce 'sub-optimal' results
+				// if the arguments are complex or have side-effects. Hopefully we can rely on the developer's better
+				// judgement in these cases.
+				newArguments[2] = SyntaxFactory.Argument(
+					SyntaxFactory.BinaryExpression(
+						SyntaxKind.SubtractExpression,
+						SyntaxFactory.MemberAccessExpression(
+							SyntaxKind.SimpleMemberAccessExpression,
+							newArguments[0].Expression,
+							SyntaxFactory.IdentifierName(nameof(string.Length))),
+						newArguments[1].Expression));
+			}
+
+			return SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(newArguments));
+		}
+
 		static ExpressionSyntax Invoke(ExpressionSyntax baseExpression, IdentifierNameSyntax method)
 			=> Invoke(baseExpression, method, SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList<ArgumentSyntax>()));
 
@@ -171,6 +205,7 @@ namespace WTG.Analyzers
 		enum Category
 		{
 			Format,
+			Substring,
 			StringValue,
 			NonStringValue,
 		}

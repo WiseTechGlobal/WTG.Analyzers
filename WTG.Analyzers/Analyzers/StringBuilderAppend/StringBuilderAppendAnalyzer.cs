@@ -80,7 +80,9 @@ namespace WTG.Analyzers
 					}
 
 					var member = (MemberAccessExpressionSyntax)invoke.Expression;
-					return member.Name.Identifier.Text == nameof(string.Format);
+					var name = member.Name.Identifier.Text;
+					return name == nameof(string.Format)
+						|| name == nameof(string.Substring);
 
 				default:
 					return false;
@@ -119,7 +121,7 @@ namespace WTG.Analyzers
 
 					return symbol != null
 						&& symbol.ContainingType.SpecialType == SpecialType.System_String
-						&& symbol.Name == nameof(string.Format);
+						&& (symbol.Name == nameof(string.Format) || symbol.Name == nameof(string.Substring));
 
 				default:
 					return false;
