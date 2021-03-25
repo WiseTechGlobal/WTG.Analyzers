@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading;
@@ -6,6 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+#pragma warning disable CA1815
 namespace WTG.Analyzers.Utils
 {
 	public readonly struct InterpolationInfo
@@ -75,6 +77,7 @@ namespace WTG.Analyzers.Utils
 		}
 
 		public string Format { get; }
-		public ExpressionSyntax[] Expressions { get; }
+		public IReadOnlyList<ExpressionSyntax> Expressions { get; }
 	}
 }
+#pragma warning restore CA1815
