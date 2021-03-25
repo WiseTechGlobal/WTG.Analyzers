@@ -41,11 +41,10 @@ namespace WTG.Analyzers
 		static async Task<Document> ConvertToAppendsAsync(Diagnostic diagnostic, Document document, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-			var diagnosticSpan = diagnostic.Location.SourceSpan;
+			var diagnosticSpan = diagnostic.AdditionalLocations[0].SourceSpan;
 			var invocation = (InvocationExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 			var memberExpression = (MemberAccessExpressionSyntax)invocation.Expression;
 			var appendLine = memberExpression.Name.Identifier.Text == nameof(StringBuilder.AppendLine);
-
 			var firstArgument = invocation.ArgumentList.Arguments[0].Expression;
 
 			return document.WithSyntaxRoot(

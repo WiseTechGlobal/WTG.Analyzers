@@ -55,7 +55,10 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			context.ReportDiagnostic(Rules.CreateDontMutateAppendedStringArgumentsDiagnostic(invokeExpression.GetLocation()));
+			context.ReportDiagnostic(Diagnostic.Create(
+				Rules.DontMutateAppendedStringArgumentsRule,
+				firstArgument.GetLocation(),
+				additionalLocations: new[] { invokeExpression.GetLocation() }));
 		}
 
 		static bool LooksLikeAppendMethod(InvocationExpressionSyntax invoke)
