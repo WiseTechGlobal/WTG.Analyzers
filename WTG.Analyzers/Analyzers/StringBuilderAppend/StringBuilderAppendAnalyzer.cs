@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -50,13 +49,13 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			if (!IsAppendMethod(context.SemanticModel, invokeExpression, firstArgument, context.CancellationToken, out var properties))
+			if (!IsAppendMethod(context.SemanticModel, invokeExpression, context.CancellationToken) ||
+				!IsMutation(context.SemanticModel, firstArgument, context.CancellationToken))
 			{
 				return;
 			}
 
-			context.ReportDiagnostic(
-				Diagnostic.Create(Rules.DontMutateAppendedStringArgumentsRule, invokeExpression.GetLocation(), properties));
+			context.ReportDiagnostic(Rules.CreateDontMutateAppendedStringArgumentsDiagnostic(invokeExpression.GetLocation()));
 		}
 
 		static bool LooksLikeAppendMethod(InvocationExpressionSyntax invoke)
@@ -88,68 +87,43 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool IsAppendMethod(SemanticModel semanticModel, InvocationExpressionSyntax invokeExpression, ExpressionSyntax firstArgument, CancellationToken cancellationToken, [NotNullWhen(true)] out ImmutableDictionary<string, string>? properties)
+		static bool IsAppendMethod(SemanticModel semanticModel, InvocationExpressionSyntax invokeExpression, CancellationToken cancellationToken)
 		{
 			var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(invokeExpression, cancellationToken).Symbol;
 
 			if (symbol == null || !symbol.ContainingType.IsMatch("System.Text.StringBuilder") || symbol.Parameters.Length == 0)
 			{
-				properties = null;
 				return false;
 			}
 
 			var parameter = symbol.Parameters[0];
 
-			if (!parameter.Type.IsMatch("System.String"))
+			if (parameter.Type.SpecialType != SpecialType.System_String)
 			{
-				properties = null;
 				return false;
-			}
-
-			if (symbol.Name == nameof(StringBuilder.Append))
-			{
-				if (firstArgument.IsKind(SyntaxKind.InterpolatedStringExpression) ||
-					IsStringFormat(semanticModel, firstArgument, cancellationToken))
-				{
-					properties = AppendFormatMode;
-				}
-				else
-				{
-					properties = AppendMode;
-				}
-			}
-			else if (firstArgument.IsKind(SyntaxKind.InterpolatedStringExpression) ||
-				IsStringFormat(semanticModel, firstArgument, cancellationToken))
-			{
-				properties = AppendFormatAppendLineMode;
-			}
-			else if (LastAppendIsString(semanticModel, firstArgument, cancellationToken))
-			{
-				properties = AppendLineMode;
-			}
-			else
-			{
-				properties = AppendAppendLineMode;
 			}
 
 			return true;
 		}
 
-		static bool IsStringFormat(SemanticModel semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken)
+		static bool IsMutation(SemanticModel semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken)
 		{
-			if (!expression.IsKind(SyntaxKind.InvocationExpression))
+			switch (expression.Kind())
 			{
-				return false;
+				case SyntaxKind.InterpolatedStringExpression:
+				case SyntaxKind.AddExpression:
+					return true;
+
+				case SyntaxKind.InvocationExpression:
+					var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
+
+					return symbol != null
+						&& symbol.ContainingType.SpecialType == SpecialType.System_String
+						&& symbol.Name == nameof(string.Format);
+
+				default:
+					return false;
 			}
-
-			var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
-
-			if (symbol == null || symbol.ContainingType.SpecialType != SpecialType.System_String)
-			{
-				return false;
-			}
-
-			return true;
 		}
 
 		static bool LastAppendIsString(SemanticModel semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken)
@@ -164,15 +138,5 @@ namespace WTG.Analyzers
 
 			return type != null && type.SpecialType == SpecialType.System_String;
 		}
-
-		static ImmutableDictionary<string, string> CreateProperties(StringBuilderAppendMode mode)
-			=> ImmutableDictionary<string, string>.Empty.Add(nameof(StringBuilderAppendMode), mode.ToString());
-
-		static readonly ImmutableDictionary<string, string> AppendMode = CreateProperties(StringBuilderAppendMode.Append);
-		static readonly ImmutableDictionary<string, string> AppendLineMode = CreateProperties(StringBuilderAppendMode.AppendLine);
-		static readonly ImmutableDictionary<string, string> AppendAppendLineMode = CreateProperties(StringBuilderAppendMode.AppendAppendLine);
-
-		static readonly ImmutableDictionary<string, string> AppendFormatMode = CreateProperties(StringBuilderAppendMode.AppendFormatMode);
-		static readonly ImmutableDictionary<string, string> AppendFormatAppendLineMode = CreateProperties(StringBuilderAppendMode.AppendFormatAppendLineMode);
 	}
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
@@ -45,7 +44,7 @@ namespace WTG.Analyzers
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var invocation = (InvocationExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 			var memberExpression = (MemberAccessExpressionSyntax)invocation.Expression;
-			var mode = GetMode(diagnostic);
+			var appendLine = memberExpression.Name.Identifier.Text == nameof(StringBuilder.AppendLine);
 
 			var firstArgument = invocation.ArgumentList.Arguments[0].Expression;
 
@@ -56,23 +55,12 @@ namespace WTG.Analyzers
 						await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false),
 						memberExpression.Expression.WithoutTrailingTrivia(),
 						firstArgument,
-						mode,
+						appendLine,
 						cancellationToken)
 						.WithTrailingTrivia(invocation.GetTrailingTrivia())));
 		}
 
-		static StringBuilderAppendMode GetMode(Diagnostic diagnostic)
-		{
-			if (diagnostic.Properties.TryGetValue(nameof(StringBuilderAppendMode), out var value) &&
-				Enum.TryParse(value, out StringBuilderAppendMode mode))
-			{
-				return mode;
-			}
-
-			return StringBuilderAppendMode.Append;
-		}
-
-		static ExpressionSyntax Translate(SemanticModel semanticModel, ExpressionSyntax baseExpression, ExpressionSyntax valueExpression, StringBuilderAppendMode mode, CancellationToken cancellationToken)
+		static ExpressionSyntax Translate(SemanticModel semanticModel, ExpressionSyntax baseExpression, ExpressionSyntax valueExpression, bool appendLine, CancellationToken cancellationToken)
 		{
 			if (valueExpression.IsKind(SyntaxKind.AddExpression))
 			{
@@ -84,30 +72,66 @@ namespace WTG.Analyzers
 						semanticModel,
 						baseExpression,
 						binaryExpression.Left,
-						StringBuilderAppendMode.Append,
+						false,
 						cancellationToken),
 					binaryExpression.Right,
-					mode,
+					appendLine,
 					cancellationToken);
 			}
 
-			switch (mode)
+			switch (GetCategory(semanticModel, valueExpression, cancellationToken))
 			{
-				case StringBuilderAppendMode.Append:
-					return Invoke(baseExpression, Append, valueExpression);
-				case StringBuilderAppendMode.AppendLine:
-					return Invoke(baseExpression, AppendLine, valueExpression);
-				case StringBuilderAppendMode.AppendAppendLine:
-					return Invoke(Invoke(baseExpression, Append, valueExpression), AppendLine);
+				case Category.Format:
+					baseExpression = Invoke(baseExpression, AppendFormat, GetFormatArguments(semanticModel, valueExpression, cancellationToken));
 
-				case StringBuilderAppendMode.AppendFormatMode:
-					return Invoke(baseExpression, AppendFormat, GetFormatArguments(semanticModel, valueExpression, cancellationToken));
-				case StringBuilderAppendMode.AppendFormatAppendLineMode:
-					return Invoke(Invoke(baseExpression, AppendFormat, GetFormatArguments(semanticModel, valueExpression, cancellationToken)), AppendLine);
+					if (appendLine)
+					{
+						baseExpression = Invoke(baseExpression, AppendLine);
+					}
+
+					return baseExpression;
+
+				case Category.StringValue:
+					return Invoke(baseExpression, appendLine ? AppendLine : Append, valueExpression);
 
 				default:
-					throw new ArgumentOutOfRangeException(nameof(mode), mode, "Unrecognised mode.");
+					baseExpression = Invoke(baseExpression, Append, valueExpression);
+
+					if (appendLine)
+					{
+						baseExpression = Invoke(baseExpression, AppendLine);
+					}
+
+					return baseExpression;
 			}
+		}
+
+		static Category GetCategory(SemanticModel semanticModel, ExpressionSyntax valueExpression, CancellationToken cancellationToken)
+		{
+			if (valueExpression.IsKind(SyntaxKind.InterpolatedStringExpression))
+			{
+				return Category.Format;
+			}
+			else if (valueExpression.IsKind(SyntaxKind.InvocationExpression))
+			{
+				var methodSymbol = (IMethodSymbol)semanticModel.GetSymbolInfo(valueExpression, cancellationToken).Symbol;
+
+				if (methodSymbol != null && methodSymbol.ContainingType.SpecialType == SpecialType.System_String)
+				{
+					if (methodSymbol.Name == nameof(string.Format))
+					{
+						return Category.Format;
+					}
+				}
+
+				return Category.StringValue;
+			}
+
+			var type = semanticModel.GetTypeInfo(valueExpression, cancellationToken).Type;
+
+			return type != null && type.SpecialType == SpecialType.System_String
+				? Category.StringValue
+				: Category.NonStringValue;
 		}
 
 		static ArgumentListSyntax GetFormatArguments(SemanticModel semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken)
@@ -143,5 +167,12 @@ namespace WTG.Analyzers
 		static readonly IdentifierNameSyntax Append = SyntaxFactory.IdentifierName(nameof(StringBuilder.Append));
 		static readonly IdentifierNameSyntax AppendLine = SyntaxFactory.IdentifierName(nameof(StringBuilder.AppendLine));
 		static readonly IdentifierNameSyntax AppendFormat = SyntaxFactory.IdentifierName(nameof(StringBuilder.AppendFormat));
+
+		enum Category
+		{
+			Format,
+			StringValue,
+			NonStringValue,
+		}
 	}
 }
