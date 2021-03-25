@@ -130,18 +130,5 @@ namespace WTG.Analyzers
 					return false;
 			}
 		}
-
-		static bool LastAppendIsString(SemanticModel semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken)
-		{
-			while (expression.IsKind(SyntaxKind.AddExpression))
-			{
-				var binaryExpression = (BinaryExpressionSyntax)expression;
-				expression = binaryExpression.Right;
-			}
-
-			var type = semanticModel.GetTypeInfo(expression, cancellationToken).Type;
-
-			return type != null && type.SpecialType == SpecialType.System_String;
-		}
 	}
 }
