@@ -46,6 +46,9 @@ namespace WTG.Analyzers.Utils
 						builder.Append('}');
 						expressionCount++;
 						break;
+
+					default:
+						throw new ArgumentException("Interpolated string contains unrecognised component: " + section.Kind(), nameof(expression));
 				}
 			}
 
