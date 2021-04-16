@@ -11,6 +11,7 @@ namespace Magic
 			builder.Append(bar + 5); // adding int's, not concatenating strings.
 			builder.Append(Decoy(foo, bar));
 			builder.AppendFormat("Prefix {0} Suffix", foo);
+			builder.AppendLine();
 			Decoy(foo + bar,bar);
 		}
 

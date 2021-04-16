@@ -37,7 +37,7 @@ namespace WTG.Analyzers
 
 			var invokeExpression = (InvocationExpressionSyntax)context.Node;
 
-			if (!LooksLikeAppendMethod(invokeExpression) && invokeExpression.ArgumentList.Arguments.Count == 0)
+			if (invokeExpression.ArgumentList.Arguments.Count == 0 || !LooksLikeAppendMethod(invokeExpression))
 			{
 				return;
 			}
