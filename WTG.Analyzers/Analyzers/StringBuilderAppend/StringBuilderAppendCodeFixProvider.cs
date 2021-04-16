@@ -71,7 +71,7 @@ namespace WTG.Analyzers
 						semanticModel,
 						baseExpression,
 						binaryExpression.Left,
-						false,
+						appendLine: false,
 						cancellationToken),
 					binaryExpression.Right,
 					appendLine,
