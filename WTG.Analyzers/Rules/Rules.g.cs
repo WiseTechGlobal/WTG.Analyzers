@@ -44,6 +44,7 @@ namespace WTG.Analyzers
 		public const string DontEquateValueTypesWithNullDiagnosticID = "WTG3008";
 		public const string PreferCompletedTaskDiagnosticID = "WTG3009";
 		public const string DontAwaitTriviallyCompletedTasksDiagnosticID = "WTG3010";
+		public const string DontMutateAppendedStringArgumentsDiagnosticID = "WTG3011";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -519,6 +520,15 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor DontMutateAppendedStringArgumentsRule = new DiagnosticDescriptor(
+			DontMutateAppendedStringArgumentsDiagnosticID,
+			"Don't mutate string arguments appended to a string builder.",
+			"Mutating the arguments before appending results in the creation of an unnecessary intermediate string.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "The intermediate string can be avoided by simply using Append methods correctly.");
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -896,6 +906,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDontAwaitTriviallyCompletedTasksDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DontAwaitTriviallyCompletedTasksRule, location);
+		}
+
+		/// <summary>
+		/// Mutating the arguments before appending results in the creation of an unnecessary intermediate string.
+		/// </summary>
+		public static Diagnostic CreateDontMutateAppendedStringArgumentsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DontMutateAppendedStringArgumentsRule, location);
 		}
 
 		/// <summary>

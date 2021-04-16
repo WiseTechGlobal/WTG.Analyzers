@@ -27,6 +27,7 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(PointlessOverrideAnalyzer), typeof(PointlessOverrideCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(RegexAnalyzer), typeof(RegexCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(RegionDirectiveAnalyzer), typeof(RegionDirectiveCodeFixProvider) })]
+	[TestFixture(TypeArgs = new[] { typeof(StringBuilderAppendAnalyzer), typeof(StringBuilderAppendCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(SuppressionAnalyzer), typeof(SuppressionCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(ToStringAnalyzer), typeof(ToStringCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(UsingsAnalyzer), typeof(UsingsCodeFixProvider) })]
