@@ -10,15 +10,15 @@
 		<location>Test0.cs: (12,42-74)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (13,42-75)</location>
+		<location>Test0.cs: (13,42-74)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (13,42-75)</location>
-	</diagnostic>
-	<diagnostic>
-		<location>Test0.cs: (14,42-76)</location>
+		<location>Test0.cs: (14,42-74)</location>
 	</diagnostic>
 	<diagnostic>
 		<location>Test0.cs: (15,42-76)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (16,42-76)</location>
 	</diagnostic>
 </diagnostics>
