@@ -85,8 +85,7 @@ namespace WTG.Analyzers
 			{
 				case SyntaxKind.StringLiteralExpression:
 					var literal = (LiteralExpressionSyntax)expression;
-					var text = literal.Token.ValueText;
-					return TextContainsPathSeparator(text);
+					return StringLiteralExpressionIsSuspicious(literal);
 
 				case SyntaxKind.AddExpression:
 					var add = (BinaryExpressionSyntax)expression;
@@ -110,7 +109,7 @@ namespace WTG.Analyzers
 			{
 				case SyntaxKind.StringLiteralExpression:
 					var literal = (LiteralExpressionSyntax)expression;
-					return LiteralExpressionIsSuspicious(literal);
+					return StringLiteralExpressionIsSuspicious(literal);
 
 				case SyntaxKind.AddExpression:
 					var add = (BinaryExpressionSyntax)expression;
@@ -128,7 +127,7 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool LiteralExpressionIsSuspicious(LiteralExpressionSyntax syntax)
+		static bool StringLiteralExpressionIsSuspicious(LiteralExpressionSyntax syntax)
 		{
 			var text = syntax.Token.ValueText;
 			return TextContainsPathSeparator(text);
