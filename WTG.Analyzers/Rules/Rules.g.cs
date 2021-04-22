@@ -34,6 +34,7 @@ namespace WTG.Analyzers
 		public const string UseCorrectEmitOverloadDiagnosticID = "WTG2005";
 		public const string ForbidCompiledInStaticRegexMethodsDiagnosticID = "WTG2006";
 		public const string ForbidCustomHttpReasonPhraseValuesDiagnosticID = "WTG2007";
+		public const string DoNotUsePathSeparatorsInPathLiteralsDiagnosticID = "WTG2008";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 		public const string PreferDirectMemberAccessOverLinqDiagnosticID = "WTG3002";
 		public const string PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID = "WTG3003";
@@ -335,6 +336,15 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
 			description: "Custom Reason Phrase values may not be passed from a HTTP/1.1 server to the client due to intermediate proxy software, and has been removed entirely from HTTP/2.");
+
+		public static readonly DiagnosticDescriptor DoNotUsePathSeparatorsInPathLiteralsRule = new DiagnosticDescriptor(
+			DoNotUsePathSeparatorsInPathLiteralsDiagnosticID,
+			"Do not specify filesystem path separators in path string literals.",
+			"Do not specify path separators in string literals that represent filesystem paths.",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "Path separators are different on different operating system. When using filesystem APIs, use Path.Combine or Path.PathSeparatorChar to construct paths.");
 
 		public static readonly DiagnosticDescriptor RemovedOrphanedSuppressionsRule = new DiagnosticDescriptor(
 			RemovedOrphanedSuppressionsDiagnosticID,
@@ -778,6 +788,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateForbidCustomHttpReasonPhraseValuesDiagnostic(Location location)
 		{
 			return Diagnostic.Create(ForbidCustomHttpReasonPhraseValuesRule, location);
+		}
+
+		/// <summary>
+		/// Do not specify path separators in string literals that represent filesystem paths.
+		/// </summary>
+		public static Diagnostic CreateDoNotUsePathSeparatorsInPathLiteralsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DoNotUsePathSeparatorsInPathLiteralsRule, location);
 		}
 
 		/// <summary>
