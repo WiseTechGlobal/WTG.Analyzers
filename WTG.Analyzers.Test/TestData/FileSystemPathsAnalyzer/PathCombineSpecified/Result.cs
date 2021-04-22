@@ -8,10 +8,10 @@ class Foo
 	public static void Method()
 	{
 		DoThingWithFile(Path.Combine("parent", "child", "grandchild"));
-		DoThingWithFile(Path.Combine("parent", @"child", @"grandchild"));
+		DoThingWithFile(Path.Combine("parent", "child", "grandchild"));
 		DoThingWithFile(Path.Combine("parent", "child", GrandchildFolderName));
 		DoThingWithFile(Path.Combine("parent", "child", GrandchildFolderName));
-		DoThingWithFile(Path.Combine("parent", @"child", GrandchildFolderName));
+		DoThingWithFile(Path.Combine("parent", "child", GrandchildFolderName));
 		DoThingWithFile(Path.Combine("parent", Child, GrandchildFolderName));
 		DoThingWithFile(Path.Combine("parent", Child, GrandchildFolderName));
 	}
