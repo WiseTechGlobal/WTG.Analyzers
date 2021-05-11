@@ -44,40 +44,88 @@ namespace WTG.Analyzers
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = (ExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
-			var argumentSyntax = (ArgumentSyntax)node.Parent;
-			var argumentList = (ArgumentListSyntax)argumentSyntax.Parent;
-			var invocationExpression = (InvocationExpressionSyntax)argumentList.Parent;
-
-			if (node.IsKind(SyntaxKind.StringLiteralExpression))
-			{
-				var literal = (LiteralExpressionSyntax)node;
-				return await FixStringLiteralExpression(document, literal, cancellationToken).ConfigureAwait(false);
-			}
-			else if (node.IsKind(SyntaxKind.InterpolatedStringExpression))
-			{
-				var interpolatedString = (InterpolatedStringExpressionSyntax)node;
-				return await FixInterpolatedStringExpression(document, interpolatedString, cancellationToken).ConfigureAwait(false);
-			}
-
-			return document;
+			return await FixPathExpression(document, node, cancellationToken).ConfigureAwait(false);
 		}
 
-		static async Task<Document> FixStringLiteralExpression(Document document, LiteralExpressionSyntax literal, CancellationToken cancellationToken)
+		static async Task<Document> FixPathExpression(Document document, ExpressionSyntax expression, CancellationToken cancellationToken)
 		{
-			var root = await literal.SyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-			var argumentSyntax = (ArgumentSyntax)literal.Parent;
+			var root = await expression.SyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+			var argumentSyntax = (ArgumentSyntax)expression.Parent;
 			var argumentList = (ArgumentListSyntax)argumentSyntax.Parent;
 
+			var indexOfLiteral = argumentList.Arguments.IndexOf(argumentSyntax);
+
+			var expressions = SplitPathExpression(expression, cancellationToken);
+
+			var arguments = new List<ArgumentSyntax>(capacity: argumentList.Arguments.Count + expressions.Count - 1);
+			arguments.AddRange(argumentList.Arguments.Take(indexOfLiteral));
+
+			for (var i = 0; i < expressions.Count; i++)
+			{
+				var newExpression = expressions[i];
+				var argument = SyntaxFactory.Argument(newExpression);
+
+				if (i == 0)
+				{
+					argument = argument.WithLeadingTrivia(argumentSyntax.GetLeadingTrivia());
+				}
+
+				if (i + 1 == expressions.Count)
+				{
+					argument = argument.WithTrailingTrivia(argumentSyntax.GetTrailingTrivia());
+				}
+
+				arguments.Add(argument);
+			}
+
+			arguments.AddRange(argumentList.Arguments.Skip(indexOfLiteral + 1));
+			var newArgumentList = SyntaxFactory.ArgumentList(
+				SyntaxFactory.SeparatedList(arguments))
+				.WithTriviaFrom(argumentList);
+
+			return document.WithSyntaxRoot(
+				root.ReplaceNode(argumentList, newArgumentList));
+		}
+
+		static ImmutableList<ExpressionSyntax> SplitPathExpression(ExpressionSyntax expression, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+
+			var expressions = ImmutableList.CreateBuilder<ExpressionSyntax>();
+
+			if (expression.IsKind(SyntaxKind.StringLiteralExpression))
+			{
+				var literal = (LiteralExpressionSyntax)expression;
+				SplitStringLiteralExpression(literal, expressions, cancellationToken);
+			}
+			else if (expression.IsKind(SyntaxKind.InterpolatedStringExpression))
+			{
+				var interpolatedString = (InterpolatedStringExpressionSyntax)expression;
+				SplitInterpolatedStringExpression(interpolatedString, expressions, cancellationToken);
+			}
+			else if (expression.IsKind(SyntaxKind.AddExpression))
+			{
+				var binaryExpression = (BinaryExpressionSyntax)expression;
+				SplitAddExpression(binaryExpression, expressions, cancellationToken);
+			}
+			else
+			{
+				// Nothing we can do
+				expressions.Add(expression);
+			}
+
+			return expressions.ToImmutable();
+		}
+
+		static void SplitStringLiteralExpression(LiteralExpressionSyntax literal, ImmutableList<ExpressionSyntax>.Builder list, CancellationToken cancellationToken)
+		{
 			var literalValue = literal.Token.ValueText;
 			var newLiterals = literalValue.Split(PathSeparatorChars, StringSplitOptions.RemoveEmptyEntries);
 
-			var arguments = new List<ArgumentSyntax>(capacity: argumentList.Arguments.Count - 1 + newLiterals.Length);
-
-			var indexOfLiteral = argumentList.Arguments.IndexOf(argumentSyntax);
-			arguments.AddRange(argumentList.Arguments.Take(indexOfLiteral));
-
 			for (var i = 0; i < newLiterals.Length; i++)
 			{
+				cancellationToken.ThrowIfCancellationRequested();
+
 				var expression = SyntaxFactory.LiteralExpression(
 					SyntaxKind.StringLiteralExpression,
 					SyntaxFactory.Literal(newLiterals[i]));
@@ -92,33 +140,17 @@ namespace WTG.Analyzers
 					expression = expression.WithTrailingTrivia(literal.GetTrailingTrivia());
 				}
 
-				var argument = SyntaxFactory.Argument(expression);
-				arguments.Add(argument);
+				list.Add(expression);
 			}
-
-			arguments.AddRange(argumentList.Arguments.Skip(indexOfLiteral + 1));
-			var newArgumentList = SyntaxFactory.ArgumentList(
-				SyntaxFactory.SeparatedList(arguments))
-				.WithTriviaFrom(argumentList);
-
-			return document.WithSyntaxRoot(
-				root.ReplaceNode(argumentList, newArgumentList));
 		}
 
-		static async Task<Document> FixInterpolatedStringExpression(Document document, InterpolatedStringExpressionSyntax literal, CancellationToken cancellationToken)
+		static void SplitInterpolatedStringExpression(InterpolatedStringExpressionSyntax literal, ImmutableList<ExpressionSyntax>.Builder list, CancellationToken cancellationToken)
 		{
-			var root = await literal.SyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-			var argumentSyntax = (ArgumentSyntax)literal.Parent;
-			var argumentList = (ArgumentListSyntax)argumentSyntax.Parent;
-
-			var arguments = new List<ArgumentSyntax>(capacity: argumentList.Arguments.Count + 1);
-
-			var indexOfLiteral = argumentList.Arguments.IndexOf(argumentSyntax);
-			arguments.AddRange(argumentList.Arguments.Take(indexOfLiteral));
-
 			var components = new List<InterpolatedStringContentSyntax>();
 			foreach (var component in literal.Contents)
 			{
+				cancellationToken.ThrowIfCancellationRequested();
+
 				if (!component.IsKind(SyntaxKind.InterpolatedStringText))
 				{
 					components.Add(component);
@@ -132,8 +164,8 @@ namespace WTG.Analyzers
 					if (components.Count > 0)
 					{
 						// Write out what we've already discovered
-						arguments.Add(
-							MakeArgumentFromInterpolatedStringComponents(
+						list.Add(
+							MakeExpressionFromInterpolatedStringComponents(
 								literal.StringStartToken,
 								components));
 						components.Clear();
@@ -142,31 +174,28 @@ namespace WTG.Analyzers
 					var pieces = textSyntax.TextToken.ValueText.Split(PathSeparatorChars);
 					if (pieces[0].Length > 0)
 					{
-						arguments.Add(
-							SyntaxFactory.Argument(
-								SyntaxFactory.LiteralExpression(
-									SyntaxKind.StringLiteralExpression,
-									SyntaxFactory.Literal(pieces[0])
-									.WithLeadingTrivia(textSyntax.GetLeadingTrivia()))));
+						list.Add(
+							SyntaxFactory.LiteralExpression(
+								SyntaxKind.StringLiteralExpression,
+								SyntaxFactory.Literal(pieces[0])
+								.WithLeadingTrivia(textSyntax.GetLeadingTrivia())));
 					}
 
 					for (var i = 1; i < (pieces.Length - 1); i++)
 					{
-						arguments.Add(
-							SyntaxFactory.Argument(
+						list.Add(
 								SyntaxFactory.LiteralExpression(
 									SyntaxKind.StringLiteralExpression,
-									SyntaxFactory.Literal(pieces[i]))));
+									SyntaxFactory.Literal(pieces[i])));
 					}
 
 					if (pieces.Length > 1 && pieces[pieces.Length - 1].Length > 0)
 					{
-						arguments.Add(
-							SyntaxFactory.Argument(
-								SyntaxFactory.LiteralExpression(
-									SyntaxKind.StringLiteralExpression,
-									SyntaxFactory.Literal(pieces[pieces.Length - 1])
-									.WithTrailingTrivia(textSyntax.GetTrailingTrivia()))));
+						list.Add(
+							SyntaxFactory.LiteralExpression(
+								SyntaxKind.StringLiteralExpression,
+								SyntaxFactory.Literal(pieces[pieces.Length - 1])
+								.WithTrailingTrivia(textSyntax.GetTrailingTrivia())));
 					}
 				}
 			}
@@ -174,22 +203,14 @@ namespace WTG.Analyzers
 			if (components.Count > 0)
 			{
 				// Write out any trailing components as the final argument;
-				arguments.Add(
-					MakeArgumentFromInterpolatedStringComponents(
+				list.Add(
+					MakeExpressionFromInterpolatedStringComponents(
 						literal.StringStartToken,
 						components));
 			}
-
-			arguments.AddRange(argumentList.Arguments.Skip(indexOfLiteral + 1));
-			var newArgumentList = SyntaxFactory.ArgumentList(
-				SyntaxFactory.SeparatedList(arguments))
-				.WithTriviaFrom(argumentList);
-
-			return document.WithSyntaxRoot(
-				root.ReplaceNode(argumentList, newArgumentList));
 		}
 
-		static ArgumentSyntax MakeArgumentFromInterpolatedStringComponents(SyntaxToken startToken, IList<InterpolatedStringContentSyntax> contents)
+		static ExpressionSyntax MakeExpressionFromInterpolatedStringComponents(SyntaxToken startToken, IList<InterpolatedStringContentSyntax> contents)
 		{
 			if (contents.Count == 1)
 			{
@@ -199,25 +220,29 @@ namespace WTG.Analyzers
 					case SyntaxKind.InterpolatedStringText:
 						var text = (InterpolatedStringTextSyntax)contents[0];
 
-						return SyntaxFactory.Argument(
-							SyntaxFactory.LiteralExpression(
+						return SyntaxFactory.LiteralExpression(
 								SyntaxKind.StringLiteralExpression,
-								SyntaxFactory.Literal(text.TextToken.ValueText)));
+								SyntaxFactory.Literal(text.TextToken.ValueText));
 
 					case SyntaxKind.Interpolation:
 						var interpolation = (InterpolationSyntax)contents[0];
 						if (interpolation.FormatClause is null && interpolation.AlignmentClause is null)
 						{
-							return SyntaxFactory.Argument(interpolation.Expression);
+							return interpolation.Expression;
 						}
 						break;
 				}
 			}
 
-			return SyntaxFactory.Argument(
-				SyntaxFactory.InterpolatedStringExpression(
+			return SyntaxFactory.InterpolatedStringExpression(
 					startToken,
-					SyntaxFactory.List(contents)));
+					SyntaxFactory.List(contents));
+		}
+
+		static void SplitAddExpression(BinaryExpressionSyntax expression, ImmutableList<ExpressionSyntax>.Builder list, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			list.Add(expression); // TODO
 		}
 	}
 }
