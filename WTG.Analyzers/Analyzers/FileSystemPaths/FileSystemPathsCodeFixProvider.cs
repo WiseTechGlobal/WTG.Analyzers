@@ -242,7 +242,12 @@ namespace WTG.Analyzers
 		static void SplitAddExpression(BinaryExpressionSyntax expression, ImmutableList<ExpressionSyntax>.Builder list, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
-			list.Add(expression); // TODO
+
+			var leftExpressions = SplitPathExpression(expression.Left, cancellationToken);
+			var rightExpressions = SplitPathExpression(expression.Right, cancellationToken);
+
+			list.AddRange(leftExpressions);
+			list.AddRange(rightExpressions);
 		}
 	}
 }
