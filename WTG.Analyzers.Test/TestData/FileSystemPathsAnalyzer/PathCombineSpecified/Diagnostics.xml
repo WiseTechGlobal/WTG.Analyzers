@@ -21,4 +21,10 @@
 	<diagnostic>
 		<location>Test0.cs: (16,42-76)</location>
 	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (17,42-67)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (18,42-67)</location>
+	</diagnostic>
 </diagnostics>

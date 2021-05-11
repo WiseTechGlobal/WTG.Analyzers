@@ -14,6 +14,8 @@ class Foo
 		DoThingWithFile(Path.Combine("parent", "child", GrandchildFolderName));
 		DoThingWithFile(Path.Combine("parent", Child, GrandchildFolderName));
 		DoThingWithFile(Path.Combine("parent", Child, GrandchildFolderName));
+		DoThingWithFile(Path.Combine("parent", "child", "grandchild" + 123));
+		DoThingWithFile(Path.Combine("parent", 123 + "child", "grandchild"));
 	}
 
 	static void DoThingWithFile(string file)

@@ -246,8 +246,29 @@ namespace WTG.Analyzers
 			var leftExpressions = SplitPathExpression(expression.Left, cancellationToken);
 			var rightExpressions = SplitPathExpression(expression.Right, cancellationToken);
 
-			list.AddRange(leftExpressions);
-			list.AddRange(rightExpressions);
+			if (leftExpressions.Count > 1 || rightExpressions.Count > 1)
+			{
+				for (var i = 0; i < leftExpressions.Count - 1; i++)
+				{
+					list.Add(leftExpressions[i]);
+				}
+
+				list.Add(
+					SyntaxFactory.BinaryExpression(
+						SyntaxKind.AddExpression,
+						leftExpressions[leftExpressions.Count - 1],
+						rightExpressions[0]));
+
+				for (var i = 1; i < rightExpressions.Count; i++)
+				{
+					list.Add(rightExpressions[i]);
+				}
+			}
+			else
+			{
+				list.AddRange(leftExpressions);
+				list.AddRange(rightExpressions);
+			}
 		}
 	}
 }
