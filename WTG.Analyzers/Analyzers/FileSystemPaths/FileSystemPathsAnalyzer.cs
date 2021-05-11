@@ -217,16 +217,19 @@ namespace WTG.Analyzers
 				return true;
 			}
 
-			if (text.StartsWith(@"\\", StringComparison.Ordinal))
+			if (text.Length > 1)
 			{
-				// likely Windows UNC path or extended path (\\server\share or \\?\ prefix)
-				return true;
-			}
+				if (text[0] == '\\' && text[1] == '\\')
+				{
+					// likely Windows UNC path or extended path (\\server\share or \\?\ prefix)
+					return true;
+				}
 
-			if (text.Length > 1 && char.IsLetter(text[0]) && text[1] == ':')
-			{
-				// likely Windows local path with drive letter (X:\path)
-				return true;
+				if (char.IsLetter(text[0]) && text[1] == ':')
+				{
+					// likely Windows local path with drive letter (X:\path)
+					return true;
+				}
 			}
 
 			return false;
