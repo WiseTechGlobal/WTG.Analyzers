@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG2008" message="Do not specify path separators in string literals that represent filesystem paths." severity="Warning">
+	<diagnostic>
+		<location>Test0.cs: (10,50-69)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (11,50-69)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (12,50-82)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (13,50-82)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (14,50-82)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (15,50-84)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (16,50-84)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (17,50-75)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (18,50-75)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (19,50-94)</location>
+	</diagnostic>
+</diagnostics>
