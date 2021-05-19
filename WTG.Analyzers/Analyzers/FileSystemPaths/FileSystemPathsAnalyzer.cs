@@ -31,14 +31,43 @@ namespace WTG.Analyzers
 				return;
 			}
 
+			var hasPathCombineMulti = HasPathCombineMulti(context.Compilation);
 			var cache = new FileDetailCache();
 
 			context.RegisterSyntaxNodeAction(
-				c => Analyze(c, cache),
+				c => Analyze(c, cache, hasPathCombineMulti),
 				SyntaxKind.InvocationExpression);
 		}
 
-		static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache)
+		static bool HasPathCombineMulti(Compilation compilation)
+		{
+			foreach (var symbol in compilation.GetTypeByMetadataName("System.IO.Path").GetMembers(nameof(System.IO.Path.Combine)))
+			{
+				if (symbol.Kind != SymbolKind.Method)
+				{
+					continue;
+				}
+
+				var method = (IMethodSymbol)symbol;
+				if (method.Parameters.Length != 1)
+				{
+					continue;
+				}
+
+				// We need the "params string[]" overload to be available
+				var parameter = method.Parameters[0];
+				if (!parameter.IsParams || parameter.Type.TypeKind != TypeKind.Array || ((IArrayTypeSymbol)parameter.Type).ElementType.SpecialType != SpecialType.System_String)
+				{
+					continue;
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+
+		static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache, bool hasPathCombineMulti)
 		{
 			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
 			{
@@ -49,7 +78,7 @@ namespace WTG.Analyzers
 
 			if (LooksLikePathCombine(invocation))
 			{
-				if (invocation.ArgumentList.Arguments.Count >= 2)
+				if (invocation.ArgumentList.Arguments.Count >= 2 && hasPathCombineMulti)
 				{
 					var arguments = invocation.ArgumentList.Arguments;
 					for (var i = 0; i < arguments.Count; i++)
