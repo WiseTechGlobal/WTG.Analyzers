@@ -49,35 +49,93 @@ namespace WTG.Analyzers
 
 			if (LooksLikePathCombine(invocation))
 			{
-				var arguments = invocation.ArgumentList.Arguments;
-				for (var i = 0; i < arguments.Count; i++)
+				if (invocation.ArgumentList.Arguments.Count >= 2)
 				{
-					if (!ExpressionLooksSuspicious(arguments[i].Expression, isFirst: i == 0))
+					var arguments = invocation.ArgumentList.Arguments;
+					for (var i = 0; i < arguments.Count; i++)
 					{
-						continue;
-					}
-
-					if (!IsPathCombine(context.SemanticModel, invocation, context.CancellationToken))
-					{
-						// This isn't actually Path.Combine so finish up the loop.
-						break;
-					}
-
-					for (var j = 0; j < arguments.Count; j++)
-					{
-						var argument = arguments[j];
-						if (!ExpressionIsSuspicious(context.SemanticModel, argument.Expression, isFirst: j == 0, context.CancellationToken))
+						if (!ExpressionLooksSuspicious(arguments[i].Expression, isFirst: i == 0))
 						{
 							continue;
 						}
 
-						context.ReportDiagnostic(Diagnostic.Create(
-							Rules.DoNotUsePathSeparatorsInPathLiteralsRule,
-							argument.GetLocation()));
+						if (!IsPathCombine(context.SemanticModel, invocation, context.CancellationToken))
+						{
+							// This isn't actually Path.Combine so finish up the loop.
+							break;
+						}
+
+						for (var j = 0; j < arguments.Count; j++)
+						{
+							var argument = arguments[j];
+							if (!ExpressionIsSuspicious(context.SemanticModel, argument.Expression, isFirst: j == 0, context.CancellationToken))
+							{
+								continue;
+							}
+
+							context.ReportDiagnostic(Diagnostic.Create(
+								Rules.DoNotUsePathSeparatorsInPathLiteralsRule,
+								argument.GetLocation()));
+						}
+
+						// We've examined all arguments against the semantic model now, so finish up the loop.
+						break;
+					}
+				}
+				else if (invocation.ArgumentList.Arguments.Count == 1 && invocation.ArgumentList.Arguments[0] is var argument)
+				{
+					InitializerExpressionSyntax? initializer;
+
+					if (argument.Expression.IsKind(SyntaxKind.ArrayCreationExpression))
+					{
+						var arrayCreation = (ArrayCreationExpressionSyntax)argument.Expression;
+						initializer = arrayCreation.Initializer;
+					}
+					else if (argument.Expression.IsKind(SyntaxKind.ImplicitArrayCreationExpression))
+					{
+						var arrayCreation = (ImplicitArrayCreationExpressionSyntax)argument.Expression;
+						initializer = arrayCreation.Initializer;
+					}
+					else
+					{
+						initializer = null;
 					}
 
-					// We've examined all arguments against the semantic model now, so finish up the loop.
-					break;
+					if (initializer != null)
+					{
+						var expressions = initializer.Expressions;
+
+						for (var i = 0; i < expressions.Count; i++)
+						{
+							var expression = expressions[i];
+							if (!ExpressionLooksSuspicious(expression, isFirst: i == 0))
+							{
+								continue;
+							}
+
+							if (!IsPathCombine(context.SemanticModel, invocation, context.CancellationToken))
+							{
+								// This isn't actually Path.Combine so finish up the loop.
+								break;
+							}
+
+							for (var j = 0; j < expressions.Count; j++)
+							{
+								expression = expressions[j];
+								if (!ExpressionIsSuspicious(context.SemanticModel, expression, isFirst: j == 0, context.CancellationToken))
+								{
+									continue;
+								}
+
+								context.ReportDiagnostic(Diagnostic.Create(
+									Rules.DoNotUsePathSeparatorsInPathLiteralsRule,
+									expression.GetLocation()));
+							}
+
+							// We've examined all expressions against the semantic model now, so finish up the loop.
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -95,8 +153,7 @@ namespace WTG.Analyzers
 				return false;
 			}
 
-			var arguments = syntax.ArgumentList;
-			return syntax.ArgumentList.Arguments.Count >= 2;
+			return true;
 		}
 
 		static bool ExpressionLooksSuspicious(ExpressionSyntax expression, bool isFirst)
@@ -246,7 +303,7 @@ namespace WTG.Analyzers
 			if (symbol.Parameters.Length == 1)
 			{
 				var parameter = symbol.Parameters[0];
-				if (parameter.Type.SpecialType != SpecialType.System_Array)
+				if (parameter.Type.TypeKind != TypeKind.Array || ((IArrayTypeSymbol)parameter.Type).ElementType.SpecialType != SpecialType.System_String)
 				{
 					return false;
 				}

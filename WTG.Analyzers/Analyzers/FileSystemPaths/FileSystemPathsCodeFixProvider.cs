@@ -44,12 +44,28 @@ namespace WTG.Analyzers
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = (ExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
-			return await FixPathExpression(document, node, cancellationToken).ConfigureAwait(false);
+			return await FixPathExpressionAsync(document, node, cancellationToken).ConfigureAwait(false);
 		}
 
-		static async Task<Document> FixPathExpression(Document document, ExpressionSyntax expression, CancellationToken cancellationToken)
+		static async Task<Document> FixPathExpressionAsync(Document document, ExpressionSyntax expression, CancellationToken cancellationToken)
 		{
 			var root = await expression.SyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+			if (expression.Parent.IsKind(SyntaxKind.Argument))
+			{
+				return FixPathExpressionInArgument(document, root, expression, cancellationToken);
+			}
+			else if (expression.Parent.IsKind(SyntaxKind.ArrayInitializerExpression))
+			{
+				return FixPathExpressionInArrayInitializer(document, root, expression, cancellationToken);
+			}
+			else
+			{
+				throw new NotSupportedException("Inconsistency error - Code Fix Provider is unable to fix expression provided by Analyzer.");
+			}
+		}
+
+		static Document FixPathExpressionInArgument(Document document, SyntaxNode root, ExpressionSyntax expression, CancellationToken cancellationToken)
+		{
 			var argumentSyntax = (ArgumentSyntax)expression.Parent;
 			var argumentList = (ArgumentListSyntax)argumentSyntax.Parent;
 
@@ -85,6 +101,26 @@ namespace WTG.Analyzers
 
 			return document.WithSyntaxRoot(
 				root.ReplaceNode(argumentList, newArgumentList));
+		}
+
+		static Document FixPathExpressionInArrayInitializer(Document document, SyntaxNode root, ExpressionSyntax expression, CancellationToken cancellationToken)
+		{
+			var initializer = (InitializerExpressionSyntax)expression.Parent;
+			var originalExpressions = initializer.Expressions;
+			var indexOfExpression = initializer.Expressions.IndexOf(expression);
+
+			var expressions = SplitPathExpression(expression, cancellationToken);
+
+			var newExpressions = new List<ExpressionSyntax>(capacity: originalExpressions.Count + expressions.Count - 1);
+			newExpressions.AddRange(originalExpressions.Take(indexOfExpression));
+			newExpressions.AddRange(expressions);
+			newExpressions.AddRange(originalExpressions.Skip(indexOfExpression + 1));
+
+			return document.WithSyntaxRoot(
+				root.ReplaceNode(
+					initializer,
+					initializer.WithExpressions(
+						SyntaxFactory.SeparatedList(newExpressions))));
 		}
 
 		static ImmutableList<ExpressionSyntax> SplitPathExpression(ExpressionSyntax expression, CancellationToken cancellationToken)
