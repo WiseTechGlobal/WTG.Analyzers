@@ -27,4 +27,7 @@
 	<diagnostic>
 		<location>Test0.cs: (18,42-67)</location>
 	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (19,42-86)</location>
+	</diagnostic>
 </diagnostics>

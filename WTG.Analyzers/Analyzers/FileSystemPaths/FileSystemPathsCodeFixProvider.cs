@@ -191,12 +191,20 @@ namespace WTG.Analyzers
 
 					if (pieces.Length > 1 && pieces[pieces.Length - 1].Length > 0)
 					{
-						list.Add(
-							SyntaxFactory.LiteralExpression(
-								SyntaxKind.StringLiteralExpression,
-								SyntaxFactory.Literal(pieces[pieces.Length - 1])
-								.WithTrailingTrivia(textSyntax.GetTrailingTrivia())));
+						var text = pieces[pieces.Length - 1];
+						components.Add(
+							SyntaxFactory.InterpolatedStringText(
+								SyntaxFactory.Token(
+									SyntaxFactory.TriviaList(),
+									SyntaxKind.InterpolatedStringTextToken,
+									text,
+									text,
+									textSyntax.GetTrailingTrivia())));
 					}
+				}
+				else
+				{
+					components.Add(component);
 				}
 			}
 
