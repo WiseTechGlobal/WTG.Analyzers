@@ -94,6 +94,11 @@ namespace WTG.Analyzers
 
 			public override bool VisitMethodDeclaration(MethodDeclarationSyntax node)
 			{
+				if (node.AttributeLists.Any())
+				{
+					return true;
+				}
+
 				var expression = node.Accept(SolitaryExpressionLocator.Instance);
 
 				if (expression == null || !expression.IsKind(SyntaxKind.InvocationExpression))
@@ -117,6 +122,11 @@ namespace WTG.Analyzers
 
 			public override bool VisitPropertyDeclaration(PropertyDeclarationSyntax node)
 			{
+				if (node.AttributeLists.Any())
+				{
+					return true;
+				}
+
 				if (node.ExpressionBody != null)
 				{
 					return !IsMatchingSelf(node.ExpressionBody.Accept(SolitaryExpressionLocator.Instance));
@@ -175,6 +185,11 @@ namespace WTG.Analyzers
 
 			public override bool VisitIndexerDeclaration(IndexerDeclarationSyntax node)
 			{
+				if (node.AttributeLists.Any())
+				{
+					return true;
+				}
+
 				if (node.ExpressionBody != null)
 				{
 					return !IsMatchingSelf(node.ExpressionBody.Accept(SolitaryExpressionLocator.Instance));
@@ -234,6 +249,11 @@ namespace WTG.Analyzers
 
 			public override bool VisitEventDeclaration(EventDeclarationSyntax node)
 			{
+				if (node.AttributeLists.Any())
+				{
+					return true;
+				}
+
 				foreach (var accessor in node.AccessorList.Accessors)
 				{
 					switch (accessor.Kind())
