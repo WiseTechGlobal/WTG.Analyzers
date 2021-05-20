@@ -6,14 +6,35 @@ namespace Magic
 	class DerivedClass : BaseClass
 	{
 		[Obsolete("Please don't use this anymore")]
-		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override void Method(int argument1) => base.Method(argument1);
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public override object Property
+		{
+			get => base.Property;
+			set => base.Property = value;
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public override event EventHandler Event
+		{
+			add => base.Event += value;
+			remove => base.Event -= value;
+		}
 	}
 
 	class BaseClass
 	{
 		public virtual void Method(int argument1)
 		{
+		}
+
+		public virtual object Property { get; set; }
+
+		public virtual event EventHandler Event
+		{
+			add { }
+			remove { }
 		}
 	}
 }
