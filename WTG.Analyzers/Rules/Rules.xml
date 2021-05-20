@@ -144,6 +144,11 @@
 			<message>Do not use custom values for the Reason Phrase portion of a HTTP response.</message>
 			<description>Custom Reason Phrase values may not be passed from a HTTP/1.1 server to the client due to intermediate proxy software, and has been removed entirely from HTTP/2.</description>
 		</rule>
+		<rule id="8" name="DoNotUsePathSeparatorsInPathLiterals" severity="Warning">
+			<title>Do not specify filesystem path separators in path string literals.</title>
+			<message>Do not specify path separators in string literals that represent filesystem paths.</message>
+			<description>Path separators are different on different operating system. When using filesystem APIs, use Path.Combine or Path.PathSeparatorChar to construct paths.</description>
+		</rule>
 	</category>
 	<category name="Decruftification" id="3000">
 		<rule id="1" name="RemovedOrphanedSuppressions" severity="Info">

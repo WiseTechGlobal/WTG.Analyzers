@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG2008" message="Do not specify path separators in string literals that represent filesystem paths." severity="Warning">
+	<languageVersion>3.0</languageVersion>
+</diagnostics>
