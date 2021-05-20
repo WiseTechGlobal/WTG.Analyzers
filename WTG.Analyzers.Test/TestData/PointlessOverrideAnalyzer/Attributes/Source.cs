@@ -21,6 +21,13 @@ namespace Magic
 			add => base.Event += value;
 			remove => base.Event -= value;
 		}
+
+		[Obsolete("Please don't use this anymore")]
+		public override object this[int index]
+		{
+			get => base[index];
+			set => base[index] = value;
+		}
 	}
 
 	class BaseClass
@@ -35,6 +42,12 @@ namespace Magic
 		{
 			add { }
 			remove { }
+		}
+
+		public virtual object this[int index]
+		{
+			get => null;
+			set { }
 		}
 	}
 }
