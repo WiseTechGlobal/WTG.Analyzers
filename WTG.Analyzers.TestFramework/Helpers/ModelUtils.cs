@@ -65,7 +65,7 @@ namespace WTG.Analyzers.TestFramework
 		{
 			var newProject = AddProject(project.Solution, assemblyName, sources);
 
-			return newProject.Solution.GetProject(project.Id)
+			return newProject.Solution.GetProject(project.Id)!
 				.WithProjectReferences(project.ProjectReferences.Concat(new[] { new ProjectReference(newProject.Id) }));
 		}
 
@@ -75,7 +75,7 @@ namespace WTG.Analyzers.TestFramework
 
 			var solution = currentSolution.AddProject(projectId, assemblyName, assemblyName, LanguageNames.CSharp);
 
-			var project = solution.GetProject(projectId)
+			var project = solution.GetProject(projectId)!
 				.AddMetadataReferences(MetadataReferences);
 
 			var compilationOptions = (CSharpCompilationOptions)project.CompilationOptions;
@@ -96,7 +96,7 @@ namespace WTG.Analyzers.TestFramework
 					SourceText.From(sources[i]));
 			}
 
-			return solution.GetProject(projectId);
+			return solution.GetProject(projectId)!;
 		}
 
 		static string GetFileName(int count)
