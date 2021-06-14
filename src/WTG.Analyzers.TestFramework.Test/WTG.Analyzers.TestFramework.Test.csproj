@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyTitle>WTG Analyzers Test Framework Test</AssemblyTitle>
-    <TargetFrameworks>net46;net6.0</TargetFrameworks>
+    <TargetFrameworks>net472;net6.0</TargetFrameworks>
     <OutputPath>..\..\bin</OutputPath>
   </PropertyGroup>
   <ItemGroup>
