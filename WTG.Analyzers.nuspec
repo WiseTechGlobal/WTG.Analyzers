@@ -15,8 +15,8 @@
 
 	<files>
 		<!-- Binaries -->
-		<file src="bin\netstandard1.3\WTG.Analyzers.dll" target="analyzers\dotnet\cs" />
-		<file src="bin\netstandard1.3\WTG.Analyzers.Utils.dll" target="analyzers\dotnet\cs" />
+		<file src="bin\netstandard2.0\WTG.Analyzers.dll" target="analyzers\dotnet\cs" />
+		<file src="bin\netstandard2.0\WTG.Analyzers.Utils.dll" target="analyzers\dotnet\cs" />
 
 		<!-- MSBuild Properties and Targets -->
 		<file src="src\WTG.Analyzers\build\WTG.Analyzers.props" target="build\" />
