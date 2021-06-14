@@ -15,7 +15,7 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(AsyncAnalyzer), typeof(AsyncCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(AwaitCompletedAnalyzer), typeof(AwaitCompletedCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(BooleanComparisonAnalyzer), typeof(BooleanComparisonCodeFixProvider) })]
-	[TestFixture(TypeArgs = new[] { typeof(BooleanLiteralAnalyzer), typeof(BooleanLiteralCodeFixProvider) })]
+	[TestFixture(TypeArgs = new[] { typeof(BooleanLiteralArgumentAnalyzer), typeof(BooleanLiteralArgumentCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(CodeContractsAnalyzer), typeof(CodeContractsCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(CompletedTaskAnalyzer), typeof(CompletedTaskCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(DeconstructionAnalyzer), typeof(DeconstructionCodeFixProvider) })]

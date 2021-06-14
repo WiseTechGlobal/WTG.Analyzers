@@ -9,7 +9,7 @@ using WTG.Analyzers.Utils;
 namespace WTG.Analyzers
 {
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
-	public sealed partial class BooleanLiteralAnalyzer : DiagnosticAnalyzer
+	public sealed partial class BooleanLiteralArgumentAnalyzer : DiagnosticAnalyzer
 	{
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 			Rules.UseNamedArgumentsWhenPassingBooleanLiteralsRule);
