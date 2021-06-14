@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,9 +22,12 @@ namespace WTG.Analyzers.Utils
 			{
 				switch (fixAllContext.Scope)
 				{
-					case FixAllScope.Document: return GetFixForDocumentAsync(fixAllContext);
-					case FixAllScope.Project: return GetFixForProjectAsync(fixAllContext);
-					case FixAllScope.Solution: return GetFixForSolutionAsync(fixAllContext);
+					case FixAllScope.Document:
+						return GetFixForDocumentAsync(fixAllContext);
+					case FixAllScope.Project:
+						return GetFixForProjectAsync(fixAllContext);
+					case FixAllScope.Solution:
+						return GetFixForSolutionAsync(fixAllContext);
 				}
 			}
 
@@ -47,8 +50,12 @@ namespace WTG.Analyzers.Utils
 			{
 				var originalDocument = pair.Key;
 				var documentToFix = solution.GetDocument(originalDocument.Id);
-				var newDocument = await ApplyFixesAsync(originalDocument, documentToFix, pair.Value, cancellationToken).ConfigureAwait(false);
-				solution = newDocument.Project.Solution;
+
+				if (documentToFix != null)
+				{
+					var newDocument = await ApplyFixesAsync(originalDocument, documentToFix, pair.Value, cancellationToken).ConfigureAwait(false);
+					solution = newDocument.Project.Solution;
+				}
 			}
 
 			return solution;

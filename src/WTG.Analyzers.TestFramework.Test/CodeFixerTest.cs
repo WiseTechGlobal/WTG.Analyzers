@@ -49,6 +49,7 @@ namespace WTG.Analyzers.Framework.Test
 
 			public override void Initialize(AnalysisContext context)
 			{
+				context.EnableConcurrentExecution();
 				context.RegisterSyntaxNodeAction(Analyze, SyntaxKind.ClassDeclaration);
 			}
 

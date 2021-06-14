@@ -219,7 +219,8 @@ namespace WTG.Analyzers.TestFramework
 		{
 			var operations = await codeAction.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
 			var solution = operations.OfType<ApplyChangesOperation>().Single().ChangedSolution;
-			return solution.GetDocument(document.Id);
+			return solution.GetDocument(document.Id)
+				?? throw new NotSupportedException("Analyzer attempted to remove the document being fixed, this is not currently a supported situation.");
 		}
 
 		static IEnumerable<Diagnostic> GetNewDiagnostics(IEnumerable<Diagnostic> diagnostics, IEnumerable<Diagnostic> newDiagnostics)

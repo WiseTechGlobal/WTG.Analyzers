@@ -139,7 +139,7 @@ namespace WTG.Analyzers.Utils
 					{
 						var local = decl.FindImplementationForInterfaceMember(member);
 
-						if (local == symbol)
+						if (SymbolEqualityComparer.Default.Equals(local, symbol))
 						{
 							return true;
 						}

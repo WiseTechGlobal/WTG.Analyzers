@@ -207,10 +207,7 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool TypeEquals(ITypeSymbol? x, ITypeSymbol? y)
-		{
-			return x == y || (x != null && x.Equals(y));
-		}
+		static bool TypeEquals(ITypeSymbol? x, ITypeSymbol? y) => ReferenceEquals(x, y) || (x != null && x.Equals(y));
 
 		sealed class Visitor : CSharpSyntaxVisitor<Candidate?>
 		{
