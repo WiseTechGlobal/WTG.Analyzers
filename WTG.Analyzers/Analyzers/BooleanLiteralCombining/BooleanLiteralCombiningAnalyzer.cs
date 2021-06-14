@@ -52,6 +52,8 @@ namespace WTG.Analyzers
 				case SyntaxKind.ConditionalExpression:
 				case SyntaxKind.LogicalNotExpression:
 				case SyntaxKind.ParenthesizedExpression:
+				case SyntaxKind.AndAssignmentExpression:
+				case SyntaxKind.OrAssignmentExpression:
 					return true;
 
 				default:
