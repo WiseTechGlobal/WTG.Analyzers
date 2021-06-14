@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3012" message="Boolean experssion can be simplified." severity="Info">
+	<diagnostic>
+		<location>Test0.cs: (5,38-42)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (6,38-43)</location>
+	</diagnostic>
+</diagnostics>

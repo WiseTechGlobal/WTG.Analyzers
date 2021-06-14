@@ -220,6 +220,12 @@
 			<message>Mutating the arguments before appending results in the creation of an unnecessary intermediate string.</message>
 			<description>The intermediate string can be avoided by simply using Append methods correctly.</description>
 		</rule>
+		<rule id="12" name="AvoidBoolLiteralsInLargerBoolExpressions" severity="Info">
+			<title>Avoid combining bool literals in larger boolean expressions.</title>
+			<message>Boolean experssion can be simplified.</message>
+			<description>Combining bool expressions in larger boolean expressions makes the code more complex than it needs to be.</description>
+			<tag>Unnecessary</tag>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">
