@@ -1,9 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Simplification;
 
 namespace WTG.Analyzers.Utils
 {
@@ -59,21 +59,9 @@ namespace WTG.Analyzers.Utils
 
 		public static ExpressionSyntax LogicalNot(ExpressionSyntax expression)
 		{
-			if (HasPrimaryOrUnaryPrecedence(expression))
-			{
-				return SyntaxFactory.PrefixUnaryExpression(
-					SyntaxKind.LogicalNotExpression,
-					expression.WithoutLeadingTrivia())
-					.WithLeadingTrivia(expression.GetLeadingTrivia());
-			}
-			else
-			{
-				return SyntaxFactory.PrefixUnaryExpression(
-					SyntaxKind.LogicalNotExpression,
-					SyntaxFactory.ParenthesizedExpression(
-						expression.WithoutTrivia()))
-					.WithTriviaFrom(expression);
-			}
+			return SyntaxFactory.PrefixUnaryExpression(
+				SyntaxKind.LogicalNotExpression,
+				WeaklyParenthesize(expression));
 		}
 
 		public static ExpressionSyntax CreateElementAccessExpression(ExpressionSyntax sourceExpression, ExpressionSyntax index)
@@ -129,7 +117,6 @@ namespace WTG.Analyzers.Utils
 						new[] { SyntaxFactory.Argument(argument) })));
 		}
 
-		[SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
 		public static ExpressionSyntax CreateSingleBitFlag(int index)
 		{
 			return SyntaxFactory.BinaryExpression(
@@ -138,6 +125,18 @@ namespace WTG.Analyzers.Utils
 					.WithTrailingTrivia(SyntaxFactory.Space),
 				CreateLiteral(index)
 					.WithLeadingTrivia(SyntaxFactory.Space));
+		}
+
+		internal static ExpressionSyntax WeaklyParenthesize(ExpressionSyntax expression)
+		{
+			if (!HasPrimaryOrUnaryPrecedence(expression))
+			{
+				return SyntaxFactory.ParenthesizedExpression(expression.WithoutTrivia())
+					.WithTriviaFrom(expression)
+					.WithAdditionalAnnotations(Simplifier.Annotation);
+			}
+
+			return expression;
 		}
 
 		static bool HasPrimaryOrUnaryPrecedence(ExpressionSyntax expression)

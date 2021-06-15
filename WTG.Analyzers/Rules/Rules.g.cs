@@ -46,6 +46,7 @@ namespace WTG.Analyzers
 		public const string PreferCompletedTaskDiagnosticID = "WTG3009";
 		public const string DontAwaitTriviallyCompletedTasksDiagnosticID = "WTG3010";
 		public const string DontMutateAppendedStringArgumentsDiagnosticID = "WTG3011";
+		public const string AvoidBoolLiteralsInLargerBoolExpressionsDiagnosticID = "WTG3012";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -539,6 +540,19 @@ namespace WTG.Analyzers
 			isEnabledByDefault: true,
 			description: "The intermediate string can be avoided by simply using Append methods correctly.");
 
+		public static readonly DiagnosticDescriptor AvoidBoolLiteralsInLargerBoolExpressionsRule = new DiagnosticDescriptor(
+			AvoidBoolLiteralsInLargerBoolExpressionsDiagnosticID,
+			"Avoid combining bool literals in larger boolean expressions.",
+			"Boolean experssion can be simplified.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Combining bool expressions in larger boolean expressions makes the code more complex than it needs to be.",
+			customTags: new[]
+			{
+				WellKnownDiagnosticTags.Unnecessary,
+			});
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -932,6 +946,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDontMutateAppendedStringArgumentsDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DontMutateAppendedStringArgumentsRule, location);
+		}
+
+		/// <summary>
+		/// Boolean experssion can be simplified.
+		/// </summary>
+		public static Diagnostic CreateAvoidBoolLiteralsInLargerBoolExpressionsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(AvoidBoolLiteralsInLargerBoolExpressionsRule, location);
 		}
 
 		/// <summary>

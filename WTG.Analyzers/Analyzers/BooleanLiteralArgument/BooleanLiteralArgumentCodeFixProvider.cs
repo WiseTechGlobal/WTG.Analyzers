@@ -11,9 +11,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace WTG.Analyzers
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(BooleanLiteralCodeFixProvider))]
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(BooleanLiteralArgumentCodeFixProvider))]
 	[Shared]
-	public sealed class BooleanLiteralCodeFixProvider : CodeFixProvider
+	public sealed class BooleanLiteralArgumentCodeFixProvider : CodeFixProvider
 	{
 		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
 			Rules.UseNamedArgumentsWhenPassingBooleanLiteralsDiagnosticID);

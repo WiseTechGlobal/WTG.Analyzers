@@ -54,6 +54,16 @@ namespace WTG.Analyzers.Utils
 				};
 			}
 
+			public override SyntaxNode VisitAssignmentExpression(AssignmentExpressionSyntax node)
+			{
+				return node.Kind() switch
+				{
+					SyntaxKind.OrAssignmentExpression => VisitAndOrAssignmentExpression(node, true),
+					SyntaxKind.AndAssignmentExpression => VisitAndOrAssignmentExpression(node, false),
+					_ => base.VisitAssignmentExpression(node),
+				};
+			}
+
 			public override SyntaxNode VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node)
 			{
 				return node.Kind() switch
@@ -118,11 +128,11 @@ namespace WTG.Analyzers.Utils
 
 					return SyntaxFactory.BinaryExpression(
 						nodeKind,
-						conditionExpression,
+						ExpressionSyntaxFactory.WeaklyParenthesize(conditionExpression),
 						SyntaxFactory.Token(opKind)
 							.WithLeadingTrivia(node.QuestionToken.LeadingTrivia)
 							.WithTrailingTrivia(node.ColonToken.TrailingTrivia),
-						whenFalse);
+						ExpressionSyntaxFactory.WeaklyParenthesize(whenFalse));
 				}
 				else if (CanDiscard(whenFalse))
 				{
@@ -143,10 +153,10 @@ namespace WTG.Analyzers.Utils
 
 					return SyntaxFactory.BinaryExpression(
 						nodeKind,
-						conditionExpression,
+						ExpressionSyntaxFactory.WeaklyParenthesize(conditionExpression),
 						SyntaxFactory.Token(opKind)
 							.WithTriviaFrom(node.QuestionToken),
-						whenTrue
+						ExpressionSyntaxFactory.WeaklyParenthesize(whenTrue)
 							.WithTrailingTrivia(whenFalse.GetTrailingTrivia()));
 				}
 
@@ -330,6 +340,35 @@ namespace WTG.Analyzers.Utils
 				return node
 					.WithLeft((ExpressionSyntax)left)
 					.WithRight((ExpressionSyntax)right);
+			}
+
+			SyntaxNode VisitAndOrAssignmentExpression(AssignmentExpressionSyntax node, bool overwriteValue)
+			{
+				var left = (ExpressionSyntax)Visit(node.Left);
+				var right = (ExpressionSyntax)Visit(node.Right);
+
+				if (CanDiscard(right))
+				{
+					if (right.IsKind(GetExpressionKind(overwriteValue)))
+					{
+						var op = node.OperatorToken;
+
+						return SyntaxFactory.AssignmentExpression(
+							SyntaxKind.SimpleAssignmentExpression,
+							left,
+							SyntaxFactory.Token(op.LeadingTrivia, SyntaxKind.EqualsToken, op.TrailingTrivia),
+							right)
+							.WithTriviaFrom(node);
+					}
+					else
+					{
+						return left.WithTriviaFrom(node);
+					}
+				}
+
+				return node
+					.WithLeft(left)
+					.WithRight(right);
 			}
 
 			SyntaxNode VisitNotExpression(PrefixUnaryExpressionSyntax node)

@@ -37,6 +37,7 @@ dotnet_diagnostic.WTG3008.severity = warning
 dotnet_diagnostic.WTG3009.severity = warning
 dotnet_diagnostic.WTG3010.severity = warning
 dotnet_diagnostic.WTG3011.severity = warning
+dotnet_diagnostic.WTG3012.severity = warning
 
 # Maintainability 
 dotnet_diagnostic.WTG3101.severity = warning

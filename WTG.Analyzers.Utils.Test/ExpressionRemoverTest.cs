@@ -27,10 +27,17 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("exp ? __FALSE__ : B", ExpectedResult = "!exp && B")]
 		[TestCase("exp ? A : __TRUE__", ExpectedResult = "!exp || A")]
 		[TestCase("exp ? A : __FALSE__", ExpectedResult = "exp && A")]
+		[TestCase("exp || A ? B : __FALSE__", ExpectedResult = "(exp || A) && B")]
+		[TestCase("exp ? A || B : __FALSE__", ExpectedResult = "exp && (A || B)")]
+		[TestCase("exp ? __FALSE__ : A || B", ExpectedResult = "!exp && (A || B)")]
 		[TestCase("exp ? __TRUE__ : __FALSE__", ExpectedResult = "exp")]
 		[TestCase("exp ? __FALSE__ : __TRUE__ ", ExpectedResult = "!exp")]
 		[TestCase("exp ? __TRUE__ : __TRUE__ ", ExpectedResult = "exp || true")] // need to keep exp incase it has side effects.
 		[TestCase("exp ? __FALSE__ : __FALSE__ ", ExpectedResult = "exp && false")] // need to keep exp incase it has side effects.
+		[TestCase("exp |= __TRUE__", ExpectedResult = "exp = true")]
+		[TestCase("exp |= __FALSE__", ExpectedResult = "exp")]
+		[TestCase("exp &= __TRUE__", ExpectedResult = "exp")]
+		[TestCase("exp &= __FALSE__", ExpectedResult = "exp = false")]
 		public string ReplaceWithConstantBool_Expression(string expressionText)
 		{
 			return ApplyToAllMagicTokens(SyntaxFactory.ParseExpression(expressionText));
