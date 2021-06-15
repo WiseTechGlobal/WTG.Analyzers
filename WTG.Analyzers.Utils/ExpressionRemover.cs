@@ -128,11 +128,11 @@ namespace WTG.Analyzers.Utils
 
 					return SyntaxFactory.BinaryExpression(
 						nodeKind,
-						conditionExpression,
+						ExpressionSyntaxFactory.WeaklyParenthesize(conditionExpression),
 						SyntaxFactory.Token(opKind)
 							.WithLeadingTrivia(node.QuestionToken.LeadingTrivia)
 							.WithTrailingTrivia(node.ColonToken.TrailingTrivia),
-						whenFalse);
+						ExpressionSyntaxFactory.WeaklyParenthesize(whenFalse));
 				}
 				else if (CanDiscard(whenFalse))
 				{
@@ -153,10 +153,10 @@ namespace WTG.Analyzers.Utils
 
 					return SyntaxFactory.BinaryExpression(
 						nodeKind,
-						conditionExpression,
+						ExpressionSyntaxFactory.WeaklyParenthesize(conditionExpression),
 						SyntaxFactory.Token(opKind)
 							.WithTriviaFrom(node.QuestionToken),
-						whenTrue
+						ExpressionSyntaxFactory.WeaklyParenthesize(whenTrue)
 							.WithTrailingTrivia(whenFalse.GetTrailingTrivia()));
 				}
 
