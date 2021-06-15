@@ -38,7 +38,7 @@ namespace WTG.Analyzers.TestFramework
 						for (var i = 0; i < documents.Length; i++)
 						{
 							var document = documents[i];
-							if (project.GetDocument(diag.Location.SourceTree).Id == document.Id)
+							if (project.GetDocument(diag.Location.SourceTree)?.Id == document.Id)
 							{
 								diagnostics.Add(diag);
 							}

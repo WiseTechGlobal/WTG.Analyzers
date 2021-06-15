@@ -46,7 +46,7 @@ namespace WTG.Analyzers
 			var compilation = await document.Project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
 			var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
 			var root = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-			var model = compilation.GetSemanticModel(tree);
+			var model = compilation!.GetSemanticModel(tree);
 
 			var invoke = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
 
