@@ -19,10 +19,9 @@ namespace WTG.Analyzers.TestFramework
 			var document = CreateDocument(dataSet.Source);
 			var project = document.Project;
 
-			project = project.WithParseOptions(
-				((CSharpParseOptions)project.ParseOptions).WithLanguageVersion(dataSet.LanguageVersion));
+			project = project.WithParseOptions(GetParseOptions(project).WithLanguageVersion(dataSet.LanguageVersion));
 
-			return project.GetDocument(document.Id);
+			return project.GetDocument(document.Id)!;
 		}
 
 		public static Document CreateDocument(string source)
@@ -78,8 +77,7 @@ namespace WTG.Analyzers.TestFramework
 			var project = solution.GetProject(projectId)!
 				.AddMetadataReferences(MetadataReferences);
 
-			var compilationOptions = (CSharpCompilationOptions)project.CompilationOptions;
-			compilationOptions = compilationOptions
+			var compilationOptions = GetCompilationOptions(project)
 				.WithAllowUnsafe(enabled: true)
 				.WithOutputKind(OutputKind.DynamicallyLinkedLibrary);
 			project = project.WithCompilationOptions(compilationOptions);
@@ -103,6 +101,9 @@ namespace WTG.Analyzers.TestFramework
 		{
 			return DefaultFilePathPrefix + count + "." + CSharpDefaultFileExt;
 		}
+
+		static CSharpParseOptions GetParseOptions(Project project) => (CSharpParseOptions)project.ParseOptions!;
+		static CSharpCompilationOptions GetCompilationOptions(Project project) => (CSharpCompilationOptions)project.CompilationOptions!;
 
 		const string DefaultFilePathPrefix = "Test";
 		const string CSharpDefaultFileExt = "cs";

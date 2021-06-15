@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
@@ -117,7 +118,8 @@ namespace WTG.Analyzers.Utils
 		{
 			foreach (var diagnostic in diagnostics)
 			{
-				var document = project.GetDocument(diagnostic.Location.SourceTree);
+				var document = project.GetDocument(diagnostic.Location.SourceTree)
+					?? throw new ArgumentException("Diagnostic not from specified project.");
 
 				if (!builder.TryGetValue(document, out var list))
 				{
