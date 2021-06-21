@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -92,12 +93,19 @@ namespace WTG.Analyzers
 		static async Task<Document> FixLineEndings(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-			var trivia = FindTrivia(root, diagnostic.Location);
+
+			var trivia = new List<SyntaxTrivia>();
+			trivia.Add(FindTrivia(root, diagnostic.Location));
+
+			foreach (var additional in diagnostic.AdditionalLocations)
+			{
+				trivia.Add(FindTrivia(root, additional));
+			}
 
 			return document.WithSyntaxRoot(
 				root.ReplaceTrivia(
 					trivia,
-					TriviaSyntaxFactory.PlatformNewLineTrivia));
+					(original, triviaToUpdate) => TriviaSyntaxFactory.PlatformNewLineTrivia));
 		}
 
 		static SyntaxTrivia FindTrivia(SyntaxNode root, Location location)

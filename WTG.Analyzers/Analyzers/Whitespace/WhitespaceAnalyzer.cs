@@ -34,6 +34,7 @@ namespace WTG.Analyzers
 
 			var root = context.Tree.GetRoot(context.CancellationToken);
 			List<Location>? brokenIndentation = null;
+			List<Location>? incorrectEOL = null;
 
 			foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
 			{
@@ -47,7 +48,8 @@ namespace WTG.Analyzers
 
 						if (trivia.ToString() != Environment.NewLine)
 						{
-							context.ReportDiagnostic(Rules.CreateUseConsistentLineEndingsDiagnostic(trivia.GetLocation(), humanReadablePlatformNewLine));
+							incorrectEOL ??= new List<Location>();
+							incorrectEOL.Add(trivia.GetLocation());
 						}
 						break;
 
@@ -58,11 +60,7 @@ namespace WTG.Analyzers
 							if (location.GetLineSpan().StartLinePosition.Character == 0 &&
 								!acceptableLeadingWhitespace.IsMatch(trivia.ToString()))
 							{
-								if (brokenIndentation == null)
-								{
-									brokenIndentation = new List<Location>();
-								}
-
+								brokenIndentation ??= new List<Location>();
 								brokenIndentation.Add(location);
 							}
 						}
@@ -79,12 +77,7 @@ namespace WTG.Analyzers
 								if (!acceptableLeadingWhitespace.IsMatch(text))
 								{
 									var start = location.SourceSpan.Start;
-
-									if (brokenIndentation == null)
-									{
-										brokenIndentation = new List<Location>();
-									}
-
+									brokenIndentation ??= new List<Location>();
 									brokenIndentation.Add(Location.Create(location.SourceTree, TextSpan.FromBounds(start, start + text.Length)));
 								}
 							}
@@ -100,6 +93,16 @@ namespace WTG.Analyzers
 						Rules.IndentWithTabsRatherThanSpacesRule,
 						brokenIndentation[0],
 						brokenIndentation.Skip(1)));
+			}
+
+			if (incorrectEOL != null)
+			{
+				context.ReportDiagnostic(
+					Diagnostic.Create(
+						Rules.UseConsistentLineEndingsRule,
+						incorrectEOL[0],
+						incorrectEOL.Skip(1),
+						humanReadablePlatformNewLine));
 			}
 		}
 
