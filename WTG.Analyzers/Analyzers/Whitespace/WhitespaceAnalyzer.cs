@@ -58,11 +58,7 @@ namespace WTG.Analyzers
 							if (location.GetLineSpan().StartLinePosition.Character == 0 &&
 								!acceptableLeadingWhitespace.IsMatch(trivia.ToString()))
 							{
-								if (brokenIndentation == null)
-								{
-									brokenIndentation = new List<Location>();
-								}
-
+								brokenIndentation ??= new List<Location>();
 								brokenIndentation.Add(location);
 							}
 						}
@@ -79,12 +75,7 @@ namespace WTG.Analyzers
 								if (!acceptableLeadingWhitespace.IsMatch(text))
 								{
 									var start = location.SourceSpan.Start;
-
-									if (brokenIndentation == null)
-									{
-										brokenIndentation = new List<Location>();
-									}
-
+									brokenIndentation ??= new List<Location>();
 									brokenIndentation.Add(Location.Create(location.SourceTree, TextSpan.FromBounds(start, start + text.Length)));
 								}
 							}
