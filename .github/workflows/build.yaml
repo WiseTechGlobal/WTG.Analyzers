@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest, macos-latest, ubuntu-latest ]
-        sdk: [ 5.0.103 ]
+        sdk: [ 5.0.301 ]
         configuration: [ Debug, Release ]
 
     runs-on: ${{ matrix.os }}
@@ -50,7 +50,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.103
+        dotnet-version: 5.0.301
 
     - name: Workaround for https://github.com/dotnet/core/issues/5881
       run: dotnet nuget locals all --clear
