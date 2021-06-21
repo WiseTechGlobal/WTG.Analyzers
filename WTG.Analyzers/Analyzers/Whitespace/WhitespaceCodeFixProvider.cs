@@ -105,7 +105,7 @@ namespace WTG.Analyzers
 			return document.WithSyntaxRoot(
 				root.ReplaceTrivia(
 					trivia,
-					(x, y) => TriviaSyntaxFactory.PlatformNewLineTrivia));
+					(original, triviaToUpdate) => TriviaSyntaxFactory.PlatformNewLineTrivia));
 		}
 
 		static SyntaxTrivia FindTrivia(SyntaxNode root, Location location)
