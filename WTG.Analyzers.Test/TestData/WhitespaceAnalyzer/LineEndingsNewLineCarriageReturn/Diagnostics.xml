@@ -3,8 +3,6 @@
 	<platform>WINDOWS</platform>
 	<diagnostic>
 		<location>Test0.cs: (1,14) - (2,1)</location>
-	</diagnostic>
-	<diagnostic>
 		<location>Test0.cs: (3,23) - (4,1)</location>
 	</diagnostic>
 </diagnostics>
