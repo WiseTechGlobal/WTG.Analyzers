@@ -19,10 +19,9 @@ namespace WTG.Analyzers.TestFramework
 			var document = CreateDocument(dataSet.Source);
 			var project = document.Project;
 
-			project = project.WithParseOptions(
-				((CSharpParseOptions)project.ParseOptions).WithLanguageVersion(dataSet.LanguageVersion));
+			project = project.WithParseOptions(GetParseOptions(project).WithLanguageVersion(dataSet.LanguageVersion));
 
-			return project.GetDocument(document.Id);
+			return project.GetDocument(document.Id)!;
 		}
 
 		public static Document CreateDocument(string source)
@@ -65,7 +64,7 @@ namespace WTG.Analyzers.TestFramework
 		{
 			var newProject = AddProject(project.Solution, assemblyName, sources);
 
-			return newProject.Solution.GetProject(project.Id)
+			return newProject.Solution.GetProject(project.Id)!
 				.WithProjectReferences(project.ProjectReferences.Concat(new[] { new ProjectReference(newProject.Id) }));
 		}
 
@@ -75,11 +74,10 @@ namespace WTG.Analyzers.TestFramework
 
 			var solution = currentSolution.AddProject(projectId, assemblyName, assemblyName, LanguageNames.CSharp);
 
-			var project = solution.GetProject(projectId)
+			var project = solution.GetProject(projectId)!
 				.AddMetadataReferences(MetadataReferences);
 
-			var compilationOptions = (CSharpCompilationOptions)project.CompilationOptions;
-			compilationOptions = compilationOptions
+			var compilationOptions = GetCompilationOptions(project)
 				.WithAllowUnsafe(enabled: true)
 				.WithOutputKind(OutputKind.DynamicallyLinkedLibrary);
 			project = project.WithCompilationOptions(compilationOptions);
@@ -96,13 +94,16 @@ namespace WTG.Analyzers.TestFramework
 					SourceText.From(sources[i]));
 			}
 
-			return solution.GetProject(projectId);
+			return solution.GetProject(projectId)!;
 		}
 
 		static string GetFileName(int count)
 		{
 			return DefaultFilePathPrefix + count + "." + CSharpDefaultFileExt;
 		}
+
+		static CSharpParseOptions GetParseOptions(Project project) => (CSharpParseOptions)project.ParseOptions!;
+		static CSharpCompilationOptions GetCompilationOptions(Project project) => (CSharpCompilationOptions)project.CompilationOptions!;
 
 		const string DefaultFilePathPrefix = "Test";
 		const string CSharpDefaultFileExt = "cs";

@@ -107,6 +107,10 @@ csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
 # XML-based project files
+
+# RS1025: Configure generated code analysis - suppressed until we can decide how we want to handle it (wrt FileDetailCache).
+dotnet_diagnostic.RS1025.severity = none
+
 [*.{csproj,props,targets,ruleset}]
 indent_style = space
 indent_size = 2
