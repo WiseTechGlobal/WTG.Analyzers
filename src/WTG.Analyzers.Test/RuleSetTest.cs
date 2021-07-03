@@ -13,7 +13,7 @@ namespace WTG.Analyzers.Test
 		[Test]
 		public void WarnAll()
 		{
-			var rulesetPath = Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "WTG.Analyzers", "build", "WarnAll.editorconfig"));
+			var rulesetPath = Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "src", "WTG.Analyzers", "build", "WarnAll.editorconfig"));
 
 			var prefix = "dotnet_diagnostic.";
 			var delimiter = new[] { '=' };
