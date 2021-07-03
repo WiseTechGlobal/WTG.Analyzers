@@ -32,7 +32,7 @@ jobs:
       run: dotnet nuget locals all --clear
         
     - name: Create NuGet Packages
-      run: dotnet pack --configuration Release /p:CommitID=${{ github.sha }} /p:TagVersion=${{ steps.tag_name.outputs.result }}
+      run: dotnet pack src --configuration Release /p:CommitID=${{ github.sha }} /p:TagVersion=${{ steps.tag_name.outputs.result }}
 
     - name: Upload WTG.Analyzers nupkg
       uses: actions/upload-artifact@v2

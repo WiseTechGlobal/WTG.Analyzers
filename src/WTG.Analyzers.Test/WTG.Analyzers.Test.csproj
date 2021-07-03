@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyTitle>WTG Analyzers Test</AssemblyTitle>
     <TargetFrameworks>net46;net5.0</TargetFrameworks>
-    <OutputPath>..\bin</OutputPath>
+    <OutputPath>..\..\bin</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="TestData\**\*.cs" />

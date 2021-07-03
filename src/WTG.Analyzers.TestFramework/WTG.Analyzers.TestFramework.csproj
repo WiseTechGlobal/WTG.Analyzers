@@ -3,8 +3,8 @@
   <PropertyGroup>
     <AssemblyTitle>WTG Analyzers Test Framework</AssemblyTitle>
     <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
-    <OutputPath>..\bin</OutputPath>
-    <NuspecFile>..\WTG.Analyzers.TestFramework.nuspec</NuspecFile>
+    <OutputPath>..\..\bin</OutputPath>
+    <NuspecFile>..\..\WTG.Analyzers.TestFramework.nuspec</NuspecFile>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>

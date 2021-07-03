@@ -19,8 +19,8 @@
 		<file src="bin\netstandard1.3\WTG.Analyzers.Utils.dll" target="analyzers\dotnet\cs" />
 
 		<!-- MSBuild Properties and Targets -->
-		<file src="WTG.Analyzers\build\WTG.Analyzers.props" target="build\" />
-		<file src="WTG.Analyzers\build\WarnAll.editorconfig" target="build\" />
+		<file src="src\WTG.Analyzers\build\WTG.Analyzers.props" target="build\" />
+		<file src="src\WTG.Analyzers\build\WarnAll.editorconfig" target="build\" />
 
 		<!-- Other -->
 		<file src="LICENSE.md" target="" />
