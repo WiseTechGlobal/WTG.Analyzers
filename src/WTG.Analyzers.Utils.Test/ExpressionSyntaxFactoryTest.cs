@@ -142,7 +142,8 @@ namespace WTG.Analyzers.Utils.Test
 		[Test]
 		public void Nameof_Cached()
 		{
-			Assert.That(ExpressionSyntaxFactory.Nameof, Is.SameAs(ExpressionSyntaxFactory.Nameof));
+			var nameof = ExpressionSyntaxFactory.Nameof;
+			Assert.That(nameof, Is.SameAs(ExpressionSyntaxFactory.Nameof));
 		}
 
 		[Test]
