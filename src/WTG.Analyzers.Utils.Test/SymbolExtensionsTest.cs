@@ -75,7 +75,8 @@ namespace WTG.Analyzers.Utils.Test
 			var compilation = await document.Project.GetCompilationAsync().ConfigureAwait(false);
 			var model = compilation.GetSemanticModel(tree);
 
-			var method = (MethodDeclarationSyntax)tree.GetRoot().DescendantNodes().First(x => x.IsKind(SyntaxKind.MethodDeclaration));
+			var root = await tree.GetRootAsync().ConfigureAwait(false);
+			var method = (MethodDeclarationSyntax)root.DescendantNodes().First(x => x.IsKind(SyntaxKind.MethodDeclaration));
 			var symbol = model.GetDeclaredSymbol(method);
 
 			return symbol.IsExternallyVisible();
@@ -101,7 +102,8 @@ namespace WTG.Analyzers.Utils.Test
 			var compilation = await document.Project.GetCompilationAsync().ConfigureAwait(false);
 			var model = compilation.GetSemanticModel(tree);
 
-			var typeDecl = (ClassDeclarationSyntax)tree.GetRoot().DescendantNodes().First(x => x.IsKind(SyntaxKind.ClassDeclaration));
+			var root = await tree.GetRootAsync().ConfigureAwait(false);
+			var typeDecl = (ClassDeclarationSyntax)root.DescendantNodes().First(x => x.IsKind(SyntaxKind.ClassDeclaration));
 			var syntax = (SyntaxNode)typeDecl.Members.First();
 
 			if (syntax is EventFieldDeclarationSyntax e)
