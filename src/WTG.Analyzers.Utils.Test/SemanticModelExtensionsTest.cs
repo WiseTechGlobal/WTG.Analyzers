@@ -48,7 +48,8 @@ namespace WTG.Analyzers.Utils.Test
 			var compilation = await document.Project.GetCompilationAsync().ConfigureAwait(false);
 			var semanticModel = compilation.GetSemanticModel(tree);
 
-			var exp = tree.GetRoot().DescendantNodes().OfType<ArrowExpressionClauseSyntax>().FirstOrDefault().Expression;
+			var root = await tree.GetRootAsync().ConfigureAwait(false);
+			var exp = root.DescendantNodes().OfType<ArrowExpressionClauseSyntax>().FirstOrDefault().Expression;
 
 			return semanticModel.IsConstantZero(exp, default);
 		}
