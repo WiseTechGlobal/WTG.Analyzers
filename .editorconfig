@@ -106,6 +106,11 @@ csharp_space_between_method_declaration_parameter_list_parentheses = false
 csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
+# Too many false positives.
+# Having an analyzer encouraging people to write buggy code makes this too dangerous to keep.
+# https://github.com/dotnet/roslyn-analyzers/issues/5747
+dotnet_diagnostic.CA1508.severity = none
+
 # XML-based project files
 [*.{csproj,props,targets,ruleset}]
 indent_style = space
