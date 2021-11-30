@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,9 +23,12 @@ namespace WTG.Analyzers.Utils
 			{
 				switch (fixAllContext.Scope)
 				{
-					case FixAllScope.Document: return GetFixForDocumentAsync(fixAllContext);
-					case FixAllScope.Project: return GetFixForProjectAsync(fixAllContext);
-					case FixAllScope.Solution: return GetFixForSolutionAsync(fixAllContext);
+					case FixAllScope.Document:
+						return GetFixForDocumentAsync(fixAllContext);
+					case FixAllScope.Project:
+						return GetFixForProjectAsync(fixAllContext);
+					case FixAllScope.Solution:
+						return GetFixForSolutionAsync(fixAllContext);
 				}
 			}
 
@@ -47,8 +51,12 @@ namespace WTG.Analyzers.Utils
 			{
 				var originalDocument = pair.Key;
 				var documentToFix = solution.GetDocument(originalDocument.Id);
-				var newDocument = await ApplyFixesAsync(originalDocument, documentToFix, pair.Value, cancellationToken).ConfigureAwait(false);
-				solution = newDocument.Project.Solution;
+
+				if (documentToFix != null)
+				{
+					var newDocument = await ApplyFixesAsync(originalDocument, documentToFix, pair.Value, cancellationToken).ConfigureAwait(false);
+					solution = newDocument.Project.Solution;
+				}
 			}
 
 			return solution;
@@ -110,7 +118,8 @@ namespace WTG.Analyzers.Utils
 		{
 			foreach (var diagnostic in diagnostics)
 			{
-				var document = project.GetDocument(diagnostic.Location.SourceTree);
+				var document = project.GetDocument(diagnostic.Location.SourceTree)
+					?? throw new ArgumentException("Diagnostic not from specified project.");
 
 				if (!builder.TryGetValue(document, out var list))
 				{

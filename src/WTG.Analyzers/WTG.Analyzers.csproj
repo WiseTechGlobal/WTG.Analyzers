@@ -2,10 +2,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyTitle>WTG Analyzers</AssemblyTitle>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <OutputPath>..\..\bin</OutputPath>
     <NuspecFile>..\..\WTG.Analyzers.nuspec</NuspecFile>
-    <PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>

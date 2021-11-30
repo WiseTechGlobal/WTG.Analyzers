@@ -18,6 +18,7 @@ namespace WTG.Analyzers
 
 		public override void Initialize(AnalysisContext context)
 		{
+			context.EnableConcurrentExecution();
 			var cache = new FileDetailCache();
 
 			context.RegisterSyntaxNodeAction(
