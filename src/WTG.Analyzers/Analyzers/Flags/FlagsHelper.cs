@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace WTG.Analyzers
@@ -60,9 +60,9 @@ namespace WTG.Analyzers
 				return 0;
 			}
 
-			if (value is int)
+			if (value is int intValue)
 			{
-				return (int)value;
+				return intValue;
 			}
 
 			return (long)value;

@@ -16,6 +16,6 @@ namespace WTG.Analyzers
 		public override bool VisitParenthesizedExpression(ParenthesizedExpressionSyntax node) => Visit(node.Expression);
 
 		public override bool VisitLiteralExpression(LiteralExpressionSyntax node)
-			=> node.Kind() == SyntaxKind.NullLiteralExpression ? true : false;
+			=> node.Kind() == SyntaxKind.NullLiteralExpression;
 	}
 }
