@@ -87,6 +87,9 @@ namespace WTG.Analyzers
 					return name == nameof(string.Format)
 						|| name == nameof(string.Substring);
 
+				case SyntaxKind.ObjectCreationExpression:
+					return true;
+
 				default:
 					return false;
 			}
@@ -120,11 +123,28 @@ namespace WTG.Analyzers
 					return true;
 
 				case SyntaxKind.InvocationExpression:
-					var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
+					{
+						var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
 
-					return symbol != null
-						&& symbol.ContainingType.SpecialType == SpecialType.System_String
-						&& (symbol.Name == nameof(string.Format) || symbol.Name == nameof(string.Substring));
+						return symbol != null
+							&& symbol.ContainingType.SpecialType == SpecialType.System_String
+							&& (symbol.Name == nameof(string.Format) || symbol.Name == nameof(string.Substring));
+					}
+
+				case SyntaxKind.ObjectCreationExpression:
+					{
+						var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
+
+						if (symbol != null && symbol.ContainingType.SpecialType == SpecialType.System_String)
+						{
+							var parameters = symbol.Parameters;
+
+							return parameters.Length == 2
+								&& parameters[0].Type.SpecialType == SpecialType.System_Char
+								&& parameters[1].Type.SpecialType == SpecialType.System_Int32;
+						}
+						return false;
+					}
 
 				default:
 					return false;
