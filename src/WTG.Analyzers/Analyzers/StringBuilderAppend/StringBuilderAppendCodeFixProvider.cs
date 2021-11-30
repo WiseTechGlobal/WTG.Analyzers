@@ -91,7 +91,7 @@ namespace WTG.Analyzers
 					baseExpression = Invoke(baseExpression, Append, GetSubstringArguments((InvocationExpressionSyntax)valueExpression));
 					break;
 
-				case Category.RepeatedChar:
+				case Category.StringConstructor:
 					baseExpression = Invoke(baseExpression, Append, GetStringConstructorArguments((ObjectCreationExpressionSyntax)valueExpression));
 					break;
 
@@ -138,14 +138,7 @@ namespace WTG.Analyzers
 
 				if (methodSymbol != null && methodSymbol.ContainingType.SpecialType == SpecialType.System_String)
 				{
-					var parameters = methodSymbol.Parameters;
-
-					if (parameters.Length == 2 &&
-						parameters[0].Type.SpecialType == SpecialType.System_Char &&
-						parameters[1].Type.SpecialType == SpecialType.System_Int32)
-					{
-						return Category.RepeatedChar;
-					}
+					return Category.StringConstructor;
 				}
 			}
 
@@ -232,7 +225,7 @@ namespace WTG.Analyzers
 			Substring,
 			StringValue,
 			NonStringValue,
-			RepeatedChar,
+			StringConstructor,
 		}
 	}
 }

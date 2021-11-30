@@ -139,9 +139,20 @@ namespace WTG.Analyzers
 						{
 							var parameters = symbol.Parameters;
 
-							return parameters.Length == 2
-								&& parameters[0].Type.SpecialType == SpecialType.System_Char
-								&& parameters[1].Type.SpecialType == SpecialType.System_Int32;
+							switch (parameters.Length)
+							{
+								case 1:
+									return IsCharArray(parameters[0].Type);
+
+								case 2:
+									return parameters[0].Type.SpecialType == SpecialType.System_Char
+										&& parameters[1].Type.SpecialType == SpecialType.System_Int32;
+
+								case 3:
+									return IsCharArray(parameters[0].Type)
+										&& parameters[1].Type.SpecialType == SpecialType.System_Int32
+										&& parameters[2].Type.SpecialType == SpecialType.System_Int32;
+							}
 						}
 						return false;
 					}
@@ -149,6 +160,17 @@ namespace WTG.Analyzers
 				default:
 					return false;
 			}
+		}
+
+		static bool IsCharArray(ITypeSymbol type)
+		{
+			if (type.TypeKind != TypeKind.Array)
+			{
+				return false;
+			}
+
+			var arrayType = (IArrayTypeSymbol)type;
+			return arrayType.IsSZArray && arrayType.ElementType.SpecialType == SpecialType.System_Char;
 		}
 	}
 }
