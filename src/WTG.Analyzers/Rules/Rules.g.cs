@@ -543,7 +543,7 @@ namespace WTG.Analyzers
 		public static readonly DiagnosticDescriptor AvoidBoolLiteralsInLargerBoolExpressionsRule = new DiagnosticDescriptor(
 			AvoidBoolLiteralsInLargerBoolExpressionsDiagnosticID,
 			"Avoid combining bool literals in larger boolean expressions.",
-			"Boolean experssion can be simplified.",
+			"Boolean expression can be simplified.",
 			DecruftificationCategory,
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
@@ -949,7 +949,7 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
-		/// Boolean experssion can be simplified.
+		/// Boolean expression can be simplified.
 		/// </summary>
 		public static Diagnostic CreateAvoidBoolLiteralsInLargerBoolExpressionsDiagnostic(Location location)
 		{
