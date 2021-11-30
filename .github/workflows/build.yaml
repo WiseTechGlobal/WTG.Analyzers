@@ -11,6 +11,7 @@ jobs:
     name: Build on ${{ matrix.os }} - ${{ matrix.configuration }}
 
     strategy:
+      fail-fast: false
       matrix:
         os: [ windows-latest, macos-latest, ubuntu-latest ]
         configuration: [ Debug, Release ]
