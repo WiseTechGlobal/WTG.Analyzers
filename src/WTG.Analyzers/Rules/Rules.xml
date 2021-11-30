@@ -222,7 +222,7 @@
 		</rule>
 		<rule id="12" name="AvoidBoolLiteralsInLargerBoolExpressions" severity="Info">
 			<title>Avoid combining bool literals in larger boolean expressions.</title>
-			<message>Boolean experssion can be simplified.</message>
+			<message>Boolean expression can be simplified.</message>
 			<description>Combining bool expressions in larger boolean expressions makes the code more complex than it needs to be.</description>
 			<tag>Unnecessary</tag>
 		</rule>
