@@ -34,9 +34,13 @@ jobs:
     - name: Build NuGet Package
       run: dotnet pack src --configuration ${{ matrix.configuration }} --no-build -p:CommitID=${{ github.sha }}
 
-    - name: Run Tests
+    - name: Run Tests (net46)
+      if: matrix.configuration == 'Debug' && matrix.os == 'windows-latest'
+      run: dotnet test src --no-build --framework net46
+
+    - name: Run Tests (net6.0)
       if: matrix.configuration == 'Debug'
-      run: dotnet test src
+      run: dotnet test src --no-build --framework net6.0
 
   nupkg:
     name: Create NuGet Package
