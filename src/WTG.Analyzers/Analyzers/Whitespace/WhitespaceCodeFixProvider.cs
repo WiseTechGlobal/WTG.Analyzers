@@ -176,8 +176,8 @@ namespace WTG.Analyzers
 				if (text[i] == '\t')
 				{
 					// Round up to the nearest multiple of AssumedTabSize.
-					column = (column + AssumedTabSize);
-					column -= (column % AssumedTabSize);
+					column += AssumedTabSize;
+					column -= column % AssumedTabSize;
 				}
 				else if (char.IsWhiteSpace(text, i))
 				{

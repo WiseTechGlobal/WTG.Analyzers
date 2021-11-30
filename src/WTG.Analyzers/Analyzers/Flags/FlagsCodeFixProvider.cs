@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Composition;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +12,6 @@ using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
-	[SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FlagsCodeFixProvider))]
 	[Shared]
 	public sealed class FlagsCodeFixProvider : CodeFixProvider
