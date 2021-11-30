@@ -91,6 +91,10 @@ namespace WTG.Analyzers
 					baseExpression = Invoke(baseExpression, Append, GetSubstringArguments((InvocationExpressionSyntax)valueExpression));
 					break;
 
+				case Category.StringConstructor:
+					baseExpression = Invoke(baseExpression, Append, GetStringConstructorArguments((ObjectCreationExpressionSyntax)valueExpression));
+					break;
+
 				default:
 					baseExpression = Invoke(baseExpression, Append, valueExpression);
 					break;
@@ -127,6 +131,15 @@ namespace WTG.Analyzers
 				}
 
 				return Category.StringValue;
+			}
+			else if (valueExpression.IsKind(SyntaxKind.ObjectCreationExpression))
+			{
+				var methodSymbol = (IMethodSymbol)semanticModel.GetSymbolInfo(valueExpression, cancellationToken).Symbol;
+
+				if (methodSymbol != null && methodSymbol.ContainingType.SpecialType == SpecialType.System_String)
+				{
+					return Category.StringConstructor;
+				}
 			}
 
 			var type = semanticModel.GetTypeInfo(valueExpression, cancellationToken).Type;
@@ -181,6 +194,11 @@ namespace WTG.Analyzers
 			return SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(newArguments));
 		}
 
+		static ArgumentListSyntax GetStringConstructorArguments(ObjectCreationExpressionSyntax valueExpression)
+		{
+			return valueExpression.ArgumentList;
+		}
+
 		static ExpressionSyntax Invoke(ExpressionSyntax baseExpression, IdentifierNameSyntax method)
 			=> Invoke(baseExpression, method, SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList<ArgumentSyntax>()));
 
@@ -207,6 +225,7 @@ namespace WTG.Analyzers
 			Substring,
 			StringValue,
 			NonStringValue,
+			StringConstructor,
 		}
 	}
 }

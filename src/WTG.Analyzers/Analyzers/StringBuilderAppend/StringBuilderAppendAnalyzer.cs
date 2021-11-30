@@ -87,6 +87,9 @@ namespace WTG.Analyzers
 					return name == nameof(string.Format)
 						|| name == nameof(string.Substring);
 
+				case SyntaxKind.ObjectCreationExpression:
+					return true;
+
 				default:
 					return false;
 			}
@@ -120,15 +123,54 @@ namespace WTG.Analyzers
 					return true;
 
 				case SyntaxKind.InvocationExpression:
-					var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
+					{
+						var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
 
-					return symbol != null
-						&& symbol.ContainingType.SpecialType == SpecialType.System_String
-						&& (symbol.Name == nameof(string.Format) || symbol.Name == nameof(string.Substring));
+						return symbol != null
+							&& symbol.ContainingType.SpecialType == SpecialType.System_String
+							&& (symbol.Name == nameof(string.Format) || symbol.Name == nameof(string.Substring));
+					}
+
+				case SyntaxKind.ObjectCreationExpression:
+					{
+						var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
+
+						if (symbol != null && symbol.ContainingType.SpecialType == SpecialType.System_String)
+						{
+							var parameters = symbol.Parameters;
+
+							switch (parameters.Length)
+							{
+								case 1:
+									return IsCharArray(parameters[0].Type);
+
+								case 2:
+									return parameters[0].Type.SpecialType == SpecialType.System_Char
+										&& parameters[1].Type.SpecialType == SpecialType.System_Int32;
+
+								case 3:
+									return IsCharArray(parameters[0].Type)
+										&& parameters[1].Type.SpecialType == SpecialType.System_Int32
+										&& parameters[2].Type.SpecialType == SpecialType.System_Int32;
+							}
+						}
+						return false;
+					}
 
 				default:
 					return false;
 			}
+		}
+
+		static bool IsCharArray(ITypeSymbol type)
+		{
+			if (type.TypeKind != TypeKind.Array)
+			{
+				return false;
+			}
+
+			var arrayType = (IArrayTypeSymbol)type;
+			return arrayType.IsSZArray && arrayType.ElementType.SpecialType == SpecialType.System_Char;
 		}
 	}
 }
