@@ -50,7 +50,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> RemoveKeyword(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var token = TokenFromDiagnostic(root, diagnostic);
 			var nextToken = token.GetNextToken();
 

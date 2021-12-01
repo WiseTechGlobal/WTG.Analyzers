@@ -33,11 +33,13 @@ namespace WTG.Analyzers
 
 		static async Task<Document> RemoveOverideAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var node = root.FindNode(diagnostic.Location.SourceSpan);
 
-			return document.WithSyntaxRoot(
-				root.RemoveNode(node, SyntaxRemoveOptions.KeepExteriorTrivia | SyntaxRemoveOptions.AddElasticMarker));
+			var newRoot = root.RemoveNode(node, SyntaxRemoveOptions.KeepExteriorTrivia | SyntaxRemoveOptions.AddElasticMarker);
+			NRT.Assert(newRoot != null, "Should only delete the override, not the entire document.");
+
+			return document.WithSyntaxRoot(newRoot);
 		}
 	}
 }

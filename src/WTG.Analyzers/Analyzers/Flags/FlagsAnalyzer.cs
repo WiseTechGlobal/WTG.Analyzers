@@ -63,7 +63,7 @@ namespace WTG.Analyzers
 			{
 				foreach (var attribute in attributeList.Attributes)
 				{
-					var symbol = (IMethodSymbol)model.GetSymbolInfo(attribute, cancellationToken).Symbol;
+					var symbol = (IMethodSymbol?)model.GetSymbolInfo(attribute, cancellationToken).Symbol;
 
 					if (symbol != null && symbol.ContainingType.IsMatch("System.FlagsAttribute"))
 					{

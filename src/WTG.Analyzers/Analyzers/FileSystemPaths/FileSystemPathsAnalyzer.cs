@@ -39,27 +39,32 @@ namespace WTG.Analyzers
 
 		static bool HasPathCombineMulti(Compilation compilation)
 		{
-			foreach (var symbol in compilation.GetTypeByMetadataName("System.IO.Path").GetMembers(nameof(System.IO.Path.Combine)))
+			var ioPathSymbol = compilation.GetTypeByMetadataName("System.IO.Path");
+
+			if (ioPathSymbol != null)
 			{
-				if (symbol.Kind != SymbolKind.Method)
+				foreach (var symbol in ioPathSymbol.GetMembers(nameof(Path.Combine)))
 				{
-					continue;
-				}
+					if (symbol.Kind != SymbolKind.Method)
+					{
+						continue;
+					}
 
-				var method = (IMethodSymbol)symbol;
-				if (method.Parameters.Length != 1)
-				{
-					continue;
-				}
+					var method = (IMethodSymbol)symbol;
+					if (method.Parameters.Length != 1)
+					{
+						continue;
+					}
 
-				// We need the "params string[]" overload to be available
-				var parameter = method.Parameters[0];
-				if (!parameter.IsParams || parameter.Type.TypeKind != TypeKind.Array || ((IArrayTypeSymbol)parameter.Type).ElementType.SpecialType != SpecialType.System_String)
-				{
-					continue;
-				}
+					// We need the "params string[]" overload to be available
+					var parameter = method.Parameters[0];
+					if (!parameter.IsParams || parameter.Type.TypeKind != TypeKind.Array || ((IArrayTypeSymbol)parameter.Type).ElementType.SpecialType != SpecialType.System_String)
+					{
+						continue;
+					}
 
-				return true;
+					return true;
+				}
 			}
 
 			return false;
@@ -321,7 +326,7 @@ namespace WTG.Analyzers
 
 		static bool IsPathCombine(SemanticModel semanticModel, InvocationExpressionSyntax syntax, CancellationToken cancellationToken)
 		{
-			var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(syntax, cancellationToken).Symbol;
+			var symbol = (IMethodSymbol?)semanticModel.GetSymbolInfo(syntax, cancellationToken).Symbol;
 			if (symbol is null || !symbol.ContainingType.IsMatch("System.IO.Path") || symbol.Parameters.Length == 0)
 			{
 				return false;

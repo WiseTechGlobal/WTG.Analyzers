@@ -35,7 +35,7 @@ namespace WTG.Analyzers
 			return false;
 		}
 
-		public static bool IsInPrivateMember(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
+		public static bool IsInPrivateMember(SemanticModel semanticModel, SyntaxNode? node, CancellationToken cancellationToken)
 		{
 			while (node != null)
 			{
@@ -106,7 +106,7 @@ namespace WTG.Analyzers
 
 			return false;
 
-			static bool IsPrivate(ISymbol symbol) => symbol != null && symbol.DeclaredAccessibility == Accessibility.Private;
+			static bool IsPrivate(ISymbol? symbol) => symbol != null && symbol.DeclaredAccessibility == Accessibility.Private;
 		}
 
 		public static bool IsNullArgumentCheck(SemanticModel semanticModel, InvocationExpressionSyntax invoke, [NotNullWhen(true)] out Location? identifierLocation, CancellationToken cancellationToken)
@@ -198,7 +198,7 @@ namespace WTG.Analyzers
 				return false;
 			}
 
-			var checkMethodSymbol = (IMethodSymbol)semanticModel.GetSymbolInfo(checkInvoke, cancellationToken).Symbol;
+			var checkMethodSymbol = (IMethodSymbol?)semanticModel.GetSymbolInfo(checkInvoke, cancellationToken).Symbol;
 
 			if (checkMethodSymbol == null || checkMethodSymbol.ContainingType.SpecialType != SpecialType.System_String)
 			{
@@ -393,7 +393,7 @@ namespace WTG.Analyzers
 
 			public Location? ParameterLocation { get; private set; }
 
-			public override void Visit(SyntaxNode node)
+			public override void Visit(SyntaxNode? node)
 			{
 				if (ParameterLocation == null)
 				{
@@ -441,7 +441,7 @@ namespace WTG.Analyzers
 
 			public bool EncounteredContractForAll { get; private set; }
 
-			public override void Visit(SyntaxNode node)
+			public override void Visit(SyntaxNode? node)
 			{
 				if (!EncounteredContractForAll)
 				{

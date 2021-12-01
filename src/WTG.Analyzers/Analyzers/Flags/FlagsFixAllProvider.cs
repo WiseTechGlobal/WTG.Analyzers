@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,15 +20,16 @@ namespace WTG.Analyzers
 
 		protected override async Task<Document> ApplyFixesAsync(Document originalDocument, Document documentToFix, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
 		{
-			var root = await originalDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-			var semanticModel = await originalDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+			var root = await originalDocument.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var semanticModel = await originalDocument.RequireSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
 			var group = new Dictionary<EnumDeclarationSyntax, List<EnumMemberDeclarationSyntax>>();
 
 			foreach (var diagnostic in diagnostics)
 			{
 				var member = (EnumMemberDeclarationSyntax)root.FindNode(diagnostic.Location.SourceSpan);
-				var decl = (EnumDeclarationSyntax)member.Parent;
+				var decl = (EnumDeclarationSyntax?)member.Parent;
+				NRT.Assert(decl != null, "The fixer should only be running on a full and complete document.");
 
 				if (!group.TryGetValue(decl, out var list))
 				{

@@ -211,7 +211,7 @@ namespace WTG.Analyzers.TestFramework
 				"Fix introduced new compiler diagnostics:{0}{1}{0}{0}New document:{0}{2}{0}",
 				Environment.NewLine,
 				string.Join(Environment.NewLine, newCompilerDiagnostics.Select(d => d.ToString())),
-				tree.ToFullString());
+				tree?.ToFullString());
 		}
 
 		static async Task<Document> ApplyFixAsync(Document document, CodeAction codeAction)
@@ -247,7 +247,7 @@ namespace WTG.Analyzers.TestFramework
 		static async Task<IEnumerable<Diagnostic>> GetCompilerDiagnosticsAsync(Document document)
 		{
 			var semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
-			return semanticModel.GetDiagnostics();
+			return semanticModel?.GetDiagnostics() ?? Enumerable.Empty<Diagnostic>();
 		}
 
 		static async Task<string> GetReducedStringFromDocumentAsync(Document document)

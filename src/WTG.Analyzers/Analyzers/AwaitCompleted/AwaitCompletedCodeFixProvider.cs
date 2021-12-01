@@ -70,21 +70,24 @@ namespace WTG.Analyzers
 
 		static async Task<Document> RemoveAwaitCompletedTaskAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = (AwaitExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
-			return document.WithSyntaxRoot(
-				root.RemoveNode(
-					node.Parent.IsKind(SyntaxKind.ExpressionStatement)
-						? node.Parent
-						: node,
-					SyntaxRemoveOptions.KeepExteriorTrivia | SyntaxRemoveOptions.AddElasticMarker));
+			var newRoot = root.RemoveNode(
+				node.Parent.IsKind(SyntaxKind.ExpressionStatement)
+					? node.Parent
+					: node,
+				SyntaxRemoveOptions.KeepExteriorTrivia | SyntaxRemoveOptions.AddElasticMarker);
+
+			NRT.Assert(newRoot != null, "We only remove an expression, not the entire document.");
+
+			return document.WithSyntaxRoot(newRoot);
 		}
 
 		static async Task<Document> UnwrapValueAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = (AwaitExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
@@ -98,9 +101,10 @@ namespace WTG.Analyzers
 
 		static async Task<Document> UnwrapThrowAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
+			NRT.Assert(node.Parent != null, "The fixer should only be running on a full and complete document.");
 			var exceptionNode = (ExpressionSyntax)node.FindNode(diagnostic.AdditionalLocations[0].SourceSpan, getInnermostNodeForTie: true).WithoutTrivia();
 
 			SyntaxNode replacementNode;

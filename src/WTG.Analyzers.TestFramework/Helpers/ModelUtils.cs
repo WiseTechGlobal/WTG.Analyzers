@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -49,11 +50,16 @@ namespace WTG.Analyzers.TestFramework
 		public static AdhocWorkspace CreateWorkspace()
 		{
 			var workspace = new AdhocWorkspace();
-			workspace.Options = workspace.Options
-				.WithChangedOption(new OptionKey(FormattingOptions.NewLine, LanguageNames.CSharp), Environment.NewLine)
-				.WithChangedOption(new OptionKey(FormattingOptions.UseTabs, LanguageNames.CSharp), true)
-				.WithChangedOption(new OptionKey(FormattingOptions.TabSize, LanguageNames.CSharp), 2)
-				.WithChangedOption(new OptionKey(FormattingOptions.IndentationSize, LanguageNames.CSharp), 2);
+			var solution = workspace.CurrentSolution;
+
+			workspace.TryApplyChanges(
+				solution.WithOptions(
+					solution.Options
+					.WithChangedOption(new OptionKey(FormattingOptions.NewLine, LanguageNames.CSharp), Environment.NewLine)
+					.WithChangedOption(new OptionKey(FormattingOptions.UseTabs, LanguageNames.CSharp), true)
+					.WithChangedOption(new OptionKey(FormattingOptions.TabSize, LanguageNames.CSharp), 2)
+					.WithChangedOption(new OptionKey(FormattingOptions.IndentationSize, LanguageNames.CSharp), 2)));
+
 			return workspace;
 		}
 

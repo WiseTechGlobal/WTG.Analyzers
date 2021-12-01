@@ -52,7 +52,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> RemoveToString(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var invoke = GetTargetInvoke(root, diagnostic);
 
 			switch (invoke.Expression.Kind())
@@ -66,6 +66,7 @@ namespace WTG.Analyzers
 							.WithTriviaFrom(invoke)));
 
 				case SyntaxKind.MemberBindingExpression:
+					NRT.Assert(invoke.Parent != null, "The fixer should only be running on a full and complete document.");
 					switch (invoke.Parent.Kind())
 					{
 						case SyntaxKind.ConditionalAccessExpression:
@@ -123,7 +124,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> ConvertToNameof(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var invoke = GetTargetInvoke(root, diagnostic);
 
 			var nameofExpression = ExpressionSyntaxFactory.CreateNameof(Unwrap(invoke).WithoutTrivia())

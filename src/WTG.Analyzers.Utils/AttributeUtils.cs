@@ -7,7 +7,14 @@ namespace WTG.Analyzers.Utils
 	{
 		public static ExpressionSyntax? GetArgumentValue(this AttributeSyntax att, int index)
 		{
-			var arguments = att.ArgumentList.Arguments;
+			var argumentList = att.ArgumentList;
+
+			if (argumentList == null)
+			{
+				return null;
+			}
+
+			var arguments = argumentList.Arguments;
 
 			if (index < 0 || index >= arguments.Count)
 			{
@@ -26,7 +33,14 @@ namespace WTG.Analyzers.Utils
 
 		public static ExpressionSyntax? GetPropertyValue(this AttributeSyntax att, string name)
 		{
-			var arguments = att.ArgumentList.Arguments;
+			var argumentList = att.ArgumentList;
+
+			if (argumentList == null)
+			{
+				return null;
+			}
+
+			var arguments = argumentList.Arguments;
 
 			foreach (var arg in arguments)
 			{
@@ -44,7 +58,7 @@ namespace WTG.Analyzers.Utils
 		/// </summary>
 		public static Location GetLocation(AttributeSyntax attribute)
 		{
-			var attributeList = (AttributeListSyntax)attribute.Parent;
+			var attributeList = (AttributeListSyntax?)attribute.Parent;
 
 			if (attributeList == null || attributeList.Attributes.Count > 1)
 			{

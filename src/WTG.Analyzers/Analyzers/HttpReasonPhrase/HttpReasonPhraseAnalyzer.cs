@@ -105,6 +105,6 @@ namespace WTG.Analyzers
 
 		static bool IsReasonPhraseIdentifier(SimpleNameSyntax identifier) => string.Equals(identifier.Identifier.ValueText, ReasonPhrasePropertyName, StringComparison.Ordinal);
 
-		static bool ShouldTriggerDiagnosticForContainingType(ITypeSymbol typeSymbol) => typeSymbol is { } && (typeSymbol.IsMatch(HttpResponseMessageFullTypeName) || typeSymbol.IsMatch(IHttpResponseFeatureFullTypeName));
+		static bool ShouldTriggerDiagnosticForContainingType(ITypeSymbol? typeSymbol) => typeSymbol is { } && (typeSymbol.IsMatch(HttpResponseMessageFullTypeName) || typeSymbol.IsMatch(IHttpResponseFeatureFullTypeName));
 	}
 }

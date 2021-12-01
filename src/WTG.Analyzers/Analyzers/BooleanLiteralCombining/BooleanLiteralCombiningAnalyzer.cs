@@ -60,6 +60,11 @@ namespace WTG.Analyzers
 
 		static bool CanBeSimplified(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
 		{
+			if (node.Parent == null)
+			{
+				return false;
+			}
+
 			switch (node.Parent.Kind())
 			{
 				case SyntaxKind.LogicalAndExpression:
@@ -83,7 +88,7 @@ namespace WTG.Analyzers
 			static bool IsSimpleBooleanExpression(ExpressionSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
 				=> IsSimpleBooleanType(semanticModel.GetTypeInfo(syntax, cancellationToken).Type);
 
-			static bool IsSimpleBooleanType(ITypeSymbol type) => type.SpecialType == SpecialType.System_Boolean;
+			static bool IsSimpleBooleanType(ITypeSymbol? type) => type?.SpecialType == SpecialType.System_Boolean;
 		}
 
 		// Where "Value Coercion" is an expression that performs regular evaluation of a sub-expression before forcing a particular result,
@@ -91,6 +96,7 @@ namespace WTG.Analyzers
 		static bool IsValueCoercion(SyntaxNode node)
 		{
 			if (TryGetLiteralBool(node, out var value) &&
+				node.Parent != null &&
 				TryGetIdentityValue(node.Parent, out var identityValue) &&
 				value != identityValue)
 			{
@@ -136,6 +142,6 @@ namespace WTG.Analyzers
 			return false;
 		}
 
-		static readonly ImmutableDictionary<string, string> noAutoFix = ImmutableDictionary<string, string>.Empty.Add(CanAutoFixProperty, bool.FalseString);
+		static readonly ImmutableDictionary<string, string?> noAutoFix = ImmutableDictionary<string, string?>.Empty.Add(CanAutoFixProperty, bool.FalseString);
 	}
 }

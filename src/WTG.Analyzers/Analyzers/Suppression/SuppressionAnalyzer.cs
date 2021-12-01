@@ -112,8 +112,8 @@ namespace WTG.Analyzers
 		{
 			if (expression is LiteralExpressionSyntax literal)
 			{
-				value = (string)literal.Token.Value;
-				return true;
+				value = (string?)literal.Token.Value;
+				return value != null;
 			}
 
 			value = null;

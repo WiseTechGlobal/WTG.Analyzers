@@ -40,7 +40,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> ConvertToAppendsAsync(Diagnostic diagnostic, Document document, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.AdditionalLocations[0].SourceSpan;
 			var invocation = (InvocationExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 			var memberExpression = (MemberAccessExpressionSyntax)invocation.Expression;
@@ -51,7 +51,7 @@ namespace WTG.Analyzers
 				root.ReplaceNode(
 					invocation,
 					Translate(
-						await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false),
+						await document.RequireSemanticModelAsync(cancellationToken).ConfigureAwait(false),
 						memberExpression.Expression.WithoutTrailingTrivia(),
 						firstArgument,
 						appendLine,
@@ -116,7 +116,7 @@ namespace WTG.Analyzers
 			}
 			else if (valueExpression.IsKind(SyntaxKind.InvocationExpression))
 			{
-				var methodSymbol = (IMethodSymbol)semanticModel.GetSymbolInfo(valueExpression, cancellationToken).Symbol;
+				var methodSymbol = (IMethodSymbol?)semanticModel.GetSymbolInfo(valueExpression, cancellationToken).Symbol;
 
 				if (methodSymbol != null && methodSymbol.ContainingType.SpecialType == SpecialType.System_String)
 				{
@@ -134,7 +134,7 @@ namespace WTG.Analyzers
 			}
 			else if (valueExpression.IsKind(SyntaxKind.ObjectCreationExpression))
 			{
-				var methodSymbol = (IMethodSymbol)semanticModel.GetSymbolInfo(valueExpression, cancellationToken).Symbol;
+				var methodSymbol = (IMethodSymbol?)semanticModel.GetSymbolInfo(valueExpression, cancellationToken).Symbol;
 
 				if (methodSymbol != null && methodSymbol.ContainingType.SpecialType == SpecialType.System_String)
 				{
@@ -196,7 +196,9 @@ namespace WTG.Analyzers
 
 		static ArgumentListSyntax GetStringConstructorArguments(ObjectCreationExpressionSyntax valueExpression)
 		{
-			return valueExpression.ArgumentList;
+			var argumentList = valueExpression.ArgumentList;
+			NRT.Assert(argumentList != null, "We should not have been able to reach this point if there was no argument list.");
+			return argumentList;
 		}
 
 		static ExpressionSyntax Invoke(ExpressionSyntax baseExpression, IdentifierNameSyntax method)

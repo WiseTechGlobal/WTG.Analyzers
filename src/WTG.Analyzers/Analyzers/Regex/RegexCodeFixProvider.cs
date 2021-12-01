@@ -39,7 +39,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> RemoveCompiledOption(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var member = (MemberAccessExpressionSyntax)root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
 			return document.WithSyntaxRoot(new FlagRemover(member).Visit(root));
 		}
@@ -51,7 +51,7 @@ namespace WTG.Analyzers
 				this.syntax = syntax ?? throw new ArgumentNullException(nameof(syntax));
 			}
 
-			public override SyntaxNode Visit(SyntaxNode node)
+			public override SyntaxNode Visit(SyntaxNode? node)
 			{
 				if (node == null)
 				{
@@ -70,9 +70,9 @@ namespace WTG.Analyzers
 
 			public override SyntaxNode VisitArgumentList(ArgumentListSyntax node)
 			{
-				var newArgList = (ArgumentListSyntax)base.VisitArgumentList(node);
+				var newArgList = (ArgumentListSyntax?)base.VisitArgumentList(node);
 
-				if (newArgList == node || node.Arguments.Count < 0)
+				if (newArgList == null || newArgList == node || node.Arguments.Count < 0)
 				{
 					return node;
 				}

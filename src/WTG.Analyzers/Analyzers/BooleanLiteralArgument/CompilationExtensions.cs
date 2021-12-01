@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -5,9 +6,9 @@ namespace WTG.Analyzers.Analyzers.BooleanLiteral
 {
 	static class CompilationExtensions
 	{
-		public static bool IsCSharpVersionOrGreater(this Compilation compilation, LanguageVersion version)
+		public static bool IsCSharpVersionOrGreater([NotNullWhen(true)] this Compilation? compilation, LanguageVersion version)
 		{
-			if (compilation.Language != LanguageNames.CSharp)
+			if (compilation == null || compilation.Language != LanguageNames.CSharp)
 			{
 				// It's not even C#!
 				return false;

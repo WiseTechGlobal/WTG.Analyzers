@@ -94,7 +94,7 @@ namespace WTG.Analyzers
 			return IsValueType(type);
 		}
 
-		static bool IsValueType(ITypeSymbol type) => type != null && type.IsValueType && type.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T;
+		static bool IsValueType(ITypeSymbol? type) => type != null && type.IsValueType && type.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T;
 
 		static bool IsUserDefinedValueTypeConversion(Conversion first, Conversion second) => first.IsIdentity && IsLoweredToValueType(second);
 

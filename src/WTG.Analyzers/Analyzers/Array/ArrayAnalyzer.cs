@@ -138,11 +138,16 @@ namespace WTG.Analyzers
 
 		static bool HasArrayEmpty(Compilation compilation)
 		{
-			foreach (var symbol in compilation.GetTypeByMetadataName("System.Array").GetMembers(nameof(System.Array.Empty)))
+			var arraySymbol = compilation.GetTypeByMetadataName("System.Array");
+
+			if (arraySymbol != null)
 			{
-				if (symbol.Kind == SymbolKind.Method)
+				foreach (var symbol in arraySymbol.GetMembers(nameof(System.Array.Empty)))
 				{
-					return true;
+					if (symbol.Kind == SymbolKind.Method)
+					{
+						return true;
+					}
 				}
 			}
 

@@ -24,6 +24,8 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("System.Collections.Generic.List`1+Enumerator", ExpectedResult = 3)]
 		[TestCase("System.ValueTuple`2", ExpectedResult = 4)]
 		[TestCase("System.ValueTuple", ExpectedResult = -1)]
+		[TestCase("System.Tuple`2", ExpectedResult = 5)]
+		[TestCase("System.Tuple", ExpectedResult = -1)]
 		[TestCase("System.Collections.Generic.List`1+Enum", ExpectedResult = -1)]
 		[TestCase("Syste.Linq.Enumerable", ExpectedResult = -1)]
 		public int MatchType(string typeName)
@@ -36,6 +38,7 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("System.Collections.Generic.List", ExpectedResult = 2)]
 		[TestCase("System.Collections.Generic.List+Enumerator", ExpectedResult = 3)]
 		[TestCase("System.ValueTuple", ExpectedResult = 4)]
+		[TestCase("System.Tuple", ExpectedResult = 5)]
 		[TestCase("System.Value", ExpectedResult = -1)]
 		[TestCase("System.Collections.Generic.List+Enum", ExpectedResult = -1)]
 		[TestCase("Syste.Linq.Enumerable", ExpectedResult = -1)]
@@ -141,7 +144,8 @@ using System.Threading.Tasks;
 				GetType("Enumerable"),
 				GetType("List<int>"),
 				GetType("List<int>.Enumerator"),
-				GetType("ValueTuple<string, int>"),
+				GetType("(string, int)"),
+				GetType("Tuple<string, int>"),
 			};
 
 			methods = new[]

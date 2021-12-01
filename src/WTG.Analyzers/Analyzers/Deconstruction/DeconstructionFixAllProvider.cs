@@ -19,7 +19,7 @@ namespace WTG.Analyzers
 
 		protected override async Task<Document> ApplyFixesAsync(Document originalDocument, Document documentToFix, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
 		{
-			var syntaxRoot = await originalDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var syntaxRoot = await originalDocument.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticsToFix = GetDiagnosticsToFix(diagnostics);
 			var nodesToFix = diagnosticsToFix.Select(d => syntaxRoot.FindNode(d.Location.SourceSpan))
 				.Where(d => d.IsKind(SyntaxKind.TupleExpression))

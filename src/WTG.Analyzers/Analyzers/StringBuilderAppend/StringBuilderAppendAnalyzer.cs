@@ -97,7 +97,7 @@ namespace WTG.Analyzers
 
 		static bool IsAppendMethod(SemanticModel semanticModel, InvocationExpressionSyntax invokeExpression, CancellationToken cancellationToken)
 		{
-			var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(invokeExpression, cancellationToken).Symbol;
+			var symbol = (IMethodSymbol?)semanticModel.GetSymbolInfo(invokeExpression, cancellationToken).Symbol;
 
 			if (symbol == null || !symbol.ContainingType.IsMatch("System.Text.StringBuilder") || symbol.Parameters.Length == 0)
 			{
@@ -124,7 +124,7 @@ namespace WTG.Analyzers
 
 				case SyntaxKind.InvocationExpression:
 					{
-						var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
+						var symbol = (IMethodSymbol?)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
 
 						return symbol != null
 							&& symbol.ContainingType.SpecialType == SpecialType.System_String
@@ -133,7 +133,7 @@ namespace WTG.Analyzers
 
 				case SyntaxKind.ObjectCreationExpression:
 					{
-						var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
+						var symbol = (IMethodSymbol?)semanticModel.GetSymbolInfo(expression, cancellationToken).Symbol;
 
 						if (symbol != null && symbol.ContainingType.SpecialType == SpecialType.System_String)
 						{

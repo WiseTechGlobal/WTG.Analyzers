@@ -42,7 +42,7 @@ namespace WTG.Analyzers
 			}
 
 			var invoke = (InvocationExpressionSyntax)context.Node;
-			IMethodSymbol symbol;
+			IMethodSymbol? symbol;
 
 			switch (ExpressionHelper.GetMethodName(invoke)?.Identifier.Text)
 			{
@@ -54,7 +54,7 @@ namespace WTG.Analyzers
 						return;
 					}
 
-					symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
+					symbol = (IMethodSymbol?)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
 
 					if (symbol == null ||
 						!symbol.IsMatch(WellKnownTypeNames.Task, nameof(Task.Delay)) ||
@@ -65,7 +65,7 @@ namespace WTG.Analyzers
 					break;
 
 				case nameof(Task.FromResult):
-					symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
+					symbol = (IMethodSymbol?)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
 
 					if (symbol == null || !symbol.IsMatch(WellKnownTypeNames.Task, nameof(Task.FromResult)))
 					{

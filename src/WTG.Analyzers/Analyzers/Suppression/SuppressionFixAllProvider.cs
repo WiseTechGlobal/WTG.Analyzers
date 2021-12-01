@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
@@ -20,13 +20,16 @@ namespace WTG.Analyzers
 
 		protected override async Task<Document> ApplyFixesAsync(Document originalDocument, Document documentToFix, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
 		{
-			var root = await documentToFix.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await documentToFix.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var nodesToRemove = GetNodesToRemove(root, diagnostics);
 
-			return documentToFix.WithSyntaxRoot(
-				root.RemoveNodes(
-					nodesToRemove,
-					SyntaxRemoveOptions.KeepNoTrivia));
+			var newRoot = root.RemoveNodes(
+				nodesToRemove,
+				SyntaxRemoveOptions.KeepNoTrivia);
+
+			NRT.Assert(newRoot != null, "Should only delete the suppressions, not the entire document.");
+
+			return documentToFix.WithSyntaxRoot(newRoot);
 		}
 
 		static IEnumerable<SyntaxNode> GetNodesToRemove(SyntaxNode root, ImmutableArray<Diagnostic> diagnostics)
@@ -56,7 +59,12 @@ namespace WTG.Analyzers
 			}
 
 			// If all the attributes in a list are to be removed, then remove the list instead.
-			var attGroups = attributes.ToLookup(x => (AttributeListSyntax)x.Parent);
+			var attGroups = attributes.ToLookup(x =>
+				{
+					var parent = (AttributeListSyntax?)x.Parent;
+					NRT.Assert(parent != null, "The fixer should only be running on a full and complete document.");
+					return parent;
+				});
 			attributes = new List<AttributeSyntax>();
 
 			foreach (var group in attGroups)

@@ -44,7 +44,7 @@ namespace WTG.Analyzers
 			return Rules.CreateDoNotConfigureAwaitFromAsyncVoidDiagnostic(Location.Create(invoke.SyntaxTree, span));
 		}
 
-		static bool IsWithinAsyncVoidMethod(SemanticModel model, SyntaxNode node)
+		static bool IsWithinAsyncVoidMethod(SemanticModel model, SyntaxNode? node)
 		{
 			var visitor = new IsAsyncVoidMethodVisitor(model);
 
@@ -65,7 +65,7 @@ namespace WTG.Analyzers
 
 		static bool IsConfigureAwait(SemanticModel semanticModel, InvocationExpressionSyntax invoke)
 		{
-			var symbol = (IMethodSymbol)semanticModel.GetSymbolInfo(invoke).Symbol;
+			var symbol = (IMethodSymbol?)semanticModel.GetSymbolInfo(invoke).Symbol;
 			return symbol != null && symbol.IsMatch(WellKnownTypeNames.Task, nameof(Task.ConfigureAwait));
 		}
 

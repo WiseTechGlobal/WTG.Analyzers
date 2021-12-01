@@ -24,13 +24,29 @@ namespace WTG.Analyzers
 
 		public static LinqResolution? GetResolution(SemanticModel model, InvocationExpressionSyntax invoke)
 		{
-			var symbol = (IMethodSymbol)model.GetSymbolInfo(invoke).Symbol;
+			var symbol = (IMethodSymbol?)model.GetSymbolInfo(invoke).Symbol;
+
+			if (symbol == null)
+			{
+				return null;
+			}
 
 			var sourceExpression = symbol.IsStatic
 				? invoke.ArgumentList.Arguments[0].Expression
 				: GetInstanceExpression(invoke);
 
+			if (sourceExpression == null)
+			{
+				return null;
+			}
+
 			var sourceType = model.GetTypeInfo(sourceExpression).Type;
+
+			if (sourceType == null)
+			{
+				return null;
+			}
+
 			return LinqMethod.Find(symbol.Name)?.GetResolution(sourceType.OriginalDefinition);
 		}
 	}

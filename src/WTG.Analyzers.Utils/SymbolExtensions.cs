@@ -69,7 +69,12 @@ namespace WTG.Analyzers.Utils
 		{
 			if (typeSymbol.IsTupleType)
 			{
-				typeSymbol = ((INamedTypeSymbol)typeSymbol).TupleUnderlyingType;
+				var underlyingType = ((INamedTypeSymbol)typeSymbol).TupleUnderlyingType;
+
+				if (underlyingType != null)
+				{
+					typeSymbol = underlyingType;
+				}
 			}
 
 			ISymbol symbol = typeSymbol;

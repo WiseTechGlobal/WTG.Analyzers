@@ -29,7 +29,7 @@ namespace WTG.Analyzers
 		void AnalyzeAttribute(SyntaxNodeAnalysisContext context)
 		{
 			var attributeNode = (AttributeSyntax)context.Node;
-			var attributeSymbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(attributeNode, context.CancellationToken).Symbol;
+			var attributeSymbol = (IMethodSymbol?)context.SemanticModel.GetSymbolInfo(attributeNode, context.CancellationToken).Symbol;
 
 			if (attributeSymbol == null)
 			{
@@ -88,7 +88,7 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			ImmutableDictionary<string, string> properties;
+			ImmutableDictionary<string, string?> properties;
 
 			switch (name.Identifier.Text)
 			{
@@ -109,7 +109,7 @@ namespace WTG.Analyzers
 					return;
 			}
 
-			var symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
+			var symbol = (IMethodSymbol?)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
 
 			if (symbol == null || !symbol.ContainingType.IsMatch("System.Diagnostics.Contracts.Contract"))
 			{
@@ -159,7 +159,7 @@ namespace WTG.Analyzers
 			return AttributeUtils.GetLocation(attribute);
 		}
 
-		static readonly ImmutableDictionary<string, string> FixDeleteProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixDelete);
-		static readonly ImmutableDictionary<string, string> FixRequiresProperties = ImmutableDictionary<string, string>.Empty.Add(PropertyProposedFix, FixRequires);
+		static readonly ImmutableDictionary<string, string?> FixDeleteProperties = ImmutableDictionary<string, string?>.Empty.Add(PropertyProposedFix, FixDelete);
+		static readonly ImmutableDictionary<string, string?> FixRequiresProperties = ImmutableDictionary<string, string?>.Empty.Add(PropertyProposedFix, FixRequires);
 	}
 }

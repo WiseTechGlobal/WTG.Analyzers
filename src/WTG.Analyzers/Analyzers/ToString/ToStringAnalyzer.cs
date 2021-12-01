@@ -49,9 +49,9 @@ namespace WTG.Analyzers
 
 						if (member.Name.Identifier.Text == WellKnownMemberNames.ObjectToString)
 						{
-							var symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
+							var symbol = (IMethodSymbol?)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
 
-							if (symbol != null)
+							if (symbol != null && symbol.ReceiverType != null)
 							{
 								switch (symbol.ReceiverType.SpecialType)
 								{
@@ -79,9 +79,9 @@ namespace WTG.Analyzers
 
 						if (binding.Name.Identifier.Text == WellKnownMemberNames.ObjectToString)
 						{
-							var symbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
+							var symbol = (IMethodSymbol?)context.SemanticModel.GetSymbolInfo(invoke, context.CancellationToken).Symbol;
 
-							if (symbol != null && symbol.ReceiverType.SpecialType == SpecialType.System_String)
+							if (symbol?.ReceiverType?.SpecialType == SpecialType.System_String)
 							{
 								context.ReportDiagnostic(Rules.CreateDontCallToStringOnAStringDiagnostic(InvokeLocation(invoke, binding.OperatorToken)));
 							}

@@ -57,7 +57,7 @@ namespace WTG.Analyzers
 			}
 
 			var model = context.SemanticModel;
-			var typeSymbol = (ITypeSymbol)model.GetSymbolInfo(candidate.Type, context.CancellationToken).Symbol;
+			var typeSymbol = (ITypeSymbol?)model.GetSymbolInfo(candidate.Type, context.CancellationToken).Symbol;
 			ITypeSymbol? expressionType = model.GetTypeInfo(candidate.ValueSource, context.CancellationToken).Type;
 
 			if (typeSymbol == null || expressionType == null)
@@ -111,7 +111,7 @@ namespace WTG.Analyzers
 
 					if (knownMethod == null)
 					{
-						knownMethod = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke).Symbol;
+						knownMethod = (IMethodSymbol?)context.SemanticModel.GetSymbolInfo(invoke).Symbol;
 
 						if (knownMethod == null)
 						{
@@ -123,7 +123,7 @@ namespace WTG.Analyzers
 					var proposedSyntax = invoke.ReplaceNode(type, SyntaxFactory.IdentifierName("var").WithTriviaFrom(type));
 					var symbol = context.SemanticModel.GetSpeculativeSymbolInfo(invoke.SpanStart, proposedSyntax, SpeculativeBindingOption.BindAsExpression).Symbol;
 
-					if (knownMethod.Equals(symbol))
+					if (SymbolEqualityComparer.Default.Equals(knownMethod, symbol))
 					{
 						// We got the same symbol when using var, so var must be safe.
 						context.ReportDiagnostic(Rules.CreateUseOutVarWherePossibleDiagnostic(type.GetLocation()));
@@ -207,7 +207,7 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool TypeEquals(ITypeSymbol? x, ITypeSymbol? y) => ReferenceEquals(x, y) || (x != null && x.Equals(y));
+		static bool TypeEquals(ITypeSymbol? x, ITypeSymbol? y) => ReferenceEquals(x, y) || (x != null && SymbolEqualityComparer.Default.Equals(x, y));
 
 		sealed class Visitor : CSharpSyntaxVisitor<Candidate?>
 		{
@@ -243,7 +243,7 @@ namespace WTG.Analyzers
 				return ExtractFromVariableDecl(node.Declaration);
 			}
 
-			static Candidate? ExtractFromVariableDecl(VariableDeclarationSyntax decl)
+			static Candidate? ExtractFromVariableDecl(VariableDeclarationSyntax? decl)
 			{
 				if (decl != null && !decl.Type.IsVar && decl.Variables.Count == 1)
 				{

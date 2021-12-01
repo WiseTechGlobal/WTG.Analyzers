@@ -13,7 +13,7 @@ namespace WTG.Analyzers.Utils
 		{
 			var visitor = new IsContainedInExpressionTreeVisitor(model, cancellationToken);
 
-			for (SyntaxNode node = expression; node != null; node = node.Parent)
+			for (SyntaxNode? node = expression; node != null; node = node.Parent)
 			{
 				var result = visitor.Visit(node);
 
@@ -51,7 +51,7 @@ namespace WTG.Analyzers.Utils
 
 			public bool IsContainedInExpressionTree(ExpressionSyntax expression)
 			{
-				for (SyntaxNode node = expression; node != null; node = node.Parent)
+				for (SyntaxNode? node = expression; node != null; node = node.Parent)
 				{
 					var result = Visit(node);
 
@@ -80,13 +80,13 @@ namespace WTG.Analyzers.Utils
 			bool IsExpressionFromQueryClauseSymbol(QueryClauseSyntax node)
 			{
 				var clauseInfo = model.GetQueryClauseInfo(node, cancellationToken);
-				var method = (IMethodSymbol)clauseInfo.OperationInfo.Symbol;
+				var method = (IMethodSymbol?)clauseInfo.OperationInfo.Symbol;
 				return method != null && IsExpressionFromLinqMethod(method);
 			}
 
 			bool IsExpressionFromNodeSymbol(SyntaxNode node)
 			{
-				var method = (IMethodSymbol)model.GetSymbolInfo(node).Symbol;
+				var method = (IMethodSymbol?)model.GetSymbolInfo(node).Symbol;
 				return method != null && IsExpressionFromLinqMethod(method);
 			}
 

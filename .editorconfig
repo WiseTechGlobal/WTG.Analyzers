@@ -116,6 +116,9 @@ dotnet_diagnostic.CA1508.severity = none
 # RS1025: Configure generated code analysis - suppressed until we can decide how we want to handle it (wrt FileDetailCache).
 dotnet_diagnostic.RS1025.severity = none
 
+# RS2008: Enable analyzer release tracking for the analyzer project containing rule '{0}' - It's really not Roslyn's place to dictate how we track releases.
+dotnet_diagnostic.RS2008.severity = none
+
 [*.{csproj,props,targets,ruleset}]
 indent_style = space
 indent_size = 2

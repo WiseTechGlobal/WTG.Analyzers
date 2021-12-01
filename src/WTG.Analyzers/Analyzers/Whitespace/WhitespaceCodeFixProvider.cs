@@ -63,7 +63,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> FixTrailingWhitespace(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var trivia = FindTrivia(root, diagnostic.Location);
 			var token = trivia.Token;
 
@@ -75,7 +75,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> FixLeadingWhitespace(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var triviaList = new SyntaxTrivia[diagnostic.AdditionalLocations.Count + 1];
 			triviaList[0] = FindTrivia(root, diagnostic.Location);
 
@@ -92,7 +92,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> FixLineEndings(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
 			var trivia = new List<SyntaxTrivia>();
 			trivia.Add(FindTrivia(root, diagnostic.Location));
