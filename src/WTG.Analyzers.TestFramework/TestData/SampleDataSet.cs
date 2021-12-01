@@ -115,9 +115,14 @@ namespace WTG.Analyzers.TestFramework
 
 				var options = SampleDataSetOptions.None;
 
-				if (ToBoolean(root.Element("omitAssemblyReferences")?.Value))
+				if (ToBoolean(root.Element("omitAssemblyReferences")?.Value, false))
 				{
 					options |= SampleDataSetOptions.OmitAssemblyReferences;
+				}
+
+				if (ToBoolean(root.Element("allowCodeFixes")?.Value, true))
+				{
+					options |= SampleDataSetOptions.AllowCodeFixes;
 				}
 
 				return new SampleDataSet(
@@ -137,7 +142,7 @@ namespace WTG.Analyzers.TestFramework
 					LanguageVersion.Default,
 					source,
 					result,
-					SampleDataSetOptions.None,
+					SampleDataSetOptions.AllowCodeFixes,
 					ImmutableArray<DiagnosticResult>.Empty,
 					ImmutableHashSet<string>.Empty,
 					ImmutableArray<OSPlatform>.Empty);
@@ -146,8 +151,8 @@ namespace WTG.Analyzers.TestFramework
 			static LanguageVersion ToLanguageVersion(string? ver)
 				=> LanguageVersionFacts.TryParse(ver, out var tmp) ? tmp : LanguageVersion.Default;
 
-			static bool ToBoolean(string? text)
-				=> bool.TryParse(text, out var tmp) && tmp;
+			static bool ToBoolean(string? value, bool defaultValue)
+				=> bool.TryParse(value, out var result) ? result : defaultValue;
 		}
 
 		static string? LoadResource(Assembly assembly, string name)

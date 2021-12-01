@@ -190,8 +190,7 @@ namespace WTG.Analyzers.TestFramework
 			{
 				if (IsFixable(diagnostic))
 				{
-					var context = new CodeFixContext(document, diagnostic, (a, b) => actions.Add(Tuple.Create(diagnostic, a)), CancellationToken.None);
-					await CodeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+					await CodeFixUtils.CollectCodeActions(CodeFixProvider, document, diagnostic, actions).ConfigureAwait(false);
 				}
 			}
 

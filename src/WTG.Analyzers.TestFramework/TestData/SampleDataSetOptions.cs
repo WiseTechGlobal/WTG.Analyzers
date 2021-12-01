@@ -7,5 +7,6 @@ namespace WTG.Analyzers.TestFramework
 	{
 		None = 0,
 		OmitAssemblyReferences = 1 << 0,
+		AllowCodeFixes = 1 << 1,
 	}
 }
