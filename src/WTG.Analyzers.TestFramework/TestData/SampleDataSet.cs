@@ -77,11 +77,7 @@ namespace WTG.Analyzers.TestFramework
 		{
 			string? source = null;
 			string? result = null;
-			var diagnostics = ImmutableArray<DiagnosticResult>.Empty;
-			var suppressedIds = ImmutableHashSet<string>.Empty;
-			var languageVersion = LanguageVersion.Default;
-			var platforms = ImmutableArray<OSPlatform>.Empty;
-			var omitAssemblyReferences = false;
+			string? diagnosticsXml = null;
 
 			foreach (var pair in resourceNames)
 			{
@@ -96,20 +92,56 @@ namespace WTG.Analyzers.TestFramework
 						break;
 
 					case "Diagnostics.xml":
-						LoadResults(assembly, pair.Value, ref languageVersion, ref diagnostics, ref suppressedIds, ref platforms, ref omitAssemblyReferences);
+						diagnosticsXml = LoadResource(assembly, pair.Value);
 						break;
 				}
 			}
 
-			return new SampleDataSet(
-				name,
-				languageVersion,
-				source ?? string.Empty,
-				result ?? source ?? string.Empty,
-				diagnostics,
-				suppressedIds,
-				platforms,
-				omitAssemblyReferences);
+			return GetSampleData(name, diagnosticsXml, source, result);
+		}
+
+		static SampleDataSet GetSampleData(string name, string? diagnosticsXml, string? source, string? result)
+		{
+			source ??= string.Empty;
+			result ??= source;
+
+			if (!string.IsNullOrEmpty(diagnosticsXml))
+			{
+				var root = XElement.Parse(diagnosticsXml);
+				var diagnostics = root.Descendants("diagnostic").Select(LoadResult).ToImmutableArray();
+				var suppressedIds = root.Elements("suppressId").Select(x => x.Value).ToImmutableHashSet();
+				var platforms = root.Elements("platform").Select(x => OSPlatform.Create(x.Value)).ToImmutableArray();
+				var languageVersion = ToLanguageVersion(root.Element("languageVersion")?.Value);
+				var omitAssemblyReferences = ToBoolean(root.Element("omitAssemblyReferences")?.Value);
+
+				return new SampleDataSet(
+					name,
+					languageVersion,
+					source,
+					result,
+					diagnostics,
+					suppressedIds,
+					platforms,
+					omitAssemblyReferences);
+			}
+			else
+			{
+				return new SampleDataSet(
+					name,
+					LanguageVersion.Default,
+					source,
+					result,
+					ImmutableArray<DiagnosticResult>.Empty,
+					ImmutableHashSet<string>.Empty,
+					ImmutableArray<OSPlatform>.Empty,
+					omitAssemblyReferences: false);
+			}
+
+			static LanguageVersion ToLanguageVersion(string? ver)
+				=> LanguageVersionFacts.TryParse(ver, out var tmp) ? tmp : LanguageVersion.Default;
+
+			static bool ToBoolean(string? text)
+				=> bool.TryParse(text, out var tmp) ? tmp : false;
 		}
 
 		static string? LoadResource(Assembly assembly, string name)
@@ -123,31 +155,6 @@ namespace WTG.Analyzers.TestFramework
 
 			using var reader = new StreamReader(stream);
 			return reader.ReadToEnd();
-		}
-
-		static void LoadResults(Assembly assembly, string name, ref LanguageVersion languageVersion, ref ImmutableArray<DiagnosticResult> diagnostics, ref ImmutableHashSet<string> suppressedIds, ref ImmutableArray<OSPlatform> platforms, ref bool omitAssemblyReferences)
-		{
-			var text = LoadResource(assembly, name);
-
-			if (!string.IsNullOrEmpty(text))
-			{
-				var root = XElement.Parse(text);
-				diagnostics = root.Descendants("diagnostic").Select(LoadResult).ToImmutableArray();
-				suppressedIds = root.Elements("suppressId").Select(x => x.Value).ToImmutableHashSet();
-				platforms = root.Elements("platform").Select(x => OSPlatform.Create(x.Value)).ToImmutableArray();
-
-				var languageVersionStr = root.Element("languageVersion")?.Value;
-				if (LanguageVersionFacts.TryParse(languageVersionStr, out var tmp))
-				{
-					languageVersion = tmp;
-				}
-
-				var omitAssemblyReferencesStr = root.Element("omitAssemblyReferences")?.Value;
-				if (bool.TryParse(omitAssemblyReferencesStr, out var tmp2))
-				{
-					omitAssemblyReferences = tmp2;
-				}
-			}
 		}
 
 		static DiagnosticResult LoadResult(XElement element)
