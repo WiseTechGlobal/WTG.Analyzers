@@ -89,11 +89,14 @@ namespace WTG.Analyzers
 
 		static bool HasCompletedTask(Compilation compilation)
 		{
-			foreach (var symbol in compilation.GetTypeByMetadataName(WellKnownTypeNames.Task).GetMembers(nameof(Task.CompletedTask)))
+			if (compilation.GetTypeByMetadataName(WellKnownTypeNames.Task) is { } taskType)
 			{
-				if (symbol.Kind == SymbolKind.Property)
+				foreach (var symbol in taskType.GetMembers(nameof(Task.CompletedTask)))
 				{
-					return true;
+					if (symbol.Kind == SymbolKind.Property)
+					{
+						return true;
+					}
 				}
 			}
 
