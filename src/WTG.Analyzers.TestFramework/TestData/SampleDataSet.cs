@@ -15,7 +15,7 @@ namespace WTG.Analyzers.TestFramework
 {
 	public sealed class SampleDataSet
 	{
-		SampleDataSet(string name, LanguageVersion languageVersion, string source, string result, ImmutableArray<DiagnosticResult> diagnostics, ImmutableHashSet<string> suppressedIds, ImmutableArray<OSPlatform> platforms)
+		SampleDataSet(string name, LanguageVersion languageVersion, string source, string result, ImmutableArray<DiagnosticResult> diagnostics, ImmutableHashSet<string> suppressedIds, ImmutableArray<OSPlatform> platforms, bool omitAssemblyReferences)
 		{
 			Name = name;
 			LanguageVersion = languageVersion;
@@ -24,6 +24,7 @@ namespace WTG.Analyzers.TestFramework
 			Diagnostics = diagnostics;
 			SuppressedIds = suppressedIds;
 			Platforms = platforms;
+			OmitAssemblyReferences = omitAssemblyReferences;
 		}
 
 		public string Name { get; }
@@ -33,6 +34,7 @@ namespace WTG.Analyzers.TestFramework
 		public ImmutableArray<DiagnosticResult> Diagnostics { get; }
 		public ImmutableHashSet<string> SuppressedIds { get; }
 		public ImmutableArray<OSPlatform> Platforms { get; }
+		public bool OmitAssemblyReferences { get; }
 
 		public override string ToString() => Name;
 
@@ -79,6 +81,7 @@ namespace WTG.Analyzers.TestFramework
 			var suppressedIds = ImmutableHashSet<string>.Empty;
 			var languageVersion = LanguageVersion.Default;
 			var platforms = ImmutableArray<OSPlatform>.Empty;
+			var omitAssemblyReferences = false;
 
 			foreach (var pair in resourceNames)
 			{
@@ -93,7 +96,7 @@ namespace WTG.Analyzers.TestFramework
 						break;
 
 					case "Diagnostics.xml":
-						LoadResults(assembly, pair.Value, ref languageVersion, ref diagnostics, ref suppressedIds, ref platforms);
+						LoadResults(assembly, pair.Value, ref languageVersion, ref diagnostics, ref suppressedIds, ref platforms, ref omitAssemblyReferences);
 						break;
 				}
 			}
@@ -105,7 +108,8 @@ namespace WTG.Analyzers.TestFramework
 				result ?? source ?? string.Empty,
 				diagnostics,
 				suppressedIds,
-				platforms);
+				platforms,
+				omitAssemblyReferences);
 		}
 
 		static string? LoadResource(Assembly assembly, string name)
@@ -121,7 +125,7 @@ namespace WTG.Analyzers.TestFramework
 			return reader.ReadToEnd();
 		}
 
-		static void LoadResults(Assembly assembly, string name, ref LanguageVersion languageVersion, ref ImmutableArray<DiagnosticResult> diagnostics, ref ImmutableHashSet<string> suppressedIds, ref ImmutableArray<OSPlatform> platforms)
+		static void LoadResults(Assembly assembly, string name, ref LanguageVersion languageVersion, ref ImmutableArray<DiagnosticResult> diagnostics, ref ImmutableHashSet<string> suppressedIds, ref ImmutableArray<OSPlatform> platforms, ref bool omitAssemblyReferences)
 		{
 			var text = LoadResource(assembly, name);
 
@@ -133,10 +137,15 @@ namespace WTG.Analyzers.TestFramework
 				platforms = root.Elements("platform").Select(x => OSPlatform.Create(x.Value)).ToImmutableArray();
 
 				var languageVersionStr = root.Element("languageVersion")?.Value;
-
 				if (LanguageVersionFacts.TryParse(languageVersionStr, out var tmp))
 				{
 					languageVersion = tmp;
+				}
+
+				var omitAssemblyReferencesStr = root.Element("omitAssemblyReferences")?.Value;
+				if (bool.TryParse(omitAssemblyReferencesStr, out var tmp2))
+				{
+					omitAssemblyReferences = tmp2;
 				}
 			}
 		}

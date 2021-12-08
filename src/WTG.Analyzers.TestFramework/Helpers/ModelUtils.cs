@@ -16,7 +16,7 @@ namespace WTG.Analyzers.TestFramework
 	{
 		public static Document CreateDocument(SampleDataSet dataSet)
 		{
-			var document = CreateDocument(dataSet.Source);
+			var document = CreateDocument(dataSet.Source, dataSet.OmitAssemblyReferences);
 			var project = document.Project;
 
 			project = project.WithParseOptions(GetParseOptions(project).WithLanguageVersion(dataSet.LanguageVersion));
@@ -24,14 +24,18 @@ namespace WTG.Analyzers.TestFramework
 			return project.GetDocument(document.Id)!;
 		}
 
-		public static Document CreateDocument(string source)
+		public static Document CreateDocument(string source) => CreateDocument(source, omitAssemblyReferences: false);
+
+		public static Document CreateDocument(string source, bool omitAssemblyReferences)
 		{
-			return CreateProject(new[] { source }).Documents.First();
+			return CreateProject(new[] { source }, omitAssemblyReferences).Documents.First();
 		}
 
-		public static Document[] CreateDocument(params string[] sources)
+		public static Document[] CreateDocument(params string[] sources) => CreateDocument(sources, omitAssemblyReferences: false);
+
+		public static Document[] CreateDocument(string[] sources, bool omitAssemblyReferences)
 		{
-			var project = CreateProject(sources);
+			var project = CreateProject(sources, omitAssemblyReferences);
 			var documents = project.Documents.ToArray();
 
 			if (documents.Length != sources.Length)
@@ -53,29 +57,38 @@ namespace WTG.Analyzers.TestFramework
 			return workspace;
 		}
 
-		public static Project CreateProject(params string[] sources)
+		public static Project CreateProject(params string[] sources) => CreateProject(sources, omitAssemblyReferences: false);
+
+		public static Project CreateProject(string[] sources, bool omitAssemblyReferences)
 		{
 #pragma warning disable CA2000 // Dispose objects before losing scope
-			return AddProject(CreateWorkspace().CurrentSolution, TestProjectName, sources);
+			return AddProject(CreateWorkspace().CurrentSolution, TestProjectName, sources, omitAssemblyReferences);
 #pragma warning restore CA2000 // Dispose objects before losing scope
 		}
 
 		public static Project AddAdHocDependency(this Project project, string assemblyName, params string[] sources)
 		{
-			var newProject = AddProject(project.Solution, assemblyName, sources);
+			var newProject = AddProject(project.Solution, assemblyName, sources, omitAssemblyReferences: false);
 
 			return newProject.Solution.GetProject(project.Id)!
 				.WithProjectReferences(project.ProjectReferences.Concat(new[] { new ProjectReference(newProject.Id) }));
 		}
 
-		static Project AddProject(Solution currentSolution, string assemblyName, string[] sources)
+		static Project AddProject(Solution currentSolution, string assemblyName, string[] sources, bool omitAssemblyReferences)
 		{
 			var projectId = ProjectId.CreateNewId(debugName: assemblyName);
 
 			var solution = currentSolution.AddProject(projectId, assemblyName, assemblyName, LanguageNames.CSharp);
 
-			var project = solution.GetProject(projectId)!
-				.AddMetadataReferences(MetadataReferences);
+			var project = solution.GetProject(projectId)!;
+
+			if (!omitAssemblyReferences)
+			{
+				#pragma warning disable CA1303
+				Console.WriteLine("Skipping assembly metadata references.");
+				#pragma warning restore CA1303
+				project = project.AddMetadataReferences(MetadataReferences);
+			}
 
 			var compilationOptions = GetCompilationOptions(project)
 				.WithAllowUnsafe(enabled: true)
