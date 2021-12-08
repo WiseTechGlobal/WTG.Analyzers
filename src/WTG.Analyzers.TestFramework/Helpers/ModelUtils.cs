@@ -84,9 +84,6 @@ namespace WTG.Analyzers.TestFramework
 
 			if (!omitAssemblyReferences)
 			{
-				#pragma warning disable CA1303
-				Console.WriteLine("Skipping assembly metadata references.");
-				#pragma warning restore CA1303
 				project = project.AddMetadataReferences(MetadataReferences);
 			}
 
