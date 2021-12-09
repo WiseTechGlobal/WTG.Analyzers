@@ -15,7 +15,7 @@ namespace WTG.Analyzers.TestFramework
 {
 	public sealed class SampleDataSet
 	{
-		SampleDataSet(string name, LanguageVersion languageVersion, string source, string result, ImmutableArray<DiagnosticResult> diagnostics, ImmutableHashSet<string> suppressedIds, ImmutableArray<OSPlatform> platforms)
+		SampleDataSet(string name, LanguageVersion languageVersion, string source, string result, ImmutableArray<DiagnosticResult> diagnostics, ImmutableHashSet<string> suppressedIds, ImmutableArray<OSPlatform> platforms, bool omitAssemblyReferences)
 		{
 			Name = name;
 			LanguageVersion = languageVersion;
@@ -24,6 +24,7 @@ namespace WTG.Analyzers.TestFramework
 			Diagnostics = diagnostics;
 			SuppressedIds = suppressedIds;
 			Platforms = platforms;
+			OmitAssemblyReferences = omitAssemblyReferences;
 		}
 
 		public string Name { get; }
@@ -33,6 +34,7 @@ namespace WTG.Analyzers.TestFramework
 		public ImmutableArray<DiagnosticResult> Diagnostics { get; }
 		public ImmutableHashSet<string> SuppressedIds { get; }
 		public ImmutableArray<OSPlatform> Platforms { get; }
+		public bool OmitAssemblyReferences { get; }
 
 		public override string ToString() => Name;
 
@@ -110,6 +112,7 @@ namespace WTG.Analyzers.TestFramework
 				var suppressedIds = root.Elements("suppressId").Select(x => x.Value).ToImmutableHashSet();
 				var platforms = root.Elements("platform").Select(x => OSPlatform.Create(x.Value)).ToImmutableArray();
 				var languageVersion = ToLanguageVersion(root.Element("languageVersion")?.Value);
+				var omitAssemblyReferences = ToBoolean(root.Element("omitAssemblyReferences")?.Value);
 
 				return new SampleDataSet(
 					name,
@@ -118,7 +121,8 @@ namespace WTG.Analyzers.TestFramework
 					result,
 					diagnostics,
 					suppressedIds,
-					platforms);
+					platforms,
+					omitAssemblyReferences);
 			}
 			else
 			{
@@ -129,11 +133,15 @@ namespace WTG.Analyzers.TestFramework
 					result,
 					ImmutableArray<DiagnosticResult>.Empty,
 					ImmutableHashSet<string>.Empty,
-					ImmutableArray<OSPlatform>.Empty);
+					ImmutableArray<OSPlatform>.Empty,
+					omitAssemblyReferences: false);
 			}
 
 			static LanguageVersion ToLanguageVersion(string? ver)
 				=> LanguageVersionFacts.TryParse(ver, out var tmp) ? tmp : LanguageVersion.Default;
+
+			static bool ToBoolean(string? text)
+				=> bool.TryParse(text, out var tmp) && tmp;
 		}
 
 		static string? LoadResource(Assembly assembly, string name)
