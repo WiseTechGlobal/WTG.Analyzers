@@ -141,7 +141,7 @@ namespace WTG.Analyzers.TestFramework
 				=> LanguageVersionFacts.TryParse(ver, out var tmp) ? tmp : LanguageVersion.Default;
 
 			static bool ToBoolean(string? text)
-				=> bool.TryParse(text, out var tmp) ? tmp : false;
+				=> bool.TryParse(text, out var tmp) && tmp;
 		}
 
 		static string? LoadResource(Assembly assembly, string name)
