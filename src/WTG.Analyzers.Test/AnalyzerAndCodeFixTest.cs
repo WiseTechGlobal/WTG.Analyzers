@@ -126,13 +126,8 @@ namespace WTG.Analyzers.Test
 		}
 
 		[Test]
-		public async Task BulkUpdate([ValueSource(nameof(Samples))] SampleDataSet data)
+		public async Task BulkUpdate([ValueSource(nameof(FixableSamples))] SampleDataSet data)
 		{
-			if ((data.Options & SampleDataSetOptions.AllowCodeFixes) == 0)
-			{
-				return;
-			}
-
 			var analyzer = new TAnalyzer();
 			var document = ModelUtils.CreateDocument(data);
 
@@ -150,6 +145,7 @@ namespace WTG.Analyzers.Test
 
 		const string TestDataPrefix = "WTG.Analyzers.Test.TestData.";
 		static IEnumerable<SampleDataSet> Samples => SampleDataSet.GetSamples(typeof(AnalyzerAndCodeFixTest<,>).GetTypeInfo().Assembly, TestDataPrefix + typeof(TAnalyzer).Name + ".");
+		static IEnumerable<SampleDataSet> FixableSamples => Samples.Where(x => (x.Options & SampleDataSetOptions.AllowCodeFixes) != 0);
 
 		static void AppendLocation(StringBuilder builder, Location location)
 		{

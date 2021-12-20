@@ -25,12 +25,15 @@ namespace WTG.Analyzers
 		{
 			var diagnostic = context.Diagnostics.First();
 
-			context.RegisterCodeFix(
-				CodeAction.Create(
-					title: "Simplify.",
-					createChangedDocument: c => Fix(context.Document, diagnostic, c),
-					equivalenceKey: "SimplifyCombinedBoolLiteral"),
-				diagnostic: diagnostic);
+			if (CanAutoFix(diagnostic))
+			{
+				context.RegisterCodeFix(
+					CodeAction.Create(
+						title: "Simplify.",
+						createChangedDocument: c => Fix(context.Document, diagnostic, c),
+						equivalenceKey: "SimplifyCombinedBoolLiteral"),
+					diagnostic: diagnostic);
+			}
 
 			return Task.CompletedTask;
 		}
@@ -43,6 +46,17 @@ namespace WTG.Analyzers
 
 			return document.WithSyntaxRoot(
 				ExpressionRemover.ReplaceWithConstantBool(root, literal, literal.IsKind(SyntaxKind.TrueLiteralExpression)));
+		}
+
+		static bool CanAutoFix(Diagnostic diagnostic)
+		{
+			if (!diagnostic.Properties.TryGetValue(BooleanLiteralCombiningAnalyzer.CanAutoFixProperty, out var valueStr) ||
+				!bool.TryParse(valueStr, out var value))
+			{
+				return true;
+			}
+
+			return value;
 		}
 	}
 }
