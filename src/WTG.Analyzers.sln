@@ -22,7 +22,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WTG.Analyzers.Utils.Test", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WTG.Analyzers.TestFramework.Test", "WTG.Analyzers.TestFramework.Test\WTG.Analyzers.TestFramework.Test.csproj", "{A408675F-8575-41E9-82C5-1DE69E80B7A0}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "WTG.Analyzers.NRT", "WTG.Analyzers.NRT\WTG.Analyzers.NRT.shproj", "{5FC2579D-2F3C-4B6E-8D63-F91DD3BE7644}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		WTG.Analyzers.NRT\WTG.Analyzers.NRT.projitems*{3f266f98-2f7b-4067-b267-50275ad261aa}*SharedItemsImports = 5
+		WTG.Analyzers.NRT\WTG.Analyzers.NRT.projitems*{5fc2579d-2f3c-4b6e-8d63-f91dd3be7644}*SharedItemsImports = 13
+		WTG.Analyzers.NRT\WTG.Analyzers.NRT.projitems*{e0567771-3f8b-4185-b31a-324f95c58eb1}*SharedItemsImports = 5
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
