@@ -11,6 +11,8 @@ namespace WTG.Analyzers
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed class BooleanLiteralCombiningAnalyzer : DiagnosticAnalyzer
 	{
+		public const string CanAutoFixProperty = "CanAutoFix";
+
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 			Rules.AvoidBoolLiteralsInLargerBoolExpressionsRule);
 
@@ -39,9 +41,20 @@ namespace WTG.Analyzers
 
 			if (CanBeSimplified(context.Node, context.SemanticModel, context.CancellationToken))
 			{
-				context.ReportDiagnostic(
-					Rules.CreateAvoidBoolLiteralsInLargerBoolExpressionsDiagnostic(
-						context.Node.GetLocation()));
+				if (IsValueCoercion(context.Node))
+				{
+					context.ReportDiagnostic(
+						Diagnostic.Create(
+							Rules.AvoidBoolLiteralsInLargerBoolExpressionsRule,
+							context.Node.GetLocation(),
+							noAutoFix));
+				}
+				else
+				{
+					context.ReportDiagnostic(
+						Rules.CreateAvoidBoolLiteralsInLargerBoolExpressionsDiagnostic(
+							context.Node.GetLocation()));
+				}
 			}
 		}
 
@@ -72,5 +85,57 @@ namespace WTG.Analyzers
 
 			static bool IsSimpleBooleanType(ITypeSymbol type) => type.SpecialType == SpecialType.System_Boolean;
 		}
+
+		// Where "Value Coercion" is an expression that performs regular evaluation of a sub-expression before forcing a particular result,
+		// eg. `<x> || true` or `<x> && false`
+		static bool IsValueCoercion(SyntaxNode node)
+		{
+			if (TryGetLiteralBool(node, out var value) &&
+				TryGetIdentityValue(node.Parent, out var identityValue) &&
+				value != identityValue)
+			{
+				var binary = (BinaryExpressionSyntax)node.Parent;
+
+				return binary.Right == node;
+			}
+
+			return false;
+		}
+
+		static bool TryGetIdentityValue(SyntaxNode node, out bool identityValue)
+		{
+			switch (node.Kind())
+			{
+				case SyntaxKind.LogicalAndExpression:
+					identityValue = true;
+					return true;
+
+				case SyntaxKind.LogicalOrExpression:
+					identityValue = false;
+					return true;
+			}
+
+			identityValue = false;
+			return false;
+		}
+
+		static bool TryGetLiteralBool(SyntaxNode node, out bool value)
+		{
+			switch (node.Kind())
+			{
+				case SyntaxKind.TrueLiteralExpression:
+					value = true;
+					return true;
+
+				case SyntaxKind.FalseLiteralExpression:
+					value = false;
+					return true;
+			}
+
+			value = false;
+			return false;
+		}
+
+		static readonly ImmutableDictionary<string, string> noAutoFix = ImmutableDictionary<string, string>.Empty.Add(CanAutoFixProperty, bool.FalseString);
 	}
 }

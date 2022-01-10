@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
@@ -75,16 +77,56 @@ namespace WTG.Analyzers.Test
 
 			Assert.That(actual.Where(filter), IsDiagnostic.EqualTo(data.Diagnostics));
 
-			var fixer = new CodeFixer(analyzer, new TCodeFix())
+			if ((data.Options & SampleDataSetOptions.AllowCodeFixes) != 0)
 			{
-				DiagnosticFilter = filter,
-			};
+				var fixer = new CodeFixer(analyzer, new TCodeFix())
+				{
+					DiagnosticFilter = filter,
+				};
 
-			await fixer.VerifyFixAsync(document, data.Result).ConfigureAwait(false);
+				await fixer.VerifyFixAsync(document, data.Result).ConfigureAwait(false);
+			}
+			else
+			{
+				var codeFix = new TCodeFix();
+				var actions = new List<Tuple<Diagnostic, CodeAction>>();
+
+				foreach (Diagnostic diagnostic in actual)
+				{
+					if (!codeFix.FixableDiagnosticIds.Contains(diagnostic.Id))
+					{
+						continue;
+					}
+
+					await CodeFixUtils.CollectCodeActions(codeFix, document, diagnostic, actions).ConfigureAwait(false);
+				}
+
+				if (actions.Count > 0)
+				{
+					var builder = new StringBuilder()
+						.AppendLine("The diagnostics should not have offered any code fix actions, but instead found:");
+
+					foreach (var (diagnostic, action) in actions)
+					{
+						builder
+							.Append("* ")
+							.Append(diagnostic.Id)
+							.Append(' ');
+
+						AppendLocation(builder, diagnostic.Location);
+
+						builder
+							.Append(": ")
+							.AppendLine(action.Title);
+					}
+
+					Assert.Fail(builder.ToString());
+				}
+			}
 		}
 
 		[Test]
-		public async Task BulkUpdate([ValueSource(nameof(Samples))] SampleDataSet data)
+		public async Task BulkUpdate([ValueSource(nameof(FixableSamples))] SampleDataSet data)
 		{
 			var analyzer = new TAnalyzer();
 			var document = ModelUtils.CreateDocument(data);
@@ -103,6 +145,37 @@ namespace WTG.Analyzers.Test
 
 		const string TestDataPrefix = "WTG.Analyzers.Test.TestData.";
 		static IEnumerable<SampleDataSet> Samples => SampleDataSet.GetSamples(typeof(AnalyzerAndCodeFixTest<,>).GetTypeInfo().Assembly, TestDataPrefix + typeof(TAnalyzer).Name + ".");
+		static IEnumerable<SampleDataSet> FixableSamples => Samples.Where(x => (x.Options & SampleDataSetOptions.AllowCodeFixes) != 0);
+
+		static void AppendLocation(StringBuilder builder, Location location)
+		{
+			var span = location.GetLineSpan();
+			var start = span.StartLinePosition;
+			var end = span.EndLinePosition;
+
+			builder
+				.Append('(')
+				.Append(start.Line)
+				.Append(',')
+				.Append(start.Character);
+
+			if (start.Line != end.Line)
+			{
+				builder
+					.Append(")-(")
+					.Append(end.Line)
+					.Append(',')
+					.Append(end.Character);
+			}
+			else if (start.Character != end.Character)
+			{
+				builder
+					.Append('-')
+					.Append(end.Character);
+			}
+
+			builder.Append(')');
+		}
 
 		#endregion
 	}

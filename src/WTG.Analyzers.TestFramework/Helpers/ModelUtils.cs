@@ -16,7 +16,7 @@ namespace WTG.Analyzers.TestFramework
 	{
 		public static Document CreateDocument(SampleDataSet dataSet)
 		{
-			var document = CreateDocument(dataSet.Source, dataSet.OmitAssemblyReferences);
+			var document = CreateDocument(dataSet.Source, (dataSet.Options & SampleDataSetOptions.OmitAssemblyReferences) != 0);
 			var project = document.Project;
 
 			project = project.WithParseOptions(GetParseOptions(project).WithLanguageVersion(dataSet.LanguageVersion));

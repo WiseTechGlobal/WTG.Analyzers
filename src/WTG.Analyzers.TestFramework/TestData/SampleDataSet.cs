@@ -15,26 +15,26 @@ namespace WTG.Analyzers.TestFramework
 {
 	public sealed class SampleDataSet
 	{
-		SampleDataSet(string name, LanguageVersion languageVersion, string source, string result, ImmutableArray<DiagnosticResult> diagnostics, ImmutableHashSet<string> suppressedIds, ImmutableArray<OSPlatform> platforms, bool omitAssemblyReferences)
+		SampleDataSet(string name, LanguageVersion languageVersion, string source, string result, SampleDataSetOptions options, ImmutableArray<DiagnosticResult> diagnostics, ImmutableHashSet<string> suppressedIds, ImmutableArray<OSPlatform> platforms)
 		{
 			Name = name;
 			LanguageVersion = languageVersion;
 			Source = source;
 			Result = result;
+			Options = options;
 			Diagnostics = diagnostics;
 			SuppressedIds = suppressedIds;
 			Platforms = platforms;
-			OmitAssemblyReferences = omitAssemblyReferences;
 		}
 
 		public string Name { get; }
 		public LanguageVersion LanguageVersion { get; }
 		public string Source { get; }
 		public string Result { get; }
+		public SampleDataSetOptions Options { get; }
 		public ImmutableArray<DiagnosticResult> Diagnostics { get; }
 		public ImmutableHashSet<string> SuppressedIds { get; }
 		public ImmutableArray<OSPlatform> Platforms { get; }
-		public bool OmitAssemblyReferences { get; }
 
 		public override string ToString() => Name;
 
@@ -112,17 +112,28 @@ namespace WTG.Analyzers.TestFramework
 				var suppressedIds = root.Elements("suppressId").Select(x => x.Value).ToImmutableHashSet();
 				var platforms = root.Elements("platform").Select(x => OSPlatform.Create(x.Value)).ToImmutableArray();
 				var languageVersion = ToLanguageVersion(root.Element("languageVersion")?.Value);
-				var omitAssemblyReferences = ToBoolean(root.Element("omitAssemblyReferences")?.Value);
+
+				var options = SampleDataSetOptions.None;
+
+				if (ToBoolean(root.Element("omitAssemblyReferences")?.Value, false))
+				{
+					options |= SampleDataSetOptions.OmitAssemblyReferences;
+				}
+
+				if (ToBoolean(root.Element("allowCodeFixes")?.Value, true))
+				{
+					options |= SampleDataSetOptions.AllowCodeFixes;
+				}
 
 				return new SampleDataSet(
 					name,
 					languageVersion,
 					source,
 					result,
+					options,
 					diagnostics,
 					suppressedIds,
-					platforms,
-					omitAssemblyReferences);
+					platforms);
 			}
 			else
 			{
@@ -131,17 +142,17 @@ namespace WTG.Analyzers.TestFramework
 					LanguageVersion.Default,
 					source,
 					result,
+					SampleDataSetOptions.AllowCodeFixes,
 					ImmutableArray<DiagnosticResult>.Empty,
 					ImmutableHashSet<string>.Empty,
-					ImmutableArray<OSPlatform>.Empty,
-					omitAssemblyReferences: false);
+					ImmutableArray<OSPlatform>.Empty);
 			}
 
 			static LanguageVersion ToLanguageVersion(string? ver)
 				=> LanguageVersionFacts.TryParse(ver, out var tmp) ? tmp : LanguageVersion.Default;
 
-			static bool ToBoolean(string? text)
-				=> bool.TryParse(text, out var tmp) && tmp;
+			static bool ToBoolean(string? value, bool defaultValue)
+				=> bool.TryParse(value, out var result) ? result : defaultValue;
 		}
 
 		static string? LoadResource(Assembly assembly, string name)

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3012" message="Boolean expression can be simplified." severity="Info">
+	<allowCodeFixes>false</allowCodeFixes>
+	<diagnostic>
+		<location>Test0.cs: (5,42-47)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (6,42-46)</location>
+	</diagnostic>
+</diagnostics>
