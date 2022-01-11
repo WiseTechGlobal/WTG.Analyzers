@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -132,7 +133,14 @@ namespace WTG.Analyzers
 					return !IsMatchingSelf(node.ExpressionBody.Accept(SolitaryExpressionLocator.Instance));
 				}
 
-				foreach (var accessor in node.AccessorList.Accessors)
+				var accessorList = node.AccessorList;
+
+				if (accessorList == null)
+				{
+					return true;
+				}
+
+				foreach (var accessor in accessorList.Accessors)
 				{
 					switch (accessor.Kind())
 					{
@@ -195,7 +203,14 @@ namespace WTG.Analyzers
 					return !IsMatchingSelf(node.ExpressionBody.Accept(SolitaryExpressionLocator.Instance));
 				}
 
-				foreach (var accessor in node.AccessorList.Accessors)
+				var accessorList = node.AccessorList;
+
+				if (accessorList == null)
+				{
+					return true;
+				}
+
+				foreach (var accessor in accessorList.Accessors)
 				{
 					switch (accessor.Kind())
 					{
@@ -254,7 +269,14 @@ namespace WTG.Analyzers
 					return true;
 				}
 
-				foreach (var accessor in node.AccessorList.Accessors)
+				var accessorList = node.AccessorList;
+
+				if (accessorList == null)
+				{
+					return true;
+				}
+
+				foreach (var accessor in accessorList.Accessors)
 				{
 					switch (accessor.Kind())
 					{

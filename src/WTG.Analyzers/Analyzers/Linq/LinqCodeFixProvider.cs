@@ -44,7 +44,7 @@ namespace WTG.Analyzers
 		static async Task<Document> ReplaceWithMemberReference(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
 			var compilation = await document.Project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
-			var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+			var tree = await document.RequireSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
 			var root = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 			var model = compilation!.GetSemanticModel(tree);
 

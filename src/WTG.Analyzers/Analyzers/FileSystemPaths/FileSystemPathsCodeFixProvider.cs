@@ -40,7 +40,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> Fix(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = (ExpressionSyntax)root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
@@ -66,8 +66,10 @@ namespace WTG.Analyzers
 
 		static Document FixPathExpressionInArgument(Document document, SyntaxNode root, ExpressionSyntax expression, CancellationToken cancellationToken)
 		{
-			var argumentSyntax = (ArgumentSyntax)expression.Parent;
-			var argumentList = (ArgumentListSyntax)argumentSyntax.Parent;
+			var argumentSyntax = (ArgumentSyntax?)expression.Parent;
+			NRT.Assert(argumentSyntax != null, "The fixer should only be running on a full and complete document.");
+			var argumentList = (ArgumentListSyntax?)argumentSyntax.Parent;
+			NRT.Assert(argumentList != null, "The fixer should only be running on a full and complete document.");
 
 			var indexOfLiteral = argumentList.Arguments.IndexOf(argumentSyntax);
 
@@ -105,7 +107,8 @@ namespace WTG.Analyzers
 
 		static Document FixPathExpressionInArrayInitializer(Document document, SyntaxNode root, ExpressionSyntax expression, CancellationToken cancellationToken)
 		{
-			var initializer = (InitializerExpressionSyntax)expression.Parent;
+			var initializer = (InitializerExpressionSyntax?)expression.Parent;
+			NRT.Assert(initializer != null, "The fixer should only be running on a full and complete document.");
 			var originalExpressions = initializer.Expressions;
 			var indexOfExpression = initializer.Expressions.IndexOf(expression);
 

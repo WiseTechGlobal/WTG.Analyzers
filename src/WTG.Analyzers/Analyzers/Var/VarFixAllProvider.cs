@@ -33,14 +33,15 @@ namespace WTG.Analyzers
 
 		protected override async Task<Document> ApplyFixesAsync(Document originalDocument, Document documentToFix, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
 		{
-			var root = await originalDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-			var model = await originalDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+			var root = await originalDocument.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var model = await originalDocument.RequireSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 			var group = new Dictionary<InvocationExpressionSyntax, List<TypeSyntax>>();
 
 			foreach (var diagnostic in diagnostics)
 			{
 				var type = (TypeSyntax)root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
 				var invoke = type.FirstAncestorOrSelf<InvocationExpressionSyntax>();
+				NRT.Assert(invoke != null, "Should only be dealing with the 'out var' cases, and they should always be within an invocation.");
 
 				if (!group.TryGetValue(invoke, out var list))
 				{
@@ -71,15 +72,15 @@ namespace WTG.Analyzers
 				// replaced, but did not take into acount combining fixes. So we need to re-evaluate
 				// each proposed type replacement after the first.
 
-				var requiredSymbol = (IMethodSymbol)model.GetSymbolInfo(originalInvoke).Symbol;
+				var requiredSymbol = (IMethodSymbol?)model.GetSymbolInfo(originalInvoke).Symbol;
 
 				for (var i = 1; i < types.Count; i++)
 				{
 					index = GetIndex(originalArguments, types[i]);
 					var proposedInvoke = VarifyOutTypeAtIndex(targetInvoke, index);
-					var actualSymbol = (IMethodSymbol)model.GetSpeculativeSymbolInfo(originalInvoke.SpanStart, proposedInvoke, SpeculativeBindingOption.BindAsExpression).Symbol;
+					var actualSymbol = (IMethodSymbol?)model.GetSpeculativeSymbolInfo(originalInvoke.SpanStart, proposedInvoke, SpeculativeBindingOption.BindAsExpression).Symbol;
 
-					if (requiredSymbol.Equals(actualSymbol))
+					if (SymbolEqualityComparer.Default.Equals(requiredSymbol, actualSymbol))
 					{
 						targetInvoke = proposedInvoke;
 					}

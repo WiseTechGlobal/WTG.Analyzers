@@ -23,8 +23,14 @@ namespace WTG.Analyzers.TestFramework
 
 			foreach (var project in projects)
 			{
-				var complation = await project.GetCompilationAsync().ConfigureAwait(false);
-				var compilationWithAnalyzers = complation.WithAnalyzers(ImmutableArray.Create(analyzer));
+				var compilation = await project.GetCompilationAsync().ConfigureAwait(false);
+
+				if (compilation == null)
+				{
+					continue;
+				}
+
+				var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer));
 				var diags = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
 
 				foreach (var diag in diags.Where(x => ids.Contains(x.Id) || IsImportant(x)))

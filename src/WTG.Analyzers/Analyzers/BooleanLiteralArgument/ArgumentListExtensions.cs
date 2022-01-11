@@ -20,7 +20,7 @@ namespace WTG.Analyzers
 				return null;
 			}
 
-			var methodSymbol = (IMethodSymbol)semanticModel.GetSymbolInfo(methodInvocation, cancellationToken).Symbol;
+			var methodSymbol = (IMethodSymbol?)semanticModel.GetSymbolInfo(methodInvocation, cancellationToken).Symbol;
 			if (methodSymbol is null)
 			{
 				return null;

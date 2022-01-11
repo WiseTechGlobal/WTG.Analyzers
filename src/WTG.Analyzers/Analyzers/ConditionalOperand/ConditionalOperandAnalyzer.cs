@@ -60,6 +60,8 @@ namespace WTG.Analyzers
 
 			var l1 = leadingToken.GetLocation();
 			var l2 = expression.GetLocation();
+			NRT.Assert(l1.SourceTree != null, "'leadingToken' should have been taken from a complete SyntaxTree, so the SourceTree from it's location should not be null.");
+			NRT.Assert(l2.SourceTree != null, "'expression' should have been taken from a complete SyntaxTree, so the SourceTree from it's location should not be null.");
 
 			if (l1.GetMappedLineSpan().StartLinePosition.Line != l2.GetMappedLineSpan().EndLinePosition.Line)
 			{

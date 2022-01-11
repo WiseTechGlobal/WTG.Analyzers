@@ -137,9 +137,9 @@ namespace WTG.Analyzers
 			}
 			else
 			{
-				for (; type != null; type = type.BaseType)
+				for (ITypeSymbol? current = type; current != null; current = current.BaseType)
 				{
-					yield return type;
+					yield return current;
 				}
 			}
 		}

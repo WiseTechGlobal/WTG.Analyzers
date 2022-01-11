@@ -74,6 +74,9 @@ namespace WTG.Analyzers
 
 		static Location CombineLocations(Location location1, Location location2)
 		{
+			NRT.Assert(location1.SourceTree != null, "Should only be operating on Locations that were ultimately taken from a SyntaxTree, so there should always be a source tree.");
+			NRT.Assert(location2.SourceTree != null, "Should only be operating on Locations that were ultimately taken from a SyntaxTree, so there should always be a source tree.");
+
 			return Location.Create(
 				location1.SourceTree,
 				TextSpan.FromBounds(

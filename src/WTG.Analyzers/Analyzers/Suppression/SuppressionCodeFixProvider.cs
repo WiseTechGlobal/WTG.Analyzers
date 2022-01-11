@@ -36,7 +36,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> RemoveSuppresson(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = root.FindNode(diagnosticSpan);
 
@@ -47,7 +47,8 @@ namespace WTG.Analyzers
 		{
 			if (node.IsKind(SyntaxKind.Attribute))
 			{
-				var attributeList = (AttributeListSyntax)node.Parent;
+				var attributeList = (AttributeListSyntax?)node.Parent;
+				NRT.Assert(attributeList != null, "The fixer should only be running on a full and complete document.");
 
 				if (attributeList.Attributes.Count == 1)
 				{
@@ -55,7 +56,9 @@ namespace WTG.Analyzers
 				}
 			}
 
-			return root.RemoveNode(node, SyntaxRemoveOptions.KeepNoTrivia);
+			var newRoot = root.RemoveNode(node, SyntaxRemoveOptions.KeepNoTrivia);
+			NRT.Assert(newRoot != null, "Should only delete the suppression, not the entire document.");
+			return newRoot;
 		}
 	}
 }

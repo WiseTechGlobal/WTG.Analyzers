@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -53,7 +53,7 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			var methodSymbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(invoke).Symbol;
+			var methodSymbol = (IMethodSymbol?)context.SemanticModel.GetSymbolInfo(invoke).Symbol;
 
 			if (methodSymbol == null || !linqMethod.IsMatch(methodSymbol))
 			{

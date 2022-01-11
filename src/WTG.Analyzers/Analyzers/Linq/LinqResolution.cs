@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -20,6 +20,11 @@ namespace WTG.Analyzers
 			var sourceExpression = arguments.Count > 0
 				? arguments[0].Expression
 				: LinqUtils.GetInstanceExpression(invoke);
+
+			if (sourceExpression == null)
+			{
+				return invoke;
+			}
 
 			return SyntaxFactory.MemberAccessExpression(
 				SyntaxKind.SimpleMemberAccessExpression,

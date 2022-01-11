@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,7 +58,7 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool IsAwaitTargetTrivial(SemanticModel model, AwaitExpressionSyntax expression, out ImmutableDictionary<string, string>? properties, out Location? innerValueLocation, CancellationToken cancellationToken)
+		static bool IsAwaitTargetTrivial(SemanticModel model, AwaitExpressionSyntax expression, [NotNullWhen(true)] out ImmutableDictionary<string, string?>? properties, out Location? innerValueLocation, CancellationToken cancellationToken)
 		{
 			if (!TryUnwrapConfigureAwait(model, expression.Expression, out var taskExpression, cancellationToken))
 			{
@@ -144,7 +145,7 @@ namespace WTG.Analyzers
 			return property.IsMatch(WellKnownTypeNames.Task, nameof(Task.CompletedTask));
 		}
 
-		static bool IsCompletedTaskFactoryMethod(SemanticModel model, InvocationExpressionSyntax expression, out ImmutableDictionary<string, string>? properties, CancellationToken cancellationToken)
+		static bool IsCompletedTaskFactoryMethod(SemanticModel model, InvocationExpressionSyntax expression, [NotNullWhen(true)] out ImmutableDictionary<string, string?>? properties, CancellationToken cancellationToken)
 		{
 			if (!expression.Expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
 			{
@@ -165,7 +166,7 @@ namespace WTG.Analyzers
 					break;
 
 				case nameof(Task.FromCanceled):
-					properties = ImmutableDictionary<string, string>.Empty;
+					properties = ImmutableDictionary<string, string?>.Empty;
 					break;
 
 				default:
@@ -180,8 +181,8 @@ namespace WTG.Analyzers
 				&& symbol.ContainingType.IsMatch(WellKnownTypeNames.Task);
 		}
 
-		static readonly ImmutableDictionary<string, string> CompletedTaskProperties = ImmutableDictionary<string, string>.Empty.Add(SourcePropertyName, nameof(Task.CompletedTask));
-		static readonly ImmutableDictionary<string, string> FromResultProperties = ImmutableDictionary<string, string>.Empty.Add(SourcePropertyName, nameof(Task.FromResult));
-		static readonly ImmutableDictionary<string, string> FromExceptionProperties = ImmutableDictionary<string, string>.Empty.Add(SourcePropertyName, nameof(Task.FromException));
+		static readonly ImmutableDictionary<string, string?> CompletedTaskProperties = ImmutableDictionary<string, string?>.Empty.Add(SourcePropertyName, nameof(Task.CompletedTask));
+		static readonly ImmutableDictionary<string, string?> FromResultProperties = ImmutableDictionary<string, string?>.Empty.Add(SourcePropertyName, nameof(Task.FromResult));
+		static readonly ImmutableDictionary<string, string?> FromExceptionProperties = ImmutableDictionary<string, string?>.Empty.Add(SourcePropertyName, nameof(Task.FromException));
 	}
 }

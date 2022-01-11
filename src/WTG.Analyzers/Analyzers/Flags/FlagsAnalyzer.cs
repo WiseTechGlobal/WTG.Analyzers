@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -9,7 +8,6 @@ using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
-	[SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed class FlagsAnalyzer : DiagnosticAnalyzer
 	{
@@ -65,7 +63,7 @@ namespace WTG.Analyzers
 			{
 				foreach (var attribute in attributeList.Attributes)
 				{
-					var symbol = (IMethodSymbol)model.GetSymbolInfo(attribute, cancellationToken).Symbol;
+					var symbol = (IMethodSymbol?)model.GetSymbolInfo(attribute, cancellationToken).Symbol;
 
 					if (symbol != null && symbol.ContainingType.IsMatch("System.FlagsAttribute"))
 					{

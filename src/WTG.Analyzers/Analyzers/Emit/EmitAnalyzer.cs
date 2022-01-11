@@ -34,7 +34,7 @@ namespace WTG.Analyzers
 				EmitMatrix.GetOpCode(opCodeSymbol) is var opcode &&
 				AreCompatible(opcode, actualEmitMethod))
 			{
-				var properties = ImmutableDictionary<string, string>.Empty;
+				var properties = ImmutableDictionary<string, string?>.Empty;
 				DiagnosticDescriptor descriptor;
 
 				var operandType = opcode.GetOperand();
@@ -69,7 +69,7 @@ namespace WTG.Analyzers
 
 			if (name == EmitMatrix.Emit || name == EmitMatrix.EmitCall || name == EmitMatrix.EmitCalli)
 			{
-				var methodSymbol = (IMethodSymbol)model.GetSymbolInfo(invoke, cancellationToken).Symbol;
+				var methodSymbol = (IMethodSymbol?)model.GetSymbolInfo(invoke, cancellationToken).Symbol;
 
 				if (methodSymbol != null)
 				{
@@ -86,6 +86,7 @@ namespace WTG.Analyzers
 			if (emitCall.ArgumentList.Arguments[0].Accept(FieldAccessor.Instance) is var fieldIdentifier &&
 				fieldIdentifier != null &&
 				model.GetSymbolInfo(fieldIdentifier, cancellation).Symbol is var fieldSymbol &&
+				fieldSymbol != null &&
 				fieldSymbol.Kind == SymbolKind.Field)
 			{
 				opCodeSymbol = (IFieldSymbol)fieldSymbol;

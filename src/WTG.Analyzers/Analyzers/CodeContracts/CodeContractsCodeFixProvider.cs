@@ -45,7 +45,7 @@ namespace WTG.Analyzers
 		{
 			var cancellationToken = context.CancellationToken;
 			var document = context.Document;
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
 
 			if (!node.IsKind(SyntaxKind.ExpressionStatement))
@@ -63,7 +63,7 @@ namespace WTG.Analyzers
 			}
 			else
 			{
-				var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+				var semanticModel = await document.RequireSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
 				if (CodeContractsHelper.IsInPrivateMember(semanticModel, invoke, context.CancellationToken))
 				{
@@ -96,22 +96,25 @@ namespace WTG.Analyzers
 
 		static async Task<Document> FixByDelete(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
+			var newRoot = root.RemoveNode(
+				root.FindNode(diagnostic.Location.SourceSpan),
+				SyntaxRemoveOptions.AddElasticMarker | SyntaxRemoveOptions.KeepExteriorTrivia);
+
+			NRT.Assert(newRoot != null, "We only remove a statement, not the entire document.");
 
 			return document.WithSyntaxRoot(
-				CodeContractsUsingSimplifier.Instance.Visit(
-					root.RemoveNode(
-						root.FindNode(diagnostic.Location.SourceSpan),
-						SyntaxRemoveOptions.AddElasticMarker | SyntaxRemoveOptions.KeepExteriorTrivia)));
+				CodeContractsUsingSimplifier.Instance.Visit(newRoot));
 		}
 
 		static async Task<Document> FixGenericRequires(Document document, Diagnostic diagnostic, Location typeLocation, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
 			var invoke = (InvocationExpressionSyntax)statementNode.Expression;
 
-			var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+			var semanticModel = await document.RequireSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 			var replacement = CodeContractsHelper.ConvertGenericRequires(semanticModel, invoke, typeLocation, cancellationToken);
 
 			return document.WithSyntaxRoot(
@@ -121,7 +124,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> FixRequiresNotNull(Document document, Diagnostic diagnostic, Location identifierLocation, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
 			var invokeNode = (InvocationExpressionSyntax)statementNode.Expression;
 			var replacement = CodeContractsHelper.ConvertRequiresNotNull(invokeNode, identifierLocation);
@@ -133,7 +136,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> FixRequires(Document document, Diagnostic diagnostic, Location identifierLocation, string defaultMessage, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var statementNode = (ExpressionStatementSyntax)root.FindNode(diagnostic.Location.SourceSpan);
 			var invokeNode = (InvocationExpressionSyntax)statementNode.Expression;
 			var replacement = CodeContractsHelper.ConvertRequires(invokeNode, identifierLocation, defaultMessage);

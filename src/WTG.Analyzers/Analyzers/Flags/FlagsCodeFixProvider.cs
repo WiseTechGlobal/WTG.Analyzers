@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Composition;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +12,6 @@ using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
-	[SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FlagsCodeFixProvider))]
 	[Shared]
 	public sealed class FlagsCodeFixProvider : CodeFixProvider
@@ -39,11 +37,12 @@ namespace WTG.Analyzers
 
 		static async Task<Document> SetEnumMemberValue(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-			var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var model = await document.RequireSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
 			var member = (EnumMemberDeclarationSyntax)root.FindNode(diagnostic.Location.SourceSpan);
-			var decl = (EnumDeclarationSyntax)member.Parent;
+			var decl = (EnumDeclarationSyntax?)member.Parent;
+			NRT.Assert(decl != null, "The fixer should only be running on a full and complete document.");
 
 			ExpressionSyntax explicitValue;
 

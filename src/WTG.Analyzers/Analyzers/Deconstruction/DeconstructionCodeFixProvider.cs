@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -43,7 +41,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> MoveVarOutsideDeconstructionsAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var node = root.FindNode(diagnostic.Location.SourceSpan);
 
 			if (node.IsKind(SyntaxKind.TupleExpression))
@@ -51,8 +49,9 @@ namespace WTG.Analyzers
 				var tupleExpression = (TupleExpressionSyntax)node;
 				var newNode = DeconstructionHelpers.UnifyVarsInTupleExpression(tupleExpression);
 
-				var documentToFixRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+				var documentToFixRoot = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 				var newRoot = documentToFixRoot.ReplaceNode(node, newNode);
+				NRT.Assert(newRoot != null, "Replacing a node should not have removed the entire tree.");
 				document = document.WithSyntaxRoot(newRoot);
 			}
 

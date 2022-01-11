@@ -43,7 +43,7 @@ namespace WTG.Analyzers
 			// so we don't need to look for the next EOL, only leading whitespace. This is made simplier as the trailing/leading
 			// trivia split is typically made just after a newline, so the leading whitespace should be in the same trivia list.
 
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
 			var startTrivia = root.FindTrivia(diagnostic.Location.SourceSpan.Start);
 			var endTrivia = root.FindTrivia(diagnostic.AdditionalLocations[0].SourceSpan.Start);

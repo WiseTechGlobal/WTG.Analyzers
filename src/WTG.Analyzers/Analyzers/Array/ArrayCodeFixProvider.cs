@@ -41,7 +41,7 @@ namespace WTG.Analyzers
 
 		static async Task<Document> ReplaceWithArrayEmpty(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
 
@@ -50,18 +50,25 @@ namespace WTG.Analyzers
 			switch (node.Kind())
 			{
 				case SyntaxKind.ArrayCreationExpression:
-				{
-					var syntax = (ArrayCreationExpressionSyntax)node;
-					typeSyntaxNode = syntax.Type;
-					break;
-				}
+					{
+						var syntax = (ArrayCreationExpressionSyntax)node;
+						typeSyntaxNode = syntax.Type;
+						break;
+					}
 
 				case SyntaxKind.ArrayInitializerExpression:
-				{
-					var syntax = (InitializerExpressionSyntax)node;
-					typeSyntaxNode = (ArrayTypeSyntax)node.FirstAncestorOrSelf<VariableDeclarationSyntax>().Type;
-					break;
-				}
+					{
+						var syntax = (InitializerExpressionSyntax)node;
+						var variableDeclarationSyntax = node.FirstAncestorOrSelf<VariableDeclarationSyntax>();
+
+						if (variableDeclarationSyntax == null)
+						{
+							return document;
+						}
+
+						typeSyntaxNode = (ArrayTypeSyntax)variableDeclarationSyntax.Type;
+						break;
+					}
 
 				default:
 					return document;

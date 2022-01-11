@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -22,7 +23,8 @@ namespace WTG.Analyzers.Utils
 				this.valueMapping = valueMapping;
 			}
 
-			public override SyntaxNode Visit(SyntaxNode node)
+			[return: NotNullIfNotNull("node")]
+			public override SyntaxNode? Visit(SyntaxNode? node)
 			{
 				if (node != null && valueMapping.TryGetValue(node, out var value))
 				{
@@ -44,7 +46,7 @@ namespace WTG.Analyzers.Utils
 				return node.WithExpression((ExpressionSyntax)inner);
 			}
 
-			public override SyntaxNode VisitBinaryExpression(BinaryExpressionSyntax node)
+			public override SyntaxNode? VisitBinaryExpression(BinaryExpressionSyntax node)
 			{
 				return node.Kind() switch
 				{
@@ -54,7 +56,7 @@ namespace WTG.Analyzers.Utils
 				};
 			}
 
-			public override SyntaxNode VisitAssignmentExpression(AssignmentExpressionSyntax node)
+			public override SyntaxNode? VisitAssignmentExpression(AssignmentExpressionSyntax node)
 			{
 				return node.Kind() switch
 				{
@@ -64,7 +66,7 @@ namespace WTG.Analyzers.Utils
 				};
 			}
 
-			public override SyntaxNode VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node)
+			public override SyntaxNode? VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node)
 			{
 				return node.Kind() switch
 				{
@@ -194,9 +196,9 @@ namespace WTG.Analyzers.Utils
 					.WithCondition((ExpressionSyntax)condition)
 					.WithStatement((StatementSyntax)Visit(node.Statement));
 
-				if (node.Else != null)
+				if (result.Else != null)
 				{
-					var elseStatement = Visit(node.Else.Statement);
+					var elseStatement = Visit(result.Else.Statement);
 
 					if (CanDiscard(elseStatement))
 					{

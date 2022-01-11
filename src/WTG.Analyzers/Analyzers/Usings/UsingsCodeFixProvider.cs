@@ -37,16 +37,17 @@ namespace WTG.Analyzers
 
 		static async Task<Document> FixBySortingUsingsAsync(Diagnostic diagnostic, Document document, CancellationToken cancellationToken)
 		{
-			var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await document.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
 			var node = root.FindNode(diagnosticSpan);
 			var parent = node.Parent;
+			NRT.Assert(parent != null, "The fixer should only be running on a full and complete document.");
 
 			var usings = UsingsHelper.ExtractUsings(parent);
 			usings = SortUsings(usings);
 			var newParent = UsingsHelper.WithUsings(parent, usings);
 
-			var newRoot = root.ReplaceNode(node.Parent, newParent);
+			var newRoot = root.ReplaceNode(parent, newParent);
 			return document.WithSyntaxRoot(newRoot);
 		}
 

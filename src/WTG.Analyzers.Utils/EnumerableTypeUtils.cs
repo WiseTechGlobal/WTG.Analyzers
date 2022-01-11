@@ -63,7 +63,7 @@ namespace WTG.Analyzers.Utils
 
 		static ITypeSymbol? GetElementTypeFromEnumeratorType(ITypeSymbol enumeratorType)
 		{
-			do
+			while (true)
 			{
 				ITypeSymbol? itemType = null;
 
@@ -91,11 +91,14 @@ namespace WTG.Analyzers.Utils
 					return itemType;
 				}
 
-				enumeratorType = enumeratorType.BaseType;
-			}
-			while (enumeratorType != null);
+				var tmp = enumeratorType.BaseType;
 
-			return null;
+				if (tmp == null)
+				{
+					return null;
+				}
+				enumeratorType = tmp;
+			}
 		}
 
 		static ITypeSymbol? GetElementTypeFromEnumerableInterface(ITypeSymbol type)

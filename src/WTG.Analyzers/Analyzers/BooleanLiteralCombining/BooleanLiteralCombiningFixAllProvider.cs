@@ -14,7 +14,7 @@ namespace WTG.Analyzers
 
 		protected override async Task<Document> ApplyFixesAsync(Document originalDocument, Document documentToFix, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
 		{
-			var root = await originalDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var root = await originalDocument.RequireSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var replacements = ImmutableDictionary.CreateBuilder<SyntaxNode, bool>();
 
 			foreach (var diagnostic in diagnostics)

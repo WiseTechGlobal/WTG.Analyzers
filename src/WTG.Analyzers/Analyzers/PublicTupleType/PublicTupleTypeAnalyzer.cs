@@ -106,7 +106,7 @@ namespace WTG.Analyzers
 						{
 							symbol = semanticModel.GetDeclaredSymbol(variables[i], cancellationToken);
 
-							if (!symbol.ImplementsAnInterface())
+							if (symbol != null && !symbol.ImplementsAnInterface())
 							{
 								return true;
 							}

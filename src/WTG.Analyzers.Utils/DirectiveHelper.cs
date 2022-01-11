@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 
 namespace WTG.Analyzers.Utils
 {
@@ -32,6 +32,9 @@ namespace WTG.Analyzers.Utils
 
 			var startNode = startToken.Parent;
 			var endNode = endToken.Parent;
+
+			NRT.Assert(startNode != null, "The startToken should have come from a document, so the parent should never be null.");
+			NRT.Assert(endNode != null, "The startToken should have come from a document, so the parent should never be null.");
 
 			ElevateToCommonScope(ref startNode, ref endNode);
 

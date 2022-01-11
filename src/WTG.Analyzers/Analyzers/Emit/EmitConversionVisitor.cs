@@ -17,13 +17,21 @@ namespace WTG.Analyzers
 
 		public override ExpressionSyntax DefaultVisit(SyntaxNode node)
 		{
+			var castType = GetCastType();
+			var originalExpression = (ExpressionSyntax)node;
+
+			if (castType == null)
+			{
+				return originalExpression;
+			}
+
 			return SyntaxFactory.CastExpression(
-				GetCastType(),
-				SyntaxFactory.ParenthesizedExpression((ExpressionSyntax)node)
+				castType,
+				SyntaxFactory.ParenthesizedExpression(originalExpression)
 					.WithAdditionalAnnotations(Simplifier.Annotation));
 		}
 
-		public override ExpressionSyntax VisitLiteralExpression(LiteralExpressionSyntax node)
+		public override ExpressionSyntax? VisitLiteralExpression(LiteralExpressionSyntax node)
 		{
 			if (node.Kind() == SyntaxKind.NumericLiteralExpression)
 			{

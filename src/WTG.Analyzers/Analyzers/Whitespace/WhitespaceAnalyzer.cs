@@ -78,7 +78,7 @@ namespace WTG.Analyzers
 								{
 									var start = location.SourceSpan.Start;
 									brokenIndentation ??= new List<Location>();
-									brokenIndentation.Add(Location.Create(location.SourceTree, TextSpan.FromBounds(start, start + text.Length)));
+									brokenIndentation.Add(Location.Create(context.Tree, TextSpan.FromBounds(start, start + text.Length)));
 								}
 							}
 						}
