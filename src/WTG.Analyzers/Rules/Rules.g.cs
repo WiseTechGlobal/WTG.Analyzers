@@ -9,6 +9,7 @@ namespace WTG.Analyzers
 		public const string CorrectnessCategory = "Correctness";
 		public const string DecruftificationCategory = "Decruftification";
 		public const string MaintainabilityCategory = "Maintainability";
+		public const string PerformanceCategory = "Performance";
 		public const string DoNotUseThePrivateKeywordDiagnosticID = "WTG1001";
 		public const string UseVarWherePossibleDiagnosticID = "WTG1002";
 		public const string DoNotLeaveWhitespaceOnTheEndOfTheLineDiagnosticID = "WTG1003";
@@ -50,6 +51,7 @@ namespace WTG.Analyzers
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
+		public const string UsingEnumerableExtensionMethodsOnAQueryableDiagnosticID = "WTG4001";
 
 		public static readonly DiagnosticDescriptor DoNotUseThePrivateKeywordRule = new DiagnosticDescriptor(
 			DoNotUseThePrivateKeywordDiagnosticID,
@@ -588,6 +590,15 @@ namespace WTG.Analyzers
 			isEnabledByDefault: true,
 			description: "The conditional compilation directive is either confused or you are trying to do something dodgy. Changing method signatures/visibility based on compiler directives is just asking for trouble.");
 
+		public static readonly DiagnosticDescriptor UsingEnumerableExtensionMethodsOnAQueryableRule = new DiagnosticDescriptor(
+			UsingEnumerableExtensionMethodsOnAQueryableDiagnosticID,
+			"Using Enumerable Extension Methods on a Queryable.",
+			"This extension method is treating the queryable as an enumerable.",
+			PerformanceCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "Using enumerable extension methods on a queryable prevents query information from being passed to the query provider and so may harm performance. If you understand the performance implications and really do want to treat the queryable as an enumerable, then use the AsEnumerable extension method to provide an explicit conversion.");
+
 		/// <summary>
 		/// Our convention is to omit the 'private' modifier where it is already the default.
 		/// </summary>
@@ -978,6 +989,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateConditionalCompilationDirectivesShouldNotSplitStructuresDiagnostic(Location location)
 		{
 			return Diagnostic.Create(ConditionalCompilationDirectivesShouldNotSplitStructuresRule, location);
+		}
+
+		/// <summary>
+		/// This extension method is treating the queryable as an enumerable.
+		/// </summary>
+		public static Diagnostic CreateUsingEnumerableExtensionMethodsOnAQueryableDiagnostic(Location location)
+		{
+			return Diagnostic.Create(UsingEnumerableExtensionMethodsOnAQueryableRule, location);
 		}
 	}
 }
