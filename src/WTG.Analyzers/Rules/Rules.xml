@@ -246,4 +246,11 @@
 			<description>The conditional compilation directive is either confused or you are trying to do something dodgy. Changing method signatures/visibility based on compiler directives is just asking for trouble.</description>
 		</rule>
 	</category>
+	<category name="Performance" id="4000">
+		<rule id="1" name="UsingEnumerableExtensionMethodsOnAQueryable">
+			<title>Using Enumerable Extension Methods on a Queryable.</title>
+			<message>This extension method is treating the queryable as an enumerable.</message>
+			<description>Using enumerable extension methods on a queryable prevents query information from being passed to the query provider and so may harm performance. If you understand the performance implications and really do want to treat the queryable as an enumerable, then use the AsEnumerable extension method to provide an explicit conversion.</description>
+		</rule>
+	</category>
 </rules>

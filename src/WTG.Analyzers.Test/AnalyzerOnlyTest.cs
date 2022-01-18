@@ -16,6 +16,7 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(HttpReasonPhraseAnalyzer) })]
 	[TestFixture(TypeArgs = new[] { typeof(NestedConditionalAnalyzer) })]
 	[TestFixture(TypeArgs = new[] { typeof(PublicTupleTypeAnalyzer) })]
+	[TestFixture(TypeArgs = new[] { typeof(QueryLinqAnalyzer) })]
 	public class AnalyzerTest<TAnalyzer>
 		where TAnalyzer : DiagnosticAnalyzer, new()
 	{

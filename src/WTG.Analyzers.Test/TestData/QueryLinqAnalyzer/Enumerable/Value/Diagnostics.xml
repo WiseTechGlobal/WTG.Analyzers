@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG4001" message="This extension method is treating the queryable as an enumerable." severity="Warning">
+	<diagnostic>
+		<location>Test0.cs: (5,60-73)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (6,59-70)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (7,59-70)</location>
+	</diagnostic>
+</diagnostics>
