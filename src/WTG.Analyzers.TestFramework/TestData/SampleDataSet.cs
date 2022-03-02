@@ -125,6 +125,11 @@ namespace WTG.Analyzers.TestFramework
 					options |= SampleDataSetOptions.AllowCodeFixes;
 				}
 
+				if (ToBoolean(root.Element("disableNRT")?.Value, false))
+				{
+					options |= SampleDataSetOptions.DisableNRT;
+				}
+
 				return new SampleDataSet(
 					name,
 					languageVersion,

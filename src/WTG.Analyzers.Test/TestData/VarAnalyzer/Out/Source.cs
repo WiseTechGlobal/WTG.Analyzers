@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 public class Bob
@@ -27,7 +27,7 @@ public class Bob
 	void Ambiguous(out double value) => value = 0;
 	void SemiAmbiguous(out int value1, out int value2, out bool value3) => value3 = (value1 = value2 = 0) == 0;
 	void SemiAmbiguous(out double value1, out double value2, out bool value3) => value3 = (value1 = value2 = 0) == 0;
-	void Generic<T>(out T value) => value = default(T);
+	void Generic<T>(out T value) where T : struct => value = default(T);
 	void Generic<T>(T inValue, out T outValue) => outValue = inValue;
 	bool TryGet(string key, out string value) => (value = key) != null;
 	Dictionary<string, string> Lookup { get; } = new Dictionary<string, string>();
