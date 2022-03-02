@@ -160,7 +160,7 @@ namespace WTG.Analyzers
 			public override void VisitPointerType(PointerTypeSyntax node) => Visit(node.ElementType);
 			public override void VisitIdentifierName(IdentifierNameSyntax node) => Validate(node);
 			public override void VisitQualifiedName(QualifiedNameSyntax node) => Validate(node);
-
+			public override void VisitNullableType(NullableTypeSyntax node) => Visit(node.ElementType);
 			public override void VisitGenericName(GenericNameSyntax node)
 			{
 				foreach (var arg in node.TypeArgumentList.Arguments)
