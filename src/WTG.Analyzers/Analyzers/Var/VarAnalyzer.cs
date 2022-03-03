@@ -57,12 +57,24 @@ namespace WTG.Analyzers
 			}
 
 			var model = context.SemanticModel;
-			var typeSymbol = (ITypeSymbol?)model.GetSymbolInfo(candidate.Type, context.CancellationToken).Symbol;
-			ITypeSymbol? expressionType = model.GetTypeInfo(candidate.ValueSource, context.CancellationToken).Type;
+			var declaredType = model.GetTypeInfo(candidate.Type, context.CancellationToken).Type;
+			var expressionTypeInfo = model.GetTypeInfo(candidate.ValueSource, context.CancellationToken);
+			var expressionType = expressionTypeInfo.Type;
 
-			if (typeSymbol == null || expressionType == null)
+			if (declaredType == null || expressionType == null)
 			{
 				return;
+			}
+
+			if (!candidate.Unwrap && declaredType.IsReferenceType && expressionTypeInfo.Nullability.FlowState == NullableFlowState.NotNull)
+			{
+				// Unfortunately, `declaredTypeInfo.Nullability.Annotation` provides wildly inconsistent/inacurate information (no better than random)
+				// so we need to try get the information ourselves.
+				if (candidate.Type.IsKind(SyntaxKind.NullableType))
+				{
+					// Declared as nullable but initialized with a non-null value. It may be set to null later.
+					return;
+				}
 			}
 
 			if (candidate.ValueSource.IsKind(SyntaxKind.StackAllocArrayCreationExpression) && expressionType.TypeKind == TypeKind.Struct && expressionType.IsMatch("System.Span`1"))
@@ -75,7 +87,7 @@ namespace WTG.Analyzers
 				expressionType = EnumerableTypeUtils.GetElementType(expressionType);
 			}
 
-			if (TypeEquals(expressionType, typeSymbol))
+			if (TypeEquals(expressionType, declaredType))
 			{
 				context.ReportDiagnostic(Rules.CreateUseVarWherePossibleDiagnostic(candidate.Type.GetLocation()));
 			}
