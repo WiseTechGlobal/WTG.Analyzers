@@ -77,7 +77,7 @@ namespace WTG.Analyzers
 				}
 			}
 
-			if (candidate.ValueSource.IsKind(SyntaxKind.StackAllocArrayCreationExpression) && expressionType.TypeKind == TypeKind.Struct && expressionType.IsMatch("System.Span`1"))
+			if (candidate.ValueSource.IsKind(SyntaxKind.StackAllocArrayCreationExpression) && expressionType.TypeKind == TypeKind.Struct && expressionType.IsMatch(WellKnownTypeNames.Span))
 			{
 				return;
 			}
