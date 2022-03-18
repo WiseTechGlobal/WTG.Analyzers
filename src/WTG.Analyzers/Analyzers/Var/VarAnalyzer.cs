@@ -30,8 +30,11 @@ namespace WTG.Analyzers
 				c => Analyze(c, cache),
 				SyntaxKind.LocalDeclarationStatement,
 				SyntaxKind.ForStatement,
-				SyntaxKind.ForEachStatement,
 				SyntaxKind.UsingStatement);
+
+			context.RegisterSyntaxNodeAction(
+				c => AnalyzeForEach(c, cache),
+				SyntaxKind.ForEachStatement);
 
 			context.RegisterSyntaxNodeAction(
 				c => AnalyzeInvoke(c, cache),
@@ -66,7 +69,7 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			if (!candidate.Unwrap && declaredType.IsReferenceType && expressionTypeInfo.Nullability.FlowState == NullableFlowState.NotNull)
+			if (declaredType.IsReferenceType && expressionTypeInfo.Nullability.FlowState == NullableFlowState.NotNull)
 			{
 				// Unfortunately, `declaredTypeInfo.Nullability.Annotation` provides wildly inconsistent/inacurate information (no better than random)
 				// so we need to try get the information ourselves.
@@ -82,14 +85,40 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			if (candidate.Unwrap)
-			{
-				expressionType = EnumerableTypeUtils.GetElementType(expressionType);
-			}
-
 			if (TypeEquals(expressionType, declaredType))
 			{
 				context.ReportDiagnostic(Rules.CreateUseVarWherePossibleDiagnostic(candidate.Type.GetLocation()));
+			}
+		}
+
+		static void AnalyzeForEach(SyntaxNodeAnalysisContext context, FileDetailCache cache)
+		{
+			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
+			{
+				return;
+			}
+
+			var node = (ForEachStatementSyntax)context.Node;
+
+			if (node.Type.IsVar)
+			{
+				return;
+			}
+
+			var model = context.SemanticModel;
+			var declaredType = model.GetTypeInfo(node.Type, context.CancellationToken).Type;
+			var expressionType = model.GetTypeInfo(node.Expression, context.CancellationToken).Type;
+
+			if (declaredType == null || expressionType == null)
+			{
+				return;
+			}
+
+			expressionType = EnumerableTypeUtils.GetElementType(expressionType);
+
+			if (TypeEquals(expressionType, declaredType))
+			{
+				context.ReportDiagnostic(Rules.CreateUseVarWherePossibleDiagnostic(node.Type.GetLocation()));
 			}
 		}
 
@@ -225,16 +254,6 @@ namespace WTG.Analyzers
 		{
 			public static Visitor Instance { get; } = new Visitor();
 
-			public override Candidate? VisitForEachStatement(ForEachStatementSyntax node)
-			{
-				if (!node.Type.IsVar)
-				{
-					return new Candidate(node.Type, node.Expression, true);
-				}
-
-				return null;
-			}
-
 			public override Candidate? VisitForStatement(ForStatementSyntax node)
 			{
 				return ExtractFromVariableDecl(node.Declaration);
@@ -263,7 +282,7 @@ namespace WTG.Analyzers
 
 					if (exp != null)
 					{
-						return new Candidate(decl.Type, exp, false);
+						return new Candidate(decl.Type, exp);
 					}
 				}
 
@@ -273,7 +292,7 @@ namespace WTG.Analyzers
 
 		sealed class Candidate
 		{
-			public Candidate(TypeSyntax type, ExpressionSyntax valueSource, bool unwrap)
+			public Candidate(TypeSyntax type, ExpressionSyntax valueSource)
 			{
 				if (type == null)
 				{
@@ -287,12 +306,10 @@ namespace WTG.Analyzers
 
 				Type = type;
 				ValueSource = valueSource;
-				Unwrap = unwrap;
 			}
 
 			public TypeSyntax Type { get; }
 			public ExpressionSyntax ValueSource { get; }
-			public bool Unwrap { get; }
 		}
 	}
 }
