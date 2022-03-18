@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <diagnostics id="WTG2004" message="This project does not use Code Contracts." severity="Warning">
+	<!--
+		We don't normally have both code contracts and NRT in the same project and the way Contract.Requires is used tends to confuse NRT
+		into thinking that things are nullable when they are not.
+		-->
+	<disableNRT>true</disableNRT>
+
 	<diagnostic>
 		<location>Test0.cs: (12,4-33)</location>
 	</diagnostic>

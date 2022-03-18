@@ -27,11 +27,14 @@ namespace WTG.Analyzers
 			var cache = new FileDetailCache();
 
 			context.RegisterSyntaxNodeAction(
-				c => Analyze(c, cache),
+				c => AnalyzeVariableDeclaration(c, cache),
 				SyntaxKind.LocalDeclarationStatement,
 				SyntaxKind.ForStatement,
-				SyntaxKind.ForEachStatement,
 				SyntaxKind.UsingStatement);
+
+			context.RegisterSyntaxNodeAction(
+				c => AnalyzeForEach(c, cache),
+				SyntaxKind.ForEachStatement);
 
 			context.RegisterSyntaxNodeAction(
 				c => AnalyzeInvoke(c, cache),
@@ -42,42 +45,87 @@ namespace WTG.Analyzers
 				SyntaxKind.SimpleAssignmentExpression);
 		}
 
-		static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache)
+		static void AnalyzeVariableDeclaration(SyntaxNodeAnalysisContext context, FileDetailCache cache)
 		{
 			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
 			{
 				return;
 			}
 
-			var candidate = Visitor.Instance.Visit(context.Node);
+			var decl = Visitor.Instance.Visit(context.Node);
 
-			if (candidate == null || candidate.ValueSource.IsKind(SyntaxKind.DefaultLiteralExpression))
+			if (decl == null || decl.Type.IsVar || decl.Variables.Count != 1)
+			{
+				return;
+			}
+
+			var expression = decl.Variables[0].Initializer?.Value;
+
+			if (expression == null || expression.IsKind(SyntaxKind.DefaultLiteralExpression))
 			{
 				return;
 			}
 
 			var model = context.SemanticModel;
-			var typeSymbol = (ITypeSymbol?)model.GetSymbolInfo(candidate.Type, context.CancellationToken).Symbol;
-			ITypeSymbol? expressionType = model.GetTypeInfo(candidate.ValueSource, context.CancellationToken).Type;
+			var declaredType = model.GetTypeInfo(decl.Type, context.CancellationToken).Type;
+			var expressionTypeInfo = model.GetTypeInfo(expression, context.CancellationToken);
+			var expressionType = expressionTypeInfo.Type;
 
-			if (typeSymbol == null || expressionType == null)
+			if (declaredType == null || expressionType == null)
 			{
 				return;
 			}
 
-			if (candidate.ValueSource.IsKind(SyntaxKind.StackAllocArrayCreationExpression) && expressionType.TypeKind == TypeKind.Struct && expressionType.IsMatch("System.Span`1"))
+			if (declaredType.IsReferenceType && expressionTypeInfo.Nullability.FlowState == NullableFlowState.NotNull)
+			{
+				// Unfortunately, `declaredTypeInfo.Nullability.Annotation` provides wildly inconsistent/inacurate information (no better than random)
+				// so we need to try get the information ourselves.
+				if (decl.Type.IsKind(SyntaxKind.NullableType))
+				{
+					// Declared as nullable but initialized with a non-null value. It may be set to null later.
+					return;
+				}
+			}
+
+			if (expression.IsKind(SyntaxKind.StackAllocArrayCreationExpression) && expressionType.TypeKind == TypeKind.Struct && expressionType.IsMatch(WellKnownTypeNames.Span))
 			{
 				return;
 			}
 
-			if (candidate.Unwrap)
+			if (TypeEquals(expressionType, declaredType))
 			{
-				expressionType = EnumerableTypeUtils.GetElementType(expressionType);
+				context.ReportDiagnostic(Rules.CreateUseVarWherePossibleDiagnostic(decl.Type.GetLocation()));
+			}
+		}
+
+		static void AnalyzeForEach(SyntaxNodeAnalysisContext context, FileDetailCache cache)
+		{
+			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
+			{
+				return;
 			}
 
-			if (TypeEquals(expressionType, typeSymbol))
+			var node = (ForEachStatementSyntax)context.Node;
+
+			if (node.Type.IsVar)
 			{
-				context.ReportDiagnostic(Rules.CreateUseVarWherePossibleDiagnostic(candidate.Type.GetLocation()));
+				return;
+			}
+
+			var model = context.SemanticModel;
+			var declaredType = model.GetTypeInfo(node.Type, context.CancellationToken).Type;
+			var expressionType = model.GetTypeInfo(node.Expression, context.CancellationToken).Type;
+
+			if (declaredType == null || expressionType == null)
+			{
+				return;
+			}
+
+			expressionType = EnumerableTypeUtils.GetElementType(expressionType);
+
+			if (TypeEquals(expressionType, declaredType))
+			{
+				context.ReportDiagnostic(Rules.CreateUseVarWherePossibleDiagnostic(node.Type.GetLocation()));
 			}
 		}
 
@@ -209,78 +257,13 @@ namespace WTG.Analyzers
 
 		static bool TypeEquals(ITypeSymbol? x, ITypeSymbol? y) => ReferenceEquals(x, y) || (x != null && SymbolEqualityComparer.Default.Equals(x, y));
 
-		sealed class Visitor : CSharpSyntaxVisitor<Candidate?>
+		sealed class Visitor : CSharpSyntaxVisitor<VariableDeclarationSyntax?>
 		{
 			public static Visitor Instance { get; } = new Visitor();
 
-			public override Candidate? VisitForEachStatement(ForEachStatementSyntax node)
-			{
-				if (!node.Type.IsVar)
-				{
-					return new Candidate(node.Type, node.Expression, true);
-				}
-
-				return null;
-			}
-
-			public override Candidate? VisitForStatement(ForStatementSyntax node)
-			{
-				return ExtractFromVariableDecl(node.Declaration);
-			}
-
-			public override Candidate? VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
-			{
-				if (node.IsConst)
-				{
-					return null;
-				}
-
-				return ExtractFromVariableDecl(node.Declaration);
-			}
-
-			public override Candidate? VisitUsingStatement(UsingStatementSyntax node)
-			{
-				return ExtractFromVariableDecl(node.Declaration);
-			}
-
-			static Candidate? ExtractFromVariableDecl(VariableDeclarationSyntax? decl)
-			{
-				if (decl != null && !decl.Type.IsVar && decl.Variables.Count == 1)
-				{
-					var exp = decl.Variables[0].Initializer?.Value;
-
-					if (exp != null)
-					{
-						return new Candidate(decl.Type, exp, false);
-					}
-				}
-
-				return null;
-			}
-		}
-
-		sealed class Candidate
-		{
-			public Candidate(TypeSyntax type, ExpressionSyntax valueSource, bool unwrap)
-			{
-				if (type == null)
-				{
-					throw new ArgumentNullException(nameof(type));
-				}
-
-				if (valueSource == null)
-				{
-					throw new ArgumentNullException(nameof(valueSource));
-				}
-
-				Type = type;
-				ValueSource = valueSource;
-				Unwrap = unwrap;
-			}
-
-			public TypeSyntax Type { get; }
-			public ExpressionSyntax ValueSource { get; }
-			public bool Unwrap { get; }
+			public override VariableDeclarationSyntax? VisitForStatement(ForStatementSyntax node) => node.Declaration;
+			public override VariableDeclarationSyntax? VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node) => node.IsConst ? null : node.Declaration;
+			public override VariableDeclarationSyntax? VisitUsingStatement(UsingStatementSyntax node) => node.Declaration;
 		}
 	}
 }

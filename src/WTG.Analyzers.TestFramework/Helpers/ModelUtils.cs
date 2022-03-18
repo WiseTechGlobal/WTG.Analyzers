@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -21,6 +20,16 @@ namespace WTG.Analyzers.TestFramework
 			var project = document.Project;
 
 			project = project.WithParseOptions(GetParseOptions(project).WithLanguageVersion(dataSet.LanguageVersion));
+
+			if ((dataSet.Options & SampleDataSetOptions.DisableNRT) == 0)
+			{
+				var effectiveVersion = LanguageVersionFacts.MapSpecifiedToEffectiveVersion(dataSet.LanguageVersion);
+
+				if (effectiveVersion >= LanguageVersion.CSharp8)
+				{
+					project = project.WithCompilationOptions(GetCompilationOptions(project).WithNullableContextOptions(NullableContextOptions.Enable));
+				}
+			}
 
 			return project.GetDocument(document.Id)!;
 		}
