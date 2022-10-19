@@ -61,7 +61,7 @@ namespace WTG.Analyzers
 
 			var expression = decl.Variables[0].Initializer?.Value;
 
-			if (expression == null || expression.IsKind(SyntaxKind.DefaultLiteralExpression))
+			if (expression == null || expression.IsKind(SyntaxKind.DefaultLiteralExpression) || expression.IsKind(SyntaxKind.ImplicitObjectCreationExpression))
 			{
 				return;
 			}
