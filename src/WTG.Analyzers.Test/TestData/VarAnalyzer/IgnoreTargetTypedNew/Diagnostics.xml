@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<diagnostics>
-	<languageVersion>8.0</languageVersion>
-	<!--
-	  Under the current Roslyn version, target-typed new is a 'preview' feature,
-	  and use of this generates a warning.
-	-->
-	<suppressId>CS8652</suppressId>
-</diagnostics>
