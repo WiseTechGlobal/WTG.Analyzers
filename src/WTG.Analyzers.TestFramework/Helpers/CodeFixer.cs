@@ -259,8 +259,9 @@ namespace WTG.Analyzers.TestFramework
 
 		static async Task<SyntaxNode> FormatTree(Document document)
 		{
-			var root = await document.GetSyntaxRootAsync().ConfigureAwait(false);
-			return Formatter.Format(root, Formatter.Annotation, document.Project.Solution.Workspace);
+			var formattedDocument = await Formatter.FormatAsync(document).ConfigureAwait(false);
+			var root = await formattedDocument.GetSyntaxRootAsync().ConfigureAwait(false);
+			return root ?? throw new InvalidOperationException("Formatted document has no root.");
 		}
 
 		sealed class DummyFixAllDiagnosticProvider : FixAllContext.DiagnosticProvider
