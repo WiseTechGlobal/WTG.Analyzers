@@ -357,7 +357,7 @@ namespace WTG.Analyzers
 			CorrectnessCategory,
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
-			description: "RegisterDefaults() is not deterministic across machines. Use QueryVisualstudioInstances() and RegisterInstance() instead with a sort function (e.g. by version).");
+			description: "RegisterDefaults() is not deterministic across machines. Use QueryVisualStudioInstances(), select your preferred instance (e.g. latest by version), and call RegisterInstance() with that instance instead.");
 
 		public static readonly DiagnosticDescriptor RemovedOrphanedSuppressionsRule = new DiagnosticDescriptor(
 			RemovedOrphanedSuppressionsDiagnosticID,

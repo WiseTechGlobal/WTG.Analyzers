@@ -152,7 +152,7 @@
 		<rule id="9" name="ForbidMSBuildLocatorRegisterDefaults" severity="Warning">
 			<title>Do not use MSBuildLocator.RegisterDefaults().</title>
 			<message>Do not use MSBuildLocator.RegisterDefaults()</message>
-			<description>RegisterDefaults() is not deterministic across machines. Use QueryVisualstudioInstances() and RegisterInstance() instead with a sort function (e.g. by version).</description>
+			<description>RegisterDefaults() is not deterministic across machines. Use QueryVisualStudioInstances(), select your preferred instance (e.g. latest by version), and call RegisterInstance() with that instance instead.</description>
 		</rule>
 	</category>
 	<category name="Decruftification" id="3000">
