@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG2009" message="Do not use MSBuildLocator.RegisterDefaults()" severity="Warning">
+	<diagnostic>
+		<location>Test0.cs: (21,3-36)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (22,3-50)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (23,29-60)</location>
+	</diagnostic>
+</diagnostics>
