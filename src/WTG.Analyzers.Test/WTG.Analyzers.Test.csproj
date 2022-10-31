@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="TestData\**\*.cs" />
-    <Compile Remove="TestData\**\*.xml" />
+    <None Remove="TestData\**\*.xml" />
     <EmbeddedResource Include="TestData\**\*.cs" />
     <EmbeddedResource Include="TestData\**\*.xml" />
   </ItemGroup>

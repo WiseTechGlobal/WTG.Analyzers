@@ -149,6 +149,11 @@
 			<message>Do not specify path separators in string literals that represent filesystem paths.</message>
 			<description>Path separators are different on different operating system. When using filesystem APIs, use Path.Combine or Path.PathSeparatorChar to construct paths.</description>
 		</rule>
+		<rule id="9" name="ForbidMSBuildLocatorRegisterDefaults" severity="Warning">
+			<title>Do not use MSBuildLocator.RegisterDefaults().</title>
+			<message>Do not use MSBuildLocator.RegisterDefaults()</message>
+			<description>RegisterDefaults() is not deterministic across machines. Use QueryVisualStudioInstances(), select your preferred instance (e.g. latest by version), and call RegisterInstance() with that instance instead.</description>
+		</rule>
 	</category>
 	<category name="Decruftification" id="3000">
 		<rule id="1" name="RemovedOrphanedSuppressions" severity="Info">

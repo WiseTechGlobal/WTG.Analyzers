@@ -14,6 +14,7 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(ConditionDirectiveAnalyzer) })]
 	[TestFixture(TypeArgs = new[] { typeof(DiscardVariableAnalyzer) })]
 	[TestFixture(TypeArgs = new[] { typeof(HttpReasonPhraseAnalyzer) })]
+	[TestFixture(TypeArgs = new[] { typeof(MSBuildLocatorAnalyzer) })]
 	[TestFixture(TypeArgs = new[] { typeof(NestedConditionalAnalyzer) })]
 	[TestFixture(TypeArgs = new[] { typeof(PublicTupleTypeAnalyzer) })]
 	[TestFixture(TypeArgs = new[] { typeof(QueryLinqAnalyzer) })]

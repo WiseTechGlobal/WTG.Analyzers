@@ -36,6 +36,7 @@ namespace WTG.Analyzers
 		public const string ForbidCompiledInStaticRegexMethodsDiagnosticID = "WTG2006";
 		public const string ForbidCustomHttpReasonPhraseValuesDiagnosticID = "WTG2007";
 		public const string DoNotUsePathSeparatorsInPathLiteralsDiagnosticID = "WTG2008";
+		public const string ForbidMSBuildLocatorRegisterDefaultsDiagnosticID = "WTG2009";
 		public const string RemovedOrphanedSuppressionsDiagnosticID = "WTG3001";
 		public const string PreferDirectMemberAccessOverLinqDiagnosticID = "WTG3002";
 		public const string PreferDirectMemberAccessOverLinqInAnExpressionDiagnosticID = "WTG3003";
@@ -348,6 +349,15 @@ namespace WTG.Analyzers
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
 			description: "Path separators are different on different operating system. When using filesystem APIs, use Path.Combine or Path.PathSeparatorChar to construct paths.");
+
+		public static readonly DiagnosticDescriptor ForbidMSBuildLocatorRegisterDefaultsRule = new DiagnosticDescriptor(
+			ForbidMSBuildLocatorRegisterDefaultsDiagnosticID,
+			"Do not use MSBuildLocator.RegisterDefaults().",
+			"Do not use MSBuildLocator.RegisterDefaults()",
+			CorrectnessCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "RegisterDefaults() is not deterministic across machines. Use QueryVisualStudioInstances(), select your preferred instance (e.g. latest by version), and call RegisterInstance() with that instance instead.");
 
 		public static readonly DiagnosticDescriptor RemovedOrphanedSuppressionsRule = new DiagnosticDescriptor(
 			RemovedOrphanedSuppressionsDiagnosticID,
@@ -821,6 +831,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDoNotUsePathSeparatorsInPathLiteralsDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DoNotUsePathSeparatorsInPathLiteralsRule, location);
+		}
+
+		/// <summary>
+		/// Do not use MSBuildLocator.RegisterDefaults()
+		/// </summary>
+		public static Diagnostic CreateForbidMSBuildLocatorRegisterDefaultsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(ForbidMSBuildLocatorRegisterDefaultsRule, location);
 		}
 
 		/// <summary>
