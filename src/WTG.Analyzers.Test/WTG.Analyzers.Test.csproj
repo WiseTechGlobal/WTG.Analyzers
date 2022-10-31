@@ -7,12 +7,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="TestData\**\*.cs" />
-    <Compile Remove="TestData\**\*.xml" />
+    <None Remove="TestData\**\*.xml" />
     <EmbeddedResource Include="TestData\**\*.cs" />
     <EmbeddedResource Include="TestData\**\*.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="TestData\MSBuildLocatorAnalyzer\RegisterDefaults\Diagnostics.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.8.0" />
