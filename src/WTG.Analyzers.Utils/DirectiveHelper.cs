@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace WTG.Analyzers.Utils
 {
@@ -28,6 +29,24 @@ namespace WTG.Analyzers.Utils
 			if (endTrivia.SpanStart < endToken.SpanStart)
 			{
 				endToken = endToken.GetPreviousToken();
+			}
+
+			if (startToken.IsKind(SyntaxKind.CommaToken))
+			{
+				var nextToken = startToken.GetNextToken();
+				if (startToken.GetLocation().GetLineSpan().EndLinePosition.Line == nextToken.GetLocation().GetLineSpan().StartLinePosition.Line)
+				{
+					startToken = nextToken;
+				}
+			}
+
+			if (endToken.IsKind(SyntaxKind.CommaToken))
+			{
+				var previousToken = endToken.GetPreviousToken();
+				if (endToken.GetLocation().GetLineSpan().StartLinePosition.Line == previousToken.GetLocation().GetLineSpan().EndLinePosition.Line)
+				{
+					endToken = previousToken;
+				}
 			}
 
 			var startNode = startToken.Parent;
