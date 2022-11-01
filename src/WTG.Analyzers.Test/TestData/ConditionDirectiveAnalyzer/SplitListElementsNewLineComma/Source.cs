@@ -10,9 +10,11 @@ namespace Magic
 			{
 				"A"
 #if true
-				,"B"
+				,
+				"B"
+				,
 #endif
-				,"C"
+				"C"
 			};
 		}
 
@@ -22,9 +24,11 @@ namespace Magic
 			{
 				null => "<null>"
 #if true
-				,int x => x.ToString()
+				,
+				int x => x.ToString()
+				,
 #endif
-				,object o => o.ToString()
+				object o => o.ToString()
 			};
 		}
 
@@ -32,22 +36,29 @@ namespace Magic
 		{
 			A
 #if true
-			,B
+			,
+			B
+			,
 #endif
-			,C
+			C
 		}
 
 		public string Parameter()
 		{
 			return string.Format(
 				"text"
-				,1
+				,
+				1
 #if true
-				,2
-				,3
-				,4
+				,
+				2
+				,
+				3
+				,
+				4
+				,
 #endif
-				,5);
+				5);
 		}
 	}
 }
