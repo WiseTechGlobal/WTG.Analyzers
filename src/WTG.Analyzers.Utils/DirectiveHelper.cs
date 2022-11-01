@@ -33,20 +33,12 @@ namespace WTG.Analyzers.Utils
 
 			if (startToken.IsKind(SyntaxKind.CommaToken))
 			{
-				var nextToken = startToken.GetNextToken();
-				if (startToken.GetLocation().GetLineSpan().EndLinePosition.Line == nextToken.GetLocation().GetLineSpan().StartLinePosition.Line)
-				{
-					startToken = nextToken;
-				}
+				startToken = startToken.GetNextToken();
 			}
 
 			if (endToken.IsKind(SyntaxKind.CommaToken))
 			{
-				var previousToken = endToken.GetPreviousToken();
-				if (endToken.GetLocation().GetLineSpan().StartLinePosition.Line == previousToken.GetLocation().GetLineSpan().EndLinePosition.Line)
-				{
-					endToken = previousToken;
-				}
+				endToken = endToken.GetPreviousToken();
 			}
 
 			var startNode = startToken.Parent;
