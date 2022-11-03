@@ -18,7 +18,7 @@
       - and the major/minor/build versions should match the NuGet package version (NuGet is x.y.z only)
       - Revision should be incremented whenever you want to publish a new version.
       -->
-    <ShortVersion Condition=" '$(TagVersion)' == '' ">3.7.0</ShortVersion>
+    <ShortVersion Condition=" '$(TagVersion)' == '' ">3.7.1</ShortVersion>
     <ShortVersion Condition=" '$(TagVersion)' != '' ">$(TagVersion.Split('-', 2)[0])</ShortVersion>
     <VersionSuffix Condition=" '$(TagVersion)' != '' ">$(TagVersion.Substring($(ShortVersion.Length)))</VersionSuffix>
 
