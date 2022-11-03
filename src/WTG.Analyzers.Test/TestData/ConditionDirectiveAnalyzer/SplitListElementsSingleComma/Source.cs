@@ -8,12 +8,33 @@ namespace Magic
 		{
 			var bob = new[]
 			{
-				123
+				"A"
 #if true
 				,
 #endif
-				-123
+				"B"
 			};
+		}
+
+		public string Switch(object item)
+		{
+			return item switch
+			{
+				null => "<null>"
+#if true
+				,
+#endif
+				object o => o.ToString(),
+			};
+		}
+
+		enum ConditionalEnum
+		{
+			A
+#if true
+			,
+#endif
+			C,
 		}
 
 		public string Parameter()
@@ -24,7 +45,7 @@ namespace Magic
 #if true
 				,
 #endif
-				-1);
+				2);
 		}
 	}
 }
