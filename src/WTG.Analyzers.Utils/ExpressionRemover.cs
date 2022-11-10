@@ -38,7 +38,7 @@ namespace WTG.Analyzers.Utils
 			{
 				var inner = Visit(node.Expression);
 
-				if (CanDiscard(inner))
+				if (CanDiscard(inner) || IsWeak(inner))
 				{
 					return inner.WithTriviaFrom(node);
 				}
@@ -166,6 +166,18 @@ namespace WTG.Analyzers.Utils
 					.WithWhenTrue(whenTrue)
 					.WithWhenFalse(whenFalse)
 					.WithCondition(conditionExpression);
+			}
+
+			public override SyntaxNode? VisitExpressionStatement(ExpressionStatementSyntax node)
+			{
+				var expression = Visit(node.Expression);
+
+				if (IsWeak(expression))
+				{
+					return EmptyStatement.WithTriviaFrom(node);
+				}
+
+				return node.WithExpression((ExpressionSyntax)expression);
 			}
 
 			public override SyntaxNode VisitIfStatement(IfStatementSyntax node)
@@ -364,7 +376,7 @@ namespace WTG.Analyzers.Utils
 					}
 					else
 					{
-						return left.WithTriviaFrom(node);
+						return left.WithTriviaFrom(node).WithAdditionalAnnotations(WeakAnnotation);
 					}
 				}
 
