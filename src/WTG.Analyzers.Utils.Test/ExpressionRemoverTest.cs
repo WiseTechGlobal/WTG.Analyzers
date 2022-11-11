@@ -237,6 +237,33 @@ namespace WTG.Analyzers.Utils.Test
 			Assert.That(actual, Is.EqualTo(Expected));
 		}
 
+		[Test]
+		public void RemovedStatementComments()
+		{
+			const string Source =
+@"{
+	// Comment A
+	foo |= __FALSE__; // Comment B
+	// Comment C
+	A();
+	// Comment D
+	foo &= __TRUE__; // Comment E
+	// Comment F
+}";
+
+			const string Expected =
+@"{
+	// Comment A
+	// Comment C
+	A();
+	// Comment D
+	// Comment F
+}";
+
+			var actual = ApplyToAllMagicTokens(SyntaxFactory.ParseStatement(Source), true);
+			Assert.That(actual, Is.EqualTo(Expected));
+		}
+
 		#region Implementation
 
 		static string ApplyToAllMagicTokens(SyntaxNode expressionSyntax, bool reformat = false)
