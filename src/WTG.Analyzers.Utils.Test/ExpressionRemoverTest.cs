@@ -38,6 +38,8 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("exp |= __FALSE__", ExpectedResult = "exp")]
 		[TestCase("exp &= __TRUE__", ExpectedResult = "exp")]
 		[TestCase("exp &= __FALSE__", ExpectedResult = "exp = false")]
+		[TestCase("(exp &= __TRUE__)", ExpectedResult = "exp")]
+		[TestCase("(exp |= __FALSE__)", ExpectedResult = "exp")]
 		public string ReplaceWithConstantBool_Expression(string expressionText)
 		{
 			return ApplyToAllMagicTokens(SyntaxFactory.ParseExpression(expressionText));
@@ -56,6 +58,10 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("while (__TRUE__) A();", ExpectedResult = "while (true) A();")]
 		[TestCase("do A(); while (__FALSE__);", ExpectedResult = "A();")]
 		[TestCase("do A(); while (__TRUE__);", ExpectedResult = "do A(); while (true);")]
+		[TestCase("exp |= __FALSE__;", ExpectedResult = ";")]
+		[TestCase("exp &= __TRUE__;", ExpectedResult = ";")]
+		[TestCase("{ exp |= __FALSE__; }", ExpectedResult = "{ }")]
+		[TestCase("{ exp &= __TRUE__; }", ExpectedResult = "{ }")]
 		public string ReplaceWithConstantBool_Statement(string statementText)
 		{
 			return ApplyToAllMagicTokens(SyntaxFactory.ParseStatement(statementText));
@@ -225,6 +231,33 @@ namespace WTG.Analyzers.Utils.Test
 	// comment 4
 
 	X();
+}";
+
+			var actual = ApplyToAllMagicTokens(SyntaxFactory.ParseStatement(Source), true);
+			Assert.That(actual, Is.EqualTo(Expected));
+		}
+
+		[Test]
+		public void RemovedStatementComments()
+		{
+			const string Source =
+@"{
+	// Comment A
+	foo |= __FALSE__; // Comment B
+	// Comment C
+	A();
+	// Comment D
+	foo &= __TRUE__; // Comment E
+	// Comment F
+}";
+
+			const string Expected =
+@"{
+	// Comment A
+	// Comment C
+	A();
+	// Comment D
+	// Comment F
 }";
 
 			var actual = ApplyToAllMagicTokens(SyntaxFactory.ParseStatement(Source), true);

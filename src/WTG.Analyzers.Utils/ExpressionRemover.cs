@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace WTG.Analyzers.Utils
 			{
 				var inner = Visit(node.Expression);
 
-				if (CanDiscard(inner))
+				if (CanDiscard(inner) || IsWeak(inner))
 				{
 					return inner.WithTriviaFrom(node);
 				}
@@ -168,6 +169,18 @@ namespace WTG.Analyzers.Utils
 					.WithCondition(conditionExpression);
 			}
 
+			public override SyntaxNode? VisitExpressionStatement(ExpressionStatementSyntax node)
+			{
+				var expression = Visit(node.Expression);
+
+				if (IsWeak(expression))
+				{
+					return EmptyStatement.WithTriviaFrom(node);
+				}
+
+				return node.WithExpression((ExpressionSyntax)expression);
+			}
+
 			public override SyntaxNode VisitIfStatement(IfStatementSyntax node)
 			{
 				var condition = Visit(node.Condition);
@@ -256,6 +269,7 @@ namespace WTG.Analyzers.Utils
 			{
 				var statements = VisitList(node.Statements);
 				var modified = false;
+				List<SyntaxTrivia>? accumulatedTrivia = null;
 
 				for (var i = 0; i < statements.Count;)
 				{
@@ -263,6 +277,11 @@ namespace WTG.Analyzers.Utils
 
 					if (CanDiscard(current))
 					{
+						accumulatedTrivia ??= new List<SyntaxTrivia>();
+						accumulatedTrivia.AddRange(current.GetLeadingTrivia());
+						TrimTrailingWhitespace(accumulatedTrivia);
+						accumulatedTrivia.Add(SyntaxFactory.ElasticMarker);
+
 						statements = statements.RemoveAt(i);
 						modified = true;
 					}
@@ -273,6 +292,13 @@ namespace WTG.Analyzers.Utils
 					}
 					else
 					{
+						if (accumulatedTrivia != null && accumulatedTrivia.Count > 0)
+						{
+							accumulatedTrivia.AddRange(current.GetLeadingTrivia());
+							statements = statements.Replace(current, current.WithLeadingTrivia(SyntaxFactory.TriviaList(accumulatedTrivia)));
+							accumulatedTrivia.Clear();
+						}
+
 						i++;
 					}
 				}
@@ -283,8 +309,32 @@ namespace WTG.Analyzers.Utils
 				{
 					result = result.WithAdditionalAnnotations(DiscardableAnnotation);
 				}
+				else if (accumulatedTrivia != null && accumulatedTrivia.Count > 0)
+				{
+					var closingBrace = result.CloseBraceToken;
+					accumulatedTrivia.AddRange(closingBrace.LeadingTrivia);
+					result = result.WithCloseBraceToken(closingBrace.WithLeadingTrivia(SyntaxFactory.TriviaList(accumulatedTrivia)));
+				}
 
 				return result;
+			}
+
+			static void TrimTrailingWhitespace(List<SyntaxTrivia> accumulatedTrivia)
+			{
+				var i = accumulatedTrivia.Count - 1;
+
+				while (i >= 0)
+				{
+					var trivia = accumulatedTrivia[i];
+
+					if (!trivia.IsKind(SyntaxKind.WhitespaceTrivia))
+					{
+						return;
+					}
+
+					accumulatedTrivia.RemoveAt(i);
+					i--;
+				}
 			}
 
 			static SyntaxList<StatementSyntax> InlineBlock(SyntaxList<StatementSyntax> statements, BlockSyntax block)
@@ -364,7 +414,7 @@ namespace WTG.Analyzers.Utils
 					}
 					else
 					{
-						return left.WithTriviaFrom(node);
+						return left.WithTriviaFrom(node).WithAdditionalAnnotations(WeakAnnotation);
 					}
 				}
 

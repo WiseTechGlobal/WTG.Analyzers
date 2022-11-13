@@ -9,12 +9,10 @@ public static class Bob
 	}
 	public static bool Method2(bool a)
 	{
-		a;
 		return a;
 	}
 	public static bool Method3(bool a)
 	{
-		a;
 		return a;
 	}
 	public static bool Method4(bool a)
