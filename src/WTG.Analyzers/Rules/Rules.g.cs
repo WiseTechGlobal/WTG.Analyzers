@@ -49,6 +49,9 @@ namespace WTG.Analyzers
 		public const string DontAwaitTriviallyCompletedTasksDiagnosticID = "WTG3010";
 		public const string DontMutateAppendedStringArgumentsDiagnosticID = "WTG3011";
 		public const string AvoidBoolLiteralsInLargerBoolExpressionsDiagnosticID = "WTG3012";
+		public const string DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID = "WTG3013";
+		public const string DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID = "WTG3014";
+		public const string DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID = "WTG3015";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -565,6 +568,33 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor DontUseConcatWhenAppendingSingleElementToEnumerablesRule = new DiagnosticDescriptor(
+			DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID,
+			"Don't use .Concat when appending a single element to enumerables",
+			"Don't use .Concat when appending a single element to enumerables",
+			DecruftificationCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "Using .Concat to append a single element to a Linq.Enumerable has been rendered inefficient and unneccessary with the introduction of the .Append method in .NET4.7.1");
+
+		public static readonly DiagnosticDescriptor DontUseConcatWhenPrependingSingleElementToEnumerablesRule = new DiagnosticDescriptor(
+			DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID,
+			"Don't use .Concat when prepending a single element to enumerables",
+			"Don't use .Concat when prepending a single element to enumerables",
+			DecruftificationCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "Using .Concat to prepend a single element to a Linq.Enumerable has been rendered inefficient and unneccessary with the introduction of the .Prepend method in .NET4.7.1");
+
+		public static readonly DiagnosticDescriptor DontConcatTwoCollectionsDefinedWithLiteralsRule = new DiagnosticDescriptor(
+			DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID,
+			"Don't .Concat two collections defined with literals",
+			"Don't .Concat two collections defined with literals",
+			DecruftificationCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "Concantenating two Collections created using literal expressions is purposeless as the concatenation can be done more memory efficiently by hand.");
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -983,6 +1013,30 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateAvoidBoolLiteralsInLargerBoolExpressionsDiagnostic(Location location)
 		{
 			return Diagnostic.Create(AvoidBoolLiteralsInLargerBoolExpressionsRule, location);
+		}
+
+		/// <summary>
+		/// Don't use .Concat when appending a single element to enumerables
+		/// </summary>
+		public static Diagnostic CreateDontUseConcatWhenAppendingSingleElementToEnumerablesDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DontUseConcatWhenAppendingSingleElementToEnumerablesRule, location);
+		}
+
+		/// <summary>
+		/// Don't use .Concat when prepending a single element to enumerables
+		/// </summary>
+		public static Diagnostic CreateDontUseConcatWhenPrependingSingleElementToEnumerablesDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DontUseConcatWhenPrependingSingleElementToEnumerablesRule, location);
+		}
+
+		/// <summary>
+		/// Don't .Concat two collections defined with literals
+		/// </summary>
+		public static Diagnostic CreateDontConcatTwoCollectionsDefinedWithLiteralsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DontConcatTwoCollectionsDefinedWithLiteralsRule, location);
 		}
 
 		/// <summary>

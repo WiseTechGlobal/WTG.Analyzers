@@ -231,6 +231,21 @@
 			<description>Combining bool expressions in larger boolean expressions makes the code more complex than it needs to be.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="13" name="DontUseConcatWhenAppendingSingleElementToEnumerables" severity="Warning">
+			<title>Don't use .Concat when appending a single element to enumerables</title>
+			<message>Don't use .Concat when appending a single element to enumerables</message>
+			<description>Using .Concat to append a single element to a Linq.Enumerable has been rendered inefficient and unneccessary with the introduction of the .Append method in .NET4.7.1</description>
+		</rule>
+		<rule id="14" name="DontUseConcatWhenPrependingSingleElementToEnumerables" severity="Warning">
+			<title>Don't use .Concat when prepending a single element to enumerables</title>
+			<message>Don't use .Concat when prepending a single element to enumerables</message>
+			<description>Using .Concat to prepend a single element to a Linq.Enumerable has been rendered inefficient and unneccessary with the introduction of the .Prepend method in .NET4.7.1</description>
+		</rule>
+		<rule id="15" name="DontConcatTwoCollectionsDefinedWithLiterals" severity="Warning">
+			<title>Don't .Concat two collections defined with literals</title>
+			<message>Don't .Concat two collections defined with literals</message>
+			<description>Concantenating two Collections created using literal expressions is purposeless as the concatenation can be done more memory efficiently by hand.</description>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">

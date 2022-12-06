@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3013" severity="Warning">
+	<suppressId>CS0246</suppressId>
+</diagnostics>
