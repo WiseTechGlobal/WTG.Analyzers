@@ -127,31 +127,55 @@ namespace WTG.Analyzers
 					return;
 				}
 
+				// caching OP and so forth
 				var semanticModel = context.SemanticModel;
-				// this is O(n) but, the O(1) alternative looks gross
+				// this is O(n) but, the O(1) alternative looks gross so for readability purposes I'm doing
+				// unneccessary conversions
 				var arguments = invocation.ArgumentList.Arguments.ToList().ConvertAll(x => x.Expression);
 
 				if (LooksLikePrepend(invocation))
 				{
 					if (LooksLikeAppend(invocation))
 					{
-						// deal with edge case
-						Console.WriteLine("It is both");
+						foreach (var argument in arguments)
+						{
+							if (argument.IsKind(SyntaxKind.ObjectCreationExpression))
+							{
+								if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)argument))
+								{
+									return;
+								}
+							}
+						}
+
+						var e = expression.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)expression.Expression).Expression : expression.Expression;
+
+						if (e.IsKind(SyntaxKind.ObjectCreationExpression))
+						{
+							if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)e))
+							{
+								return;
+							}
+						}
+
+						context.ReportDiagnostic(Rules.CreateDontConcatTwoCollectionsDefinedWithLiteralsDiagnostic(expression.GetLocation()));
 					}
 					else
 					{
 						switch (arguments.Count)
 						{
 							case 1:
-								if (arguments[0].IsKind(SyntaxKind.ObjectCreationExpression))
+								var e = expression.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)expression.Expression).Expression : expression.Expression;
+
+								if (e.IsKind(SyntaxKind.ObjectCreationExpression))
 								{
-									if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)arguments[0]))
+									if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)e))
 									{
 										return;
 									}
 								}
 
-								if (!IsIEnumerable(semanticModel, expression.Expression))
+								if (!IsIEnumerable(semanticModel, arguments[0]))
 								{
 									return;
 								}

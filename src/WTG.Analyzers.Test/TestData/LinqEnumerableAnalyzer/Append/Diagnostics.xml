@@ -2,6 +2,9 @@
 <diagnostics id="WTG3013" severity="Warning">
 	<suppressId>CS0246</suppressId>
 	<diagnostic message="Don't use .Concat when appending a single element to enumerables">
+		<location>Test0.cs: (15, 3-11)</location>
+	</diagnostic>
+	<diagnostic message="Don't use .Concat when appending a single element to enumerables">
 		<location>Test0.cs: (16, 3-11)</location>
 	</diagnostic>
 	<diagnostic message="Don't use .Concat when appending a single element to enumerables">
@@ -17,7 +20,7 @@
 		<location>Test0.cs: (20, 3-11)</location>
 	</diagnostic>
 	<diagnostic message="Don't use .Concat when appending a single element to enumerables">
-		<location>Test0.cs: (21, 3-11)</location>
+		<location>Test0.cs: (22, 3-20)</location>
 	</diagnostic>
 	<diagnostic message="Don't use .Concat when appending a single element to enumerables">
 		<location>Test0.cs: (23, 3-20)</location>
@@ -33,8 +36,5 @@
 	</diagnostic>
 	<diagnostic message="Don't use .Concat when appending a single element to enumerables">
 		<location>Test0.cs: (27, 3-20)</location>
-	</diagnostic>
-	<diagnostic message="Don't use .Concat when appending a single element to enumerables">
-		<location>Test0.cs: (28, 3-20)</location>
 	</diagnostic>
 </diagnostics>

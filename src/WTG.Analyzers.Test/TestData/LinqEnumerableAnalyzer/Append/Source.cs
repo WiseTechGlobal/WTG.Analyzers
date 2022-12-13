@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,10 +26,10 @@ public class Bob
 		Enumerable.Concat(a, new int[] { j });
 		Enumerable.Concat(a, new List<int>() { j });
 
-		a.Concat(b); // there is no flow analysis to guarantee that the single element collection remains single element
+		a.Concat(b);
 		Dictionary<int, int> dict = new Dictionary<int, int>() { { 2, 1 } };
 		dict.Concat(new Dictionary<int, int>() {
 			{1, 1}
-		}); // analyzer does not check dictionaries despite them using ObjectCreationExpression
+		});
 	}
 }

@@ -12,8 +12,6 @@ public class Bob
 		int[] b = new[] { 1 };
 		int j = 5;
 
-		// TESTING append WTG3013
-
 		a.Append(4);
 		a.Append(4);
 		a.Append(4);
@@ -21,10 +19,17 @@ public class Bob
 		a.Append(j);
 		a.Append(j);
 
-		a.Concat(b); // there is no flow analysis to guarantee that the single element collection remains single element
+		Enumerable.Append(a, 4);
+		Enumerable.Append(a, 4);
+		Enumerable.Append(a, 4);
+		Enumerable.Append(a, j);
+		Enumerable.Append(a, j);
+		Enumerable.Append(a, j);
+
+		a.Concat(b);
 		Dictionary<int, int> dict = new Dictionary<int, int>() { { 2, 1 } };
 		dict.Concat(new Dictionary<int, int>() {
 			{1, 1}
-		}); // analyzer does not check dictionaries despite them using ObjectCreationExpression
+		});
 	}
 }

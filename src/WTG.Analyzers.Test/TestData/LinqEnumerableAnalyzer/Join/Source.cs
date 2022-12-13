@@ -10,16 +10,18 @@ public class Bob
 	{
 		IEnumerable<int> a = Enumerable.Empty<int>();
 		int[] b = new[] { 1 };
-		int j = 5;
-
-		// TESTING prepend WTG3014
-
-		new[] { 0 }.Concat(new[] { 1 });
 
 		a.Concat(b); // there is no flow analysis to guarantee that the single element collection remains single element
-		Dictionary<int, int> dict = new Dictionary<int, int>() { { 2, 1 } };
-		dict.Concat(new Dictionary<int, int>() {
+		new Dictionary<int, int>() { { 2, 1 } }.Concat(new Dictionary<int, int>() {
 			{1, 1}
 		}); // analyzer does not check dictionaries despite them using ObjectCreationExpression
 	}
+
+	public IEnumerable<int> Method1() => new[] { 1 }.Concat(new[] { 2 });
+	public IEnumerable<int> Method2() => new int[] { 1 }.Concat(new[] { 2 });
+	public IEnumerable<int> Method3() => new List<int>() { 1 }.Concat(new[] { 2 });
+
+	public IEnumerable<int> Method4() => (new[] { 1 }).Concat(new[] { 2 });
+	public IEnumerable<int> Method5() => (new int[] { 1 }).Concat(new[] { 2 });
+	public IEnumerable<int> Method6() => (new List<int>() { 1 }).Concat(new[] { 2 });
 }

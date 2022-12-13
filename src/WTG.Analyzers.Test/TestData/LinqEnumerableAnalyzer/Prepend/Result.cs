@@ -12,25 +12,27 @@ public class Bob
 		int[] b = new[] { 1 };
 		int j = 5;
 
-		// TESTING append and prepend simultaneously WTG3015
+		// TESTING prepend WTG3014
 
-		new[] { 1, 2 };
-		new[] { 1, 2 };
+		a.Prepend(0);
+		a.Prepend(0);
+		a.Prepend(0);
+		a.Prepend(0);
+		a.Prepend(0);
+		a.Prepend(0);
+		a.Prepend(j);
+		a.Prepend(j);
+		a.Prepend(j);
+		a.Prepend(j);
+		a.Prepend(j);
+		a.Prepend(j);
 
-		new int[] { 1, 2 };
-		new int[] { 1, 2 };
-
-		new List<int>() { 1, 2 };
-		new List<int>() { 1, 2 };
-
-		new[] { 1, 2 };
-		new[] { 1, 2 };
-
-		new[] { 1, 2 };
-		new[] { 1, 2 };
-
-		new int[] { 1, 2 };
-		new int[] { 1, 2 };
+		Enumerable.Prepend(a, 0);
+		Enumerable.Prepend(a, 0);
+		Enumerable.Prepend(a, 0);
+		Enumerable.Prepend(a, j);
+		Enumerable.Prepend(a, j);
+		Enumerable.Prepend(a, j);
 
 		a.Concat(b); // there is no flow analysis to guarantee that the single element collection remains single element
 		Dictionary<int, int> dict = new Dictionary<int, int>() { { 2, 1 } };

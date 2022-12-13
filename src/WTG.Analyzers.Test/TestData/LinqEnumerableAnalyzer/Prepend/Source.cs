@@ -27,6 +27,13 @@ public class Bob
 		(new List<int>() { j }).Concat(a);
 		new List<int>() { j }.Concat(a);
 
+		Enumerable.Concat(new[] { 0 }, a);
+		Enumerable.Concat(new int[] { 0 }, a);
+		Enumerable.Concat(new List<int>() { 0 }, a);
+		Enumerable.Concat(new[] { j }, a);
+		Enumerable.Concat(new int[] { j }, a);
+		Enumerable.Concat(new List<int>() { j }, a);
+
 		a.Concat(b); // there is no flow analysis to guarantee that the single element collection remains single element
 		Dictionary<int, int> dict = new Dictionary<int, int>() { { 2, 1 } };
 		dict.Concat(new Dictionary<int, int>() {
