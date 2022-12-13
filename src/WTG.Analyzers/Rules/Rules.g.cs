@@ -52,6 +52,7 @@ namespace WTG.Analyzers
 		public const string DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID = "WTG3013";
 		public const string DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID = "WTG3014";
 		public const string DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID = "WTG3015";
+		public const string InterpolatedStringMustBePurposefulDiagnosticID = "WTG3016";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -595,6 +596,15 @@ namespace WTG.Analyzers
 			isEnabledByDefault: true,
 			description: "Concantenating two Collections created using literal expressions is purposeless as the concatenation can be done more memory efficiently by hand.");
 
+		public static readonly DiagnosticDescriptor InterpolatedStringMustBePurposefulRule = new DiagnosticDescriptor(
+			InterpolatedStringMustBePurposefulDiagnosticID,
+			"Interpolated strings must be purposeful",
+			"Interpolated strings must be purposeful",
+			DecruftificationCategory,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: "Interpolated strings must be purposeful and include a combination of interpolation and interpolated string text");
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -1037,6 +1047,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateDontConcatTwoCollectionsDefinedWithLiteralsDiagnostic(Location location)
 		{
 			return Diagnostic.Create(DontConcatTwoCollectionsDefinedWithLiteralsRule, location);
+		}
+
+		/// <summary>
+		/// Interpolated strings must be purposeful
+		/// </summary>
+		public static Diagnostic CreateInterpolatedStringMustBePurposefulDiagnostic(Location location)
+		{
+			return Diagnostic.Create(InterpolatedStringMustBePurposefulRule, location);
 		}
 
 		/// <summary>

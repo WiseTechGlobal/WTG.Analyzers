@@ -39,6 +39,7 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(VisibilityAnalyzer), typeof(VisibilityCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(WhitespaceAnalyzer), typeof(WhitespaceCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(LinqEnumerableAnalyzer), typeof(LinqEnumerableCodeFixProvider) })]
+	[TestFixture(TypeArgs = new[] { typeof(InterpolatedStringAnalyzer), typeof(InterpolatedStringCodeFixProvider) })]
 	public class AnalyzerAndCodeFixTest<TAnalyzer, TCodeFix>
 		where TAnalyzer : DiagnosticAnalyzer, new()
 		where TCodeFix : CodeFixProvider, new()
