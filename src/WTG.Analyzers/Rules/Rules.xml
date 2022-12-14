@@ -244,7 +244,7 @@
 		<rule id="15" name="DontConcatTwoCollectionsDefinedWithLiterals" severity="Warning">
 			<title>Don't .Concat two collections defined with literals</title>
 			<message>Don't .Concat two collections defined with literals</message>
-			<description>Concantenating two Collections created using literal expressions is purposeless as the concatenation can be done more memory efficiently by hand.</description>
+			<description>Concatenating two collections comprising solely of literals creates useless work for the runtime.</description>
 		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
