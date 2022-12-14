@@ -242,7 +242,7 @@
 			<description>Using Concat to prepend a single element to an IEnumerable is less efficient than using Prepend.</description>
 		</rule>
 		<rule id="15" name="DontConcatTwoCollectionsDefinedWithLiterals" severity="Warning">
-			<title>Don't .Concat two collections defined with literals</title>
+			<title>Don't Concat two collections solely comprised of literals.</title>
 			<message>Don't .Concat two collections defined with literals</message>
 			<description>Concatenating two collections comprising solely of literals creates useless work for the runtime.</description>
 		</rule>
