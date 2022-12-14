@@ -237,7 +237,7 @@
 			<description>Using Concat to append a single element to an IEnumerable is less efficient than using Append.</description>
 		</rule>
 		<rule id="14" name="DontUseConcatWhenPrependingSingleElementToEnumerables" severity="Warning">
-			<title>Don't use .Concat when prepending a single element to enumerables</title>
+			<title>Don't use Concat when prepending a single element to an enumerable.</title>
 			<message>Don't use .Concat when prepending a single element to enumerables</message>
 			<description>Using .Concat to prepend a single element to a Linq.Enumerable has been rendered inefficient and unneccessary with the introduction of the .Prepend method in .NET4.7.1</description>
 		</rule>
