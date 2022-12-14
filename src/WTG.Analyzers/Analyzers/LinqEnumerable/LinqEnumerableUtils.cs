@@ -103,7 +103,7 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 						ArgumentList(
 							SeparatedList<ArgumentSyntax>(arguments)))
 					.WithLeadingTrivia(m.Parent!.GetLeadingTrivia())
-					.WithTrailingTrivia(m.Parent!.GetTrailingTrivia());
+					.WithTrailingTrivia(invocation.GetTrailingTrivia());
 		}
 
 		// this function exploits the fact that ImplicitArrayCreationExpression, ArrayCreationExpression,
