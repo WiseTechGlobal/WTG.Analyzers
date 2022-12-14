@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -9,54 +10,39 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 {
 	public static class LinqEnumerableUtils
 	{
-		public static SyntaxNode? FixMemberAccessExpression(MemberAccessExpressionSyntax memberAccessExpression, Diagnostic diagnostic)
+		public static InitializerExpressionSyntax? GetInitializer(ExpressionSyntax? e)
 		{
-			return diagnostic.Id switch
+			return e?.Kind() switch
 			{
-				Rules.DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID => AppendFix(memberAccessExpression),
-				Rules.DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID => PrependFix(memberAccessExpression),
-				Rules.DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID => JoinFix(memberAccessExpression),
-				_ => null,
+				SyntaxKind.ObjectCreationExpression => ((ObjectCreationExpressionSyntax)e).Initializer,
+				SyntaxKind.ArrayCreationExpression => ((ArrayCreationExpressionSyntax)e).Initializer,
+				SyntaxKind.ImplicitArrayCreationExpression => ((ImplicitArrayCreationExpressionSyntax)e).Initializer,
+				_ => throw new NotImplementedException(), // this should never happen - the analyzer should only look for lists, strongly typed arrays, and implicitly typed arrays
 			};
 		}
 
-		public static InitializerExpressionSyntax? GetInitializer(ExpressionSyntax e)
-		{
-			return e.Kind() switch
-			{
-				SyntaxKind.ObjectCreationExpression => ((ObjectCreationExpressionSyntax)e).Initializer!,
-				SyntaxKind.ArrayCreationExpression => ((ArrayCreationExpressionSyntax)e).Initializer!,
-				SyntaxKind.ImplicitArrayCreationExpression => ((ImplicitArrayCreationExpressionSyntax)e).Initializer!,
-				_ => null,
-			};
-		}
-
-		public static ExpressionSyntax? GetValue(ExpressionSyntax e)
+		public static ExpressionSyntax? GetValue(ExpressionSyntax? e)
 		{
 			var initializer = GetInitializer(e);
-			if (initializer == null)
-			{
-				return null;
-			}
 
-			return initializer.Expressions.First();
+			return initializer?.Expressions.First();
 		}
 
-		public static SyntaxNode AppendFix(MemberAccessExpressionSyntax m)
+		public static SyntaxNode FixConcatWithAppendMethod(MemberAccessExpressionSyntax m)
 		{
 			var invocation = (InvocationExpressionSyntax)m.Parent!;
 
-			var arguments = new List<SyntaxNodeOrToken>();
+			var listOfArgumentsAndSeparators = new List<SyntaxNodeOrToken>();
 
 			switch (invocation.ArgumentList.Arguments.Count)
 			{
 				case 1:
-					arguments.Add(Argument(GetValue(invocation.ArgumentList.Arguments[0].Expression)!));
+					listOfArgumentsAndSeparators.Add(Argument(GetValue(invocation.ArgumentList.Arguments[0].Expression)!));
 					break;
 				case 2:
-					arguments.Add(invocation.ArgumentList.Arguments[0]);
-					arguments.Add(Token(SyntaxKind.CommaToken));
-					arguments.Add(Argument(GetValue(invocation.ArgumentList.Arguments[1].Expression)!));
+					listOfArgumentsAndSeparators.Add(invocation.ArgumentList.Arguments[0]);
+					listOfArgumentsAndSeparators.Add(Token(SyntaxKind.CommaToken));
+					listOfArgumentsAndSeparators.Add(Argument(GetValue(invocation.ArgumentList.Arguments[1].Expression)!));
 					break;
 			}
 
@@ -64,12 +50,12 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 						MemberAccessExpression(
 							SyntaxKind.SimpleMemberAccessExpression,
 							IdentifierName(m.Expression.ToString()),
-							IdentifierName("Append")))
+							IdentifierName(nameof(Enumerable.Append))))
 					.WithArgumentList(
 						ArgumentList(
-							SeparatedList<ArgumentSyntax>(arguments)))
-					.WithLeadingTrivia(m.Parent!.GetLeadingTrivia())
-					.WithTrailingTrivia(m.Parent!.GetTrailingTrivia());
+							SeparatedList<ArgumentSyntax>(listOfArgumentsAndSeparators)))
+					.WithLeadingTrivia(invocation.GetLeadingTrivia())
+					.WithTrailingTrivia(invocation.GetTrailingTrivia());
 		}
 
 		public static SyntaxNode? PrependFix(MemberAccessExpressionSyntax m)
@@ -78,32 +64,56 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 
 			var arguments = new List<SyntaxNodeOrToken>();
 
-			string identifier = m.Expression.ToString();
-
 			switch (invocation.ArgumentList.Arguments.Count)
 			{
 				case 1:
-					var expression = m.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)m.Expression).Expression : m.Expression;
-					identifier = invocation.ArgumentList.Arguments.First().ToString();
-					arguments.Add(Argument(GetValue(expression)!));
-					break;
-				case 2:
-					arguments.Add(invocation.ArgumentList.Arguments[1]);
-					arguments.Add(Token(SyntaxKind.CommaToken));
-					arguments.Add(Argument(GetValue(invocation.ArgumentList.Arguments[0].Expression)!));
-					break;
-			}
+					ExpressionSyntax expression = m.Expression;
 
-			return InvocationExpression(
+					while (expression.IsKind(SyntaxKind.ParenthesizedExpression))
+					{
+						expression = ((ParenthesizedExpressionSyntax)expression).Expression;
+					}
+
+					arguments.Add(Argument(GetValue(expression)!));
+
+					IdentifierNameSyntax identifier = (IdentifierNameSyntax)invocation.ArgumentList.Arguments[0].Expression;
+
+					return InvocationExpression(
 						MemberAccessExpression(
 							SyntaxKind.SimpleMemberAccessExpression,
-							IdentifierName(identifier),
-							IdentifierName("Prepend")))
+							identifier,
+							IdentifierName(nameof(Enumerable.Prepend))))
 					.WithArgumentList(
 						ArgumentList(
 							SeparatedList<ArgumentSyntax>(arguments)))
 					.WithLeadingTrivia(invocation.GetLeadingTrivia())
 					.WithTrailingTrivia(invocation.GetTrailingTrivia());
+				case 2:
+
+					var value = GetValue(invocation.ArgumentList.Arguments[0].Expression);
+
+					if (value == null)
+					{
+						return invocation;
+					}	
+
+					arguments.Add(invocation.ArgumentList.Arguments[1]);
+					arguments.Add(Token(SyntaxKind.CommaToken));
+					arguments.Add(Argument(value));
+
+					return InvocationExpression(
+						MemberAccessExpression(
+							SyntaxKind.SimpleMemberAccessExpression,
+							IdentifierName(nameof(Enumerable)),
+							IdentifierName(nameof(Enumerable.Prepend))))
+					.WithArgumentList(
+						ArgumentList(
+							SeparatedList<ArgumentSyntax>(arguments)))
+					.WithLeadingTrivia(invocation.GetLeadingTrivia())
+					.WithTrailingTrivia(invocation.GetTrailingTrivia());
+				default:
+					return invocation;
+			}
 		}
 
 		// this function exploits the fact that ImplicitArrayCreationExpression, ArrayCreationExpression,
@@ -139,8 +149,8 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 					break;
 				case 2:
 
-					var firstArgument = invocation.ArgumentList.Arguments.First().Expression;
-					var secondArgument = invocation.ArgumentList.Arguments.Last().Expression;
+					var firstArgument = invocation.ArgumentList.Arguments[0].Expression;
+					var secondArgument = invocation.ArgumentList.Arguments[1].Expression;
 
 					if (firstArgument.RawKind < secondArgument.RawKind)
 					{
@@ -159,11 +169,11 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 
 			if (prepend)
 			{
-				initializer = GetInitializer(a!)!.Expressions.Insert(0, GetValue(b!)!);
+				initializer = GetInitializer(a)!.Expressions.Insert(0, GetValue(b)!);
 			}
 			else
 			{
-				initializer = GetInitializer(a!)!.Expressions.Add(GetValue(b!)!);
+				initializer = GetInitializer(a)!.Expressions.Add(GetValue(b)!);
 			}
 
 			SyntaxKind syntaxKind = a!.Kind() switch
@@ -174,9 +184,9 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 				_ => SyntaxKind.ArrayInitializerExpression,
 			};
 
-			return a!.ReplaceNode(GetInitializer(a!)!, InitializerExpression(syntaxKind, initializer))
-					.WithLeadingTrivia(m.Parent!.GetLeadingTrivia())
-					.WithTrailingTrivia(m.Parent!.GetTrailingTrivia());
+			return a!.ReplaceNode(GetInitializer(a)!, InitializerExpression(syntaxKind, initializer))
+					.WithLeadingTrivia(invocation.GetLeadingTrivia())
+					.WithTrailingTrivia(invocation.GetTrailingTrivia());
 		}
 	}
 }

@@ -27,6 +27,7 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(FileSystemPathsAnalyzer), typeof(FileSystemPathsCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(FlagsAnalyzer), typeof(FlagsCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(LinqAnalyzer), typeof(LinqCodeFixProvider) })]
+	[TestFixture(TypeArgs = new[] { typeof(LinqEnumerableAnalyzer), typeof(LinqEnumerableCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(NullComparisonAnalyzer), typeof(NullComparisonCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(PointlessOverrideAnalyzer), typeof(PointlessOverrideCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(RegexAnalyzer), typeof(RegexCodeFixProvider) })]
@@ -38,7 +39,6 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(VarAnalyzer), typeof(VarCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(VisibilityAnalyzer), typeof(VisibilityCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(WhitespaceAnalyzer), typeof(WhitespaceCodeFixProvider) })]
-	[TestFixture(TypeArgs = new[] { typeof(LinqEnumerableAnalyzer), typeof(LinqEnumerableCodeFixProvider) })]
 	public class AnalyzerAndCodeFixTest<TAnalyzer, TCodeFix>
 		where TAnalyzer : DiagnosticAnalyzer, new()
 		where TCodeFix : CodeFixProvider, new()

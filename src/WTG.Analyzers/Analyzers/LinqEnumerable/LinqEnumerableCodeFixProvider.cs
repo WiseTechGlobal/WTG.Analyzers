@@ -67,7 +67,13 @@ namespace WTG.Analyzers
 
 		public static SyntaxNode? FixMemberAccessExpression(MemberAccessExpressionSyntax m, Diagnostic d)
 		{
-			return LinqEnumerableUtils.FixMemberAccessExpression(m, d);
+			return d.Id switch
+			{
+				Rules.DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID => LinqEnumerableUtils.FixConcatWithAppendMethod(m),
+				Rules.DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID => LinqEnumerableUtils.PrependFix(m),
+				Rules.DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID => LinqEnumerableUtils.JoinFix(m),
+				_ => null,
+			};
 		}
 	}
 }

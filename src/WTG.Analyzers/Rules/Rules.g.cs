@@ -570,30 +570,30 @@ namespace WTG.Analyzers
 
 		public static readonly DiagnosticDescriptor DontUseConcatWhenAppendingSingleElementToEnumerablesRule = new DiagnosticDescriptor(
 			DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID,
-			"Don't use .Concat when appending a single element to enumerables",
-			"Don't use .Concat when appending a single element to enumerables",
+			"Don't use Concat when appending a single element to an enumerable.",
+			"Don't use Concat when appending a single element to an enumerable.",
 			DecruftificationCategory,
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
-			description: "Using .Concat to append a single element to a Linq.Enumerable has been rendered inefficient and unneccessary with the introduction of the .Append method in .NET4.7.1");
+			description: "Using Concat to append a single element to an IEnumerable is less efficient than using Append.");
 
 		public static readonly DiagnosticDescriptor DontUseConcatWhenPrependingSingleElementToEnumerablesRule = new DiagnosticDescriptor(
 			DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID,
-			"Don't use .Concat when prepending a single element to enumerables",
-			"Don't use .Concat when prepending a single element to enumerables",
+			"Don't use Concat when prepending a single element to an enumerable.",
+			"Don't use Concat when prepending a single element to an enumerable.",
 			DecruftificationCategory,
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
-			description: "Using .Concat to prepend a single element to a Linq.Enumerable has been rendered inefficient and unneccessary with the introduction of the .Prepend method in .NET4.7.1");
+			description: "Using Concat to prepend a single element to an IEnumerable is less efficient than using Prepend.");
 
 		public static readonly DiagnosticDescriptor DontConcatTwoCollectionsDefinedWithLiteralsRule = new DiagnosticDescriptor(
 			DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID,
-			"Don't .Concat two collections defined with literals",
-			"Don't .Concat two collections defined with literals",
+			"Don't Concat two collections solely comprised of literals.",
+			"Don't Concat two collections solely comprised of literals.",
 			DecruftificationCategory,
 			DiagnosticSeverity.Warning,
 			isEnabledByDefault: true,
-			description: "Concantenating two Collections created using literal expressions is purposeless as the concatenation can be done more memory efficiently by hand.");
+			description: "Concatenating two collections comprising solely of literals creates useless work for the runtime.");
 
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
@@ -1016,7 +1016,7 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
-		/// Don't use .Concat when appending a single element to enumerables
+		/// Don't use Concat when appending a single element to an enumerable.
 		/// </summary>
 		public static Diagnostic CreateDontUseConcatWhenAppendingSingleElementToEnumerablesDiagnostic(Location location)
 		{
@@ -1024,7 +1024,7 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
-		/// Don't use .Concat when prepending a single element to enumerables
+		/// Don't use Concat when prepending a single element to an enumerable.
 		/// </summary>
 		public static Diagnostic CreateDontUseConcatWhenPrependingSingleElementToEnumerablesDiagnostic(Location location)
 		{
@@ -1032,7 +1032,7 @@ namespace WTG.Analyzers
 		}
 
 		/// <summary>
-		/// Don't .Concat two collections defined with literals
+		/// Don't Concat two collections solely comprised of literals.
 		/// </summary>
 		public static Diagnostic CreateDontConcatTwoCollectionsDefinedWithLiteralsDiagnostic(Location location)
 		{
