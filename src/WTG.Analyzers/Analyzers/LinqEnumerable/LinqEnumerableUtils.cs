@@ -102,7 +102,7 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 					.WithArgumentList(
 						ArgumentList(
 							SeparatedList<ArgumentSyntax>(arguments)))
-					.WithLeadingTrivia(m.Parent!.GetLeadingTrivia())
+					.WithLeadingTrivia(invocation.GetLeadingTrivia())
 					.WithTrailingTrivia(invocation.GetTrailingTrivia());
 		}
 
