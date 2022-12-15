@@ -10,6 +10,7 @@ using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
+#pragma warning disable CA1303
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public class LinqEnumerableAnalyzer : DiagnosticAnalyzer
 	{
@@ -57,20 +58,16 @@ namespace WTG.Analyzers
 			context.RegisterSyntaxNodeAction(c => Analyze(c, cache, hasEnumerableAppendMethod), SyntaxKind.SimpleMemberAccessExpression);
 		}
 
-		static bool ContainsSingleElement(ArrayCreationExpressionSyntax e) => (e != null && e.Initializer != null && e.Initializer.Expressions.Count == 1);
-		static bool ContainsSingleElement(ImplicitArrayCreationExpressionSyntax e) => (e != null && e.Initializer != null && e.Initializer.Expressions.Count == 1);
-		static bool ContainsSingleElement(ObjectCreationExpressionSyntax e) => (e != null && e.Initializer != null && e.Initializer.Expressions.Count == 1);
-
 		static bool ContainsSingleElement (ExpressionSyntax e)
 		{
 			switch (e.Kind())
 			{
 				case SyntaxKind.ImplicitArrayCreationExpression:
-					return ContainsSingleElement((ImplicitArrayCreationExpressionSyntax)e);
+					return ((ImplicitArrayCreationExpressionSyntax)e)?.Initializer?.Expressions.Count == 1;
 				case SyntaxKind.ObjectCreationExpression:
-					return ContainsSingleElement((ObjectCreationExpressionSyntax)e);
+					return ((ObjectCreationExpressionSyntax)e)?.Initializer?.Expressions.Count == 1;
 				case SyntaxKind.ArrayCreationExpression:
-					return ContainsSingleElement((ArrayCreationExpressionSyntax)e);
+					return ((ArrayCreationExpressionSyntax)e)?.Initializer?.Expressions.Count == 1;
 				default:
 					return false;
 			}
@@ -89,8 +86,8 @@ namespace WTG.Analyzers
 			return (invocation.ArgumentList.Arguments.Count == 1 ? ContainsSingleElement(expression) : ContainsSingleElement(invocation.ArgumentList.Arguments[0].Expression));
 		}
 
-		public static bool IsList(SemanticModel model, ObjectCreationExpressionSyntax e) => (model.GetTypeInfo(e).Type!.MetadataName == "List`1");
-		public static bool IsIEnumerable(SemanticModel model, ExpressionSyntax e) => (model.GetTypeInfo(e).Type!.MetadataName == "IEnumerable`1");
+		public static bool IsList(SemanticModel model, ObjectCreationExpressionSyntax e) => e.Type.ToString().StartsWith("List", StringComparison.Ordinal) && model.GetTypeInfo(e).Type?.MetadataName == "List`1";
+		public static bool IsIEnumerable(SemanticModel model, ExpressionSyntax e) => model.GetTypeInfo(e).Type!.MetadataName == "IEnumerable`1";
 
 		public static void Analyze (SyntaxNodeAnalysisContext context, FileDetailCache cache, bool hasEnumerable)
 		{
@@ -108,23 +105,26 @@ namespace WTG.Analyzers
 					return;
 				}
 
-				var invocation = expression.Parent as InvocationExpressionSyntax;
+				if (!expression.Parent.IsKind(SyntaxKind.InvocationExpression))
+				{
+					return;
+				}
+
+				var invocation = (InvocationExpressionSyntax)expression.Parent;
 
 				if (invocation == null)
 				{
 					return;
 				}
 
-				if (invocation.ArgumentList.Arguments.Count > 2)
+				if (invocation.ArgumentList.Arguments.Count > 2 ||
+					invocation.ArgumentList.Arguments.Count < 1)
 				{
 					return;
 				}
 
-				// caching OP and so forth
 				var semanticModel = context.SemanticModel;
-				// this is O(n) but, the O(1) alternative looks gross so for readability purposes I'm doing
-				// unneccessary conversions
-				var arguments = invocation.ArgumentList.Arguments.ToList().ConvertAll(x => x.Expression);
+				var arguments = invocation.ArgumentList.Arguments;
 
 				if (LooksLikePrepend(invocation))
 				{
@@ -132,23 +132,17 @@ namespace WTG.Analyzers
 					{
 						foreach (var argument in arguments)
 						{
-							if (argument.IsKind(SyntaxKind.ObjectCreationExpression))
+							if (argument.IsKind(SyntaxKind.ObjectCreationExpression) && !IsList(semanticModel, (ObjectCreationExpressionSyntax)argument.Expression))
 							{
-								if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)argument))
-								{
-									return;
-								}
+								return;
 							}
 						}
 
 						var e = expression.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)expression.Expression).Expression : expression.Expression;
 
-						if (e.IsKind(SyntaxKind.ObjectCreationExpression))
+						if (e.IsKind(SyntaxKind.ObjectCreationExpression) && !IsList(semanticModel, (ObjectCreationExpressionSyntax)e))
 						{
-							if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)e))
-							{
-								return;
-							}
+							return;
 						}
 
 						context.ReportDiagnostic(Rules.CreateDontConcatTwoCollectionsDefinedWithLiteralsDiagnostic(expression.GetLocation()));
@@ -160,15 +154,12 @@ namespace WTG.Analyzers
 							case 1:
 								var e = expression.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)expression.Expression).Expression : expression.Expression;
 
-								if (e.IsKind(SyntaxKind.ObjectCreationExpression))
+								if (e.IsKind(SyntaxKind.ObjectCreationExpression) && !IsList(semanticModel, (ObjectCreationExpressionSyntax)e))
 								{
-									if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)e))
-									{
-										return;
-									}
+									return;
 								}
 
-								if (!IsIEnumerable(semanticModel, arguments[0]))
+								if (!IsIEnumerable(semanticModel, arguments[0].Expression))
 								{
 									return;
 								}
@@ -177,9 +168,9 @@ namespace WTG.Analyzers
 
 								break;
 							case 2:
-								if (arguments[0].IsKind(SyntaxKind.ObjectCreationExpression))
+								if (arguments[0].Expression.IsKind(SyntaxKind.ObjectCreationExpression))
 								{
-									if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)arguments[0]))
+									if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)arguments[0].Expression))
 									{
 										return;
 									}
@@ -202,9 +193,9 @@ namespace WTG.Analyzers
 					{
 						case 1:
 
-							if (arguments[0].IsKind(SyntaxKind.ObjectCreationExpression))
+							if (arguments[0].Expression.IsKind(SyntaxKind.ObjectCreationExpression))
 							{
-								if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)arguments[0]))
+								if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)arguments[0].Expression))
 								{
 									return;
 								}
@@ -220,9 +211,9 @@ namespace WTG.Analyzers
 							break;
 						case 2:
 
-							if (arguments[1].IsKind(SyntaxKind.ObjectCreationExpression))
+							if (arguments[1].Expression.IsKind(SyntaxKind.ObjectCreationExpression))
 							{
-								if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)arguments[1]))
+								if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)arguments[1].Expression))
 								{
 									return;
 								}
@@ -242,6 +233,7 @@ namespace WTG.Analyzers
 		}
 	}
 }
+#pragma warning restore CA1303
 
 
 
