@@ -1,12 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Net.Http.Headers;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.InteropServices;
-using System.Xml.Schema;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -16,7 +10,7 @@ using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
-	#pragma warning disable CA1303
+#pragma warning disable CA1303
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public class LinqEnumerableAnalyzer : DiagnosticAnalyzer
 	{
