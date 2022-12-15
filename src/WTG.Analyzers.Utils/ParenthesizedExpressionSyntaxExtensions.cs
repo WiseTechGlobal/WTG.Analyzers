@@ -15,7 +15,7 @@ namespace WTG.Analyzers.Utils
 
 			while (unwrappedExpression.IsKind(SyntaxKind.ParenthesizedExpression))
 			{
-				unwrappedExpression = unwrappedExpression.Expression;
+				unwrappedExpression = ((ParenthesizedExpressionSyntax)unwrappedExpression).Expression;
 			}
 
 			return unwrappedExpression;
