@@ -5,7 +5,7 @@
 		<location>Test0.cs: (17, 3-21)</location>
 	</diagnostic>
 	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
-		<location>Test0.cs: (18, 3-23)</location>
+		<location>Test0.cs: (18, 3-27)</location>
 	</diagnostic>
 	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
 		<location>Test0.cs: (19, 3-27)</location>

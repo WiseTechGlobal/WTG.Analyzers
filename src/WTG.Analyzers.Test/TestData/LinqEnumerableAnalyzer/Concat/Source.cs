@@ -24,4 +24,6 @@ public class Bob
 	public IEnumerable<int> Method4() => (new[] { 1 }).Concat(new[] { 2 });
 	public IEnumerable<int> Method5() => (new int[] { 1 }).Concat(new[] { 2 });
 	public IEnumerable<int> Method6() => (new List<int>() { 1 }).Concat(new[] { 2 });
+
+	public IEnumerable<int> Method7() => new[] { 1 }.Concat(new[] { null });
 }

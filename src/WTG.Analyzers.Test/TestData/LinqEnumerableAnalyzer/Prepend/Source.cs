@@ -15,7 +15,7 @@ public class Bob
 		// TESTING prepend WTG3014
 
 		new[] { 0 }.Concat(a);
-		(new[] { 0 }).Concat(a);
+		(((new[] { 0 }))).Concat(a);
 		(new int[] { 0 }).Concat(a);
 		new int[] { 0 }.Concat(a);
 		(new List<int>() { 0 }).Concat(a);

@@ -58,9 +58,9 @@ namespace WTG.Analyzers
 			context.RegisterSyntaxNodeAction(c => Analyze(c, cache, hasEnumerableAppendMethod), SyntaxKind.SimpleMemberAccessExpression);
 		}
 
-		static bool ContainsSingleElement (ExpressionSyntax e)
+		static bool ContainsSingleElement (ExpressionSyntax? e)
 		{
-			switch (e.Kind())
+			switch (e?.Kind())
 			{
 				case SyntaxKind.ImplicitArrayCreationExpression:
 					return ((ImplicitArrayCreationExpressionSyntax)e)?.Initializer?.Expressions.Count == 1;
@@ -78,16 +78,17 @@ namespace WTG.Analyzers
 		public static bool LooksLikePrepend(InvocationExpressionSyntax invocation)
 		{
 			var expression = ((MemberAccessExpressionSyntax)invocation.Expression).Expression;
-			if (expression.Kind() == SyntaxKind.ParenthesizedExpression)
+
+			if (expression.IsKind(SyntaxKind.ParenthesizedExpression))
 			{
-				expression = ((ParenthesizedExpressionSyntax)expression).Expression;
+				expression = ((ParenthesizedExpressionSyntax)expression).GetExpression();
 			}
 
 			return (invocation.ArgumentList.Arguments.Count == 1 ? ContainsSingleElement(expression) : ContainsSingleElement(invocation.ArgumentList.Arguments[0].Expression));
 		}
 
 		public static bool IsList(SemanticModel model, ObjectCreationExpressionSyntax e) => e.Type.ToString().StartsWith("List", StringComparison.Ordinal) && model.GetTypeInfo(e).Type?.MetadataName == "List`1";
-		public static bool IsIEnumerable(SemanticModel model, ExpressionSyntax e) => model.GetTypeInfo(e).Type!.MetadataName == "IEnumerable`1";
+		public static bool IsIEnumerable(SemanticModel model, ExpressionSyntax e) => model.GetTypeInfo(e).Type?.MetadataName == "IEnumerable`1";
 
 		public static void Analyze (SyntaxNodeAnalysisContext context, FileDetailCache cache, bool hasEnumerable)
 		{
@@ -138,7 +139,7 @@ namespace WTG.Analyzers
 							}
 						}
 
-						var e = expression.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)expression.Expression).Expression : expression.Expression;
+						var e = expression.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)expression.Expression).GetExpression() : expression.Expression;
 
 						if (e.IsKind(SyntaxKind.ObjectCreationExpression) && !IsList(semanticModel, (ObjectCreationExpressionSyntax)e))
 						{
@@ -152,7 +153,7 @@ namespace WTG.Analyzers
 						switch (arguments.Count)
 						{
 							case 1:
-								var e = expression.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)expression.Expression).Expression : expression.Expression;
+								var e = expression.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)expression.Expression).GetExpression() : expression.Expression;
 
 								if (e.IsKind(SyntaxKind.ObjectCreationExpression) && !IsList(semanticModel, (ObjectCreationExpressionSyntax)e))
 								{

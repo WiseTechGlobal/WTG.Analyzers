@@ -11,7 +11,7 @@ namespace WTG.Analyzers.Utils
 	{
 		public static ExpressionSyntax? GetExpression (this ParenthesizedExpressionSyntax expression)
 		{
-			ExpressionSyntax unwrappedExpression = expression.Expression;
+			var unwrappedExpression = expression.Expression;
 
 			while (unwrappedExpression.IsKind(SyntaxKind.ParenthesizedExpression))
 			{

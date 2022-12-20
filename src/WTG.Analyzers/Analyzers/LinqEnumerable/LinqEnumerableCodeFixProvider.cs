@@ -48,11 +48,12 @@ namespace WTG.Analyzers
 		{
 			var root = await document.GetSyntaxRootAsync(c).ConfigureAwait(true);
 
-			var memberAccessExpressions = from m in root!.DescendantNodes().OfType<MemberAccessExpressionSyntax>()
-										  where m.GetLocation() == diagnostic.Location
-										  select m;
+			if (root == null)
+			{
+				return document;
+			}
 
-			var memberAccessExpression = memberAccessExpressions.First();
+			var memberAccessExpression = (MemberAccessExpressionSyntax)root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
 
 			var newNode = FixMemberAccessExpression(memberAccessExpression, diagnostic);
 
@@ -70,8 +71,8 @@ namespace WTG.Analyzers
 			return d.Id switch
 			{
 				Rules.DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID => LinqEnumerableUtils.FixConcatWithAppendMethod(m),
-				Rules.DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID => LinqEnumerableUtils.PrependFix(m),
-				Rules.DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID => LinqEnumerableUtils.JoinFix(m),
+				Rules.DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID => LinqEnumerableUtils.FixConcatWithPrependMethod(m),
+				Rules.DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID => LinqEnumerableUtils.FixConcatWithNewCollection(m),
 				_ => null,
 			};
 		}

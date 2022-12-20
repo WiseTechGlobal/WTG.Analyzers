@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using WTG.Analyzers.Utils;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace WTG.Analyzers.Analyzers.LinqEnumerable
@@ -58,21 +59,21 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 					.WithTrailingTrivia(invocation.GetTrailingTrivia());
 		}
 
-		public static SyntaxNode? PrependFix(MemberAccessExpressionSyntax m)
+		public static SyntaxNode? FixConcatWithPrependMethod(MemberAccessExpressionSyntax m)
 		{
-			var invocation = (InvocationExpressionSyntax)m.Parent!;
+			var invocation = (InvocationExpressionSyntax?)m.Parent;
+
+			if (invocation == null)
+			{
+				return m;
+			}
 
 			var arguments = new List<SyntaxNodeOrToken>();
 
 			switch (invocation.ArgumentList.Arguments.Count)
 			{
 				case 1:
-					ExpressionSyntax expression = m.Expression;
-
-					while (expression.IsKind(SyntaxKind.ParenthesizedExpression))
-					{
-						expression = ((ParenthesizedExpressionSyntax)expression).Expression;
-					}
+					var expression = m.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)m.Expression).GetExpression() : m.Expression;
 
 					arguments.Add(Argument(GetValue(expression)!));
 
@@ -116,77 +117,24 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 			}
 		}
 
-		// this function exploits the fact that ImplicitArrayCreationExpression, ArrayCreationExpression,
-		// and ObjectCreationExpression are already ordered appropriately in the SyntaxKind enum
-		// ImplicitArrayCreationExpression = 8652
-		// ArrayCreationExpression = 8651
-		// ObjectCreationExpression = 8649
-		public static SyntaxNode JoinFix(MemberAccessExpressionSyntax m)
+		public static SyntaxNode FixConcatWithNewCollection(MemberAccessExpressionSyntax m)
 		{
-			var invocation = (InvocationExpressionSyntax)m.Parent!;
+			var invocation = (InvocationExpressionSyntax?)m.Parent;
 
-			ExpressionSyntax? a = null, b = null;
-
-			var prepend = false;
+			if (invocation == null)
+			{
+				return m;
+			}
 
 			switch (invocation.ArgumentList.Arguments.Count)
 			{
 				case 1:
-
-					var expression = m.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)m.Expression).Expression : m.Expression;
-					var argument = invocation.ArgumentList.Arguments.First().Expression;
-
-					if (expression.RawKind < argument.RawKind)
-					{
-						(a, b) = (argument, expression);
-						prepend = true;
-					}
-					else
-					{
-						(a, b) = (expression, argument);
-					}
-
 					break;
 				case 2:
-
-					var firstArgument = invocation.ArgumentList.Arguments[0].Expression;
-					var secondArgument = invocation.ArgumentList.Arguments[1].Expression;
-
-					if (firstArgument.RawKind < secondArgument.RawKind)
-					{
-						(a, b) = (secondArgument, firstArgument);
-						prepend = true;
-					}
-					else
-					{
-						(a, b) = (firstArgument, secondArgument);
-					}
-
 					break;
+				default:
+					return invocation;
 			}
-
-			SeparatedSyntaxList<ExpressionSyntax> initializer;
-
-			if (prepend)
-			{
-				initializer = GetInitializer(a)!.Expressions.Insert(0, GetValue(b)!);
-			}
-			else
-			{
-				initializer = GetInitializer(a)!.Expressions.Add(GetValue(b)!);
-			}
-
-			SyntaxKind syntaxKind = a!.Kind() switch
-			{
-				SyntaxKind.ImplicitArrayCreationExpression => SyntaxKind.ArrayInitializerExpression,
-				SyntaxKind.ArrayCreationExpression => SyntaxKind.ArrayInitializerExpression,
-				SyntaxKind.ObjectCreationExpression => SyntaxKind.ObjectInitializerExpression,
-				_ => SyntaxKind.ArrayInitializerExpression,
-			};
-
-			return a!.ReplaceNode(GetInitializer(a)!, InitializerExpression(syntaxKind, initializer))
-					.WithLeadingTrivia(invocation.GetLeadingTrivia())
-					.WithTrailingTrivia(invocation.GetTrailingTrivia());
 		}
 	}
 }
