@@ -28,7 +28,6 @@ namespace WTG.Analyzers.Test
 	[TestFixture(TypeArgs = new[] { typeof(FlagsAnalyzer), typeof(FlagsCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(InterpolatedStringAnalyzer), typeof(InterpolatedStringCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(LinqAnalyzer), typeof(LinqCodeFixProvider) })]
-	[TestFixture(TypeArgs = new[] { typeof(LinqEnumerableAnalyzer), typeof(LinqEnumerableCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(NullComparisonAnalyzer), typeof(NullComparisonCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(PointlessOverrideAnalyzer), typeof(PointlessOverrideCodeFixProvider) })]
 	[TestFixture(TypeArgs = new[] { typeof(RegexAnalyzer), typeof(RegexCodeFixProvider) })]
