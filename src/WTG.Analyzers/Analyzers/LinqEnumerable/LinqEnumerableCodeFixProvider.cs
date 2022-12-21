@@ -47,6 +47,7 @@ namespace WTG.Analyzers
 		public static async Task<Document> ReplaceWithAppropriateMethod(Document document, Diagnostic diagnostic, CancellationToken c)
 		{
 			var root = await document.GetSyntaxRootAsync(c).ConfigureAwait(true);
+			var semanticModel = await document.GetSemanticModelAsync(c).ConfigureAwait(true);
 
 			if (root == null)
 			{
@@ -55,7 +56,7 @@ namespace WTG.Analyzers
 
 			var memberAccessExpression = (MemberAccessExpressionSyntax)root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
 
-			var newNode = FixMemberAccessExpression(memberAccessExpression, diagnostic);
+			var newNode = FixMemberAccessExpression(semanticModel, memberAccessExpression, diagnostic);
 
 			if (newNode == null)
 			{
@@ -66,13 +67,13 @@ namespace WTG.Analyzers
 				memberAccessExpression.Parent!, newNode));
 		}
 
-		public static SyntaxNode? FixMemberAccessExpression(MemberAccessExpressionSyntax m, Diagnostic d)
+		public static SyntaxNode? FixMemberAccessExpression(SemanticModel? semanticModel, MemberAccessExpressionSyntax m, Diagnostic d)
 		{
 			return d.Id switch
 			{
 				Rules.DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID => LinqEnumerableUtils.FixConcatWithAppendMethod(m),
 				Rules.DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID => LinqEnumerableUtils.FixConcatWithPrependMethod(m),
-				Rules.DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID => LinqEnumerableUtils.FixConcatWithNewCollection(m),
+				Rules.DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID => LinqEnumerableUtils.FixConcatWithNewCollection(m, semanticModel),
 				_ => null,
 			};
 		}

@@ -24,6 +24,4 @@ public class Bob
 	public IEnumerable<int> Method4() => new[] { 1, 2 };
 	public IEnumerable<int> Method5() => new[] { 1, 2 };
 	public IEnumerable<int> Method6() => new[] { 1, 2 };
-
-	public IEnumerable<int> Method7() => new[] { 1, null };
 }
