@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Reflection.Metadata.Ecma335;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Workspaces;
 using WTG.Analyzers.Utils;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -120,7 +117,7 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 			}
 		}
 
-		public static SyntaxNode FixConcatWithNewCollection(MemberAccessExpressionSyntax m, SemanticModel? semanticModel)
+		public static SyntaxNode FixConcatWithNewCollection(MemberAccessExpressionSyntax m)
 		{
 			var invocation = (InvocationExpressionSyntax?)m.Parent;
 
@@ -128,11 +125,6 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 			if (invocation == null)
 			{
 				return m;
-			}
-
-			if (semanticModel == null)
-			{
-				return invocation;
 			}
 
 			LiteralExpressionSyntax a, b;
@@ -153,45 +145,6 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 					return invocation;
 			}
 
-			//ITypeSymbol? typeA = semanticModel.GetTypeInfo(a).Type, typeB = semanticModel.GetTypeInfo(b).Type;
-
-			/*if (a.IsKind(SyntaxKind.NullLiteralExpression))
-			{
-				return ArrayCreationExpression(
-						Token(SyntaxKind.NewKeyword),
-						ArrayType(
-							NullableType(
-								GetTypeSyntax(typeA))),
-						InitializerExpression(
-							SyntaxKind.ArrayCreationExpression,
-							SeparatedList<ExpressionSyntax>(
-								new SyntaxNodeOrToken[] { a, b })));
-			}
-
-			if (b.IsKind(SyntaxKind.NullLiteralExpression))
-			{
-				return ArrayCreationExpression(
-						Token(SyntaxKind.NewKeyword),
-						ArrayType(
-							NullableType(
-								GetTypeSyntax(typeB))),
-						InitializerExpression(
-							SyntaxKind.ArrayCreationExpression,
-							SeparatedList<ExpressionSyntax>(
-								new SyntaxNodeOrToken[] { a, b })));
-			}
-
-			if (SymbolEqualityComparer.Default.Equals(typeA, typeB))
-			{
-				return ImplicitArrayCreationExpression(
-						InitializerExpression(
-							SyntaxKind.ImplicitArrayCreationExpression,
-							SeparatedList<ExpressionSyntax>(
-								new SyntaxNodeOrToken[] { a, b })));
-			}
-
-			return invocation;*/
-
 			return ImplicitArrayCreationExpression(
 					InitializerExpression(
 						SyntaxKind.ArrayInitializerExpression,
@@ -199,6 +152,9 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 							new List<SyntaxNodeOrToken>() { a, Token(SyntaxKind.CommaToken), b })));
 		}
 
+		// this is never used but, it might be useful elsewhere
+		// if we ever need to create an explicitly typed array
+		// from an implicitly typed one
 		public static TypeSyntax GetTypeSyntax (ITypeSymbol? type)
 		{
 			switch (type?.SpecialType)
