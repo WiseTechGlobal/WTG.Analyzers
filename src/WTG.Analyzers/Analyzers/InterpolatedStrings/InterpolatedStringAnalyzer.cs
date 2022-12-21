@@ -31,19 +31,23 @@ namespace WTG.Analyzers
 
 			var node = (InterpolatedStringExpressionSyntax)context.Node;
 
-			if (node.Contents.Count != 1)
+			switch (node.Contents.Count)
 			{
-				return;
-			}
+				case 0:
+					break;
+				case 1:
+					if (node.Contents.First().IsKind(SyntaxKind.Interpolation))
+					{
+						var interpolation = (InterpolationSyntax)node.Contents[0];
 
-			if (node.Contents.First().IsKind(SyntaxKind.Interpolation))
-			{
-				var interpolation = (InterpolationSyntax)node.Contents[0];
-
-				if (interpolation.AlignmentClause != null)
-				{
+						if (interpolation.AlignmentClause != null || interpolation.FormatClause != null)
+						{
+							return;
+						}
+					}
+					break;
+				default:
 					return;
-				}
 			}
 
 			var info = context.SemanticModel.GetTypeInfo(node);

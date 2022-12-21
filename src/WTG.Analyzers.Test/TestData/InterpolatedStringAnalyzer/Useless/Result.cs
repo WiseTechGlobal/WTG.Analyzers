@@ -13,7 +13,10 @@ public class Bob
 		FormattableString s = $"This is useless but, it may have to be";
 		Method1("This is useless and there is zero need to be");
 		Method2($"This is useless but, it may have to be");
-		Method1(foo.ToString());
+		Method1(foo);
+		Method1(price.ToString());
+		Method1("");
+		Method1(foo);
 
 		Method1(useless);
 		Method1(useful);

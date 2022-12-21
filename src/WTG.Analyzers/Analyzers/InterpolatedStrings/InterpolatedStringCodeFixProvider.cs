@@ -47,16 +47,25 @@ namespace WTG.Analyzers
 				return document;
 			}
 
-			var interpolatedStrings = from m in root.DescendantNodes().OfType<InterpolatedStringExpressionSyntax>()
-									  where m.GetLocation() == diagnostic.Location
-									  select m;
+			var interpolatedStringExpression = (InterpolatedStringExpressionSyntax)root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
 
-			var interpolatedStringExpression = (InterpolatedStringExpressionSyntax)interpolatedStrings.FirstOrDefault();
+			// the lack of implicit conversion of int -> bool makes me sad :(
+			if (interpolatedStringExpression.Contents.Count == 0)
+			{
+				return document.WithSyntaxRoot(
+						root.ReplaceNode(
+							interpolatedStringExpression,
+							LiteralExpression(
+								SyntaxKind.StringLiteralExpression,
+								Literal(string.Empty))
+							.WithLeadingTrivia(interpolatedStringExpression?.GetLeadingTrivia())
+							.WithTrailingTrivia(interpolatedStringExpression?.GetTrailingTrivia())));
+			}
 
 			switch (interpolatedStringExpression.Contents.First().Kind())
 			{
 				case SyntaxKind.InterpolatedStringText:
-					var text = ((InterpolatedStringTextSyntax)interpolatedStringExpression.Contents.First()).TextToken.Text;
+					var text = ((InterpolatedStringTextSyntax)interpolatedStringExpression.Contents[0]).TextToken.Text;
 
 					return document.WithSyntaxRoot(
 						root.ReplaceNode(
@@ -64,10 +73,23 @@ namespace WTG.Analyzers
 							LiteralExpression(
 								SyntaxKind.StringLiteralExpression,
 								Literal(text))
-							.WithLeadingTrivia(interpolatedStringExpression!.GetLeadingTrivia())
-							.WithTrailingTrivia(interpolatedStringExpression!.GetTrailingTrivia())));
+							.WithLeadingTrivia(interpolatedStringExpression?.GetLeadingTrivia())
+							.WithTrailingTrivia(interpolatedStringExpression?.GetTrailingTrivia())));
 				case SyntaxKind.Interpolation:
-					var variable = ((InterpolationSyntax)interpolatedStringExpression.Contents.First()).Expression.ToString();
+					var variable = ((InterpolationSyntax)interpolatedStringExpression.Contents[0]).Expression;
+
+					// only do this here because it's only necessary here
+					var semanticModel = await document.GetSemanticModelAsync(c).ConfigureAwait(true);
+
+					if (semanticModel?.GetTypeInfo(variable, c).Type?.SpecialType == SpecialType.System_String)
+					{
+						return document.WithSyntaxRoot(
+								root.ReplaceNode(
+									interpolatedStringExpression,
+									variable
+									.WithLeadingTrivia(interpolatedStringExpression?.GetLeadingTrivia())
+									.WithTrailingTrivia(interpolatedStringExpression?.GetTrailingTrivia())));
+					}
 
 					return document.WithSyntaxRoot(
 						root.ReplaceNode(
@@ -75,10 +97,10 @@ namespace WTG.Analyzers
 							InvocationExpression(
 								MemberAccessExpression(
 								SyntaxKind.SimpleMemberAccessExpression,
-								IdentifierName(variable),
+								variable,
 								IdentifierName("ToString")))
-							.WithLeadingTrivia(interpolatedStringExpression!.GetLeadingTrivia())
-							.WithTrailingTrivia(interpolatedStringExpression!.GetTrailingTrivia())));
+							.WithLeadingTrivia(interpolatedStringExpression?.GetLeadingTrivia())
+							.WithTrailingTrivia(interpolatedStringExpression?.GetTrailingTrivia())));
 				default:
 					return document;
 			}

@@ -9,4 +9,13 @@
 	<diagnostic message="Interpolated strings must be purposeful">
 		<location>Test0.cs: (16, 11-19)</location>
 	</diagnostic>
+	<diagnostic message="Interpolated strings must be purposeful">
+		<location>Test0.cs: (17, 11-21)</location>
+	</diagnostic>
+	<diagnostic message="Interpolated strings must be purposeful">
+		<location>Test0.cs: (18, 11-14)</location>
+	</diagnostic>
+	<diagnostic message="Interpolated strings must be purposeful">
+		<location>Test0.cs: (19, 11-20)</location>
+	</diagnostic>
 </diagnostics>
