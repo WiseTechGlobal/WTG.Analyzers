@@ -1,16 +1,19 @@
 using System;
 using System.Collections.Immutable;
+using System.Data;
+using System.Dynamic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using WTG.Analyzers.Analyzers.BooleanLiteral;
+using WTG.Analyzers.Analyzers.LinqEnumerable;
 using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
-#pragma warning disable CA1303
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public class LinqEnumerableAnalyzer : DiagnosticAnalyzer
 	{
@@ -52,189 +55,205 @@ namespace WTG.Analyzers
 				return;
 			}
 
+			/* exclusively checking the existence of the Enumerable.Append method because 
+			   Enumerable.Append and Enumerable.Prepend were released at the same time */
 			var hasEnumerableAppendMethod = HasEnumerableAppendMethod(context.Compilation);
 			var cache = new FileDetailCache();
 
 			context.RegisterSyntaxNodeAction(c => Analyze(c, cache, hasEnumerableAppendMethod), SyntaxKind.SimpleMemberAccessExpression);
 		}
 
-		static bool ContainsSingleElement (ExpressionSyntax? e)
-		{
-			switch (e?.Kind())
-			{
-				case SyntaxKind.ImplicitArrayCreationExpression:
-					return ((ImplicitArrayCreationExpressionSyntax)e)?.Initializer?.Expressions.Count == 1;
-				case SyntaxKind.ObjectCreationExpression:
-					return ((ObjectCreationExpressionSyntax)e)?.Initializer?.Expressions.Count == 1;
-				case SyntaxKind.ArrayCreationExpression:
-					return ((ArrayCreationExpressionSyntax)e)?.Initializer?.Expressions.Count == 1;
-				default:
-					return false;
-			}
-		}
+		static bool ContainsSingleElement(ExpressionSyntax? e) => LinqEnumerableUtils.GetInitializer(e)?.Expressions.Count == 1;
 
 		public static bool LooksLikeAppend(InvocationExpressionSyntax invocation) => (invocation.ArgumentList.Arguments.Count == 1 ? ContainsSingleElement(invocation.ArgumentList.Arguments[0].Expression) : ContainsSingleElement(invocation.ArgumentList.Arguments[1].Expression));
 
 		public static bool LooksLikePrepend(InvocationExpressionSyntax invocation)
 		{
-			var expression = ((MemberAccessExpressionSyntax)invocation.Expression).Expression;
+			var expression = ((MemberAccessExpressionSyntax)invocation.Expression).Expression.TryGetExpressionFromParenthesizedExpression();
 
-			if (expression.IsKind(SyntaxKind.ParenthesizedExpression))
+			if (expression == null)
 			{
-				expression = ((ParenthesizedExpressionSyntax)expression).GetExpression();
+				expression = ((MemberAccessExpressionSyntax)invocation.Expression).Expression;
 			}
 
 			return (invocation.ArgumentList.Arguments.Count == 1 ? ContainsSingleElement(expression) : ContainsSingleElement(invocation.ArgumentList.Arguments[0].Expression));
 		}
 
-		public static bool IsList(SemanticModel model, ObjectCreationExpressionSyntax e) => e.Type.ToString().StartsWith("List", StringComparison.Ordinal) && model.GetTypeInfo(e).Type?.MetadataName == "List`1";
-		public static bool IsIEnumerable(SemanticModel model, ExpressionSyntax e) => model.GetTypeInfo(e).Type?.MetadataName == "IEnumerable`1";
-
-		public static void Analyze (SyntaxNodeAnalysisContext context, FileDetailCache cache, bool hasEnumerable)
+		public static bool IsMonadicArityCollection (SemanticModel model, ExpressionSyntax e)
 		{
-			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken) || !hasEnumerable)
+			var typeSymbol = model.GetTypeInfo(e).Type;
+
+			if (typeSymbol == null)
+			{
+				return false;
+			}
+
+			if (typeSymbol.MetadataName.Length != 0 && typeSymbol.MetadataName[typeSymbol.MetadataName.Length - 1] != '1')
+			{
+				return false;
+			}
+
+			foreach (var baseType in typeSymbol.AllInterfaces)
+			{
+				if (baseType.IsMatch(WellKnownTypeNames.IEnumerable_T))
+				{
+					return true;
+				}
+			}
+
+			return typeSymbol.IsMatch(WellKnownTypeNames.IEnumerable_T);
+		}
+
+		public static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache, bool hasEnumerableAppendMethod)
+		{
+			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken) || !hasEnumerableAppendMethod)
 			{
 				return;
 			}
 
 			var expression = (MemberAccessExpressionSyntax)context.Node;
 
-			if (expression != null)
+			if (expression == null)
 			{
-				if (!string.Equals(expression.Name.Identifier.Text, "Concat", StringComparison.Ordinal))
+				return;
+			}
+
+			if (!string.Equals(expression.Name.Identifier.Text, "Concat", StringComparison.Ordinal))
+			{
+				return;
+			}
+
+			if (!expression.Parent.IsKind(SyntaxKind.InvocationExpression))
+			{
+				return;
+			}
+
+			var invocation = (InvocationExpressionSyntax)expression.Parent;
+
+			if (invocation == null)
+			{
+				return;
+			}
+
+			if (!(invocation.ArgumentList.Arguments.Count is 1 or 2))
+			{
+				return;
+			}
+
+			var semanticModel = context.SemanticModel;
+			var arguments = invocation.ArgumentList.Arguments;
+
+			if (LooksLikePrepend(invocation))
+			{
+				if (LooksLikeAppend(invocation))
 				{
-					return;
-				}
+					var e = expression.Expression.TryGetExpressionFromParenthesizedExpression();
 
-				if (!expression.Parent.IsKind(SyntaxKind.InvocationExpression))
-				{
-					return;
-				}
-
-				var invocation = (InvocationExpressionSyntax)expression.Parent;
-
-				if (invocation == null)
-				{
-					return;
-				}
-
-				if (invocation.ArgumentList.Arguments.Count > 2 ||
-					invocation.ArgumentList.Arguments.Count < 1)
-				{
-					return;
-				}
-
-				var semanticModel = context.SemanticModel;
-				var arguments = invocation.ArgumentList.Arguments;
-
-				if (LooksLikePrepend(invocation))
-				{
-					if (LooksLikeAppend(invocation))
+					if (e == null)
 					{
-						foreach (var argument in arguments)
-						{
-							if (argument.IsKind(SyntaxKind.ObjectCreationExpression) && !IsList(semanticModel, (ObjectCreationExpressionSyntax)argument.Expression))
-							{
-								return;
-							}
-						}
+						e = expression.Expression;
+					}
 
-						var e = expression.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)expression.Expression).GetExpression() : expression.Expression;
-
-						if (e.IsKind(SyntaxKind.ObjectCreationExpression) && !IsList(semanticModel, (ObjectCreationExpressionSyntax)e))
+					foreach (var argument in arguments)
+					{
+						if (!IsMonadicArityCollection(semanticModel, argument.Expression))
 						{
 							return;
 						}
-
-						context.ReportDiagnostic(Rules.CreateDontConcatTwoCollectionsDefinedWithLiteralsDiagnostic(expression.GetLocation()));
 					}
-					else
+
+					if (arguments.Count == 1 && !IsMonadicArityCollection(semanticModel, e))
 					{
-						switch (arguments.Count)
-						{
-							case 1:
-								var e = expression.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)expression.Expression).GetExpression() : expression.Expression;
-
-								if (e.IsKind(SyntaxKind.ObjectCreationExpression) && !IsList(semanticModel, (ObjectCreationExpressionSyntax)e))
-								{
-									return;
-								}
-
-								if (!IsIEnumerable(semanticModel, arguments[0].Expression))
-								{
-									return;
-								}
-
-								context.ReportDiagnostic(Rules.CreateDontUseConcatWhenPrependingSingleElementToEnumerablesDiagnostic(expression.GetLocation()));
-
-								break;
-							case 2:
-								if (arguments[0].Expression.IsKind(SyntaxKind.ObjectCreationExpression))
-								{
-									if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)arguments[0].Expression))
-									{
-										return;
-									}
-								}
-
-								if (!semanticModel.GetTypeInfo(expression.Expression).Type!.IsMatch(WellKnownTypeNames.Enumerable))
-								{
-									return;
-								}
-
-								context.ReportDiagnostic(Rules.CreateDontUseConcatWhenPrependingSingleElementToEnumerablesDiagnostic(expression.GetLocation()));
-
-								break;
-						}
+						return;
 					}
+
+					context.ReportDiagnostic(Rules.CreateDontConcatTwoCollectionsDefinedWithLiteralsDiagnostic(expression.GetLocation()));
 				}
-				else if (LooksLikeAppend(invocation))
+				else
 				{
 					switch (arguments.Count)
 					{
 						case 1:
+							var e = expression.Expression.TryGetExpressionFromParenthesizedExpression();
 
-							if (arguments[0].Expression.IsKind(SyntaxKind.ObjectCreationExpression))
+							if (e == null)
 							{
-								if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)arguments[0].Expression))
-								{
-									return;
-								}
+								e = expression.Expression;
 							}
 
-							if (!IsIEnumerable(semanticModel, expression.Expression))
+							if (!IsMonadicArityCollection(semanticModel, e) || !IsMonadicArityCollection(semanticModel, arguments[0].Expression))
 							{
 								return;
 							}
 
-							context.ReportDiagnostic(Rules.CreateDontUseConcatWhenAppendingSingleElementToEnumerablesDiagnostic(expression.GetLocation()));
+							context.ReportDiagnostic(Rules.CreateDontUseConcatWhenPrependingSingleElementToEnumerablesDiagnostic(expression.GetLocation()));
 
 							break;
-						case 2:
 
-							if (arguments[1].Expression.IsKind(SyntaxKind.ObjectCreationExpression))
+						case 2:
+							var typeSymbol = semanticModel.GetTypeInfo(expression.Expression).Type;
+
+							/* An instance of String.Concat() is more likely than arguments being non-monadic 
+							   arity collections, so this check is done first */
+							if (typeSymbol == null || !typeSymbol.IsMatch(WellKnownTypeNames.Enumerable))
 							{
-								if (!IsList(semanticModel, (ObjectCreationExpressionSyntax)arguments[1].Expression))
+								return;
+							}
+
+							foreach (var argument in arguments)
+							{
+								if (!IsMonadicArityCollection(semanticModel, argument.Expression))
 								{
 									return;
 								}
 							}
 
-							if (!semanticModel.GetTypeInfo(expression.Expression).Type!.IsMatch(WellKnownTypeNames.Enumerable))
-							{
-								return;
-							}
-
-							context.ReportDiagnostic(Rules.CreateDontUseConcatWhenAppendingSingleElementToEnumerablesDiagnostic(expression.GetLocation()));
+							context.ReportDiagnostic(Rules.CreateDontUseConcatWhenPrependingSingleElementToEnumerablesDiagnostic(expression.GetLocation()));
 
 							break;
 					}
 				}
 			}
+			else if (LooksLikeAppend(invocation))
+			{
+				switch (arguments.Count)
+				{
+					case 1:
+
+						if (!IsMonadicArityCollection(semanticModel, expression.Expression) ||
+							!IsMonadicArityCollection(semanticModel, arguments[0].Expression))
+						{
+							return;
+						}
+
+						context.ReportDiagnostic(Rules.CreateDontUseConcatWhenAppendingSingleElementToEnumerablesDiagnostic(expression.GetLocation()));
+
+						break;
+					case 2:
+
+						var typeSymbol = semanticModel.GetTypeInfo(expression.Expression).Type;
+
+						if (typeSymbol == null || !typeSymbol.IsMatch(WellKnownTypeNames.Enumerable))
+						{
+							return;
+						}
+
+						foreach (var argument in arguments)
+						{
+							if (!IsMonadicArityCollection(semanticModel, argument.Expression))
+							{
+								return;
+							}
+						}
+
+						context.ReportDiagnostic(Rules.CreateDontUseConcatWhenAppendingSingleElementToEnumerablesDiagnostic(expression.GetLocation()));
+
+						break;
+				}
+			}
 		}
 	}
 }
-#pragma warning restore CA1303
 
 
 

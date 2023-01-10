@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <diagnostics id="WTG3014" severity="Warning">
-	<suppressId>CS0246</suppressId>
 	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
 		<location>Test0.cs: (17, 3-21)</location>
 	</diagnostic>

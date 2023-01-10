@@ -14,7 +14,7 @@ public class Bob
 
 		a.Concat(new[] { 4 });
 		a.Concat(new int[] { 4 });
-		a.Concat(new List<int>(){ 4 });
+		a.Concat(new List<int>() { 4 });
 		a.Concat(new[] { j });
 		a.Concat(new int[] { j });
 		a.Concat(new List<int>() { j });
