@@ -12,7 +12,7 @@ using WTG.Analyzers.Utils;
 namespace WTG.Analyzers
 {
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
-	public class LinqEnumerableAnalyzer : DiagnosticAnalyzer
+	public sealed class LinqEnumerableAnalyzer : DiagnosticAnalyzer
 	{
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 			Rules.DontUseConcatWhenAppendingSingleElementToEnumerablesRule,

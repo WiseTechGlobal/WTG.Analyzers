@@ -17,7 +17,7 @@ namespace WTG.Analyzers
 {
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LinqEnumerableCodeFixProvider))]
 	[Shared]
-	public class LinqEnumerableCodeFixProvider : CodeFixProvider
+	public sealed class LinqEnumerableCodeFixProvider : CodeFixProvider
 	{
 		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
 			Rules.DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID,
