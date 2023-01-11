@@ -86,7 +86,7 @@ namespace WTG.Analyzers
 				return false;
 			}
 
-			if (typeSymbol.MetadataName.Length != 0 && typeSymbol.MetadataName[typeSymbol.MetadataName.Length - 1] != '1')
+			if (typeSymbol.MetadataName.Length != 0 && typeSymbol.MetadataName[^1] != '1')
 			{
 				return false;
 			}
