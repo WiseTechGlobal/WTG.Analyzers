@@ -102,7 +102,7 @@ namespace WTG.Analyzers
 			return InvocationExpression(
 					MemberAccessExpression(
 						SyntaxKind.SimpleMemberAccessExpression,
-						IdentifierName(m.Expression.ToString()),
+						(IdentifierNameSyntax)m.Expression,
 						IdentifierName(nameof(Enumerable.Append))))
 				.WithArgumentList(
 					ArgumentList(
