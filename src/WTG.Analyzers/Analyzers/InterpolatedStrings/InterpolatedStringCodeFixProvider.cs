@@ -16,7 +16,7 @@ namespace WTG.Analyzers
 {
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(InterpolatedStringCodeFixProvider))]
 	[Shared]
-	public class InterpolatedStringCodeFixProvider : CodeFixProvider
+	sealed class InterpolatedStringCodeFixProvider : CodeFixProvider
 	{
 		public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(
 			Rules.InterpolatedStringMustBePurposefulDiagnosticID);

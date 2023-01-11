@@ -8,7 +8,7 @@ using WTG.Analyzers.Utils;
 namespace WTG.Analyzers
 {
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
-	public class InterpolatedStringAnalyzer : DiagnosticAnalyzer
+	sealed class InterpolatedStringAnalyzer : DiagnosticAnalyzer
 	{
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
 			Rules.InterpolatedStringMustBePurposefulRule);
