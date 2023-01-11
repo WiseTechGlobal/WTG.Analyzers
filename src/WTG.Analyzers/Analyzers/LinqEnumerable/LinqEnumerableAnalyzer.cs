@@ -144,11 +144,6 @@ namespace WTG.Analyzers
 			{
 				if (LooksLikeAppend(invocation))
 				{
-					if (!context.Compilation.IsCSharpVersionOrGreater(LanguageVersion.CSharp3))
-					{
-						return;
-					}
-
 					var e = expression.Expression.TryGetExpressionFromParenthesizedExpression();
 
 					foreach (var argument in arguments)
