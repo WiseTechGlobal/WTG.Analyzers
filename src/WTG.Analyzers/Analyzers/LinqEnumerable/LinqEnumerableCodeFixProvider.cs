@@ -102,7 +102,7 @@ namespace WTG.Analyzers
 			return InvocationExpression(
 					MemberAccessExpression(
 						SyntaxKind.SimpleMemberAccessExpression,
-						(IdentifierNameSyntax)m.Expression,
+						m.Expression,
 						IdentifierName(nameof(Enumerable.Append))))
 				.WithArgumentList(
 					ArgumentList(
@@ -128,12 +128,10 @@ namespace WTG.Analyzers
 
 					arguments.Add(Argument(LinqEnumerableUtils.GetValue(expression)!));
 
-					IdentifierNameSyntax identifier = (IdentifierNameSyntax)invocation.ArgumentList.Arguments[0].Expression;
-
 					return InvocationExpression(
 						MemberAccessExpression(
 							SyntaxKind.SimpleMemberAccessExpression,
-							identifier,
+							invocation.ArgumentList.Arguments[0].Expression,
 							IdentifierName(nameof(Enumerable.Prepend))))
 					.WithArgumentList(
 						ArgumentList(
