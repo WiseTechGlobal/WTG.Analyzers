@@ -571,9 +571,9 @@ namespace WTG.Analyzers
 			"Interpolated strings must be purposeful",
 			"Interpolated strings must be purposeful",
 			DecruftificationCategory,
-			DiagnosticSeverity.Warning,
+			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
-			description: "Interpolated strings must be purposeful and include a combination of interpolation and interpolated string text");
+			description: "Interpolated strings must be purposeful and include more than one interpolation or interpolation text");
 
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<diagnostics id="WTG3016" severity="Warning">
+<diagnostics id="WTG3016" severity="Info">
 	<diagnostic message="Interpolated strings must be purposeful">
 		<location>Test0.cs: (12, 20-67)</location>
 	</diagnostic>

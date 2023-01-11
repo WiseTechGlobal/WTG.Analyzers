@@ -231,10 +231,10 @@
 			<description>Combining bool expressions in larger boolean expressions makes the code more complex than it needs to be.</description>
 			<tag>Unnecessary</tag>
 		</rule>
-		<rule id="16" name="InterpolatedStringMustBePurposeful" severity="Warning">
+		<rule id="16" name="InterpolatedStringMustBePurposeful" severity="Info">
 			<title>Interpolated strings must be purposeful</title>
 			<message>Interpolated strings must be purposeful</message>
-			<description>Interpolated strings must be purposeful and include a combination of interpolation and interpolated string text</description>
+			<description>Interpolated strings must be purposeful and include more than one interpolation or interpolation text</description>
 		</rule>
 	</category>
 	<category name="Maintainability" id="3100">

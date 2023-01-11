@@ -10,9 +10,9 @@ public class Bob
 
 		string useful = $"This is not a useless interpolated string because it tells you a price: {price}";
 		string useless = "This is useless and there is zero need to be";
-		FormattableString s = $"This is useless but, it may have to be";
+		FormattableString s = $"This is not useless but, it looks useless at first glance";
 		Method1("This is useless and there is zero need to be");
-		Method2($"This is useless but, it may have to be");
+		Method2($"This is not useless but, it looks useless at first glance");
 		Method1(foo);
 		Method1(price.ToString());
 		Method1("");

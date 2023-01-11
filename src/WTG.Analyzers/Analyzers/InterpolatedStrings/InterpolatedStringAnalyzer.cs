@@ -52,7 +52,7 @@ namespace WTG.Analyzers
 
 			var info = context.SemanticModel.GetTypeInfo(node);
 
-			if (info.ConvertedType != null && info.ConvertedType.SpecialType != SpecialType.System_String)
+			if (info.ConvertedType?.SpecialType != SpecialType.System_String)
 			{
 				return;
 			}

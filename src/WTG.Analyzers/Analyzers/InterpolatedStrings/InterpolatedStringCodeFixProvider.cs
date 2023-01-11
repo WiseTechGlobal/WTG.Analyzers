@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Dynamic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,16 +39,10 @@ namespace WTG.Analyzers
 
 		public static async Task<Document> FixUselessInterpolatedString (Document document, Diagnostic diagnostic, CancellationToken c)
 		{
-			var root = await document.GetSyntaxRootAsync(c).ConfigureAwait(true);
-
-			if (root == null)
-			{
-				return document;
-			}
+			var root = await document.RequireSyntaxRootAsync(c).ConfigureAwait(true);
 
 			var interpolatedStringExpression = (InterpolatedStringExpressionSyntax)root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
 
-			// the lack of implicit conversion of int -> bool makes me sad :(
 			if (interpolatedStringExpression.Contents.Count == 0)
 			{
 				return document.WithSyntaxRoot(
@@ -62,10 +55,12 @@ namespace WTG.Analyzers
 							.WithTrailingTrivia(interpolatedStringExpression?.GetTrailingTrivia())));
 			}
 
-			switch (interpolatedStringExpression.Contents.First().Kind())
+			switch (interpolatedStringExpression.Contents[0].Kind())
 			{
 				case SyntaxKind.InterpolatedStringText:
 					var text = ((InterpolatedStringTextSyntax)interpolatedStringExpression.Contents[0]).TextToken.Text;
+
+					// Tried to replace 'Literal(text)' with the straight TextToken and it didn't work?
 
 					return document.WithSyntaxRoot(
 						root.ReplaceNode(
@@ -73,22 +68,20 @@ namespace WTG.Analyzers
 							LiteralExpression(
 								SyntaxKind.StringLiteralExpression,
 								Literal(text))
-							.WithLeadingTrivia(interpolatedStringExpression?.GetLeadingTrivia())
-							.WithTrailingTrivia(interpolatedStringExpression?.GetTrailingTrivia())));
+							.WithTriviaFrom(interpolatedStringExpression)));
+
 				case SyntaxKind.Interpolation:
-					var variable = ((InterpolationSyntax)interpolatedStringExpression.Contents[0]).Expression;
+					var interpolation = ((InterpolationSyntax)interpolatedStringExpression.Contents[0]).Expression;
 
-					// only do this here because it's only necessary here
-					var semanticModel = await document.GetSemanticModelAsync(c).ConfigureAwait(true);
+					var semanticModel = await document.RequireSemanticModelAsync(c).ConfigureAwait(true);
 
-					if (semanticModel?.GetTypeInfo(variable, c).Type?.SpecialType == SpecialType.System_String)
+					if (semanticModel.GetTypeInfo(interpolation, c).Type?.SpecialType == SpecialType.System_String)
 					{
 						return document.WithSyntaxRoot(
 								root.ReplaceNode(
 									interpolatedStringExpression,
-									variable
-									.WithLeadingTrivia(interpolatedStringExpression?.GetLeadingTrivia())
-									.WithTrailingTrivia(interpolatedStringExpression?.GetTrailingTrivia())));
+									interpolation
+									.WithTriviaFrom(interpolatedStringExpression)));
 					}
 
 					return document.WithSyntaxRoot(
@@ -97,10 +90,9 @@ namespace WTG.Analyzers
 							InvocationExpression(
 								MemberAccessExpression(
 								SyntaxKind.SimpleMemberAccessExpression,
-								variable,
+								interpolation,
 								IdentifierName("ToString")))
-							.WithLeadingTrivia(interpolatedStringExpression?.GetLeadingTrivia())
-							.WithTrailingTrivia(interpolatedStringExpression?.GetTrailingTrivia())));
+							.WithTriviaFrom(interpolatedStringExpression)));
 				default:
 					return document;
 			}
