@@ -103,7 +103,7 @@ namespace WTG.Analyzers
 
 		public static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache, bool hasEnumerableAppendMethod)
 		{
-			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken) || !hasEnumerableAppendMethod)
+			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
 			{
 				return;
 			}
@@ -144,6 +144,11 @@ namespace WTG.Analyzers
 			{
 				if (LooksLikeAppend(invocation))
 				{
+					if (!context.Compilation.IsCSharpVersionOrGreater(LanguageVersion.CSharp3))
+					{
+						return;
+					}
+
 					var e = expression.Expression.TryGetExpressionFromParenthesizedExpression();
 
 					foreach (var argument in arguments)
@@ -163,6 +168,11 @@ namespace WTG.Analyzers
 				}
 				else
 				{
+					if (!hasEnumerableAppendMethod)
+					{
+						return;
+					}
+
 					switch (arguments.Count)
 					{
 						case 1:
@@ -203,6 +213,11 @@ namespace WTG.Analyzers
 			}
 			else if (LooksLikeAppend(invocation))
 			{
+				if (!hasEnumerableAppendMethod)
+				{
+					return;
+				}
+
 				switch (arguments.Count)
 				{
 					case 1:
