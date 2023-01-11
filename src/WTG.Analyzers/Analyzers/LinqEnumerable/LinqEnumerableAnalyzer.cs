@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Immutable;
-using System.Data;
-using System.Dynamic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,6 +11,7 @@ using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
+#pragma warning disable CA1303
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public class LinqEnumerableAnalyzer : DiagnosticAnalyzer
 	{
@@ -79,7 +77,7 @@ namespace WTG.Analyzers
 			return (invocation.ArgumentList.Arguments.Count == 1 ? ContainsSingleElement(expression) : ContainsSingleElement(invocation.ArgumentList.Arguments[0].Expression));
 		}
 
-		public static bool IsMonadicArityCollection (SemanticModel model, ExpressionSyntax e)
+		public static bool IsSingleArityCollection (SemanticModel model, ExpressionSyntax e)
 		{
 			var typeSymbol = model.GetTypeInfo(e).Type;
 
@@ -118,7 +116,7 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			if (!string.Equals(expression.Name.Identifier.Text, "Concat", StringComparison.Ordinal))
+			if (!string.Equals(expression.Name.Identifier.Text, nameof(Enumerable.Concat), StringComparison.Ordinal))
 			{
 				return;
 			}
@@ -135,7 +133,7 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			if (!(invocation.ArgumentList.Arguments.Count is 1 or 2))
+			if (invocation.ArgumentList.Arguments.Count is not (1 or 2))
 			{
 				return;
 			}
@@ -149,20 +147,15 @@ namespace WTG.Analyzers
 				{
 					var e = expression.Expression.TryGetExpressionFromParenthesizedExpression();
 
-					if (e == null)
-					{
-						e = expression.Expression;
-					}
-
 					foreach (var argument in arguments)
 					{
-						if (!IsMonadicArityCollection(semanticModel, argument.Expression))
+						if (!IsSingleArityCollection(semanticModel, argument.Expression))
 						{
 							return;
 						}
 					}
 
-					if (arguments.Count == 1 && !IsMonadicArityCollection(semanticModel, e))
+					if (arguments.Count == 1 && !IsSingleArityCollection(semanticModel, e))
 					{
 						return;
 					}
@@ -176,12 +169,7 @@ namespace WTG.Analyzers
 						case 1:
 							var e = expression.Expression.TryGetExpressionFromParenthesizedExpression();
 
-							if (e == null)
-							{
-								e = expression.Expression;
-							}
-
-							if (!IsMonadicArityCollection(semanticModel, e) || !IsMonadicArityCollection(semanticModel, arguments[0].Expression))
+							if (!IsSingleArityCollection(semanticModel, e) || !IsSingleArityCollection(semanticModel, arguments[0].Expression))
 							{
 								return;
 							}
@@ -202,7 +190,7 @@ namespace WTG.Analyzers
 
 							foreach (var argument in arguments)
 							{
-								if (!IsMonadicArityCollection(semanticModel, argument.Expression))
+								if (!IsSingleArityCollection(semanticModel, argument.Expression))
 								{
 									return;
 								}
@@ -220,8 +208,8 @@ namespace WTG.Analyzers
 				{
 					case 1:
 
-						if (!IsMonadicArityCollection(semanticModel, expression.Expression) ||
-							!IsMonadicArityCollection(semanticModel, arguments[0].Expression))
+						if (!IsSingleArityCollection(semanticModel, expression.Expression) ||
+							!IsSingleArityCollection(semanticModel, arguments[0].Expression))
 						{
 							return;
 						}
@@ -240,7 +228,7 @@ namespace WTG.Analyzers
 
 						foreach (var argument in arguments)
 						{
-							if (!IsMonadicArityCollection(semanticModel, argument.Expression))
+							if (!IsSingleArityCollection(semanticModel, argument.Expression))
 							{
 								return;
 							}
@@ -253,6 +241,7 @@ namespace WTG.Analyzers
 			}
 		}
 	}
+#pragma warning restore CA1303
 }
 
 

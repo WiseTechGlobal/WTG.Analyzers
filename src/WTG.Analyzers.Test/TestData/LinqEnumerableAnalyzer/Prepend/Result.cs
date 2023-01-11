@@ -12,8 +12,6 @@ public class Bob
 		int[] b = new[] { 1 };
 		int j = 5;
 
-		// TESTING prepend WTG3014
-
 		a.Prepend(0);
 		a.Prepend(0);
 		a.Prepend(0);

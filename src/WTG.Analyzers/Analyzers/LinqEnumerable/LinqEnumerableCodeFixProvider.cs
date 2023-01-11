@@ -100,14 +100,14 @@ namespace WTG.Analyzers
 			}
 
 			return InvocationExpression(
-						MemberAccessExpression(
-							SyntaxKind.SimpleMemberAccessExpression,
-							IdentifierName(m.Expression.ToString()),
-							IdentifierName(nameof(Enumerable.Append))))
-					.WithArgumentList(
-						ArgumentList(
-							SeparatedList<ArgumentSyntax>(listOfArgumentsAndSeparators)))
-					.WithTriviaFrom(invocation);
+					MemberAccessExpression(
+						SyntaxKind.SimpleMemberAccessExpression,
+						IdentifierName(m.Expression.ToString()),
+						IdentifierName(nameof(Enumerable.Append))))
+				.WithArgumentList(
+					ArgumentList(
+						SeparatedList<ArgumentSyntax>(listOfArgumentsAndSeparators)))
+				.WithTriviaFrom(invocation);
 		}
 
 		public static SyntaxNode? FixConcatWithPrependMethod(MemberAccessExpressionSyntax m)
@@ -145,7 +145,7 @@ namespace WTG.Analyzers
 					if (value == null)
 					{
 						return invocation;
-					}	
+					}
 
 					arguments.Add(invocation.ArgumentList.Arguments[1]);
 					arguments.Add(Token(SyntaxKind.CommaToken));

@@ -12,8 +12,6 @@ public class Bob
 		int[] b = new[] { 1 };
 		int j = 5;
 
-		// TESTING prepend WTG3014
-
 		new[] { 0 }.Concat(a);
 		(((new[] { 0 }))).Concat(a);
 		(new int[] { 0 }).Concat(a);

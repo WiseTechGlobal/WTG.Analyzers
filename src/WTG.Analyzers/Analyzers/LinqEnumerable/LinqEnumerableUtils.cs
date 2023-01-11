@@ -25,11 +25,11 @@ namespace WTG.Analyzers.Analyzers.LinqEnumerable
 			return initializer?.Expressions[0];
 		}
 
-		public static ExpressionSyntax? TryGetExpressionFromParenthesizedExpression (this ExpressionSyntax expression)
+		public static ExpressionSyntax TryGetExpressionFromParenthesizedExpression (this ExpressionSyntax expression)
 		{
 			if (!expression.IsKind(SyntaxKind.ParenthesizedExpression))
 			{
-				return null;
+				return expression;
 			}
 
 			var unwrappedExpression = ((ParenthesizedExpressionSyntax)expression).Expression;
