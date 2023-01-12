@@ -107,13 +107,13 @@ namespace WTG.Analyzers
 
 					foreach (var argument in arguments)
 					{
-						if (!IsSingleArityCollection(semanticModel, argument.Expression))
+						if (!IsSupportedCollection(semanticModel, argument.Expression))
 						{
 							return;
 						}
 					}
 
-					if (arguments.Count == 1 && !IsSingleArityCollection(semanticModel, e))
+					if (arguments.Count == 1 && !IsSupportedCollection(semanticModel, e))
 					{
 						return;
 					}
@@ -127,42 +127,14 @@ namespace WTG.Analyzers
 						return;
 					}
 
-					switch (arguments.Count)
+					var e = CheckConcatExpressionMeetsSemanticRequirements(semanticModel, invocation);
+
+					if (e == null)
 					{
-						case 1:
-							var e = expression.Expression.TryGetExpressionFromParenthesizedExpression();
-
-							if (!IsSingleArityCollection(semanticModel, e) || !IsSingleArityCollection(semanticModel, arguments[0].Expression))
-							{
-								return;
-							}
-
-							context.ReportDiagnostic(Rules.CreateDontUseConcatWhenPrependingSingleElementToEnumerablesDiagnostic(expression.GetLocation()));
-
-							break;
-
-						case 2:
-							var typeSymbol = semanticModel.GetTypeInfo(expression.Expression).Type;
-
-							/* An instance of String.Concat() is more likely than arguments being non-monadic 
-							   arity collections, so this check is done first */
-							if (typeSymbol == null || !typeSymbol.IsMatch(WellKnownTypeNames.Enumerable))
-							{
-								return;
-							}
-
-							foreach (var argument in arguments)
-							{
-								if (!IsSingleArityCollection(semanticModel, argument.Expression))
-								{
-									return;
-								}
-							}
-
-							context.ReportDiagnostic(Rules.CreateDontUseConcatWhenPrependingSingleElementToEnumerablesDiagnostic(expression.GetLocation()));
-
-							break;
+						return;
 					}
+
+					context.ReportDiagnostic(Rules.CreateDontUseConcatWhenPrependingSingleElementToEnumerablesDiagnostic(e.GetLocation()));
 				}
 			}
 			else if (LooksLikeShouldBeAppend(invocation))
@@ -172,40 +144,14 @@ namespace WTG.Analyzers
 					return;
 				}
 
-				switch (arguments.Count)
+				var e = CheckConcatExpressionMeetsSemanticRequirements(semanticModel, invocation);
+
+				if (e == null)
 				{
-					case 1:
-
-						if (!IsSingleArityCollection(semanticModel, expression.Expression) ||
-							!IsSingleArityCollection(semanticModel, arguments[0].Expression))
-						{
-							return;
-						}
-
-						context.ReportDiagnostic(Rules.CreateDontUseConcatWhenAppendingSingleElementToEnumerablesDiagnostic(expression.GetLocation()));
-
-						break;
-					case 2:
-
-						var typeSymbol = semanticModel.GetTypeInfo(expression.Expression).Type;
-
-						if (typeSymbol == null || !typeSymbol.IsMatch(WellKnownTypeNames.Enumerable))
-						{
-							return;
-						}
-
-						foreach (var argument in arguments)
-						{
-							if (!IsSingleArityCollection(semanticModel, argument.Expression))
-							{
-								return;
-							}
-						}
-
-						context.ReportDiagnostic(Rules.CreateDontUseConcatWhenAppendingSingleElementToEnumerablesDiagnostic(expression.GetLocation()));
-
-						break;
+					return;
 				}
+
+				context.ReportDiagnostic(Rules.CreateDontUseConcatWhenAppendingSingleElementToEnumerablesDiagnostic(e.GetLocation()));
 			}
 		}
 
@@ -224,7 +170,45 @@ namespace WTG.Analyzers
 
 		static bool ContainsSingleElement(ExpressionSyntax? e) => LinqEnumerableUtils.GetInitializer(e)?.Expressions.Count == 1;
 
-		static bool IsSingleArityCollection(SemanticModel model, ExpressionSyntax e)
+		static ExpressionSyntax? CheckConcatExpressionMeetsSemanticRequirements(SemanticModel semanticModel, InvocationExpressionSyntax invocation)
+		{
+			var arguments = invocation.ArgumentList.Arguments;
+
+			var e = ((MemberAccessExpressionSyntax)invocation.Expression).Expression.TryGetExpressionFromParenthesizedExpression();
+
+			switch (arguments.Count)
+			{
+				case 1:
+					if (!(IsSupportedCollection(semanticModel, e) ||
+						IsSupportedCollection(semanticModel, arguments[0].Expression)))
+					{
+						return null;
+					}
+					break;
+
+				case 2:
+					var typeSymbol = semanticModel.GetTypeInfo(e).Type;
+
+					if (typeSymbol == null || !typeSymbol.IsMatch(WellKnownTypeNames.Enumerable))
+					{
+						return null;
+					}
+
+					if (!AnyArgumentIsSupportedCollection(semanticModel, arguments))
+					{
+						return null;
+					}
+					
+					break;
+
+				default:
+					return null;
+			}
+
+			return invocation.Expression;
+		}
+
+		static bool IsSupportedCollection(SemanticModel model, ExpressionSyntax e)
 		{
 			var typeSymbol = model.GetTypeInfo(e).Type;
 
@@ -233,20 +217,20 @@ namespace WTG.Analyzers
 				return false;
 			}
 
-			if (typeSymbol.MetadataName.Length != 0 && typeSymbol.MetadataName[^1] != '1')
-			{
-				return false;
-			}
+			return typeSymbol.TypeKind == TypeKind.Array || typeSymbol.IsMatch(WellKnownTypeNames.List_T);
+		}
 
-			foreach (var baseType in typeSymbol.AllInterfaces)
+		static bool AnyArgumentIsSupportedCollection (SemanticModel semanticModel, SeparatedSyntaxList<ArgumentSyntax> arguments)
+		{
+			foreach (var argument in arguments)
 			{
-				if (baseType.IsMatch(WellKnownTypeNames.IEnumerable_T))
+				if (IsSupportedCollection(semanticModel, argument.Expression))
 				{
 					return true;
 				}
 			}
 
-			return typeSymbol.IsMatch(WellKnownTypeNames.IEnumerable_T);
+			return false;
 		}
 	}
 }
