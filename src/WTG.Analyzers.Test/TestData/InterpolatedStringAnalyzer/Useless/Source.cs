@@ -16,6 +16,7 @@ public class Bob
 		Method1($"{foo}");
 		Method1($"{price}");
 		Method1($"");
+		Method1($"{"this is a literal..."}");
 		Method1(@$"{foo}");
 
 		Method1(useless);

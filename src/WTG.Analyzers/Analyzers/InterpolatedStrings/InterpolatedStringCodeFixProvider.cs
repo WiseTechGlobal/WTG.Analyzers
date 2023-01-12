@@ -51,16 +51,13 @@ namespace WTG.Analyzers
 							LiteralExpression(
 								SyntaxKind.StringLiteralExpression,
 								Literal(string.Empty))
-							.WithLeadingTrivia(interpolatedStringExpression?.GetLeadingTrivia())
-							.WithTrailingTrivia(interpolatedStringExpression?.GetTrailingTrivia())));
+							.WithTriviaFrom(interpolatedStringExpression)));
 			}
 
 			switch (interpolatedStringExpression.Contents[0].Kind())
 			{
 				case SyntaxKind.InterpolatedStringText:
 					var text = ((InterpolatedStringTextSyntax)interpolatedStringExpression.Contents[0]).TextToken.Text;
-
-					// Tried to replace 'Literal(text)' with the straight TextToken and it didn't work?
 
 					return document.WithSyntaxRoot(
 						root.ReplaceNode(
@@ -91,8 +88,8 @@ namespace WTG.Analyzers
 								MemberAccessExpression(
 								SyntaxKind.SimpleMemberAccessExpression,
 								interpolation,
-								IdentifierName("ToString")))
-							.WithTriviaFrom(interpolatedStringExpression)));
+								IdentifierName(nameof(object.ToString)))
+							.WithTriviaFrom(interpolatedStringExpression))));
 				default:
 					return document;
 			}
