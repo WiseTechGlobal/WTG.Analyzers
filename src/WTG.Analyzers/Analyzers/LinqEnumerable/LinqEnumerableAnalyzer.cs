@@ -6,7 +6,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using WTG.Analyzers.Analyzers.BooleanLiteral;
-using WTG.Analyzers.Analyzers.LinqEnumerable;
 using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers

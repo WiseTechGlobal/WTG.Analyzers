@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using WTG.Analyzers.Analyzers.LinqEnumerable;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
