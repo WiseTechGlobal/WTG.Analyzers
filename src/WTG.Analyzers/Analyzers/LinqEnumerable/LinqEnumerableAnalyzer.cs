@@ -25,7 +25,22 @@ namespace WTG.Analyzers
 			context.RegisterCompilationStartAction(c => CompilationStart(c));
 		}
 
-		public static bool HasEnumerableAppendMethod(Compilation compilation)
+		static void CompilationStart(CompilationStartAnalysisContext context)
+		{
+			if (!context.Compilation.IsCSharpVersionOrGreater(LanguageVersion.CSharp3))
+			{
+				return;
+			}
+
+			/* exclusively checking the existence of the Enumerable.Append method because 
+			   Enumerable.Append and Enumerable.Prepend were released at the same time */
+			var hasEnumerableAppendMethod = HasEnumerableAppendMethod(context.Compilation);
+			var cache = new FileDetailCache();
+
+			context.RegisterSyntaxNodeAction(c => Analyze(c, cache, hasEnumerableAppendMethod), SyntaxKind.SimpleMemberAccessExpression);
+		}
+
+		static bool HasEnumerableAppendMethod(Compilation compilation)
 		{
 			var enumerable = compilation.GetTypeByMetadataName("System.Linq.Enumerable");
 
@@ -45,63 +60,7 @@ namespace WTG.Analyzers
 			return false;
 		}
 
-		public static void CompilationStart(CompilationStartAnalysisContext context)
-		{
-			if (!context.Compilation.IsCSharpVersionOrGreater(LanguageVersion.CSharp4))
-			{
-				return;
-			}
-
-			/* exclusively checking the existence of the Enumerable.Append method because 
-			   Enumerable.Append and Enumerable.Prepend were released at the same time */
-			var hasEnumerableAppendMethod = HasEnumerableAppendMethod(context.Compilation);
-			var cache = new FileDetailCache();
-
-			context.RegisterSyntaxNodeAction(c => Analyze(c, cache, hasEnumerableAppendMethod), SyntaxKind.SimpleMemberAccessExpression);
-		}
-
-		static bool ContainsSingleElement(ExpressionSyntax? e) => LinqEnumerableUtils.GetInitializer(e)?.Expressions.Count == 1;
-
-		public static bool LooksLikeAppend(InvocationExpressionSyntax invocation) => (invocation.ArgumentList.Arguments.Count == 1 ? ContainsSingleElement(invocation.ArgumentList.Arguments[0].Expression) : ContainsSingleElement(invocation.ArgumentList.Arguments[1].Expression));
-
-		public static bool LooksLikePrepend(InvocationExpressionSyntax invocation)
-		{
-			var expression = ((MemberAccessExpressionSyntax)invocation.Expression).Expression.TryGetExpressionFromParenthesizedExpression();
-
-			if (expression == null)
-			{
-				expression = ((MemberAccessExpressionSyntax)invocation.Expression).Expression;
-			}
-
-			return (invocation.ArgumentList.Arguments.Count == 1 ? ContainsSingleElement(expression) : ContainsSingleElement(invocation.ArgumentList.Arguments[0].Expression));
-		}
-
-		public static bool IsSingleArityCollection (SemanticModel model, ExpressionSyntax e)
-		{
-			var typeSymbol = model.GetTypeInfo(e).Type;
-
-			if (typeSymbol == null)
-			{
-				return false;
-			}
-
-			if (typeSymbol.MetadataName.Length != 0 && typeSymbol.MetadataName[^1] != '1')
-			{
-				return false;
-			}
-
-			foreach (var baseType in typeSymbol.AllInterfaces)
-			{
-				if (baseType.IsMatch(WellKnownTypeNames.IEnumerable_T))
-				{
-					return true;
-				}
-			}
-
-			return typeSymbol.IsMatch(WellKnownTypeNames.IEnumerable_T);
-		}
-
-		public static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache, bool hasEnumerableAppendMethod)
+		static void Analyze(SyntaxNodeAnalysisContext context, FileDetailCache cache, bool hasEnumerableAppendMethod)
 		{
 			if (cache.IsGenerated(context.SemanticModel.SyntaxTree, context.CancellationToken))
 			{
@@ -140,9 +99,9 @@ namespace WTG.Analyzers
 			var semanticModel = context.SemanticModel;
 			var arguments = invocation.ArgumentList.Arguments;
 
-			if (LooksLikePrepend(invocation))
+			if (LooksLikeShouldBePrepend(invocation))
 			{
-				if (LooksLikeAppend(invocation))
+				if (LooksLikeShouldBeAppend(invocation))
 				{
 					var e = expression.Expression.TryGetExpressionFromParenthesizedExpression();
 
@@ -206,7 +165,7 @@ namespace WTG.Analyzers
 					}
 				}
 			}
-			else if (LooksLikeAppend(invocation))
+			else if (LooksLikeShouldBeAppend(invocation))
 			{
 				if (!hasEnumerableAppendMethod)
 				{
@@ -248,6 +207,46 @@ namespace WTG.Analyzers
 						break;
 				}
 			}
+		}
+
+		static bool LooksLikeShouldBePrepend(InvocationExpressionSyntax invocation)
+		{
+			if (invocation.ArgumentList.Arguments.Count == 1)
+			{
+				var expression = ((MemberAccessExpressionSyntax)invocation.Expression).Expression.TryGetExpressionFromParenthesizedExpression();
+				return ContainsSingleElement(expression);
+			}
+
+			return ContainsSingleElement(invocation.ArgumentList.Arguments[0].Expression);
+		}
+
+		static bool LooksLikeShouldBeAppend(InvocationExpressionSyntax invocation) => (invocation.ArgumentList.Arguments.Count == 1 ? ContainsSingleElement(invocation.ArgumentList.Arguments[0].Expression) : ContainsSingleElement(invocation.ArgumentList.Arguments[1].Expression));
+
+		static bool ContainsSingleElement(ExpressionSyntax? e) => LinqEnumerableUtils.GetInitializer(e)?.Expressions.Count == 1;
+
+		static bool IsSingleArityCollection(SemanticModel model, ExpressionSyntax e)
+		{
+			var typeSymbol = model.GetTypeInfo(e).Type;
+
+			if (typeSymbol == null)
+			{
+				return false;
+			}
+
+			if (typeSymbol.MetadataName.Length != 0 && typeSymbol.MetadataName[^1] != '1')
+			{
+				return false;
+			}
+
+			foreach (var baseType in typeSymbol.AllInterfaces)
+			{
+				if (baseType.IsMatch(WellKnownTypeNames.IEnumerable_T))
+				{
+					return true;
+				}
+			}
+
+			return typeSymbol.IsMatch(WellKnownTypeNames.IEnumerable_T);
 		}
 	}
 }
