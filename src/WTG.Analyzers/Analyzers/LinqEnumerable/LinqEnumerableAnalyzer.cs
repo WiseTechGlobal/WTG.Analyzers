@@ -11,7 +11,6 @@ using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
-#pragma warning disable CA1303
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed class LinqEnumerableAnalyzer : DiagnosticAnalyzer
 	{
@@ -241,7 +240,6 @@ namespace WTG.Analyzers
 			return false;
 		}
 	}
-#pragma warning restore CA1303
 }
 
 
