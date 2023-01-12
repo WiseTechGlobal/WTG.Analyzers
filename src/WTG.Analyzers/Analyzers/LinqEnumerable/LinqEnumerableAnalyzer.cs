@@ -179,8 +179,12 @@ namespace WTG.Analyzers
 			switch (arguments.Count)
 			{
 				case 1:
-					if (!(IsSupportedCollection(semanticModel, e) ||
-						IsSupportedCollection(semanticModel, arguments[0].Expression)))
+					if (!ImplementsIEnumerable(semanticModel, e))
+					{
+						return null;
+					}
+
+					if (!(IsSupportedCollection(semanticModel, e) || IsSupportedCollection(semanticModel, arguments[0].Expression)))
 					{
 						return null;
 					}
@@ -206,6 +210,26 @@ namespace WTG.Analyzers
 			}
 
 			return invocation.Expression;
+		}
+
+		static bool ImplementsIEnumerable (SemanticModel model, ExpressionSyntax e)
+		{
+			var typeSymbol = model.GetTypeInfo(e).Type;
+
+			if (typeSymbol == null)
+			{
+				return false;
+			}
+
+			foreach (var implementedInterface in typeSymbol.AllInterfaces)
+			{
+				if (implementedInterface.IsMatch(WellKnownTypeNames.IEnumerable_T))
+				{
+					return true;
+				}
+			}
+
+			return typeSymbol.IsMatch(WellKnownTypeNames.IEnumerable_T);
 		}
 
 		static bool IsSupportedCollection(SemanticModel model, ExpressionSyntax e)
