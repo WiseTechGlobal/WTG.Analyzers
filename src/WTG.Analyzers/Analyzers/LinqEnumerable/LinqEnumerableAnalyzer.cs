@@ -11,6 +11,7 @@ using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
+#pragma warning disable CA1303
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed class LinqEnumerableAnalyzer : DiagnosticAnalyzer
 	{
@@ -176,18 +177,21 @@ namespace WTG.Analyzers
 
 			var e = ((MemberAccessExpressionSyntax)invocation.Expression).Expression.TryGetExpressionFromParenthesizedExpression();
 
+			var concatMethodSymbol = (IMethodSymbol?)semanticModel.GetSymbolInfo(invocation.Expression).Symbol;
+
+			if (concatMethodSymbol == null || !concatMethodSymbol.IsMatch(WellKnownTypeNames.Enumerable, nameof(Enumerable.Concat)))
+			{
+				return null;
+			}
+
 			switch (arguments.Count)
 			{
 				case 1:
-					if (!ImplementsIEnumerable(semanticModel, e))
-					{
-						return null;
-					}
-
 					if (!(IsSupportedCollection(semanticModel, e) || IsSupportedCollection(semanticModel, arguments[0].Expression)))
 					{
 						return null;
 					}
+
 					break;
 
 				case 2:
@@ -210,26 +214,6 @@ namespace WTG.Analyzers
 			}
 
 			return invocation.Expression;
-		}
-
-		static bool ImplementsIEnumerable (SemanticModel model, ExpressionSyntax e)
-		{
-			var typeSymbol = model.GetTypeInfo(e).Type;
-
-			if (typeSymbol == null)
-			{
-				return false;
-			}
-
-			foreach (var implementedInterface in typeSymbol.AllInterfaces)
-			{
-				if (implementedInterface.IsMatch(WellKnownTypeNames.IEnumerable_T))
-				{
-					return true;
-				}
-			}
-
-			return typeSymbol.IsMatch(WellKnownTypeNames.IEnumerable_T);
 		}
 
 		static bool IsSupportedCollection(SemanticModel model, ExpressionSyntax e)
@@ -257,6 +241,7 @@ namespace WTG.Analyzers
 			return false;
 		}
 	}
+#pragma warning restore CA1303
 }
 
 
