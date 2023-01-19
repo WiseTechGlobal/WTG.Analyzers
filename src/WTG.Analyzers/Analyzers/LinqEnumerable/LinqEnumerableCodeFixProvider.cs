@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Simplification;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -102,7 +103,8 @@ namespace WTG.Analyzers
 					MemberAccessExpression(
 						SyntaxKind.SimpleMemberAccessExpression,
 						m.Expression,
-						IdentifierName(nameof(Enumerable.Append))))
+            m.OperatorToken,
+						IdentifierName(nameof(Enumerable.Append)).WithTriviaFrom(m.Name)))
 				.WithArgumentList(
 					ArgumentList(
 						SeparatedList<ArgumentSyntax>(listOfArgumentsAndSeparators)))
@@ -130,7 +132,9 @@ namespace WTG.Analyzers
 					return InvocationExpression(
 						MemberAccessExpression(
 							SyntaxKind.SimpleMemberAccessExpression,
-							invocation.ArgumentList.Arguments[0].Expression,
+							ParenthesizedExpression(invocation.ArgumentList.Arguments[0].Expression.WithoutTrivia())
+              .WithTriviaFrom(invocation.ArgumentList.Arguments[0].Expression)
+              .WithAdditionalAnnotations(Simplifier.Annotation),
 							IdentifierName(nameof(Enumerable.Prepend))))
 					.WithArgumentList(
 						ArgumentList(
