@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <diagnostics id="WTG3016" severity="Info">
 	<diagnostic message="Interpolated strings must be purposeful">
-		<location>Test0.cs: (12, 20-67)</location>
+		<location>Test0.cs: (10, 20-67)</location>
 	</diagnostic>
 	<diagnostic message="Interpolated strings must be purposeful">
-		<location>Test0.cs: (14, 11-58)</location>
+		<location>Test0.cs: (12, 11-58)</location>
 	</diagnostic>
 	<diagnostic message="Interpolated strings must be purposeful">
-		<location>Test0.cs: (16, 11-19)</location>
+		<location>Test0.cs: (14, 11-19)</location>
 	</diagnostic>
 	<diagnostic message="Interpolated strings must be purposeful">
-		<location>Test0.cs: (17, 11-21)</location>
+		<location>Test0.cs: (15, 11-21)</location>
 	</diagnostic>
 	<diagnostic message="Interpolated strings must be purposeful">
-		<location>Test0.cs: (18, 11-14)</location>
+		<location>Test0.cs: (16, 11-14)</location>
 	</diagnostic>
 	<diagnostic message="Interpolated strings must be purposeful">
-		<location>Test0.cs: (19, 11-38)</location>
+		<location>Test0.cs: (17, 11-38)</location>
 	</diagnostic>
 	<diagnostic message="Interpolated strings must be purposeful">
-		<location>Test0.cs: (20, 11-20)</location>
+		<location>Test0.cs: (18, 11-20)</location>
 	</diagnostic>
+	<diagnostic message="Interpolated strings must be purposeful">
+		<location>Test0.cs: (27, 11-20)</location>
+	</diagnostic>
+</diagnostics>
+
 </diagnostics>

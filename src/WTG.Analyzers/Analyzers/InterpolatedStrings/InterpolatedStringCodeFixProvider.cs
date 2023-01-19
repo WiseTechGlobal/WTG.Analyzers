@@ -37,7 +37,7 @@ namespace WTG.Analyzers
 			return Task.CompletedTask;
 		}
 
-		public static async Task<Document> FixUselessInterpolatedString (Document document, Diagnostic diagnostic, CancellationToken c)
+		public static async Task<Document> FixUselessInterpolatedString(Document document, Diagnostic diagnostic, CancellationToken c)
 		{
 			var root = await document.RequireSyntaxRootAsync(c).ConfigureAwait(true);
 
@@ -70,9 +70,22 @@ namespace WTG.Analyzers
 				case SyntaxKind.Interpolation:
 					var interpolation = ((InterpolationSyntax)interpolatedStringExpression.Contents[0]).Expression;
 
+					if (interpolation.IsKind(SyntaxKind.NullLiteralExpression))
+					{
+						return document.WithSyntaxRoot(
+							root.ReplaceNode(
+								interpolatedStringExpression,
+								LiteralExpression(
+									SyntaxKind.StringLiteralExpression,
+									Literal(string.Empty))
+								.WithTriviaFrom(interpolatedStringExpression)));
+					}
+
 					var semanticModel = await document.RequireSemanticModelAsync(c).ConfigureAwait(true);
 
-					if (semanticModel.GetTypeInfo(interpolation, c).Type?.SpecialType == SpecialType.System_String)
+					var typeInfo = semanticModel.GetTypeInfo(interpolation, c);
+
+					if (typeInfo.Type?.SpecialType == SpecialType.System_String)
 					{
 						return document.WithSyntaxRoot(
 								root.ReplaceNode(
