@@ -54,4 +54,7 @@
 	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
 		<location>Test0.cs: (33, 3-20)</location>
 	</diagnostic>
+	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+		<location>Test0.cs: (35, 9-28)</location>
+	</diagnostic>
 </diagnostics>

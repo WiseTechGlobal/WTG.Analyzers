@@ -32,6 +32,8 @@ public class Bob
 		Enumerable.Prepend(a, j);
 		Enumerable.Prepend(a, j);
 
+		((1 == 1) ? new [] { 1 } : new [] { 2 }).Prepend(1);
+
 		a.Concat(b); // there is no flow analysis to guarantee that the single element collection remains single element
 		Dictionary<int, int> dict = new Dictionary<int, int>() { { 2, 1 } };
 		dict.Concat(new Dictionary<int, int>() {

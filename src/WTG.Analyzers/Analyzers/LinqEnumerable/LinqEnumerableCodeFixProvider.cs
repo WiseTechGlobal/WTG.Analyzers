@@ -103,7 +103,7 @@ namespace WTG.Analyzers
 					MemberAccessExpression(
 						SyntaxKind.SimpleMemberAccessExpression,
 						m.Expression,
-            m.OperatorToken,
+						m.OperatorToken,
 						IdentifierName(nameof(Enumerable.Append)).WithTriviaFrom(m.Name)))
 				.WithArgumentList(
 					ArgumentList(
@@ -133,8 +133,8 @@ namespace WTG.Analyzers
 						MemberAccessExpression(
 							SyntaxKind.SimpleMemberAccessExpression,
 							ParenthesizedExpression(invocation.ArgumentList.Arguments[0].Expression.WithoutTrivia())
-              .WithTriviaFrom(invocation.ArgumentList.Arguments[0].Expression)
-              .WithAdditionalAnnotations(Simplifier.Annotation),
+							.WithTriviaFrom(invocation.ArgumentList.Arguments[0].Expression)
+							.WithAdditionalAnnotations(Simplifier.Annotation),
 							IdentifierName(nameof(Enumerable.Prepend))))
 					.WithArgumentList(
 						ArgumentList(
