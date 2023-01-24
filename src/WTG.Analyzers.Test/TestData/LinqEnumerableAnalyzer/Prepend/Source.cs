@@ -32,7 +32,7 @@ public class Bob
 		Enumerable.Concat(new int[] { j }, a);
 		Enumerable.Concat(new List<int>() { j }, a);
 
-        new [] { 1 }.Concat((1 == 1) ? new [] { 1 } : new [] { 2 });
+        	new [] { 1 }.Concat((1 == 1) ? new [] { 1 } : new [] { 2 });
 
 		a.Concat(b); // there is no flow analysis to guarantee that the single element collection remains single element
 		Dictionary<int, int> dict = new Dictionary<int, int>() { { 2, 1 } };

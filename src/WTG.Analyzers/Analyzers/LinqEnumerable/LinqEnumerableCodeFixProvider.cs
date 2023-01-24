@@ -102,7 +102,9 @@ namespace WTG.Analyzers
 			return InvocationExpression(
 					MemberAccessExpression(
 						SyntaxKind.SimpleMemberAccessExpression,
-						m.Expression,
+						ParenthesizedExpression(m.Expression.WithoutTrivia())
+						.WithTriviaFrom(m.Expression)
+						.WithAdditionalAnnotations(Simplifier.Annotation),
 						m.OperatorToken,
 						IdentifierName(nameof(Enumerable.Append)).WithTriviaFrom(m.Name)))
 				.WithArgumentList(
@@ -135,7 +137,7 @@ namespace WTG.Analyzers
 							ParenthesizedExpression(invocation.ArgumentList.Arguments[0].Expression.WithoutTrivia())
 							.WithTriviaFrom(invocation.ArgumentList.Arguments[0].Expression)
 							.WithAdditionalAnnotations(Simplifier.Annotation),
-							IdentifierName(nameof(Enumerable.Prepend))))
+							IdentifierName(nameof(Enumerable.Prepend)).WithTriviaFrom(m.Name)))
 					.WithArgumentList(
 						ArgumentList(
 							SeparatedList<ArgumentSyntax>(arguments)))
@@ -198,7 +200,8 @@ namespace WTG.Analyzers
 						SyntaxKind.ArrayInitializerExpression,
 						SeparatedList<ExpressionSyntax>(
 							new List<SyntaxNodeOrToken>() { a, Token(SyntaxKind.CommaToken), b })))
-					.WithTriviaFrom(invocation);
+					.WithTriviaFrom(invocation)
+					.WithAdditionalAnnotations(Simplifier.Annotation);
 		}
 	}
 }
