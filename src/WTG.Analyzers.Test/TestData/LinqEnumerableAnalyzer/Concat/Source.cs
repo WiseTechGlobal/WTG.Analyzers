@@ -24,5 +24,17 @@ public class Bob
 	public IEnumerable<int> Method4() => (new[] { 1 }).Concat(new[] { 2 });
 	public IEnumerable<int> Method5() => (new int[] { 1 }).Concat(new[] { 2 });
 	public IEnumerable<int> Method6() => (new List<int>() { 1 }).Concat(new[] { 2 });
-	public IEnumerable<int> Method7() => (new[] { 1 }).Concat(new[] { 2 }).Concat(new[] { 3 });
+
+	public IEnumerable<object> Method7(object first, IEnumerable<object> other) => new[] { first }.Concat(other ?? Enumerable.Empty<object>());
+	public IEnumerable<object> Method8(IEnumerable<object> first, object other) => (first ?? Enumerable.Empty<object>()).Concat(new[] { other });
+
+	public IEnumerable<int> Method9(IEnumerable<int> values) =>
+		values
+		.Concat(new[] { 123 })
+		.Distinct();
+
+	public IEnumerable<int> Method10(IEnumerable<int> values) =>
+		new[] { 123 }
+		.Concat(values)
+		.Distinct();
 }

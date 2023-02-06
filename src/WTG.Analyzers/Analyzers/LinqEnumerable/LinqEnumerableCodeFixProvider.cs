@@ -103,10 +103,11 @@ namespace WTG.Analyzers
 					MemberAccessExpression(
 						SyntaxKind.SimpleMemberAccessExpression,
 						ParenthesizedExpression(m.Expression.WithoutTrivia())
-						.WithTriviaFrom(m.Expression)
-						.WithAdditionalAnnotations(Simplifier.Annotation),
+							.WithTriviaFrom(m.Expression)
+							.WithAdditionalAnnotations(Simplifier.Annotation),
 						m.OperatorToken,
-						IdentifierName(nameof(Enumerable.Append)).WithTriviaFrom(m.Name)))
+						IdentifierName(nameof(Enumerable.Append))
+							.WithTriviaFrom(m.Name)))
 				.WithArgumentList(
 					ArgumentList(
 						SeparatedList<ArgumentSyntax>(listOfArgumentsAndSeparators)))
@@ -127,7 +128,7 @@ namespace WTG.Analyzers
 			switch (invocation.ArgumentList.Arguments.Count)
 			{
 				case 1:
-					var expression = m.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)m.Expression).TryGetExpressionFromParenthesizedExpression() : m.Expression;
+					var expression = m.Expression.TryGetExpressionFromParenthesizedExpression();
 
 					arguments.Add(Argument(LinqEnumerableUtils.GetValue(expression)!));
 
@@ -135,9 +136,12 @@ namespace WTG.Analyzers
 						MemberAccessExpression(
 							SyntaxKind.SimpleMemberAccessExpression,
 							ParenthesizedExpression(invocation.ArgumentList.Arguments[0].Expression.WithoutTrivia())
-							.WithTriviaFrom(invocation.ArgumentList.Arguments[0].Expression)
-							.WithAdditionalAnnotations(Simplifier.Annotation),
-							IdentifierName(nameof(Enumerable.Prepend)).WithTriviaFrom(m.Name)))
+								.WithTriviaFrom(invocation.ArgumentList.Arguments[0].Expression)
+								.WithTriviaFrom(invocation)
+								.WithAdditionalAnnotations(Simplifier.Annotation),
+							m.OperatorToken,
+							IdentifierName(nameof(Enumerable.Prepend))
+								.WithTriviaFrom(m.Name)))
 					.WithArgumentList(
 						ArgumentList(
 							SeparatedList<ArgumentSyntax>(arguments)))

@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <diagnostics severity="Warning">
+	<group id="WTG3013">
+		<diagnostic message="Don't use Concat when appending a single element to an enumerable.">
+			<location>Test0.cs: (29, 81-125)</location>
+		</diagnostic>
+		<diagnostic message="Don't use Concat when appending a single element to an enumerable.">
+			<location>Test0.cs: (32,3) - (33,10)</location>
+		</diagnostic>
+	</group>
+	<group id="WTG3014">
+		<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+			<location>Test0.cs: (28, 81-103)</location>
+		</diagnostic>
+		<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+			<location>Test0.cs: (37,3) - (38,10)</location>
+		</diagnostic>
+	</group>
 	<group id="WTG3015">
 		<diagnostic message="Don't Concat two collections solely comprised of literals.">
 			<location>Test0.cs: (20, 39-57)</location>
@@ -18,14 +34,6 @@
 		</diagnostic>
 		<diagnostic message="Don't Concat two collections solely comprised of literals.">
 			<location>Test0.cs: (26, 39-69)</location>
-		</diagnostic>
-		<diagnostic message="Don't Concat two collections solely comprised of literals.">
-			<location>Test0.cs: (27, 39-59)</location>
-		</diagnostic>
-	</group>
-	<group id="WTG3013">
-		<diagnostic message="Don't use Concat when appending a single element to an enumerable.">
-			<location>Test0.cs: (27, 39-79)</location>
 		</diagnostic>
 	</group>
 </diagnostics>

@@ -24,5 +24,17 @@ public class Bob
 	public IEnumerable<int> Method4() => new[] { 1, 2 };
 	public IEnumerable<int> Method5() => new[] { 1, 2 };
 	public IEnumerable<int> Method6() => new[] { 1, 2 };
-	public IEnumerable<int> Method7() => (new[] { 1, 2 }).Append(3);
+
+	public IEnumerable<object> Method7(object first, IEnumerable<object> other) => (other ?? Enumerable.Empty<object>()).Prepend(first);
+	public IEnumerable<object> Method8(IEnumerable<object> first, object other) => (first ?? Enumerable.Empty<object>()).Append(other);
+
+	public IEnumerable<int> Method9(IEnumerable<int> values) =>
+		values
+		.Append(123)
+		.Distinct();
+
+	public IEnumerable<int> Method10(IEnumerable<int> values) =>
+		values
+		.Prepend(123)
+		.Distinct();
 }
