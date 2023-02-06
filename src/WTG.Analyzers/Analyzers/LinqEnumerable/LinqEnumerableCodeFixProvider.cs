@@ -186,7 +186,7 @@ namespace WTG.Analyzers
 			switch (invocation.ArgumentList.Arguments.Count)
 			{
 				case 1:
-					var expression = m.Expression.IsKind(SyntaxKind.ParenthesizedExpression) ? ((ParenthesizedExpressionSyntax)m.Expression).TryGetExpressionFromParenthesizedExpression() : m.Expression;
+					var expression = m.Expression.TryGetExpressionFromParenthesizedExpression();
 
 					a = (LiteralExpressionSyntax)LinqEnumerableUtils.GetValue(expression)!;
 					b = (LiteralExpressionSyntax)LinqEnumerableUtils.GetValue(invocation.ArgumentList.Arguments[0].Expression)!;
