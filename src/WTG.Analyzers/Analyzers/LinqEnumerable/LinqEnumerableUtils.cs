@@ -26,19 +26,12 @@ namespace WTG.Analyzers
 
 		public static ExpressionSyntax TryGetExpressionFromParenthesizedExpression (this ExpressionSyntax expression)
 		{
-			if (!expression.IsKind(SyntaxKind.ParenthesizedExpression))
+			while (expression.IsKind(SyntaxKind.ParenthesizedExpression))
 			{
-				return expression;
+				expression = ((ParenthesizedExpressionSyntax)expression).Expression;
 			}
 
-			var unwrappedExpression = ((ParenthesizedExpressionSyntax)expression).Expression;
-
-			while (unwrappedExpression.IsKind(SyntaxKind.ParenthesizedExpression))
-			{
-				unwrappedExpression = ((ParenthesizedExpressionSyntax)unwrappedExpression).Expression;
-			}
-
-			return unwrappedExpression;
+			return expression;
 		}
 	}
 }
