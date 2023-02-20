@@ -573,7 +573,7 @@ namespace WTG.Analyzers
 			DecruftificationCategory,
 			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
-			description: "Interpolated strings must be purposeful and include more than one interpolation or interpolation text");
+			description: "Interpolated strings must be purposeful and include more than just literal text.");
 
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
