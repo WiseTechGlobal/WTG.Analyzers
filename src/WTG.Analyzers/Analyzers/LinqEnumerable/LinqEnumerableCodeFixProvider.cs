@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
@@ -98,17 +99,19 @@ namespace WTG.Analyzers
 					listOfArgumentsAndSeparators.Add(Token(SyntaxKind.CommaToken));
 					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(invocation.ArgumentList.Arguments[1].Expression)!));
 					break;
+				default:
+					throw new InvalidOperationException("Unreachable - Code fix should never trigger for >2 arguments.");
 			}
 
 			return InvocationExpression(
-					MemberAccessExpression(
-						SyntaxKind.SimpleMemberAccessExpression,
-						ParenthesizedExpression(m.Expression.WithoutTrivia())
-							.WithTriviaFrom(m.Expression)
-							.WithAdditionalAnnotations(Simplifier.Annotation),
-						m.OperatorToken,
-						IdentifierName(nameof(Enumerable.Append))
-							.WithTriviaFrom(m.Name)))
+				MemberAccessExpression(
+					SyntaxKind.SimpleMemberAccessExpression,
+					ParenthesizedExpression(m.Expression.WithoutTrivia())
+						.WithTriviaFrom(m.Expression)
+						.WithAdditionalAnnotations(Simplifier.Annotation),
+					m.OperatorToken,
+					IdentifierName(nameof(Enumerable.Append))
+						.WithTriviaFrom(m.Name)))
 				.WithArgumentList(
 					ArgumentList(
 						SeparatedList<ArgumentSyntax>(listOfArgumentsAndSeparators)))
@@ -120,53 +123,40 @@ namespace WTG.Analyzers
 			var invocation = (InvocationExpressionSyntax?)m.Parent;
 			NRT.Assert(invocation != null, "MemberAccessExpression should have a parent.");
 
-			var arguments = new List<SyntaxNodeOrToken>();
+			var listOfArgumentsAndSeparators = new List<SyntaxNodeOrToken>();
+
+			ExpressionSyntax member;
 
 			switch (invocation.ArgumentList.Arguments.Count)
 			{
 				case 1:
-					var expression = m.Expression.TryGetExpressionFromParenthesizedExpression();
-
-					arguments.Add(Argument(LinqEnumerableUtils.GetFirstValue(expression)!));
-
-					return InvocationExpression(
-						MemberAccessExpression(
-							SyntaxKind.SimpleMemberAccessExpression,
-							ParenthesizedExpression(invocation.ArgumentList.Arguments[0].Expression.WithoutTrivia())
-								.WithTriviaFrom(invocation.ArgumentList.Arguments[0].Expression)
-								.WithTriviaFrom(invocation)
-								.WithAdditionalAnnotations(Simplifier.Annotation),
-							m.OperatorToken,
-							IdentifierName(nameof(Enumerable.Prepend))
-								.WithTriviaFrom(m.Name)))
-					.WithArgumentList(
-						ArgumentList(
-							SeparatedList<ArgumentSyntax>(arguments)))
-					.WithTriviaFrom(invocation);
+					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(m.Expression.TryGetExpressionFromParenthesizedExpression())!));
+					member = ParenthesizedExpression(invocation.ArgumentList.Arguments[0].Expression.WithoutTrivia())
+						.WithTriviaFrom(invocation)
+						.WithAdditionalAnnotations(Simplifier.Annotation);
+					break;
 				case 2:
-					var value = LinqEnumerableUtils.GetFirstValue(invocation.ArgumentList.Arguments[0].Expression);
+					listOfArgumentsAndSeparators.Add(invocation.ArgumentList.Arguments[1]);
+					listOfArgumentsAndSeparators.Add(Token(SyntaxKind.CommaToken));
+					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(invocation.ArgumentList.Arguments[0].Expression)!));
+					member = m.Expression;
+					break;
 
-					if (value == null)
-					{
-						return invocation;
-					}
-
-					arguments.Add(invocation.ArgumentList.Arguments[1]);
-					arguments.Add(Token(SyntaxKind.CommaToken));
-					arguments.Add(Argument(value));
-
-					return InvocationExpression(
-						MemberAccessExpression(
-							SyntaxKind.SimpleMemberAccessExpression,
-							IdentifierName(nameof(Enumerable)),
-							IdentifierName(nameof(Enumerable.Prepend))))
-					.WithArgumentList(
-						ArgumentList(
-							SeparatedList<ArgumentSyntax>(arguments)))
-					.WithTriviaFrom(invocation);
 				default:
-					return invocation;
+					throw new InvalidOperationException("Unreachable - Code fix should never trigger for >2 arguments.");
 			}
+
+			return InvocationExpression(
+				MemberAccessExpression(
+					SyntaxKind.SimpleMemberAccessExpression,
+					member,
+					m.OperatorToken,
+					IdentifierName(nameof(Enumerable.Prepend))
+						.WithTriviaFrom(m.Name)))
+				.WithArgumentList(
+					ArgumentList(
+						SeparatedList<ArgumentSyntax>(listOfArgumentsAndSeparators)))
+				.WithTriviaFrom(invocation);
 		}
 
 		public static SyntaxNode FixConcatWithNewCollection(MemberAccessExpressionSyntax m)
