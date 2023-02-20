@@ -36,9 +36,15 @@ namespace WTG.Analyzers
 				case 0:
 					break;
 				case 1:
-					if (node.Contents[0].IsKind(SyntaxKind.Interpolation))
+					var content = node.Contents[0];
+					if (content.IsKind(SyntaxKind.Interpolation))
 					{
-						var interpolation = (InterpolationSyntax)node.Contents[0];
+						var interpolation = (InterpolationSyntax)content;
+
+						if (!interpolation.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+						{
+							return;
+						}
 
 						if (interpolation.AlignmentClause != null || interpolation.FormatClause != null)
 						{
