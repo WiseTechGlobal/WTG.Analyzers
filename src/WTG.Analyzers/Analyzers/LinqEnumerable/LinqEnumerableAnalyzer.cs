@@ -97,7 +97,16 @@ namespace WTG.Analyzers
 			var semanticModel = context.SemanticModel;
 			var arguments = invocation.ArgumentList.Arguments;
 
-			if (LooksLikeShouldBePrepend(invocation))
+			if (LooksLikeTwoCollectionLiterals(invocation, out var first, out var second))
+			{
+				if (!IsSupportedCollection(semanticModel, first) || !IsSupportedCollection(semanticModel, second))
+				{
+					return;
+				}
+
+				context.ReportDiagnostic(Rules.CreateDontConcatTwoCollectionsDefinedWithLiteralsDiagnostic(expression.GetLocation()));
+			}
+			else if (LooksLikeShouldBePrepend(invocation))
 			{
 				if (LooksLikeShouldBeAppend(invocation))
 				{
@@ -153,6 +162,23 @@ namespace WTG.Analyzers
 			}
 		}
 
+		static bool LooksLikeTwoCollectionLiterals(InvocationExpressionSyntax invocation, out ExpressionSyntax first, out ExpressionSyntax second)
+		{
+			if (invocation.ArgumentList.Arguments.Count == 1)
+			{
+				var expression = (MemberAccessExpressionSyntax)invocation.Expression;
+				first = expression.Expression.TryGetExpressionFromParenthesizedExpression();
+				second = invocation.ArgumentList.Arguments[0].Expression;
+			}
+			else
+			{
+				first = invocation.ArgumentList.Arguments[0].Expression;
+				second = invocation.ArgumentList.Arguments[1].Expression;
+			}
+
+			return LooksLikeCollectionLiteral(first) && LooksLikeCollectionLiteral(second);
+		}
+
 		static bool LooksLikeShouldBePrepend(InvocationExpressionSyntax invocation)
 		{
 			if (invocation.ArgumentList.Arguments.Count == 1)
@@ -166,7 +192,7 @@ namespace WTG.Analyzers
 
 		static bool LooksLikeShouldBeAppend(InvocationExpressionSyntax invocation) => (invocation.ArgumentList.Arguments.Count == 1 ? ContainsSingleElement(invocation.ArgumentList.Arguments[0].Expression) : ContainsSingleElement(invocation.ArgumentList.Arguments[1].Expression));
 
-		static bool ContainsSingleElement(ExpressionSyntax? e)
+		static bool LooksLikeCollectionLiteral(ExpressionSyntax e, int? expectedItems = default)
 		{
 			var maybeExpressions = LinqEnumerableUtils.GetInitializer(e)?.Expressions;
 			if (!maybeExpressions.HasValue)
@@ -175,20 +201,23 @@ namespace WTG.Analyzers
 			}
 
 			var expressions = maybeExpressions.GetValueOrDefault();
-			if (expressions.Count != 1)
+			if (expectedItems.HasValue && expressions.Count != expectedItems.GetValueOrDefault())
 			{
 				return false;
 			}
 
-			var expression = expressions[0];
-
-			if (expression.IsKind(SyntaxKind.SimpleAssignmentExpression))
+			foreach (var expression in expressions)
 			{
-				return false;
+				if (expression.IsKind(SyntaxKind.SimpleAssignmentExpression))
+				{
+					return false;
+				}
 			}
 
 			return true;
 		}
+
+		static bool ContainsSingleElement(ExpressionSyntax e) => LooksLikeCollectionLiteral(e, expectedItems: 1);
 
 		static ExpressionSyntax? CheckConcatExpressionMeetsSemanticRequirements(SemanticModel semanticModel, InvocationExpressionSyntax invocation)
 		{

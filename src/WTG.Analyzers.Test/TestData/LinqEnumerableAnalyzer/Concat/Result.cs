@@ -38,9 +38,36 @@ public class Bob
 		.Prepend(123)
 		.Distinct();
 
-	static IEnumerable<int> Method11(IEnumerable<int> source)
+	public IEnumerable<int> Method11(IEnumerable<int> source)
 		=> source.Concat(new List<int>() { [0] = 4 });
 
-	static IEnumerable<int> Method12(IEnumerable<int> source)
+	public IEnumerable<int> Method12(IEnumerable<int> source)
 		=> source.Append(4);
+
+	public IEnumerable<int> Method13()
+		=> new[] { 1, 2, 3, 4 };
+
+	public IEnumerable<int> Method14()
+		=> new[] { 1, 2, 3, 4 };
+
+	public IEnumerable<int> Method15()
+		=> new[] { 1, 2, 3, 4 };
+
+	public IEnumerable<int> Method16()
+		=> new[] { 1, 2, 3, 4 };
+
+	public IEnumerable<int> Method17()
+		=> new[] { 1, 2, 3, 4 };
+
+	public IEnumerable<int> Method18()
+		=> new[] { 1, 2, 3, 4 };
+
+	public IEnumerable<int> Method19()
+		=> new[] { 1, 2, 3, 4, 5, 6 };
+
+	public IEnumerable<int> Method20()
+		=> new[] { 1, 2, 3, 4, 5, 6 };
+
+	public IEnumerable<int> Method21()
+		=> new[] { 1, 2, 3, 4, 5, 6 };
 }

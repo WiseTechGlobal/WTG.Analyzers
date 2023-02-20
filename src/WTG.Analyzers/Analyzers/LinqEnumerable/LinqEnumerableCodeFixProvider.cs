@@ -90,12 +90,12 @@ namespace WTG.Analyzers
 			switch (invocation.ArgumentList.Arguments.Count)
 			{
 				case 1:
-					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetValue(invocation.ArgumentList.Arguments[0].Expression)!));
+					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(invocation.ArgumentList.Arguments[0].Expression)!));
 					break;
 				case 2:
 					listOfArgumentsAndSeparators.Add(invocation.ArgumentList.Arguments[0]);
 					listOfArgumentsAndSeparators.Add(Token(SyntaxKind.CommaToken));
-					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetValue(invocation.ArgumentList.Arguments[1].Expression)!));
+					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(invocation.ArgumentList.Arguments[1].Expression)!));
 					break;
 			}
 
@@ -130,7 +130,7 @@ namespace WTG.Analyzers
 				case 1:
 					var expression = m.Expression.TryGetExpressionFromParenthesizedExpression();
 
-					arguments.Add(Argument(LinqEnumerableUtils.GetValue(expression)!));
+					arguments.Add(Argument(LinqEnumerableUtils.GetFirstValue(expression)!));
 
 					return InvocationExpression(
 						MemberAccessExpression(
@@ -147,7 +147,7 @@ namespace WTG.Analyzers
 							SeparatedList<ArgumentSyntax>(arguments)))
 					.WithTriviaFrom(invocation);
 				case 2:
-					var value = LinqEnumerableUtils.GetValue(invocation.ArgumentList.Arguments[0].Expression);
+					var value = LinqEnumerableUtils.GetFirstValue(invocation.ArgumentList.Arguments[0].Expression);
 
 					if (value == null)
 					{
@@ -181,29 +181,33 @@ namespace WTG.Analyzers
 				return m;
 			}
 
-			LiteralExpressionSyntax a, b;
-
-			switch (invocation.ArgumentList.Arguments.Count)
+			var initializerItems = new List<SyntaxNodeOrToken>();
+			if (invocation.ArgumentList.Arguments.Count == 1)
 			{
-				case 1:
-					var expression = m.Expression.TryGetExpressionFromParenthesizedExpression();
-
-					a = (LiteralExpressionSyntax)LinqEnumerableUtils.GetValue(expression)!;
-					b = (LiteralExpressionSyntax)LinqEnumerableUtils.GetValue(invocation.ArgumentList.Arguments[0].Expression)!;
-					break;
-				case 2:
-					a = (LiteralExpressionSyntax)LinqEnumerableUtils.GetValue(invocation.ArgumentList.Arguments[0].Expression)!;
-					b = (LiteralExpressionSyntax)LinqEnumerableUtils.GetValue(invocation.ArgumentList.Arguments[1].Expression)!;
-					break;
-				default:
-					return invocation;
+				var expression = m.Expression.TryGetExpressionFromParenthesizedExpression();
+				foreach (var item in LinqEnumerableUtils.GetValues(expression))
+				{
+					initializerItems.Add(item);
+					initializerItems.Add(Token(SyntaxKind.CommaToken));
+				}
 			}
+
+			foreach (var argument in invocation.ArgumentList.Arguments)
+			{
+				var expression = argument.Expression.TryGetExpressionFromParenthesizedExpression();
+				foreach (var item in LinqEnumerableUtils.GetValues(expression))
+				{
+					initializerItems.Add(item);
+					initializerItems.Add(Token(SyntaxKind.CommaToken));
+				}
+			}
+
+			initializerItems.RemoveAt(initializerItems.Count - 1);
 
 			return ImplicitArrayCreationExpression(
 					InitializerExpression(
 						SyntaxKind.ArrayInitializerExpression,
-						SeparatedList<ExpressionSyntax>(
-							new List<SyntaxNodeOrToken>() { a, Token(SyntaxKind.CommaToken), b })))
+						SeparatedList<ExpressionSyntax>(initializerItems)))
 					.WithTriviaFrom(invocation)
 					.WithAdditionalAnnotations(Simplifier.Annotation);
 		}
