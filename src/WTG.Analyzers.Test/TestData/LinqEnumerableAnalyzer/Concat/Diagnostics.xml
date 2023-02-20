@@ -7,6 +7,9 @@
 		<diagnostic message="Don't use Concat when appending a single element to an enumerable.">
 			<location>Test0.cs: (32,3) - (33,10)</location>
 		</diagnostic>
+		<diagnostic message="Don't use Concat when appending a single element to an enumerable.">
+			<location>Test0.cs: (45, 6-19)</location>
+		</diagnostic>
 	</group>
 	<group id="WTG3014">
 		<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">

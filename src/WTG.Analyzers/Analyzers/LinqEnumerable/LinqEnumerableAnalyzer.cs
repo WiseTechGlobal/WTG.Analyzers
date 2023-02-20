@@ -166,7 +166,29 @@ namespace WTG.Analyzers
 
 		static bool LooksLikeShouldBeAppend(InvocationExpressionSyntax invocation) => (invocation.ArgumentList.Arguments.Count == 1 ? ContainsSingleElement(invocation.ArgumentList.Arguments[0].Expression) : ContainsSingleElement(invocation.ArgumentList.Arguments[1].Expression));
 
-		static bool ContainsSingleElement(ExpressionSyntax? e) => LinqEnumerableUtils.GetInitializer(e)?.Expressions.Count == 1;
+		static bool ContainsSingleElement(ExpressionSyntax? e)
+		{
+			var maybeExpressions = LinqEnumerableUtils.GetInitializer(e)?.Expressions;
+			if (!maybeExpressions.HasValue)
+			{
+				return false;
+			}
+
+			var expressions = maybeExpressions.GetValueOrDefault();
+			if (expressions.Count != 1)
+			{
+				return false;
+			}
+
+			var expression = expressions[0];
+
+			if (expression.IsKind(SyntaxKind.SimpleAssignmentExpression))
+			{
+				return false;
+			}
+
+			return true;
+		}
 
 		static ExpressionSyntax? CheckConcatExpressionMeetsSemanticRequirements(SemanticModel semanticModel, InvocationExpressionSyntax invocation)
 		{

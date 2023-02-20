@@ -10,11 +10,11 @@ public class Bob
 	{
 		IEnumerable<int> a = Enumerable.Empty<int>();
 		int[] b = new[] { 1 };
+		a.Concat(b);
 
-		a.Concat(b); // there is no flow analysis to guarantee that the single element collection remains single element
 		new Dictionary<int, int>() { { 2, 1 } }.Concat(new Dictionary<int, int>() {
 			{1, 1}
-		}); // analyzer does not check dictionaries despite them using ObjectCreationExpression
+		});
 	}
 
 	public IEnumerable<int> Method1() => new[] { 1, 2 };
@@ -37,4 +37,10 @@ public class Bob
 		values
 		.Prepend(123)
 		.Distinct();
+
+	static IEnumerable<int> Method11(IEnumerable<int> source)
+		=> source.Concat(new List<int>() { [0] = 4 });
+
+	static IEnumerable<int> Method12(IEnumerable<int> source)
+		=> source.Append(4);
 }

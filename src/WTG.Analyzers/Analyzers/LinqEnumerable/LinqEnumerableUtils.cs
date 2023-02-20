@@ -21,7 +21,15 @@ namespace WTG.Analyzers
 		{
 			var initializer = GetInitializer(e);
 
-			return initializer?.Expressions[0];
+			var expression = initializer?.Expressions[0];
+
+			if (expression.IsKind(SyntaxKind.ComplexElementInitializerExpression))
+			{
+				initializer = (InitializerExpressionSyntax)expression;
+				return initializer.Expressions[0];
+			}
+
+			return expression;
 		}
 
 		public static ExpressionSyntax TryGetExpressionFromParenthesizedExpression (this ExpressionSyntax expression)
