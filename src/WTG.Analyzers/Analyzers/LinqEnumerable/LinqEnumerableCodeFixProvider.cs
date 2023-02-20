@@ -83,7 +83,8 @@ namespace WTG.Analyzers
 
 		public static SyntaxNode FixConcatWithAppendMethod(MemberAccessExpressionSyntax m)
 		{
-			var invocation = (InvocationExpressionSyntax)m.Parent!;
+			var invocation = (InvocationExpressionSyntax?)m.Parent;
+			NRT.Assert(invocation != null, "MemberAccessExpression should have a parent.");
 
 			var listOfArgumentsAndSeparators = new List<SyntaxNodeOrToken>();
 
@@ -117,11 +118,7 @@ namespace WTG.Analyzers
 		public static SyntaxNode? FixConcatWithPrependMethod(MemberAccessExpressionSyntax m)
 		{
 			var invocation = (InvocationExpressionSyntax?)m.Parent;
-
-			if (invocation == null)
-			{
-				return m;
-			}
+			NRT.Assert(invocation != null, "MemberAccessExpression should have a parent.");
 
 			var arguments = new List<SyntaxNodeOrToken>();
 
