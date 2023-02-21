@@ -19,7 +19,7 @@ namespace WTG.Analyzers
 		public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
 			Rules.UsingEnumerableExtensionMethodsOnAQueryableDiagnosticID);
 
-		public override FixAllProvider GetFixAllProvider() => QueryLinqFixAllProvider.Instance;
+		public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
 		public override Task RegisterCodeFixesAsync(CodeFixContext context)
 		{
