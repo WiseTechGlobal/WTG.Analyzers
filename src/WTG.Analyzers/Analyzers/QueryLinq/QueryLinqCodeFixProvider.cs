@@ -40,7 +40,7 @@ namespace WTG.Analyzers
 			var node = root.FindNode(diagnostic.Location.SourceSpan);
 
 			var invocationExpressionNode = node.AncestorsAndSelf().OfType<InvocationExpressionSyntax>().FirstOrDefault();
-			if (invocationExpressionNode.Expression is not MemberAccessExpressionSyntax memberAccessExpressionNode)
+			if (invocationExpressionNode?.Expression is not MemberAccessExpressionSyntax memberAccessExpressionNode)
 			{
 				return document;
 			}
