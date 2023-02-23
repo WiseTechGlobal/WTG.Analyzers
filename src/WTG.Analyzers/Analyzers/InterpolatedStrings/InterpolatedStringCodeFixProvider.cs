@@ -70,39 +70,11 @@ namespace WTG.Analyzers
 				case SyntaxKind.Interpolation:
 					var interpolation = ((InterpolationSyntax)interpolatedStringExpression.Contents[0]).Expression;
 
-					if (interpolation.IsKind(SyntaxKind.NullLiteralExpression))
-					{
-						return document.WithSyntaxRoot(
+					return document.WithSyntaxRoot(
 							root.ReplaceNode(
 								interpolatedStringExpression,
-								LiteralExpression(
-									SyntaxKind.StringLiteralExpression,
-									Literal(string.Empty))
+								interpolation
 								.WithTriviaFrom(interpolatedStringExpression)));
-					}
-
-					var semanticModel = await document.RequireSemanticModelAsync(c).ConfigureAwait(true);
-
-					var typeInfo = semanticModel.GetTypeInfo(interpolation, c);
-
-					if (typeInfo.Type?.SpecialType == SpecialType.System_String)
-					{
-						return document.WithSyntaxRoot(
-								root.ReplaceNode(
-									interpolatedStringExpression,
-									interpolation
-									.WithTriviaFrom(interpolatedStringExpression)));
-					}
-
-					return document.WithSyntaxRoot(
-						root.ReplaceNode(
-							interpolatedStringExpression,
-							InvocationExpression(
-								MemberAccessExpression(
-								SyntaxKind.SimpleMemberAccessExpression,
-								interpolation,
-								IdentifierName(nameof(object.ToString)))
-							.WithTriviaFrom(interpolatedStringExpression))));
 				default:
 					return document;
 			}
