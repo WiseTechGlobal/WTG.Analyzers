@@ -64,11 +64,11 @@ namespace WTG.Analyzers
 
 					if (interpolatedStringExpression.StringStartToken.IsKind(SyntaxKind.InterpolatedVerbatimStringStartToken))
 					{
-						literalToken = Literal("@\"" + text.Text + '"', text.ValueText);
+						literalToken = Literal("@\"" + ConvertDisplayText(text.Text) + '"', text.ValueText);
 					}
 					else
 					{
-						literalToken = Literal('"' + text.Text + '"', text.ValueText);
+						literalToken = Literal('"' + ConvertDisplayText(text.Text) + '"', text.ValueText);
 					}
 
 					return document.WithSyntaxRoot(
@@ -91,5 +91,8 @@ namespace WTG.Analyzers
 					return document;
 			}
 		}
-	}
+
+		static string ConvertDisplayText(string displayText)
+			=> displayText.Replace("}}", "}").Replace("{{", "{");
+    }
 }
