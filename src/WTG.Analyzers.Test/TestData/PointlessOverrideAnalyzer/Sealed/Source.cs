@@ -7,7 +7,6 @@ namespace Magic
 		public sealed override void Method(int argument1, int argument2)
 		{
 			base.Method(argument1, argument2);
-			Foo();
 		}
 
 		public sealed override int Property
@@ -53,10 +52,6 @@ namespace Magic
 				base.Event -= value;
 			}
 		}
-
-		void Foo()
-		{
-		}
 	}
 
 	class OverrideSealedClass : BaseClass
@@ -64,7 +59,6 @@ namespace Magic
 		public override sealed void Method(int argument1, int argument2)
 		{
 			base.Method(argument1, argument2);
-			Foo();
 		}
 
 		public override sealed int Property
@@ -109,10 +103,6 @@ namespace Magic
 			{
 				base.Event -= value;
 			}
-		}
-
-		void Foo()
-		{
 		}
 	}
 
