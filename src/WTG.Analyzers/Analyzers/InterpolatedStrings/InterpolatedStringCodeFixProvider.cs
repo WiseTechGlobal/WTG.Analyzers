@@ -57,14 +57,26 @@ namespace WTG.Analyzers
 			switch (interpolatedStringExpression.Contents[0].Kind())
 			{
 				case SyntaxKind.InterpolatedStringText:
-					var text = ((InterpolatedStringTextSyntax)interpolatedStringExpression.Contents[0]).TextToken.Text;
+					var syntax = (InterpolatedStringTextSyntax)interpolatedStringExpression.Contents[0];
+					var text = syntax.TextToken;
+
+					SyntaxToken literalToken;
+
+					if (interpolatedStringExpression.StringStartToken.IsKind(SyntaxKind.InterpolatedVerbatimStringStartToken))
+					{
+						literalToken = Literal("@\"" + text.Text + '"', text.ValueText);
+					}
+					else
+					{
+						literalToken = Literal('"' + text.Text + '"', text.ValueText);
+					}
 
 					return document.WithSyntaxRoot(
 						root.ReplaceNode(
 							interpolatedStringExpression,
 							LiteralExpression(
 								SyntaxKind.StringLiteralExpression,
-								Literal(text))
+								literalToken)
 							.WithTriviaFrom(interpolatedStringExpression)));
 
 				case SyntaxKind.Interpolation:
