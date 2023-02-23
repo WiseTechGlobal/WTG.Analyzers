@@ -43,7 +43,7 @@ namespace WTG.Analyzers
 
 			var node = (CSharpSyntaxNode)context.Node;
 
-			if (IsOverride(node) && !node.Accept(IsMeaningfulVisitor.Instance))
+			if (IsUnsealedOverride(node) && !node.Accept(IsMeaningfulVisitor.Instance))
 			{
 				context.ReportDiagnostic(CreateDiagnostic(node));
 			}
@@ -63,19 +63,26 @@ namespace WTG.Analyzers
 			};
 		}
 
-		static bool IsOverride(CSharpSyntaxNode node)
+		static bool IsUnsealedOverride(CSharpSyntaxNode node)
 		{
 			var modifiers = node.Accept(ModifierExtractionVisitor.Instance);
 
+			var hasOverrideModifier = false;
+
 			foreach (var modifier in modifiers)
 			{
-				if (modifier.IsKind(SyntaxKind.OverrideKeyword))
+				switch (modifier.Kind())
 				{
-					return true;
+					case SyntaxKind.OverrideKeyword:
+						hasOverrideModifier = true;
+						break;
+
+					case SyntaxKind.SealedKeyword:
+						return false;
 				}
 			}
 
-			return false;
+			return hasOverrideModifier;
 		}
 
 		static bool IsBaseMemberAccess(MemberAccessExpressionSyntax node)
