@@ -132,7 +132,7 @@ namespace WTG.Analyzers
 				case 1:
 					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(m.Expression.TryGetExpressionFromParenthesizedExpression())!));
 					member = ParenthesizedExpression(invocation.ArgumentList.Arguments[0].Expression.WithoutTrivia())
-						.WithTriviaFrom(invocation)
+						.WithTriviaFrom(m.Expression)
 						.WithAdditionalAnnotations(Simplifier.Annotation);
 					break;
 				case 2:
