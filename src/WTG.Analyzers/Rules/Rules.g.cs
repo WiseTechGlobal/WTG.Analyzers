@@ -49,6 +49,7 @@ namespace WTG.Analyzers
 		public const string DontAwaitTriviallyCompletedTasksDiagnosticID = "WTG3010";
 		public const string DontMutateAppendedStringArgumentsDiagnosticID = "WTG3011";
 		public const string AvoidBoolLiteralsInLargerBoolExpressionsDiagnosticID = "WTG3012";
+		public const string InterpolatedStringMustBePurposefulDiagnosticID = "WTG3016";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
 		public const string ConditionalCompilationDirectivesShouldNotSplitStructuresDiagnosticID = "WTG3103";
@@ -565,6 +566,15 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor InterpolatedStringMustBePurposefulRule = new DiagnosticDescriptor(
+			InterpolatedStringMustBePurposefulDiagnosticID,
+			"Interpolated strings must be purposeful",
+			"Interpolated strings must be purposeful",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Interpolated strings must be purposeful and include more than just literal text.");
+
 		public static readonly DiagnosticDescriptor DoNotNestRegionsRule = new DiagnosticDescriptor(
 			DoNotNestRegionsDiagnosticID,
 			"Do not nest regions.",
@@ -983,6 +993,14 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateAvoidBoolLiteralsInLargerBoolExpressionsDiagnostic(Location location)
 		{
 			return Diagnostic.Create(AvoidBoolLiteralsInLargerBoolExpressionsRule, location);
+		}
+
+		/// <summary>
+		/// Interpolated strings must be purposeful
+		/// </summary>
+		public static Diagnostic CreateInterpolatedStringMustBePurposefulDiagnostic(Location location)
+		{
+			return Diagnostic.Create(InterpolatedStringMustBePurposefulRule, location);
 		}
 
 		/// <summary>

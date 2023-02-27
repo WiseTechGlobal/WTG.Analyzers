@@ -93,10 +93,11 @@ namespace WTG.Analyzers.TestFramework
 			var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document).ConfigureAwait(false);
 			var batchCount = -1;
 
+			var batcher = CodeFixProvider.GetFixAllProvider() ?? throw new NotSupportedException("Bulk-fixing can only operate over code-fix providers that support it.");
+
 			while (analyzerDiagnostics.Length > 0)
 			{
 				var actions = await RequestAllFixes(document, analyzerDiagnostics).ConfigureAwait(false);
-				var batcher = CodeFixProvider.GetFixAllProvider();
 
 				var groupedDiagnostics = Enumerable.ToArray(
 					from tuple in actions
@@ -260,6 +261,12 @@ namespace WTG.Analyzers.TestFramework
 		static async Task<SyntaxNode> FormatTree(Document document)
 		{
 			var root = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+
+			if (root is null)
+			{
+				throw new NotSupportedException("Cannot format a document with no syntax tree.");
+			}
+
 			return Formatter.Format(root, Formatter.Annotation, document.Project.Solution.Workspace);
 		}
 

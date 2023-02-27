@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG3016" severity="Info" message="Interpolated strings must be purposeful">
+	<diagnostic>
+		<location>Test0.cs: (5,23-32)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (6,28-34)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (7,28-34)</location>
+	</diagnostic>
+</diagnostics>
