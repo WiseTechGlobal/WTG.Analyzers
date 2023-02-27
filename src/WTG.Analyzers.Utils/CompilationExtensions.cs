@@ -2,9 +2,9 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace WTG.Analyzers.Analyzers.BooleanLiteral
+namespace WTG.Analyzers.Utils
 {
-	static class CompilationExtensions
+	public static class CompilationExtensions
 	{
 		public static bool IsCSharpVersionOrGreater([NotNullWhen(true)] this Compilation? compilation, LanguageVersion version)
 		{

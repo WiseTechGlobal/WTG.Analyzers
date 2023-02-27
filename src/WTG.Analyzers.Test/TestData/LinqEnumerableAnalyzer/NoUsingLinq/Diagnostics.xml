@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics severity="Info">
+	<group id="WTG3013" message="Don't use Concat when appending a single element to an enumerable.">
+		<diagnostic>
+			<location>Test0.cs: (5, 66-95)</location>
+		</diagnostic>
+	</group>
+	<group id="WTG3014" message="Don't use Concat when prepending a single element to an enumerable.">
+		<diagnostic>
+			<location>Test0.cs: (6, 67-96)</location>
+		</diagnostic>
+	</group>
+</diagnostics>

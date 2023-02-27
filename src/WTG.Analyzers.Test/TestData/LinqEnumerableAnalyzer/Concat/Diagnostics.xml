@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics severity="Info">
+	<group id="WTG3013" message="Don't use Concat when appending a single element to an enumerable.">
+		<diagnostic>
+			<location>Test0.cs: (29, 81-125)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (32,3) - (33,10)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (45, 6-19)</location>
+		</diagnostic>
+	</group>
+	<group id="WTG3014" message="Don't use Concat when prepending a single element to an enumerable.">
+		<diagnostic>
+			<location>Test0.cs: (28, 81-103)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (37,3) - (38,10)</location>
+		</diagnostic>
+	</group>
+	<group id="WTG3015" message="Don't Concat two collections solely comprised of literals.">
+		<diagnostic>
+			<location>Test0.cs: (20, 39-57)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (21, 39-61)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (22, 39-67)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (24, 39-59)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (25, 39-63)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (26, 39-69)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (48, 6-30)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (51, 6-34)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (54, 6-40)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (57, 6-24)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (60, 6-28)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (63, 6-34)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (66, 6-30)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (69, 6-34)</location>
+		</diagnostic>
+		<diagnostic>
+			<location>Test0.cs: (72, 6-40)</location>
+		</diagnostic>
+	</group>
+</diagnostics>

@@ -49,6 +49,9 @@ namespace WTG.Analyzers
 		public const string DontAwaitTriviallyCompletedTasksDiagnosticID = "WTG3010";
 		public const string DontMutateAppendedStringArgumentsDiagnosticID = "WTG3011";
 		public const string AvoidBoolLiteralsInLargerBoolExpressionsDiagnosticID = "WTG3012";
+		public const string DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID = "WTG3013";
+		public const string DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID = "WTG3014";
+		public const string DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID = "WTG3015";
 		public const string InterpolatedStringMustBePurposefulDiagnosticID = "WTG3016";
 		public const string DoNotNestRegionsDiagnosticID = "WTG3101";
 		public const string RegionsShouldNotSplitStructuresDiagnosticID = "WTG3102";
@@ -566,6 +569,33 @@ namespace WTG.Analyzers
 				WellKnownDiagnosticTags.Unnecessary,
 			});
 
+		public static readonly DiagnosticDescriptor DontUseConcatWhenAppendingSingleElementToEnumerablesRule = new DiagnosticDescriptor(
+			DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID,
+			"Don't use Concat when appending a single element to an enumerable.",
+			"Don't use Concat when appending a single element to an enumerable.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Using Concat to append a single element to an IEnumerable is less efficient than using Append.");
+
+		public static readonly DiagnosticDescriptor DontUseConcatWhenPrependingSingleElementToEnumerablesRule = new DiagnosticDescriptor(
+			DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID,
+			"Don't use Concat when prepending a single element to an enumerable.",
+			"Don't use Concat when prepending a single element to an enumerable.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Using Concat to prepend a single element to an IEnumerable is less efficient than using Prepend.");
+
+		public static readonly DiagnosticDescriptor DontConcatTwoCollectionsDefinedWithLiteralsRule = new DiagnosticDescriptor(
+			DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID,
+			"Don't Concat two collections solely comprised of literals.",
+			"Don't Concat two collections solely comprised of literals.",
+			DecruftificationCategory,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			description: "Concatenating two collections comprising solely of literals creates useless work for the runtime.");
+
 		public static readonly DiagnosticDescriptor InterpolatedStringMustBePurposefulRule = new DiagnosticDescriptor(
 			InterpolatedStringMustBePurposefulDiagnosticID,
 			"Interpolated strings must be purposeful",
@@ -993,6 +1023,30 @@ namespace WTG.Analyzers
 		public static Diagnostic CreateAvoidBoolLiteralsInLargerBoolExpressionsDiagnostic(Location location)
 		{
 			return Diagnostic.Create(AvoidBoolLiteralsInLargerBoolExpressionsRule, location);
+		}
+
+		/// <summary>
+		/// Don't use Concat when appending a single element to an enumerable.
+		/// </summary>
+		public static Diagnostic CreateDontUseConcatWhenAppendingSingleElementToEnumerablesDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DontUseConcatWhenAppendingSingleElementToEnumerablesRule, location);
+		}
+
+		/// <summary>
+		/// Don't use Concat when prepending a single element to an enumerable.
+		/// </summary>
+		public static Diagnostic CreateDontUseConcatWhenPrependingSingleElementToEnumerablesDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DontUseConcatWhenPrependingSingleElementToEnumerablesRule, location);
+		}
+
+		/// <summary>
+		/// Don't Concat two collections solely comprised of literals.
+		/// </summary>
+		public static Diagnostic CreateDontConcatTwoCollectionsDefinedWithLiteralsDiagnostic(Location location)
+		{
+			return Diagnostic.Create(DontConcatTwoCollectionsDefinedWithLiteralsRule, location);
 		}
 
 		/// <summary>

@@ -231,6 +231,21 @@
 			<description>Combining bool expressions in larger boolean expressions makes the code more complex than it needs to be.</description>
 			<tag>Unnecessary</tag>
 		</rule>
+		<rule id="13" name="DontUseConcatWhenAppendingSingleElementToEnumerables" severity="Info">
+			<title>Don't use Concat when appending a single element to an enumerable.</title>
+			<message>Don't use Concat when appending a single element to an enumerable.</message>
+			<description>Using Concat to append a single element to an IEnumerable is less efficient than using Append.</description>
+		</rule>
+		<rule id="14" name="DontUseConcatWhenPrependingSingleElementToEnumerables" severity="Info">
+			<title>Don't use Concat when prepending a single element to an enumerable.</title>
+			<message>Don't use Concat when prepending a single element to an enumerable.</message>
+			<description>Using Concat to prepend a single element to an IEnumerable is less efficient than using Prepend.</description>
+		</rule>
+		<rule id="15" name="DontConcatTwoCollectionsDefinedWithLiterals" severity="Info">
+			<title>Don't Concat two collections solely comprised of literals.</title>
+			<message>Don't Concat two collections solely comprised of literals.</message>
+			<description>Concatenating two collections comprising solely of literals creates useless work for the runtime.</description>
+		</rule>
 		<rule id="16" name="InterpolatedStringMustBePurposeful" severity="Info">
 			<title>Interpolated strings must be purposeful</title>
 			<message>Interpolated strings must be purposeful</message>
