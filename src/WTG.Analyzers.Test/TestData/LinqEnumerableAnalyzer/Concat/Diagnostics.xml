@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<diagnostics severity="Warning">
+<diagnostics severity="Info">
 	<group id="WTG3013" message="Don't use Concat when appending a single element to an enumerable.">
 		<diagnostic>
 			<location>Test0.cs: (29, 81-125)</location>

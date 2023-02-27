@@ -1,60 +1,60 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<diagnostics id="WTG3014" severity="Warning">
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+<diagnostics id="WTG3014" severity="Info" message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (15, 3-21)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (16, 3-27)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (17, 3-27)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (18, 3-25)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (19, 3-33)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (20, 3-31)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (21, 3-21)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (22, 3-23)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (23, 3-27)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (24, 3-25)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (25, 3-33)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (26, 3-31)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (28, 3-20)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (29, 3-20)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (30, 3-20)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (31, 3-20)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (32, 3-20)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (33, 3-20)</location>
 	</diagnostic>
-	<diagnostic message="Don't use Concat when prepending a single element to an enumerable.">
+	<diagnostic>
 		<location>Test0.cs: (35, 10-29)</location>
 	</diagnostic>
 </diagnostics>

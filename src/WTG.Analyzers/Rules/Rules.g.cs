@@ -573,7 +573,7 @@ namespace WTG.Analyzers
 			"Don't use Concat when appending a single element to an enumerable.",
 			"Don't use Concat when appending a single element to an enumerable.",
 			DecruftificationCategory,
-			DiagnosticSeverity.Warning,
+			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
 			description: "Using Concat to append a single element to an IEnumerable is less efficient than using Append.");
 
@@ -582,7 +582,7 @@ namespace WTG.Analyzers
 			"Don't use Concat when prepending a single element to an enumerable.",
 			"Don't use Concat when prepending a single element to an enumerable.",
 			DecruftificationCategory,
-			DiagnosticSeverity.Warning,
+			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
 			description: "Using Concat to prepend a single element to an IEnumerable is less efficient than using Prepend.");
 
@@ -591,7 +591,7 @@ namespace WTG.Analyzers
 			"Don't Concat two collections solely comprised of literals.",
 			"Don't Concat two collections solely comprised of literals.",
 			DecruftificationCategory,
-			DiagnosticSeverity.Warning,
+			DiagnosticSeverity.Info,
 			isEnabledByDefault: true,
 			description: "Concatenating two collections comprising solely of literals creates useless work for the runtime.");
 
