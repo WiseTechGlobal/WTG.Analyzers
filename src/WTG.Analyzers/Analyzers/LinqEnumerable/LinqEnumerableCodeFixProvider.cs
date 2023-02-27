@@ -31,19 +31,34 @@ namespace WTG.Analyzers
 		{
 			var diagnostic = context.Diagnostics.First();
 
-			var equivalenceKey = diagnostic.Id switch
+			string equivalenceKey, title;
+
+			switch (diagnostic.Id)
 			{
-				Rules.DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID => "Append",
-				Rules.DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID => "Prepend",
-				Rules.DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID => "Join",
-				_ => null,
-			};
+				case Rules.DontUseConcatWhenAppendingSingleElementToEnumerablesDiagnosticID:
+					title = "Replace Concat with Append";
+					equivalenceKey = "Append";
+					break;
+
+				case Rules.DontUseConcatWhenPrependingSingleElementToEnumerablesDiagnosticID:
+					title = "Replace Concat with Prepend";
+					equivalenceKey = "Prepend";
+					break;
+
+				case Rules.DontConcatTwoCollectionsDefinedWithLiteralsDiagnosticID:
+					title = "Merge collections";
+					equivalenceKey = "Join";
+					break;
+
+				default:
+					return Task.CompletedTask;
+			}
 
 			context.RegisterCodeFix(
 				CodeAction.Create(
-					title: "Fix incorrect use of .Concat",
+					title,
 					createChangedDocument: c => ReplaceWithAppropriateMethod(context.Document, diagnostic, c),
-					equivalenceKey: equivalenceKey),
+					equivalenceKey),
 				diagnostic);
 
 			return Task.CompletedTask;
