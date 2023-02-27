@@ -246,6 +246,11 @@
 			<message>Don't Concat two collections solely comprised of literals.</message>
 			<description>Concatenating two collections comprising solely of literals creates useless work for the runtime.</description>
 		</rule>
+		<rule id="16" name="InterpolatedStringMustBePurposeful" severity="Info">
+			<title>Interpolated strings must be purposeful</title>
+			<message>Interpolated strings must be purposeful</message>
+			<description>Interpolated strings must be purposeful and include more than just literal text.</description>
+		</rule>
 	</category>
 	<category name="Maintainability" id="3100">
 		<rule id="1" name="DoNotNestRegions" severity="Info">
