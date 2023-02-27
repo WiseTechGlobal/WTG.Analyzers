@@ -276,7 +276,7 @@ namespace WTG.Analyzers
 			return typeSymbol.TypeKind == TypeKind.Array || typeSymbol.IsMatch(WellKnownTypeNames.List_T);
 		}
 
-		static bool AnyArgumentIsSupportedCollection (SemanticModel semanticModel, SeparatedSyntaxList<ArgumentSyntax> arguments)
+		static bool AnyArgumentIsSupportedCollection(SemanticModel semanticModel, SeparatedSyntaxList<ArgumentSyntax> arguments)
 		{
 			foreach (var argument in arguments)
 			{
