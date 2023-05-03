@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <diagnostics id="WTG1001" message="Our convention is to omit the 'private' modifier where it is already the default." severity="Hidden">
 	<languageVersion>9.0</languageVersion>
-	<suppressId>CS0267</suppressId>
 </diagnostics>
