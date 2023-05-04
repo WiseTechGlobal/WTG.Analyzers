@@ -47,7 +47,7 @@ namespace WTG.Analyzers
 
 					case SyntaxKind.ProtectedKeyword:
 					case SyntaxKind.PublicKeyword:
-					case SyntaxKind.PartialKeyword:
+					case SyntaxKind.PartialKeyword when (context.Node.IsKind(SyntaxKind.MethodDeclaration)):
 						return;
 
 					case SyntaxKind.InternalKeyword:

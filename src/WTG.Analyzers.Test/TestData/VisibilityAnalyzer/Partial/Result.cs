@@ -12,7 +12,7 @@ namespace ns
 
 	class Outer
 	{
-		private partial class Bar
+		partial class Bar
 		{
 		}
 
