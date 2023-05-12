@@ -62,7 +62,7 @@ namespace NS
 
 			trivia = Enumerable.ToDictionary(
 				from trivia in root.DescendantTrivia()
-				where trivia.Kind() == SyntaxKind.MultiLineCommentTrivia
+				where trivia.IsKind(SyntaxKind.MultiLineCommentTrivia)
 				let raw = trivia.ToString()
 				let name = raw.Substring(2, raw.Length - 4)
 				select new { name, trivia },
