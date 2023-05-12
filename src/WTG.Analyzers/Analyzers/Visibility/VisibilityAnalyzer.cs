@@ -73,6 +73,7 @@ namespace WTG.Analyzers
 			{
 				case SyntaxKind.NamespaceDeclaration:
 				case SyntaxKind.CompilationUnit:
+				case FutureSyntaxKinds.FileScopedNamespaceDeclaration:
 					return true;
 
 				default:
