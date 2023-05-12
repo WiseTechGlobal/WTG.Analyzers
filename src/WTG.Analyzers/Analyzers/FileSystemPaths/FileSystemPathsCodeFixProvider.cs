@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using WTG.Analyzers.Utils;
 
 namespace WTG.Analyzers
 {
@@ -26,12 +27,15 @@ namespace WTG.Analyzers
 		{
 			var diagnostic = context.Diagnostics.First();
 
-			context.RegisterCodeFix(
-				CodeAction.Create(
-					title: "Use Path.Combine(...)",
-					createChangedDocument: c => Fix(context.Document, diagnostic, c),
-					equivalenceKey: "UsePathCombine"),
-				diagnostic: diagnostic);
+			if (CommonDiagnosticProperties.CanAutoFix(diagnostic))
+			{
+				context.RegisterCodeFix(
+					CodeAction.Create(
+						title: "Use Path.Combine(...)",
+						createChangedDocument: c => Fix(context.Document, diagnostic, c),
+						equivalenceKey: "UsePathCombine"),
+					diagnostic: diagnostic);
+			}
 
 			return Task.CompletedTask;
 		}

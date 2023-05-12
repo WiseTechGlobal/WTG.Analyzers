@@ -130,12 +130,8 @@ namespace WTG.Analyzers.TestFramework
 					new DummyFixAllDiagnosticProvider(batch.ToArray()),
 					CancellationToken.None);
 
-				var fix = await batcher.GetFixAsync(context).ConfigureAwait(false);
-
-				if (fix == null)
-				{
-					return document;
-				}
+				var fix = (await batcher.GetFixAsync(context).ConfigureAwait(false))
+					?? throw new InvalidOperationException("The batch fixer should not return a null CodeAction.");
 
 				document = await ApplyFixAsync(document, fix).ConfigureAwait(false);
 				analyzerDiagnostics = FilterDiagnostics(await DiagnosticUtils.GetDiagnosticsAsync(Analyzer, new[] { document }).ConfigureAwait(false));

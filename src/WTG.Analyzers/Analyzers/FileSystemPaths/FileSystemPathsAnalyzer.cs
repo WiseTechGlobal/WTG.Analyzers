@@ -99,14 +99,13 @@ namespace WTG.Analyzers
 						for (var j = 0; j < arguments.Count; j++)
 						{
 							var argument = arguments[j];
-							if (!ExpressionIsSuspicious(context.SemanticModel, argument.Expression, isFirst: j == 0, context.CancellationToken))
+							var result = ExpressionIsSuspicious(context.SemanticModel, argument.Expression, isFirst: j == 0, context.CancellationToken);
+							if (result == SuspicionResult.LooksOk)
 							{
 								continue;
 							}
 
-							context.ReportDiagnostic(Diagnostic.Create(
-								Rules.DoNotUsePathSeparatorsInPathLiteralsRule,
-								argument.GetLocation()));
+							context.ReportDiagnostic(CreateDiagnostic(argument.Expression, result == SuspicionResult.CanAutoFix));
 						}
 
 						// We've examined all arguments against the semantic model now, so finish up the loop.
@@ -153,14 +152,13 @@ namespace WTG.Analyzers
 							for (var j = 0; j < expressions.Count; j++)
 							{
 								expression = expressions[j];
-								if (!ExpressionIsSuspicious(context.SemanticModel, expression, isFirst: j == 0, context.CancellationToken))
+								var result = ExpressionIsSuspicious(context.SemanticModel, expression, isFirst: j == 0, context.CancellationToken);
+								if (result == SuspicionResult.LooksOk)
 								{
 									continue;
 								}
 
-								context.ReportDiagnostic(Diagnostic.Create(
-									Rules.DoNotUsePathSeparatorsInPathLiteralsRule,
-									expression.GetLocation()));
+								context.ReportDiagnostic(CreateDiagnostic(expression, result == SuspicionResult.CanAutoFix));
 							}
 
 							// We've examined all expressions against the semantic model now, so finish up the loop.
@@ -169,6 +167,16 @@ namespace WTG.Analyzers
 					}
 				}
 			}
+		}
+
+		static Diagnostic CreateDiagnostic(SyntaxNode syntaxNode, bool canAutoFix)
+		{
+			return Diagnostic.Create(
+				Rules.DoNotUsePathSeparatorsInPathLiteralsRule,
+				syntaxNode.GetLocation(),
+				canAutoFix
+					? ImmutableDictionary<string, string?>.Empty
+					: CommonDiagnosticProperties.NoAutoFixProperties);
 		}
 
 		static bool LooksLikePathCombine(InvocationExpressionSyntax syntax)
@@ -211,27 +219,36 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool ExpressionIsSuspicious(SemanticModel semanticModel, ExpressionSyntax expression, bool isFirst, CancellationToken cancellationToken)
+		static SuspicionResult ExpressionIsSuspicious(SemanticModel semanticModel, ExpressionSyntax expression, bool isFirst, CancellationToken cancellationToken)
 		{
 			switch (expression.Kind())
 			{
 				case SyntaxKind.StringLiteralExpression:
 					var literal = (LiteralExpressionSyntax)expression;
-					return StringLiteralExpressionIsSuspicious(literal, isFirst);
+					return StringLiteralExpressionIsSuspicious(literal, isFirst) ? SuspicionResult.CanAutoFix : SuspicionResult.LooksOk;
 
 				case SyntaxKind.AddExpression:
 					var add = (BinaryExpressionSyntax)expression;
-					return ExpressionIsSuspicious(semanticModel, add.Left, isFirst, cancellationToken) || ExpressionIsSuspicious(semanticModel, add.Right, isFirst: false, cancellationToken);
+					var result1 = ExpressionIsSuspicious(semanticModel, add.Left, isFirst, cancellationToken);
+
+					if (result1 == SuspicionResult.CanAutoFix)
+					{
+						return result1;
+					}
+
+					var result2 = ExpressionIsSuspicious(semanticModel, add.Right, isFirst: false, cancellationToken);
+
+					return result1 > result2 ? result1 : result2;
 
 				case SyntaxKind.InterpolatedStringExpression:
 					var interpolatedString = (InterpolatedStringExpressionSyntax)expression;
-					return InterpolatedStringIsSuspicious(interpolatedString, isFirst);
+					return InterpolatedStringIsSuspicious(interpolatedString, isFirst) ? SuspicionResult.CanAutoFix : SuspicionResult.LooksOk;
 
 				case SyntaxKind.IdentifierName:
-					return IdentifierNameIsSuspicious(semanticModel, expression, isFirst, cancellationToken);
+					return IdentifierNameIsSuspicious(semanticModel, expression, isFirst, cancellationToken) ? SuspicionResult.CannotAutoFix : SuspicionResult.LooksOk;
 
 				default:
-					return false;
+					return SuspicionResult.LooksOk;
 			}
 		}
 
@@ -351,6 +368,24 @@ namespace WTG.Analyzers
 			}
 
 			return true;
+		}
+
+		enum SuspicionResult
+		{
+			/// <summary>
+			/// Did not identify anything wrong with the expression.
+			/// </summary>
+			LooksOk,
+
+			/// <summary>
+			/// Identified one or more issues, but all need to be fixed manually.
+			/// </summary>
+			CannotAutoFix,
+
+			/// <summary>
+			/// Identified one or more issues, at least some can be resolved automatically.
+			/// </summary>
+			CanAutoFix,
 		}
 	}
 }
