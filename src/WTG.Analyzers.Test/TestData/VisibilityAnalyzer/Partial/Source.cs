@@ -15,9 +15,9 @@ namespace ns
 		private partial class Bar
 		{
 		}
+	}
 
-		internal partial class Baz
-		{
-		}
+	internal partial class Baz
+	{
 	}
 }
