@@ -11,8 +11,6 @@ namespace WTG.Analyzers
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public sealed class BooleanLiteralCombiningAnalyzer : DiagnosticAnalyzer
 	{
-		public const string CanAutoFixProperty = "CanAutoFix";
-
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 			Rules.AvoidBoolLiteralsInLargerBoolExpressionsRule);
 
@@ -47,7 +45,7 @@ namespace WTG.Analyzers
 						Diagnostic.Create(
 							Rules.AvoidBoolLiteralsInLargerBoolExpressionsRule,
 							context.Node.GetLocation(),
-							noAutoFix));
+							CommonDiagnosticProperties.NoAutoFixProperties));
 				}
 				else
 				{
@@ -141,7 +139,5 @@ namespace WTG.Analyzers
 			value = false;
 			return false;
 		}
-
-		static readonly ImmutableDictionary<string, string?> noAutoFix = ImmutableDictionary<string, string?>.Empty.Add(CanAutoFixProperty, bool.FalseString);
 	}
 }

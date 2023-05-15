@@ -25,7 +25,7 @@ namespace WTG.Analyzers
 		{
 			var diagnostic = context.Diagnostics.First();
 
-			if (CanAutoFix(diagnostic))
+			if (CommonDiagnosticProperties.CanAutoFix(diagnostic))
 			{
 				context.RegisterCodeFix(
 					CodeAction.Create(
@@ -46,17 +46,6 @@ namespace WTG.Analyzers
 
 			return document.WithSyntaxRoot(
 				ExpressionRemover.ReplaceWithConstantBool(root, literal, literal.IsKind(SyntaxKind.TrueLiteralExpression)));
-		}
-
-		static bool CanAutoFix(Diagnostic diagnostic)
-		{
-			if (!diagnostic.Properties.TryGetValue(BooleanLiteralCombiningAnalyzer.CanAutoFixProperty, out var valueStr) ||
-				!bool.TryParse(valueStr, out var value))
-			{
-				return true;
-			}
-
-			return value;
 		}
 	}
 }
