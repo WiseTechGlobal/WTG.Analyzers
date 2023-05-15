@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diagnostics id="WTG1006" message="Our convention is to omit the 'internal' modifier on types where it is already the default." severity="Hidden">
+	<diagnostic>
+		<location>Test0.cs: (5,1-9)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (9,1-9)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (13,1-9)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (17,1-9)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (21,1-9)</location>
+	</diagnostic>
+</diagnostics>

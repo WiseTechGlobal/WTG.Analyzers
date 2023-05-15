@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <diagnostics id="WTG1006" message="Our convention is to omit the 'internal' modifier on types where it is already the default." severity="Hidden">
 	<diagnostic>
 		<location>Test0.cs: (5,2-10)</location>
@@ -14,21 +14,5 @@
 	</diagnostic>
 	<diagnostic>
 		<location>Test0.cs: (21,2-10)</location>
-	</diagnostic>
-
-	<diagnostic>
-		<location>Test0.cs: (24,1-9)</location>
-	</diagnostic>
-	<diagnostic>
-		<location>Test0.cs: (28,1-9)</location>
-	</diagnostic>
-	<diagnostic>
-		<location>Test0.cs: (32,1-9)</location>
-	</diagnostic>
-	<diagnostic>
-		<location>Test0.cs: (36,1-9)</location>
-	</diagnostic>
-	<diagnostic>
-		<location>Test0.cs: (40,1-9)</location>
 	</diagnostic>
 </diagnostics>
