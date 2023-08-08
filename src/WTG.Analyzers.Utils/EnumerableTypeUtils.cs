@@ -22,15 +22,21 @@ namespace WTG.Analyzers.Utils
 
 		static ITypeSymbol? GetExplicitElementType(ITypeSymbol enumerableType)
 		{
-			foreach (var method in enumerableType.GetMembers(nameof(IEnumerable.GetEnumerator)).OfType<IMethodSymbol>())
+			do
 			{
-				if (!method.IsGenericMethod && method.Parameters.Length == 0 && method.TypeArguments.Length == 0)
+				foreach (var method in enumerableType.GetMembers(nameof(IEnumerable.GetEnumerator)).OfType<IMethodSymbol>())
 				{
-					var retType = method.ReturnType;
+					if (!method.IsGenericMethod && method.Parameters.Length == 0 && method.TypeArguments.Length == 0)
+					{
+						var retType = method.ReturnType;
 
-					return GetElementTypeFromEnumeratorType(retType);
+						return GetElementTypeFromEnumeratorType(retType);
+					}
 				}
+
+				enumerableType = enumerableType.BaseType!;
 			}
+			while (enumerableType != null);
 
 			return null;
 		}

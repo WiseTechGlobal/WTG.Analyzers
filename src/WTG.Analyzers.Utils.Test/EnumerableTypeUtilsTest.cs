@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -15,6 +15,8 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("IEnumerable", ExpectedResult = "object")]
 		[TestCase("PreGenericTypedCollection", ExpectedResult = "float")]
 		[TestCase("ExplicitOnlyCollection", ExpectedResult = "double")]
+		[TestCase("ImplicitNonGenericCollection", ExpectedResult = "object")]
+		[TestCase("ChildImplicitNonGenericCollection", ExpectedResult = "object")]
 		public string GetItemType(string enumerableType)
 		{
 			return EnumerableTypeUtils.GetElementType(GetType(enumerableType))?.ToString();
@@ -52,6 +54,16 @@ class ExplicitOnlyCollection : IEnumerable<double>
 {
 	IEnumerator<double> IEnumerable<double>.GetEnumerator() { yield break; }
 	IEnumerator IEnumerable.GetEnumerator() { yield break; }
+}
+
+class ImplicitNonGenericCollection : IEnumerable<double>
+{
+	IEnumerator<double> IEnumerable<double>.GetEnumerator() { yield break; }
+	IEnumerator GetEnumerator() { yield break; }
+}
+
+class ChildImplicitNonGenericCollection : ImplicitNonGenericCollection
+{
 }
 ";
 

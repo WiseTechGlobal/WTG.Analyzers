@@ -62,6 +62,20 @@ public class Bob
 		{
 		}
 	}
+
+	public void ImplicitNonGeneric(ImplicitNonGenericCollection values)
+	{
+		foreach (int value in values) // can't translate this so don't suggest it
+		{
+		}
+	}
+
+	public void ChildImplicitNonGeneric(ChildImplicitNonGenericCollection values)
+	{
+		foreach (int value in values) // can't translate this so don't suggest it
+		{
+		}
+	}
 }
 
 public class MagicCollection<T> : IEnumerable
@@ -94,4 +108,14 @@ public class AmbigiousCollection : IEnumerable<int>, IEnumerable<double>
 {
 	IEnumerator<int> IEnumerable<int>.GetEnumerator() { yield break; }
 	IEnumerator<double> IEnumerable<double>.GetEnumerator() { yield break; }
+}
+
+public class ImplicitNonGenericCollection : IEnumerable<int>
+{
+	public IEnumerator GetEnumerator() { yield break; }
+	IEnumerator<int> IEnumerable<int>.GetEnumerator() { yield break; }
+}
+
+public class ChildImplicitNonGenericCollection : ImplicitNonGenericCollection
+{
 }
