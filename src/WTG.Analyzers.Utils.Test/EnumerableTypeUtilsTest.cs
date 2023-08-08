@@ -16,6 +16,7 @@ namespace WTG.Analyzers.Utils.Test
 		[TestCase("PreGenericTypedCollection", ExpectedResult = "float")]
 		[TestCase("ExplicitOnlyCollection", ExpectedResult = "double")]
 		[TestCase("ImplicitNonGenericCollection", ExpectedResult = "object")]
+		[TestCase("ChildImplicitNonGenericCollection", ExpectedResult = "object")]
 		public string GetItemType(string enumerableType)
 		{
 			return EnumerableTypeUtils.GetElementType(GetType(enumerableType))?.ToString();
@@ -59,6 +60,10 @@ class ImplicitNonGenericCollection : IEnumerable<double>
 {
 	IEnumerator<double> IEnumerable<double>.GetEnumerator() { yield break; }
 	IEnumerator GetEnumerator() { yield break; }
+}
+
+class ChildImplicitNonGenericCollection : ImplicitNonGenericCollection
+{
 }
 ";
 
