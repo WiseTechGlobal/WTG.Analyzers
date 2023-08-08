@@ -69,6 +69,13 @@ public class Bob
 		{
 		}
 	}
+
+	public void ChildImplicitNonGeneric(ChildImplicitNonGenericCollection values)
+	{
+		foreach (int value in values) // can't translate this so don't suggest it
+		{
+		}
+	}
 }
 
 public class MagicCollection<T> : IEnumerable
@@ -107,4 +114,8 @@ public class ImplicitNonGenericCollection : IEnumerable<int>
 {
 	public IEnumerator GetEnumerator() { yield break; }
 	IEnumerator<int> IEnumerable<int>.GetEnumerator() { yield break; }
+}
+
+public class ChildImplicitNonGenericCollection : ImplicitNonGenericCollection
+{
 }
