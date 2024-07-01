@@ -24,7 +24,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.100
+        dotnet-version: 6.0.423
 
     - name: Build WTG.Analyzers
       run: dotnet build src --configuration ${{ matrix.configuration }}
@@ -51,7 +51,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.100
+        dotnet-version: 6.0.423
 
     - name: Build NuGet Package
       run: dotnet pack src -p:CommitID=${{ github.sha }}
