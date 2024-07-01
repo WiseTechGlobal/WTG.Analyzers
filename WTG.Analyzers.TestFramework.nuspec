@@ -11,6 +11,7 @@
 		<copyright>$copyright$</copyright>
 		<repository type="git" url="https://github.com/WiseTechGlobal/WTG.Analyzers" commit="$commitid$" />
 		<developmentDependency>true</developmentDependency>
+		<icon>images\icon.png</icon>
 		<dependencies>
 			<group targetFramework=".NETStandard2.0" />
 		</dependencies>
@@ -22,5 +23,6 @@
 
 		<!-- Other -->
 		<file src="LICENSE.md" target="" />
+		<file src="icon.png" target="images" />
 	</files>
 </package>

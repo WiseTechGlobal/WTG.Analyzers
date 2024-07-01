@@ -10,6 +10,7 @@
 		<description>Support library for Roslyn Analyzers.</description>
 		<copyright>$copyright$</copyright>
 		<repository type="git" url="https://github.com/WiseTechGlobal/WTG.Analyzers" commit="$commitid$" />
+		<icon>images\icon.png</icon>
 		<dependencies>
 			<group targetFramework=".NETStandard2.0">
 				<dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="3.7.0" />
@@ -23,5 +24,6 @@
 
 		<!-- Other -->
 		<file src="LICENSE.md" target="" />
+		<file src="icon.png" target="images" />
 	</files>
 </package>
