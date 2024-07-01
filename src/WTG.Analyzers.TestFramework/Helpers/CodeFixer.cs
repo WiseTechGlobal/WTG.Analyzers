@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -205,10 +206,12 @@ namespace WTG.Analyzers.TestFramework
 			var tree = await document.GetSyntaxRootAsync().ConfigureAwait(false);
 
 			Assert.Fail(
-				"Fix introduced new compiler diagnostics:{0}{1}{0}{0}New document:{0}{2}{0}",
-				Environment.NewLine,
-				string.Join(Environment.NewLine, newCompilerDiagnostics.Select(d => d.ToString())),
-				tree?.ToFullString());
+				string.Format(
+					CultureInfo.InvariantCulture,
+					"Fix introduced new compiler diagnostics:{0}{1}{0}{0}New document:{0}{2}{0}",
+					Environment.NewLine,
+					string.Join(Environment.NewLine, newCompilerDiagnostics.Select(d => d.ToString())),
+					tree?.ToFullString()));
 		}
 
 		static async Task<Document> ApplyFixAsync(Document document, CodeAction codeAction)

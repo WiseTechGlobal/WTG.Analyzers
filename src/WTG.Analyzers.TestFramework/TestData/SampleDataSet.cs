@@ -188,10 +188,11 @@ namespace WTG.Analyzers.TestFramework
 		static T GetEnumValue<T>(XElement element, string name)
 			where T : struct
 		{
-			return (T)Enum.Parse(typeof(T), GetStringValue(element, name));
+			var value = GetStringValue(element, name);
+			return value is null ? default : (T)Enum.Parse(typeof(T), value);
 		}
 
-		static string? GetStringValue(XElement element, string name)
+		static string? GetStringValue(XElement? element, string name)
 		{
 			while (element != null)
 			{

@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
+using System.Globalization;
 using Microsoft.CodeAnalysis;
 
 namespace WTG.Analyzers.TestFramework
@@ -22,7 +23,7 @@ namespace WTG.Analyzers.TestFramework
 			return new DiagnosticResult(
 				diagnostic.Id,
 				diagnostic.Severity,
-				diagnostic.GetMessage(),
+				diagnostic.GetMessage(CultureInfo.InvariantCulture),
 				builder.ToImmutable());
 		}
 
