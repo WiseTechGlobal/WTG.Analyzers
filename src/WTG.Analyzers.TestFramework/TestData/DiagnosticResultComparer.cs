@@ -12,8 +12,18 @@ namespace WTG.Analyzers.TestFramework
 		{
 		}
 
-		public static int Compare(DiagnosticResult x, DiagnosticResult y)
+		public static int Compare(DiagnosticResult? x, DiagnosticResult? y)
 		{
+			switch (x, y)
+			{
+				case (null, null):
+					return 0;
+				case (null, _):
+					return -1;
+				case (_, null):
+					return 1;
+			}
+
 			var firstLocX = x.Locations.Length == 0 ? null : x.Locations[0];
 			var firstLocY = y.Locations.Length == 0 ? null : y.Locations[0];
 			var diff = Compare(firstLocX, firstLocY);
@@ -111,7 +121,7 @@ namespace WTG.Analyzers.TestFramework
 			return diff;
 		}
 
-		int IComparer.Compare(object x, object y) => Compare((DiagnosticResult)x, (DiagnosticResult)y);
-		int IComparer<DiagnosticResult>.Compare(DiagnosticResult x, DiagnosticResult y) => Compare(x, y);
+		int IComparer.Compare(object? x, object? y) => Compare((DiagnosticResult?)x, (DiagnosticResult?)y);
+		int IComparer<DiagnosticResult>.Compare(DiagnosticResult? x, DiagnosticResult? y) => Compare(x, y);
 	}
 }

@@ -23,7 +23,7 @@ namespace WTG.Analyzers.Test
 				.Where(line => line.StartsWith(prefix, StringComparison.Ordinal))
 				.Select(line => line.Split(delimiter, count: 2))
 				.ToDictionary(
-					parts => parts[0].Substring(prefix.Length, length: parts[0].IndexOf(".", startIndex: prefix.Length, StringComparison.Ordinal) - prefix.Length),
+					parts => parts[0].Substring(prefix.Length, length: parts[0].IndexOf('.', startIndex: prefix.Length) - prefix.Length),
 					parts => (DiagnosticSeverity)Enum.Parse(typeof(DiagnosticSeverity), parts[1].Trim(), ignoreCase: true));
 
 			var descriptors = typeof(Rules).GetFields()

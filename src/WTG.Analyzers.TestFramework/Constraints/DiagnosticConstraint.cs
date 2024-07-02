@@ -13,6 +13,8 @@ namespace WTG.Analyzers.TestFramework
 		{
 		}
 
+		public override string Description => "has specified diagnostics";
+
 		public override ConstraintResult ApplyTo<TActual>(TActual actual)
 		{
 			if (actual == null)
@@ -24,7 +26,7 @@ namespace WTG.Analyzers.TestFramework
 			{
 				return ApplyTo(
 					tmp.Select(DiagnosticConversion.Convert),
-					(IEnumerable<DiagnosticResult>)Arguments[0]);
+					(IEnumerable<DiagnosticResult>)Arguments[0]!);
 			}
 
 			return new ConstraintResult(this, actual);

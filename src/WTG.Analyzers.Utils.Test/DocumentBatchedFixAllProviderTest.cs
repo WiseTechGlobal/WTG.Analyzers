@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -102,7 +103,7 @@ namespace WTG.Analyzers.Utils.Test
 				{
 					builder.AppendLine();
 					builder.Append("// ");
-					builder.Append(diagnostic.GetMessage());
+					builder.Append(diagnostic.GetMessage(CultureInfo.InvariantCulture));
 				}
 
 				return documentToFix.WithText(SourceText.From(builder.ToString()));
