@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <diagnostics severity="Hidden">
 	<languageVersion>9.0</languageVersion>
+	<suppressId justtification="To ignore when only one method in one class have the code fix removing 'private' applied.">CS8799</suppressId>
 	<diagnostic id="WTG1001" message="Our convention is to omit the 'private' modifier where it is already the default.">
-		<location>Test0.cs: (15,3-10)</location>
+		<location>Test0.cs: (9,3-10)</location>
+	</diagnostic>
+	<diagnostic id="WTG1001" message="Our convention is to omit the 'private' modifier where it is already the default.">
+		<location>Test0.cs: (19,3-10)</location>
+	</diagnostic>
+	<diagnostic id="WTG1001" message="Our convention is to omit the 'private' modifier where it is already the default.">
+		<location>Test0.cs: (25,3-10)</location>
 	</diagnostic>
 	<diagnostic id="WTG1006" message="Our convention is to omit the 'internal' modifier on types where it is already the default." >
-		<location>Test0.cs: (20,2-10)</location>
+		<location>Test0.cs: (30,2-10)</location>
 	</diagnostic>
 </diagnostics>
