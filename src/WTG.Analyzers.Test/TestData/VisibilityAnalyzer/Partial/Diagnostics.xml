@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <diagnostics severity="Hidden">
 	<languageVersion>9.0</languageVersion>
-	<suppressId justtification="To ignore when only one method in one class have the code fix removing 'private' applied.">CS8799</suppressId>
+	<suppressId>CS8799</suppressId>
 	<diagnostic id="WTG1001" message="Our convention is to omit the 'private' modifier where it is already the default.">
 		<location>Test0.cs: (9,3-10)</location>
 	</diagnostic>

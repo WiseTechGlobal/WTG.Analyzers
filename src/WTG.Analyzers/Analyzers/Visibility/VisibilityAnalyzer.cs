@@ -50,7 +50,7 @@ namespace WTG.Analyzers
 
 					case SyntaxKind.ProtectedKeyword:
 					case SyntaxKind.PublicKeyword:
-					case SyntaxKind.PartialKeyword when (DoesMethodHaveReturnValueOrOutKeyword(currentNode)):
+					case SyntaxKind.PartialKeyword when (PartialMethodRequiresAccessibilityModifier(currentNode)):
 						return;
 					case SyntaxKind.InternalKeyword:
 						if (IsTopLevel(currentNode))
@@ -67,7 +67,7 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool DoesMethodHaveReturnValueOrOutKeyword(SyntaxNode node)
+		static bool PartialMethodRequiresAccessibilityModifier(SyntaxNode node)
 		{
 			if (!node.IsKind(SyntaxKind.MethodDeclaration))
 			{
@@ -75,13 +75,16 @@ namespace WTG.Analyzers
 			}
 
 			var methodNode = (MethodDeclarationSyntax)node;
-			if (methodNode.ReturnType is PredefinedTypeSyntax predefinedTypeSyntax
-				&& !predefinedTypeSyntax.Keyword.IsKind(SyntaxKind.VoidKeyword))
+			if (methodNode.ReturnType.IsKind(SyntaxKind.PredefinedType))
 			{
-				return true;
+				var returnType = (PredefinedTypeSyntax)methodNode.ReturnType;
+				if (!returnType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+				{
+					return true;
+				}
 			}
 
-			if (methodNode.ParameterList?.Parameters.Any(c => c.Modifiers.Any(SyntaxKind.OutKeyword)) == true)
+			if (methodNode.ParameterList?.Parameters.Any(static p => p.Modifiers.Any(SyntaxKind.OutKeyword)) == true)
 			{
 				return true;
 			}
