@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using WTG.Analyzers.Utils;
 
@@ -32,7 +34,8 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			var list = ModifierExtractionVisitor.Instance.Visit(context.Node);
+			var currentNode = context.Node;
+			var list = ModifierExtractionVisitor.Instance.Visit(currentNode);
 			var privateToken = default(SyntaxToken);
 
 			foreach (var modifier in list)
@@ -47,11 +50,10 @@ namespace WTG.Analyzers
 
 					case SyntaxKind.ProtectedKeyword:
 					case SyntaxKind.PublicKeyword:
-					case SyntaxKind.PartialKeyword when (context.Node.IsKind(SyntaxKind.MethodDeclaration)):
+					case SyntaxKind.PartialKeyword when (PartialMethodRequiresAccessibilityModifier(currentNode)):
 						return;
-
 					case SyntaxKind.InternalKeyword:
-						if (IsTopLevel(context.Node))
+						if (IsTopLevel(currentNode))
 						{
 							context.ReportDiagnostic(Rules.CreateDoNotUseTheInternalKeywordForTopLevelTypesDiagnostic(modifier.GetLocation()));
 						}
@@ -63,6 +65,31 @@ namespace WTG.Analyzers
 			{
 				context.ReportDiagnostic(Rules.CreateDoNotUseThePrivateKeywordDiagnostic(privateToken.GetLocation()));
 			}
+		}
+
+		static bool PartialMethodRequiresAccessibilityModifier(SyntaxNode node)
+		{
+			if (!node.IsKind(SyntaxKind.MethodDeclaration))
+			{
+				return false;
+			}
+
+			var methodNode = (MethodDeclarationSyntax)node;
+			if (methodNode.ReturnType.IsKind(SyntaxKind.PredefinedType))
+			{
+				var returnType = (PredefinedTypeSyntax)methodNode.ReturnType;
+				if (!returnType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+				{
+					return true;
+				}
+			}
+
+			if (methodNode.ParameterList?.Parameters.Any(static p => p.Modifiers.Any(SyntaxKind.OutKeyword)) == true)
+			{
+				return true;
+			}
+
+			return false;
 		}
 
 		static bool IsTopLevel(SyntaxNode node)
