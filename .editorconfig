@@ -111,6 +111,9 @@ csharp_space_between_square_brackets = false
 # https://github.com/dotnet/roslyn-analyzers/issues/5747
 dotnet_diagnostic.CA1508.severity = none
 
+# Argument exception throw helpers are not available in all supported target frameworks.
+dotnet_diagnostic.CA1510.severity = none
+
 # Duplicate of WTG3004 but also bugged in VS17.5.
 # https://github.com/dotnet/roslyn-analyzers/issues/6500
 dotnet_diagnostic.CA1825.severity = none
