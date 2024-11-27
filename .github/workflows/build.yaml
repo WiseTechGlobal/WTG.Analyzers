@@ -19,10 +19,10 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.300
 
@@ -42,14 +42,14 @@ jobs:
 
   nupkg:
     name: Create NuGet Package
-      
+
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
-    
+    - uses: actions/checkout@v4
+
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.300
 
@@ -57,7 +57,7 @@ jobs:
       run: dotnet pack src -p:CommitID=${{ github.sha }}
 
     - name: Upload NuGet Package
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: nuget-packages
         path: 'Bin/*.nupkg'
