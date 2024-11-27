@@ -14,14 +14,14 @@
 		<icon>images\icon.png</icon>
 		<dependencies>
 			<group targetFramework=".NETFramework4.6.2" />
-			<group targetFramework="net6.0" />
+			<group targetFramework="net8.0" />
 		</dependencies>
 	</metadata>
 
 	<files>
 		<!-- Binaries -->
 		<file src="bin\net462\WTG.Analyzers.TestFramework.dll" target="lib\net462" />
-		<file src="bin\net6.0\WTG.Analyzers.TestFramework.dll" target="lib\net6.0" />
+		<file src="bin\net8.0\WTG.Analyzers.TestFramework.dll" target="lib\net8.0" />
 
 		<!-- Other -->
 		<file src="LICENSE.md" target="" />
