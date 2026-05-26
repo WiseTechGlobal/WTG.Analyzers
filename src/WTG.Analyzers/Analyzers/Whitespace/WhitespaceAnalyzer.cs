@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
@@ -13,7 +12,6 @@ using WTG.Analyzers.Utils;
 namespace WTG.Analyzers
 {
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
-	[SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1035:Do not use APIs banned for analyzers", Justification = "Reading Environment.NewLine for formatting, not reading settings.")]
 	public sealed class WhitespaceAnalyzer : DiagnosticAnalyzer
 	{
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
@@ -48,7 +46,9 @@ namespace WTG.Analyzers
 							context.ReportDiagnostic(Rules.CreateDoNotLeaveWhitespaceOnTheEndOfTheLineDiagnostic(precedingTrivia.GetLocation()));
 						}
 
+#pragma warning disable RS1035 // Do not use APIs banned for analyzers - Reading Environment.NewLine for formatting, not reading settings.
 						if (trivia.ToString() != Environment.NewLine)
+#pragma warning restore RS1035
 						{
 							incorrectEOL ??= new List<Location>();
 							incorrectEOL.Add(trivia.GetLocation());
@@ -153,6 +153,7 @@ namespace WTG.Analyzers
 		// (sometimes visual studio likes to add a few spaces to spaces to align with something on the previous line.)
 		static readonly Regex acceptableLeadingWhitespace = new Regex(@"^\t*[ ]{0,3}$", RegexOptions.ExplicitCapture);
 
+#pragma warning disable RS1035 // Do not use APIs banned for analyzers - Reading Environment.NewLine for formatting, not reading settings.
 		static readonly string humanReadablePlatformNewLine = Environment.NewLine switch
 		{
 			"\r\n" => "CRLF",
@@ -160,5 +161,6 @@ namespace WTG.Analyzers
 			"\n" => "LF",
 			_ => throw new PlatformNotSupportedException(),
 		};
+#pragma warning restore RS1035
 	}
 }

@@ -10,8 +10,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-    <CodeAnalysisRuleSet>$(BuildDirectory)CodeAnalysis.ruleset</CodeAnalysisRuleSet>
 
     <!--
       - The major and minor versions should match the Roslyn API version,
@@ -32,9 +32,9 @@
     <FileVersion>$(Version)</FileVersion>
   </PropertyGroup>
 
-  <PropertyGroup  Condition="'$(WTGIsTestProject)' == 'True'">
-    <CodeAnalysisRuleSet>$(BuildDirectory)CodeAnalysis.Test.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+  <ItemGroup Condition="'$(WTGIsTestProject)' == 'True'">
+    <GlobalAnalyzerConfigFiles Include="$(BuildDirectory)CodeAnalysis.Test.globalconfig" />
+  </ItemGroup>
 
   <PropertyGroup Condition="'$(RunCodeAnalysis)' == 'True'">
     <DebugType>full</DebugType>

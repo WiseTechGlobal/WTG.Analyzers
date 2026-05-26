@@ -16,10 +16,10 @@ namespace WTG.Analyzers.Utils
 
 			var constant = model.GetConstantValue(expression, cancellationToken);
 
-			return constant.HasValue && IsZeroLiteral(constant.Value!);
+			return constant.HasValue && IsZeroLiteral(constant.Value);
 		}
 
-		static bool IsZeroLiteral(object value)
+		static bool IsZeroLiteral(object? value)
 		{
 			return value switch
 			{

@@ -65,7 +65,7 @@ namespace WTG.Analyzers.Utils
 		async Task<CodeAction?> GetFixForDocumentAsync(FixAllContext fixAllContext)
 		{
 			var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(fixAllContext.Document!).ConfigureAwait(false);
-			return CreateFixAction(fixAllContext.Document!, diagnostics, fixAllContext.CodeActionEquivalenceKey!);
+			return CreateFixAction(fixAllContext.Document!, diagnostics, fixAllContext.CodeActionEquivalenceKey);
 		}
 
 		async Task<CodeAction?> GetFixForProjectAsync(FixAllContext fixAllContext)
@@ -76,7 +76,7 @@ namespace WTG.Analyzers.Utils
 			PopulateDiagnosticDictionary(builder, fixAllContext.Project, diagnostics);
 			var groupedDiagnostics = builder.ToImmutableDictionary(x => x.Key, x => x.Value.ToImmutable());
 
-			return CreateFixAction(fixAllContext.Solution, groupedDiagnostics, fixAllContext.CodeActionEquivalenceKey!);
+			return CreateFixAction(fixAllContext.Solution, groupedDiagnostics, fixAllContext.CodeActionEquivalenceKey);
 		}
 
 		async Task<CodeAction?> GetFixForSolutionAsync(FixAllContext fixAllContext)
@@ -95,10 +95,10 @@ namespace WTG.Analyzers.Utils
 			}
 
 			var groupedDiagnostics = builder.ToImmutableDictionary(x => x.Key, x => x.Value.ToImmutable());
-			return CreateFixAction(solution, groupedDiagnostics, fixAllContext.CodeActionEquivalenceKey!);
+			return CreateFixAction(solution, groupedDiagnostics, fixAllContext.CodeActionEquivalenceKey);
 		}
 
-		CodeAction CreateFixAction(Document document, ImmutableArray<Diagnostic> diagnostics, string codeActionEquivalenceKey)
+		CodeAction CreateFixAction(Document document, ImmutableArray<Diagnostic> diagnostics, string? codeActionEquivalenceKey)
 		{
 			return CodeAction.Create(
 				Title,
@@ -106,7 +106,7 @@ namespace WTG.Analyzers.Utils
 				equivalenceKey: codeActionEquivalenceKey);
 		}
 
-		CodeAction CreateFixAction(Solution solution, ImmutableDictionary<Document, ImmutableArray<Diagnostic>> diagnostics, string codeActionEquivalenceKey)
+		CodeAction CreateFixAction(Solution solution, ImmutableDictionary<Document, ImmutableArray<Diagnostic>> diagnostics, string? codeActionEquivalenceKey)
 		{
 			return CodeAction.Create(
 				Title,

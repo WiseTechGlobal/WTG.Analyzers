@@ -1,0 +1,7 @@
+is_global = true
+
+# CA1707: Identifiers should not contain underscores - acceptable in test methods
+dotnet_diagnostic.CA1707.severity = none
+
+# RS1036: Specify analyzer banned API enforcement setting
+dotnet_diagnostic.RS1036.severity = none

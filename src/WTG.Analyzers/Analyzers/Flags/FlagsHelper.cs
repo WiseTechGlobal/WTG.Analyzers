@@ -22,7 +22,7 @@ namespace WTG.Analyzers
 
 					if (value.HasValue)
 					{
-						result |= AsLong(value.Value!);
+						result |= AsLong(value.Value);
 					}
 				}
 			}
@@ -53,7 +53,7 @@ namespace WTG.Analyzers
 			return count - 1;
 		}
 
-		static long AsLong(object value)
+		static long AsLong(object? value)
 		{
 			if (value == null)
 			{

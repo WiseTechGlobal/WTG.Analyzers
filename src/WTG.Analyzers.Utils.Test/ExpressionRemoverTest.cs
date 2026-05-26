@@ -273,7 +273,7 @@ namespace WTG.Analyzers.Utils.Test
 			if (reformat)
 			{
 				using var workspace = ModelUtils.CreateWorkspace();
-				node = Formatter.Format(node, Formatter.Annotation, workspace);
+				node = Formatter.Format(node, Formatter.Annotation, workspace, workspace.Options);
 			}
 
 			return node.ToString();
