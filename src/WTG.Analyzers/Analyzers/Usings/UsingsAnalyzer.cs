@@ -47,16 +47,36 @@ namespace WTG.Analyzers
 				{
 					var currentUsing = enumerator.Current;
 
-					var comparisonResult = Compare(previousUsing, currentUsing);
-					if (comparisonResult > 0)
+					if (!HasConditionalDirectiveTrivia(currentUsing))
 					{
-						context.ReportDiagnostic(Diagnostic.Create(Rules.UsingDirectivesMustBeOrderedByKindRule, currentUsing.GetLocation()));
-						return;
+						var comparisonResult = Compare(previousUsing, currentUsing);
+						if (comparisonResult > 0)
+						{
+							context.ReportDiagnostic(Diagnostic.Create(Rules.UsingDirectivesMustBeOrderedByKindRule, currentUsing.GetLocation()));
+							return;
+						}
 					}
 
 					previousUsing = currentUsing;
 				}
 			}
+		}
+
+		static bool HasConditionalDirectiveTrivia(UsingDirectiveSyntax node)
+		{
+			foreach (var trivia in node.GetLeadingTrivia())
+			{
+				switch (trivia.Kind())
+				{
+					case SyntaxKind.IfDirectiveTrivia:
+					case SyntaxKind.ElifDirectiveTrivia:
+					case SyntaxKind.ElseDirectiveTrivia:
+					case SyntaxKind.EndIfDirectiveTrivia:
+						return true;
+				}
+			}
+
+			return false;
 		}
 
 		static int Compare(UsingDirectiveSyntax first, UsingDirectiveSyntax second)

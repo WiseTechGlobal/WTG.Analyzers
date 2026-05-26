@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace WTG.Analyzers
@@ -53,11 +54,35 @@ namespace WTG.Analyzers
 
 		static SyntaxList<UsingDirectiveSyntax> SortUsings(SyntaxList<UsingDirectiveSyntax> unsorted)
 		{
+			var result = new SyntaxList<UsingDirectiveSyntax>();
+			var group = new List<UsingDirectiveSyntax>();
+
+			foreach (var syntax in unsorted)
+			{
+				if (HasConditionalDirectiveTrivia(syntax) && group.Count > 0)
+				{
+					result = result.AddRange(SortGroup(group));
+					group.Clear();
+				}
+
+				group.Add(syntax);
+			}
+
+			if (group.Count > 0)
+			{
+				result = result.AddRange(SortGroup(group));
+			}
+
+			return result;
+		}
+
+		static IEnumerable<UsingDirectiveSyntax> SortGroup(List<UsingDirectiveSyntax> group)
+		{
 			var regularUsings = new List<UsingDirectiveSyntax>();
 			var staticUsings = new List<UsingDirectiveSyntax>();
 			var aliasedUsings = new List<UsingDirectiveSyntax>();
 
-			foreach (var syntax in unsorted)
+			foreach (var syntax in group)
 			{
 				switch (UsingsHelper.GetUsingDirectiveKind(syntax))
 				{
@@ -75,11 +100,24 @@ namespace WTG.Analyzers
 				}
 			}
 
-			var sorted = new SyntaxList<UsingDirectiveSyntax>()
-				.AddRange(regularUsings)
-				.AddRange(staticUsings)
-				.AddRange(aliasedUsings);
-			return sorted;
+			return regularUsings.Concat(staticUsings).Concat(aliasedUsings);
+		}
+
+		static bool HasConditionalDirectiveTrivia(UsingDirectiveSyntax node)
+		{
+			foreach (var trivia in node.GetLeadingTrivia())
+			{
+				switch (trivia.Kind())
+				{
+					case SyntaxKind.IfDirectiveTrivia:
+					case SyntaxKind.ElifDirectiveTrivia:
+					case SyntaxKind.ElseDirectiveTrivia:
+					case SyntaxKind.EndIfDirectiveTrivia:
+						return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }
