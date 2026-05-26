@@ -1,11 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class ViewModel
-{
-	public IEnumerable<ViewModel> Items { get; set; }
-}
-
 public class Bob
 {
 	public void Method()
@@ -17,4 +12,9 @@ public class Bob
 		viewModel.Items.Append<object>(viewModel);
 		Enumerable.Append<object>(viewModel.Items, viewModel);
 	}
+}
+
+public class ViewModel
+{
+	public IEnumerable<ViewModel> Items { get; set; }
 }

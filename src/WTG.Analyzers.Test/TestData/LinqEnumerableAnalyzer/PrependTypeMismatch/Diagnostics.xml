@@ -2,18 +2,18 @@
 <diagnostics severity="Info">
 	<group id="WTG3014" message="Don't use Concat when prepending a single element to an enumerable.">
 		<diagnostic>
-			<location>Test0.cs: (15, 3-36)</location>
+			<location>Test0.cs: (10, 3-36)</location>
 		</diagnostic>
 		<diagnostic>
-			<location>Test0.cs: (16, 3-20)</location>
+			<location>Test0.cs: (11, 3-20)</location>
 		</diagnostic>
 	</group>
 	<group id="WTG3013" message="Don't use Concat when appending a single element to an enumerable.">
 		<diagnostic>
-			<location>Test0.cs: (17, 3-25)</location>
+			<location>Test0.cs: (12, 3-25)</location>
 		</diagnostic>
 		<diagnostic>
-			<location>Test0.cs: (18, 3-20)</location>
+			<location>Test0.cs: (13, 3-20)</location>
 		</diagnostic>
 	</group>
 </diagnostics>
