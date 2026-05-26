@@ -147,8 +147,8 @@ namespace WTG.Analyzers.TestFramework
 			"\n" +
 			"[*.cs]\n" +
 			"indent_style = tab\n" +
-			"indent_size = 2\n" +
-			"tab_width = 2\n";
+			"indent_size = 4\n" +
+			"tab_width = 4\n";
 
 		static readonly ImmutableArray<MetadataReference> MetadataReferences = GetMetadataReferences();
 
