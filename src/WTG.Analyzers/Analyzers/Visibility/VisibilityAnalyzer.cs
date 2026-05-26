@@ -61,7 +61,7 @@ namespace WTG.Analyzers
 				}
 			}
 
-			if (privateToken.Kind() == SyntaxKind.PrivateKeyword)
+			if (privateToken.IsKind(SyntaxKind.PrivateKeyword))
 			{
 				context.ReportDiagnostic(Rules.CreateDoNotUseThePrivateKeywordDiagnostic(privateToken.GetLocation()));
 			}

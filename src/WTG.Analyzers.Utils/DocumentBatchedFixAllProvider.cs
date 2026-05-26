@@ -17,7 +17,7 @@ namespace WTG.Analyzers.Utils
 
 		const string Title = "<fix-all>";
 
-		public override Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
+		public override Task<CodeAction?> GetFixAsync(FixAllContext fixAllContext)
 		{
 			if (fixAllContext.Document != null)
 			{
@@ -34,8 +34,8 @@ namespace WTG.Analyzers.Utils
 
 			var solution = fixAllContext.Solution;
 			var codeActionEquivalenceKey = fixAllContext.CodeActionEquivalenceKey;
-			var codeAction = CodeAction.Create(Title, c => Task.FromResult(solution), codeActionEquivalenceKey);
-			return Task.FromResult(codeAction);
+			CodeAction? codeAction = CodeAction.Create(Title, c => Task.FromResult(solution), codeActionEquivalenceKey);
+			return Task.FromResult<CodeAction?>(codeAction);
 		}
 
 		/// <summary>
@@ -62,13 +62,13 @@ namespace WTG.Analyzers.Utils
 			return solution;
 		}
 
-		async Task<CodeAction> GetFixForDocumentAsync(FixAllContext fixAllContext)
+		async Task<CodeAction?> GetFixForDocumentAsync(FixAllContext fixAllContext)
 		{
-			var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(fixAllContext.Document).ConfigureAwait(false);
-			return CreateFixAction(fixAllContext.Document, diagnostics, fixAllContext.CodeActionEquivalenceKey);
+			var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(fixAllContext.Document!).ConfigureAwait(false);
+			return CreateFixAction(fixAllContext.Document!, diagnostics, fixAllContext.CodeActionEquivalenceKey!);
 		}
 
-		async Task<CodeAction> GetFixForProjectAsync(FixAllContext fixAllContext)
+		async Task<CodeAction?> GetFixForProjectAsync(FixAllContext fixAllContext)
 		{
 			var diagnostics = await fixAllContext.GetAllDiagnosticsAsync(fixAllContext.Project).ConfigureAwait(false);
 
@@ -76,10 +76,10 @@ namespace WTG.Analyzers.Utils
 			PopulateDiagnosticDictionary(builder, fixAllContext.Project, diagnostics);
 			var groupedDiagnostics = builder.ToImmutableDictionary(x => x.Key, x => x.Value.ToImmutable());
 
-			return CreateFixAction(fixAllContext.Solution, groupedDiagnostics, fixAllContext.CodeActionEquivalenceKey);
+			return CreateFixAction(fixAllContext.Solution, groupedDiagnostics, fixAllContext.CodeActionEquivalenceKey!);
 		}
 
-		async Task<CodeAction> GetFixForSolutionAsync(FixAllContext fixAllContext)
+		async Task<CodeAction?> GetFixForSolutionAsync(FixAllContext fixAllContext)
 		{
 			var solution = fixAllContext.Solution;
 			var triggerProject = fixAllContext.Project;
@@ -95,7 +95,7 @@ namespace WTG.Analyzers.Utils
 			}
 
 			var groupedDiagnostics = builder.ToImmutableDictionary(x => x.Key, x => x.Value.ToImmutable());
-			return CreateFixAction(solution, groupedDiagnostics, fixAllContext.CodeActionEquivalenceKey);
+			return CreateFixAction(solution, groupedDiagnostics, fixAllContext.CodeActionEquivalenceKey!);
 		}
 
 		CodeAction CreateFixAction(Document document, ImmutableArray<Diagnostic> diagnostics, string codeActionEquivalenceKey)

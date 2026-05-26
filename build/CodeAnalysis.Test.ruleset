@@ -4,4 +4,9 @@
   <Rules AnalyzerId="Microsoft.CodeAnalysis.NetAnalyzers" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1707" Action="None" />
   </Rules>
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.Analyzers" RuleNamespace="Microsoft.CodeAnalysis.Analyzers">
+    <Rule Id="RS1036" Action="None" />
+    <Rule Id="RS1038" Action="None" />
+    <Rule Id="RS1041" Action="None" />
+  </Rules>
 </RuleSet>

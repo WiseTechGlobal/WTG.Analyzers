@@ -13,7 +13,7 @@
 		<icon>images\icon.png</icon>
 		<dependencies>
 			<group targetFramework=".NETStandard2.0">
-				<dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="3.7.0" />
+				<dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="4.14.0" />
 			</group>
 		</dependencies>
 	</metadata>

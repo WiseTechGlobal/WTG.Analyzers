@@ -14,4 +14,8 @@
     <Rule Id="CA1014" Action="None" />
     <Rule Id="CA1062" Action="None" />
   </Rules>
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.Analyzers" RuleNamespace="Microsoft.CodeAnalysis.Analyzers">
+    <Rule Id="RS1038" Action="None" />
+    <Rule Id="RS1041" Action="None" />
+  </Rules>
 </RuleSet>

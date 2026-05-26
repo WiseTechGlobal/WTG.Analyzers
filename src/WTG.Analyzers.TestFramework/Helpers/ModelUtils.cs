@@ -6,8 +6,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.CodeAnalysis.Text;
 
 namespace WTG.Analyzers.TestFramework
@@ -58,18 +56,7 @@ namespace WTG.Analyzers.TestFramework
 
 		public static AdhocWorkspace CreateWorkspace()
 		{
-			var workspace = new AdhocWorkspace();
-			var solution = workspace.CurrentSolution;
-
-			workspace.TryApplyChanges(
-				solution.WithOptions(
-					solution.Options
-					.WithChangedOption(new OptionKey(FormattingOptions.NewLine, LanguageNames.CSharp), Environment.NewLine)
-					.WithChangedOption(new OptionKey(FormattingOptions.UseTabs, LanguageNames.CSharp), true)
-					.WithChangedOption(new OptionKey(FormattingOptions.TabSize, LanguageNames.CSharp), 2)
-					.WithChangedOption(new OptionKey(FormattingOptions.IndentationSize, LanguageNames.CSharp), 2)));
-
-			return workspace;
+			return new AdhocWorkspace();
 		}
 
 		public static Project CreateProject(params string[] sources) => CreateProject(sources, omitAssemblyReferences: false);
@@ -109,6 +96,13 @@ namespace WTG.Analyzers.TestFramework
 
 			solution = project.Solution;
 
+			var editorConfigId = DocumentId.CreateNewId(projectId, debugName: ".editorconfig");
+			solution = solution.AddAnalyzerConfigDocument(
+				editorConfigId,
+				".editorconfig",
+				SourceText.From(EditorConfigContent),
+				filePath: "/project/.editorconfig");
+
 			for (var i = 0; i < sources.Length; i++)
 			{
 				var newFileName = GetFileName(i);
@@ -116,7 +110,8 @@ namespace WTG.Analyzers.TestFramework
 				solution = solution.AddDocument(
 					DocumentId.CreateNewId(projectId, debugName: newFileName),
 					newFileName,
-					SourceText.From(sources[i]));
+					SourceText.From(sources[i]),
+					filePath: "/project/" + newFileName);
 			}
 
 			return solution.GetProject(projectId)!;
@@ -133,6 +128,14 @@ namespace WTG.Analyzers.TestFramework
 		const string DefaultFilePathPrefix = "Test";
 		const string CSharpDefaultFileExt = "cs";
 		const string TestProjectName = "TestProject";
+
+		const string EditorConfigContent =
+			"root = true\n" +
+			"\n" +
+			"[*.cs]\n" +
+			"indent_style = tab\n" +
+			"indent_size = 2\n" +
+			"tab_width = 2\n";
 
 		static readonly ImmutableArray<MetadataReference> MetadataReferences = GetMetadataReferences();
 

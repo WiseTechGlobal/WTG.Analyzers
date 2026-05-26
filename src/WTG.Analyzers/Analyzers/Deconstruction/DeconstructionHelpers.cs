@@ -32,7 +32,7 @@ namespace WTG.Analyzers
 
 			public override SyntaxNode VisitTupleExpression(TupleExpressionSyntax node)
 			{
-				var args = node.Arguments.Select(x => Visit(x.Expression));
+				var args = node.Arguments.Select(x => (VariableDesignationSyntax)Visit(x.Expression)!);
 				var variables = SyntaxFactory.SeparatedList(args);
 				var newNode = SyntaxFactory.ParenthesizedVariableDesignation(variables);
 				return newNode;

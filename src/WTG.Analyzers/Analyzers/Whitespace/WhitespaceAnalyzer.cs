@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
@@ -12,6 +13,7 @@ using WTG.Analyzers.Utils;
 namespace WTG.Analyzers
 {
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
+	[SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1035:Do not use APIs banned for analyzers", Justification = "Reading Environment.NewLine for formatting, not reading settings.")]
 	public sealed class WhitespaceAnalyzer : DiagnosticAnalyzer
 	{
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(

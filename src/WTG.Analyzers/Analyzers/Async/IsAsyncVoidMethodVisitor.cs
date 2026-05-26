@@ -42,9 +42,18 @@ namespace WTG.Analyzers
 
 			public override bool? DefaultVisit(SyntaxNode node) => null;
 
-			bool IsAsyncVoid(CSharpSyntaxNode node)
+			bool IsAsyncVoid(MethodDeclarationSyntax node)
 			{
-				var owningMethod = (IMethodSymbol)model.GetDeclaredSymbol(node);
+				var owningMethod = model.GetDeclaredSymbol(node);
+
+				return owningMethod != null
+					&& owningMethod.IsAsync
+					&& owningMethod.ReturnsVoid;
+			}
+
+			bool IsAsyncVoid(LocalFunctionStatementSyntax node)
+			{
+				var owningMethod = model.GetDeclaredSymbol(node);
 
 				return owningMethod != null
 					&& owningMethod.IsAsync

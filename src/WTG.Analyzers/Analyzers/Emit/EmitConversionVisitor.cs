@@ -57,7 +57,7 @@ namespace WTG.Analyzers
 			return base.VisitLiteralExpression(node);
 		}
 
-		public override ExpressionSyntax VisitCastExpression(CastExpressionSyntax node) => node.Expression.Accept(this);
+		public override ExpressionSyntax VisitCastExpression(CastExpressionSyntax node) => node.Expression.Accept(this)!;
 
 		TypeSyntax? GetCastType()
 		{

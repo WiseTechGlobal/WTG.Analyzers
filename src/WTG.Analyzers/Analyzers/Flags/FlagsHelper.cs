@@ -22,7 +22,7 @@ namespace WTG.Analyzers
 
 					if (value.HasValue)
 					{
-						result |= AsLong(value.Value);
+						result |= AsLong(value.Value!);
 					}
 				}
 			}

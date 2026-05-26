@@ -113,7 +113,7 @@ namespace WTG.Analyzers
 
 			return invoke.ReplaceNode(
 				valueArgument,
-				valueArgument.Accept(new EmitConversionVisitor(opcode.GetOperand())));
+				valueArgument.Accept(new EmitConversionVisitor(opcode.GetOperand()))!);
 		}
 	}
 }
