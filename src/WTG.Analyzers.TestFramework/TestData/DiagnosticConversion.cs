@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Globalization;
-using System.IO;
 using Microsoft.CodeAnalysis;
 
 namespace WTG.Analyzers.TestFramework
@@ -33,7 +32,7 @@ namespace WTG.Analyzers.TestFramework
 			var loc = location.GetLineSpan();
 
 			return new DiagnosticResultLocation(
-				Path.GetFileName(loc.Path),
+				loc.Path,
 				loc.StartLinePosition.Line + 1,
 				loc.StartLinePosition.Character + 1,
 				loc.EndLinePosition.Line + 1,

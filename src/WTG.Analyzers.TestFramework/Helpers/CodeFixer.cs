@@ -267,7 +267,8 @@ namespace WTG.Analyzers.TestFramework
 			}
 
 			var formattedDoc = await Formatter.FormatAsync(document, Formatter.Annotation).ConfigureAwait(false);
-			return (await formattedDoc.GetSyntaxRootAsync().ConfigureAwait(false))!;
+			return await formattedDoc.GetSyntaxRootAsync().ConfigureAwait(false)
+				?? throw new NotSupportedException("GetSyntaxRootAsync should not return null for a C# document.");
 		}
 
 		sealed class DummyFixAllDiagnosticProvider : FixAllContext.DiagnosticProvider

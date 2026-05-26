@@ -34,7 +34,7 @@ namespace WTG.Analyzers.Utils
 
 			var solution = fixAllContext.Solution;
 			var codeActionEquivalenceKey = fixAllContext.CodeActionEquivalenceKey;
-			CodeAction? codeAction = CodeAction.Create(Title, c => Task.FromResult(solution), codeActionEquivalenceKey);
+			var codeAction = CodeAction.Create(Title, c => Task.FromResult(solution), codeActionEquivalenceKey);
 			return Task.FromResult<CodeAction?>(codeAction);
 		}
 

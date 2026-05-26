@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
 
 namespace WTG.Analyzers.TestFramework
@@ -57,19 +56,7 @@ namespace WTG.Analyzers.TestFramework
 
 		public static AdhocWorkspace CreateWorkspace()
 		{
-			var workspace = new AdhocWorkspace();
-			var solution = workspace.CurrentSolution;
-
-#pragma warning disable CS0618 // OptionSet/WithChangedOption is obsolete - needed for Formatter.Format with SyntaxNode overload
-			workspace.TryApplyChanges(
-				solution.WithOptions(
-					solution.Options
-					.WithChangedOption(new Microsoft.CodeAnalysis.Options.OptionKey(FormattingOptions.UseTabs, LanguageNames.CSharp), true)
-					.WithChangedOption(new Microsoft.CodeAnalysis.Options.OptionKey(FormattingOptions.TabSize, LanguageNames.CSharp), 4)
-					.WithChangedOption(new Microsoft.CodeAnalysis.Options.OptionKey(FormattingOptions.IndentationSize, LanguageNames.CSharp), 4)));
-#pragma warning restore CS0618
-
-			return workspace;
+			return new AdhocWorkspace();
 		}
 
 		public static Project CreateProject(params string[] sources) => CreateProject(sources, omitAssemblyReferences: false);
