@@ -104,15 +104,19 @@ namespace WTG.Analyzers
 
 			var listOfArgumentsAndSeparators = new List<SyntaxNodeOrToken>();
 
+			ExpressionSyntax singleElementCollection;
+
 			switch (invocation.ArgumentList.Arguments.Count)
 			{
 				case 1:
-					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(invocation.ArgumentList.Arguments[0].Expression)!));
+					singleElementCollection = invocation.ArgumentList.Arguments[0].Expression;
+					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(singleElementCollection)!));
 					break;
 				case 2:
+					singleElementCollection = invocation.ArgumentList.Arguments[1].Expression;
 					listOfArgumentsAndSeparators.Add(invocation.ArgumentList.Arguments[0]);
 					listOfArgumentsAndSeparators.Add(Token(SyntaxKind.CommaToken));
-					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(invocation.ArgumentList.Arguments[1].Expression)!));
+					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(singleElementCollection)!));
 					break;
 				default:
 					throw new InvalidOperationException("Unreachable - Code fix should never trigger for >2 arguments.");
@@ -125,7 +129,7 @@ namespace WTG.Analyzers
 						.WithTriviaFrom(m.Expression)
 						.WithAdditionalAnnotations(Simplifier.Annotation),
 					m.OperatorToken,
-					IdentifierName(nameof(Enumerable.Append))
+					GetMethodName(nameof(Enumerable.Append), singleElementCollection)
 						.WithTriviaFrom(m.Name)))
 				.WithArgumentList(
 					ArgumentList(
@@ -141,19 +145,22 @@ namespace WTG.Analyzers
 			var listOfArgumentsAndSeparators = new List<SyntaxNodeOrToken>();
 
 			ExpressionSyntax member;
+			ExpressionSyntax singleElementCollection;
 
 			switch (invocation.ArgumentList.Arguments.Count)
 			{
 				case 1:
-					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(m.Expression.TryGetExpressionFromParenthesizedExpression())!));
+					singleElementCollection = m.Expression.TryGetExpressionFromParenthesizedExpression();
+					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(singleElementCollection)!));
 					member = ParenthesizedExpression(invocation.ArgumentList.Arguments[0].Expression.WithoutTrivia())
 						.WithTriviaFrom(m.Expression)
 						.WithAdditionalAnnotations(Simplifier.Annotation);
 					break;
 				case 2:
+					singleElementCollection = invocation.ArgumentList.Arguments[0].Expression;
 					listOfArgumentsAndSeparators.Add(invocation.ArgumentList.Arguments[1]);
 					listOfArgumentsAndSeparators.Add(Token(SyntaxKind.CommaToken));
-					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(invocation.ArgumentList.Arguments[0].Expression)!));
+					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(singleElementCollection)!));
 					member = m.Expression;
 					break;
 
@@ -166,7 +173,7 @@ namespace WTG.Analyzers
 					SyntaxKind.SimpleMemberAccessExpression,
 					member,
 					m.OperatorToken,
-					IdentifierName(nameof(Enumerable.Prepend))
+					GetMethodName(nameof(Enumerable.Prepend), singleElementCollection)
 						.WithTriviaFrom(m.Name)))
 				.WithArgumentList(
 					ArgumentList(
@@ -212,6 +219,43 @@ namespace WTG.Analyzers
 						SeparatedList<ExpressionSyntax>(initializerItems)))
 					.WithTriviaFrom(invocation)
 					.WithAdditionalAnnotations(Simplifier.Annotation);
+		}
+
+		static SimpleNameSyntax GetMethodName(string methodName, ExpressionSyntax singleElementCollection)
+		{
+			var elementType = GetCollectionElementType(singleElementCollection.TryGetExpressionFromParenthesizedExpression());
+
+			if (elementType != null)
+			{
+				return GenericName(Identifier(methodName))
+					.WithTypeArgumentList(
+						TypeArgumentList(
+							SingletonSeparatedList<TypeSyntax>(
+								elementType.WithoutTrivia())))
+					.WithAdditionalAnnotations(Simplifier.Annotation);
+			}
+
+			return IdentifierName(methodName);
+		}
+
+		static TypeSyntax? GetCollectionElementType(ExpressionSyntax expression)
+		{
+			switch (expression.Kind())
+			{
+				case SyntaxKind.ArrayCreationExpression:
+					return ((ArrayCreationExpressionSyntax)expression).Type.ElementType;
+
+				case SyntaxKind.ObjectCreationExpression:
+					var objectCreationType = ((ObjectCreationExpressionSyntax)expression).Type;
+					if (objectCreationType is GenericNameSyntax genericName && genericName.TypeArgumentList.Arguments.Count == 1)
+					{
+						return genericName.TypeArgumentList.Arguments[0];
+					}
+
+					break;
+			}
+
+			return null;
 		}
 	}
 }
