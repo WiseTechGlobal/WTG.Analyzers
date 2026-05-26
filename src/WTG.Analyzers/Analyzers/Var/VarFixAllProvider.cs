@@ -78,7 +78,27 @@ namespace WTG.Analyzers
 				{
 					index = GetIndex(originalArguments, types[i]);
 					var proposedInvoke = VarifyOutTypeAtIndex(targetInvoke, index);
-					var actualSymbol = (IMethodSymbol?)model.GetSpeculativeSymbolInfo(originalInvoke.SpanStart, proposedInvoke, SpeculativeBindingOption.BindAsExpression).Symbol;
+
+					ExpressionSyntax speculativeExpression;
+					int speculativePosition;
+
+					if (originalInvoke.Expression is MemberBindingExpressionSyntax memberBinding
+						&& originalInvoke.Parent is ConditionalAccessExpressionSyntax conditionalAccess)
+					{
+						var memberAccess = SyntaxFactory.MemberAccessExpression(
+							SyntaxKind.SimpleMemberAccessExpression,
+							conditionalAccess.Expression,
+							memberBinding.Name);
+						speculativeExpression = proposedInvoke.WithExpression(memberAccess);
+						speculativePosition = conditionalAccess.SpanStart;
+					}
+					else
+					{
+						speculativeExpression = proposedInvoke;
+						speculativePosition = originalInvoke.SpanStart;
+					}
+
+					var actualSymbol = (IMethodSymbol?)model.GetSpeculativeSymbolInfo(speculativePosition, speculativeExpression, SpeculativeBindingOption.BindAsExpression).Symbol;
 
 					if (SymbolEqualityComparer.Default.Equals(requiredSymbol, actualSymbol))
 					{

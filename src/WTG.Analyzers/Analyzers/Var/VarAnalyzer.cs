@@ -168,8 +168,31 @@ namespace WTG.Analyzers
 						}
 					}
 
-					var proposedSyntax = invoke.ReplaceNode(type, SyntaxFactory.IdentifierName("var").WithTriviaFrom(type));
-					var symbol = context.SemanticModel.GetSpeculativeSymbolInfo(invoke.SpanStart, proposedSyntax, SpeculativeBindingOption.BindAsExpression).Symbol;
+					var proposedInvoke = invoke.ReplaceNode(type, SyntaxFactory.IdentifierName("var").WithTriviaFrom(type));
+
+					ExpressionSyntax speculativeExpression;
+					int speculativePosition;
+
+					if (invoke.Expression is MemberBindingExpressionSyntax memberBinding
+						&& invoke.Parent is ConditionalAccessExpressionSyntax conditionalAccess)
+					{
+						// For conditional access (e.g. obj?.Method(out Type x)), the invocation node alone
+						// does not have enough context for speculative binding (NRE). Rewrite as a regular
+						// member access expression using the conditional access target.
+						var memberAccess = SyntaxFactory.MemberAccessExpression(
+							SyntaxKind.SimpleMemberAccessExpression,
+							conditionalAccess.Expression,
+							memberBinding.Name);
+						speculativeExpression = proposedInvoke.WithExpression(memberAccess);
+						speculativePosition = conditionalAccess.SpanStart;
+					}
+					else
+					{
+						speculativeExpression = proposedInvoke;
+						speculativePosition = invoke.SpanStart;
+					}
+
+					var symbol = context.SemanticModel.GetSpeculativeSymbolInfo(speculativePosition, speculativeExpression, SpeculativeBindingOption.BindAsExpression).Symbol;
 
 					if (SymbolEqualityComparer.Default.Equals(knownMethod, symbol))
 					{
