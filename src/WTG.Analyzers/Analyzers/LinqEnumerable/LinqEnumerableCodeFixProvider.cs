@@ -121,9 +121,7 @@ namespace WTG.Analyzers
 			return InvocationExpression(
 				MemberAccessExpression(
 					SyntaxKind.SimpleMemberAccessExpression,
-					ParenthesizedExpression(m.Expression.WithoutTrivia())
-						.WithTriviaFrom(m.Expression)
-						.WithAdditionalAnnotations(Simplifier.Annotation),
+					WrapExpressionIfNeeded(m.Expression),
 					m.OperatorToken,
 					IdentifierName(nameof(Enumerable.Append))
 						.WithTriviaFrom(m.Name)))
@@ -146,9 +144,7 @@ namespace WTG.Analyzers
 			{
 				case 1:
 					listOfArgumentsAndSeparators.Add(Argument(LinqEnumerableUtils.GetFirstValue(m.Expression.TryGetExpressionFromParenthesizedExpression())!));
-					member = ParenthesizedExpression(invocation.ArgumentList.Arguments[0].Expression.WithoutTrivia())
-						.WithTriviaFrom(m.Expression)
-						.WithAdditionalAnnotations(Simplifier.Annotation);
+					member = WrapExpressionIfNeeded(invocation.ArgumentList.Arguments[0].Expression.WithTriviaFrom(m.Expression));
 					break;
 				case 2:
 					listOfArgumentsAndSeparators.Add(invocation.ArgumentList.Arguments[1]);
@@ -212,6 +208,23 @@ namespace WTG.Analyzers
 						SeparatedList<ExpressionSyntax>(initializerItems)))
 					.WithTriviaFrom(invocation)
 					.WithAdditionalAnnotations(Simplifier.Annotation);
+		}
+
+		static ExpressionSyntax WrapExpressionIfNeeded(ExpressionSyntax expression)
+		{
+			// Invocation expressions never need parenthesization as they already have
+			// clear binding. Wrapping them can cause issues when the expression is part
+			// of a conditional access chain (?.), as it disconnects MemberBindingExpressions
+			// from their ConditionalAccessExpression, causing Roslyn's speculative semantic
+			// model to crash with a NullReferenceException.
+			if (expression.IsKind(SyntaxKind.InvocationExpression))
+			{
+				return expression;
+			}
+
+			return ParenthesizedExpression(expression.WithoutTrivia())
+				.WithTriviaFrom(expression)
+				.WithAdditionalAnnotations(Simplifier.Annotation);
 		}
 	}
 }
