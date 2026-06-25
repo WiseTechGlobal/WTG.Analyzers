@@ -11,6 +11,7 @@ public class Bob
 	public void V6() => NullableLookup?.TryGetValue("key", out string value);
 	public void V7() => Inner?.Lookup.TryGetValue("key", out string value);
 	public void V8() => Inner?.NullableLookup?.TryGetValue("key", out string value);
+	public void V9() => StructContext?.Data.TryGetValue("key", out int value);
 
 	public void S4() => SemiAmbiguous(out int value1, out int value2, out bool value3); // value1 and value2 cannot both be var as that would make it ambiguous.
 
@@ -36,4 +37,10 @@ public class Bob
 	Dictionary<string, string> Lookup { get; } = new Dictionary<string, string>();
 	Dictionary<string, string>? NullableLookup { get; } = new Dictionary<string, string>();
 	Bob? Inner { get; }
+	Context? StructContext { get; }
+}
+
+public struct Context
+{
+	public Dictionary<string, int> Data { get; set; }
 }

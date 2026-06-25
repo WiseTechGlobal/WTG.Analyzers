@@ -28,12 +28,15 @@
 		<location>Test0.cs: (13,68-74)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (15,40-43)</location>
+		<location>Test0.cs: (14,65-68)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (15,56-59)</location>
+		<location>Test0.cs: (16,40-43)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (15,72-76)</location>
+		<location>Test0.cs: (16,56-59)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (16,72-76)</location>
 	</diagnostic>
 </diagnostics>

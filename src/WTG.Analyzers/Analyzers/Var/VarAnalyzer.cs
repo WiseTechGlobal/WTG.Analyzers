@@ -184,7 +184,8 @@ namespace WTG.Analyzers
 							conditionalAccess = outer;
 						}
 
-						speculativeExpression = FlattenConditionalAccess(conditionalAccess.ReplaceNode(type, SyntaxFactory.IdentifierName("var").WithTriviaFrom(type)));
+						var receiverIsNullableValueType = IsNullableValueType(context.SemanticModel, conditionalAccess.Expression);
+						speculativeExpression = FlattenConditionalAccess(conditionalAccess.ReplaceNode(type, SyntaxFactory.IdentifierName("var").WithTriviaFrom(type)), receiverIsNullableValueType);
 						speculativePosition = conditionalAccess.SpanStart;
 					}
 					else
@@ -281,14 +282,32 @@ namespace WTG.Analyzers
 
 		static bool TypeEquals(ITypeSymbol? x, ITypeSymbol? y) => ReferenceEquals(x, y) || (x != null && SymbolEqualityComparer.Default.Equals(x, y));
 
-		internal static ExpressionSyntax FlattenConditionalAccess(ExpressionSyntax expression)
+		internal static ExpressionSyntax FlattenConditionalAccess(ExpressionSyntax expression, bool receiverIsNullableValueType = false)
 		{
 			if (expression is ConditionalAccessExpressionSyntax cae)
 			{
-				return RewriteWhenNotNull(cae.Expression, cae.WhenNotNull);
+				var left = cae.Expression;
+
+				if (receiverIsNullableValueType)
+				{
+					left = SyntaxFactory.MemberAccessExpression(
+						SyntaxKind.SimpleMemberAccessExpression,
+						left,
+						SyntaxFactory.IdentifierName("Value"));
+				}
+
+				return RewriteWhenNotNull(left, cae.WhenNotNull);
 			}
 
 			return expression;
+		}
+
+		internal static bool IsNullableValueType(SemanticModel model, ExpressionSyntax expression)
+		{
+			var typeInfo = model.GetTypeInfo(expression);
+			return typeInfo.Type is INamedTypeSymbol namedType
+				&& namedType.IsValueType
+				&& namedType.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T;
 		}
 
 		static ExpressionSyntax RewriteWhenNotNull(ExpressionSyntax left, ExpressionSyntax whenNotNull)

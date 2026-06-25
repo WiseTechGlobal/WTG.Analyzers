@@ -91,7 +91,8 @@ namespace WTG.Analyzers
 							conditionalAccess = outer;
 						}
 
-						speculativeExpression = VarAnalyzer.FlattenConditionalAccess(conditionalAccess.ReplaceNode(originalInvoke, proposedInvoke));
+						var receiverIsNullableValueType = VarAnalyzer.IsNullableValueType(model, conditionalAccess.Expression);
+						speculativeExpression = VarAnalyzer.FlattenConditionalAccess(conditionalAccess.ReplaceNode(originalInvoke, proposedInvoke), receiverIsNullableValueType);
 						speculativePosition = conditionalAccess.SpanStart;
 					}
 					else
