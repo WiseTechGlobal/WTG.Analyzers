@@ -19,15 +19,21 @@
 		<location>Test0.cs: (10,52-58)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (11,53-59)</location>
+		<location>Test0.cs: (11,61-67)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (13,40-43)</location>
+		<location>Test0.cs: (12,59-65)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (13,56-59)</location>
+		<location>Test0.cs: (13,68-74)</location>
 	</diagnostic>
 	<diagnostic>
-		<location>Test0.cs: (13,72-76)</location>
+		<location>Test0.cs: (15,40-43)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (15,56-59)</location>
+	</diagnostic>
+	<diagnostic>
+		<location>Test0.cs: (15,72-76)</location>
 	</diagnostic>
 </diagnostics>

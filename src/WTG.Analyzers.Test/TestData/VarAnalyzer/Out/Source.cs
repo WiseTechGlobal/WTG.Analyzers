@@ -8,7 +8,9 @@ public class Bob
 	public void V3() => Generic(1, out int value);
 	public void V4() => Generic(TryGet("key", out string value1), out bool value2);
 	public void V5() => Lookup.TryGetValue("key", out string value);
-	public void V6() => Lookup?.TryGetValue("key", out string value);
+	public void V6() => NullableLookup?.TryGetValue("key", out string value);
+	public void V7() => Inner?.Lookup.TryGetValue("key", out string value);
+	public void V8() => Inner?.NullableLookup?.TryGetValue("key", out string value);
 
 	public void S4() => SemiAmbiguous(out int value1, out int value2, out bool value3); // value1 and value2 cannot both be var as that would make it ambiguous.
 
@@ -31,5 +33,7 @@ public class Bob
 	void Generic<T>(out T value) where T : struct => value = default(T);
 	void Generic<T>(T inValue, out T outValue) => outValue = inValue;
 	bool TryGet(string key, out string value) => (value = key) != null;
-	Dictionary<string, string>? Lookup { get; } = new Dictionary<string, string>();
+	Dictionary<string, string> Lookup { get; } = new Dictionary<string, string>();
+	Dictionary<string, string>? NullableLookup { get; } = new Dictionary<string, string>();
+	Bob? Inner { get; }
 }

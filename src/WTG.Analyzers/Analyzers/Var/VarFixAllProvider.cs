@@ -79,17 +79,19 @@ namespace WTG.Analyzers
 					index = GetIndex(originalArguments, types[i]);
 					var proposedInvoke = VarifyOutTypeAtIndex(targetInvoke, index);
 
+					var conditionalAccess = originalInvoke.FirstAncestorOrSelf<ConditionalAccessExpressionSyntax>();
+
 					ExpressionSyntax speculativeExpression;
 					int speculativePosition;
 
-					if (originalInvoke.Expression is MemberBindingExpressionSyntax memberBinding
-						&& originalInvoke.Parent is ConditionalAccessExpressionSyntax conditionalAccess)
+					if (conditionalAccess != null)
 					{
-						var memberAccess = SyntaxFactory.MemberAccessExpression(
-							SyntaxKind.SimpleMemberAccessExpression,
-							conditionalAccess.Expression,
-							memberBinding.Name);
-						speculativeExpression = proposedInvoke.WithExpression(memberAccess);
+						while (conditionalAccess.Parent is ConditionalAccessExpressionSyntax outer)
+						{
+							conditionalAccess = outer;
+						}
+
+						speculativeExpression = VarAnalyzer.FlattenConditionalAccess(conditionalAccess.ReplaceNode(originalInvoke, proposedInvoke));
 						speculativePosition = conditionalAccess.SpanStart;
 					}
 					else

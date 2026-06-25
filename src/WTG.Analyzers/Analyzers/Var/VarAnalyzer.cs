@@ -168,27 +168,28 @@ namespace WTG.Analyzers
 						}
 					}
 
-					var proposedInvoke = invoke.ReplaceNode(type, SyntaxFactory.IdentifierName("var").WithTriviaFrom(type));
+					var conditionalAccess = invoke.FirstAncestorOrSelf<ConditionalAccessExpressionSyntax>();
 
 					ExpressionSyntax speculativeExpression;
 					int speculativePosition;
 
-					if (invoke.Expression is MemberBindingExpressionSyntax memberBinding
-						&& invoke.Parent is ConditionalAccessExpressionSyntax conditionalAccess)
+					if (conditionalAccess != null)
 					{
-						// For conditional access (e.g. obj?.Method(out Type x)), the invocation node alone
-						// does not have enough context for speculative binding (NRE). Rewrite as a regular
-						// member access expression using the conditional access target.
-						var memberAccess = SyntaxFactory.MemberAccessExpression(
-							SyntaxKind.SimpleMemberAccessExpression,
-							conditionalAccess.Expression,
-							memberBinding.Name);
-						speculativeExpression = proposedInvoke.WithExpression(memberAccess);
+						// For conditional access (e.g. obj?.Method(out Type x) or obj?.Inner?.Method(out Type x)),
+						// the invocation node alone does not have enough context for speculative binding (NRE).
+						// Walk up through nested conditional access expressions to find the outermost one,
+						// then flatten to a non-conditional expression for speculative binding.
+						while (conditionalAccess.Parent is ConditionalAccessExpressionSyntax outer)
+						{
+							conditionalAccess = outer;
+						}
+
+						speculativeExpression = FlattenConditionalAccess(conditionalAccess.ReplaceNode(type, SyntaxFactory.IdentifierName("var").WithTriviaFrom(type)));
 						speculativePosition = conditionalAccess.SpanStart;
 					}
 					else
 					{
-						speculativeExpression = proposedInvoke;
+						speculativeExpression = invoke.ReplaceNode(type, SyntaxFactory.IdentifierName("var").WithTriviaFrom(type));
 						speculativePosition = invoke.SpanStart;
 					}
 
@@ -279,6 +280,39 @@ namespace WTG.Analyzers
 		}
 
 		static bool TypeEquals(ITypeSymbol? x, ITypeSymbol? y) => ReferenceEquals(x, y) || (x != null && SymbolEqualityComparer.Default.Equals(x, y));
+
+		internal static ExpressionSyntax FlattenConditionalAccess(ExpressionSyntax expression)
+		{
+			if (expression is ConditionalAccessExpressionSyntax cae)
+			{
+				return RewriteWhenNotNull(cae.Expression, cae.WhenNotNull);
+			}
+
+			return expression;
+		}
+
+		static ExpressionSyntax RewriteWhenNotNull(ExpressionSyntax left, ExpressionSyntax whenNotNull)
+		{
+			switch (whenNotNull)
+			{
+				case ConditionalAccessExpressionSyntax nestedCae:
+					var intermediateAccess = RewriteWhenNotNull(left, nestedCae.Expression);
+					return RewriteWhenNotNull(intermediateAccess, nestedCae.WhenNotNull);
+
+				case InvocationExpressionSyntax inv:
+					return inv.WithExpression(RewriteWhenNotNull(left, inv.Expression));
+
+				case MemberBindingExpressionSyntax mb:
+					return SyntaxFactory.MemberAccessExpression(
+						SyntaxKind.SimpleMemberAccessExpression, left, mb.Name);
+
+				case MemberAccessExpressionSyntax ma:
+					return ma.WithExpression(RewriteWhenNotNull(left, ma.Expression));
+
+				default:
+					return whenNotNull;
+			}
+		}
 
 		sealed class Visitor : CSharpSyntaxVisitor<VariableDeclarationSyntax?>
 		{
