@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -37,9 +38,11 @@ namespace WTG.Analyzers
 				return;
 			}
 
-			if (CanBeSimplified(context.Node, context.SemanticModel, context.CancellationToken))
+			if (CanBeSimplified(context.Node, context.SemanticModel, context.CancellationToken, out var governingNode))
 			{
-				if (IsValueCoercion(context.Node))
+				// Do not offer an automatic fix when the governing expression contains
+				// preprocessor directives, because replacing it may discard directive trivia.
+				if (IsValueCoercion(context.Node) || governingNode.ContainsDirectives)
 				{
 					context.ReportDiagnostic(
 						Diagnostic.Create(
@@ -56,14 +59,16 @@ namespace WTG.Analyzers
 			}
 		}
 
-		static bool CanBeSimplified(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+		static bool CanBeSimplified(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out SyntaxNode? governingNode)
 		{
-			if (node.Parent == null)
+			governingNode = node.Parent;
+
+			if (governingNode == null)
 			{
 				return false;
 			}
 
-			switch (node.Parent.Kind())
+			switch (governingNode.Kind())
 			{
 				case SyntaxKind.LogicalAndExpression:
 				case SyntaxKind.LogicalOrExpression:
@@ -74,7 +79,7 @@ namespace WTG.Analyzers
 					return true;
 
 				case SyntaxKind.ConditionalExpression:
-					var condition = (ConditionalExpressionSyntax)node.Parent;
+					var condition = (ConditionalExpressionSyntax)governingNode;
 					var expressionToCheck = condition.WhenTrue == node ? condition.WhenFalse : condition.WhenTrue;
 					var result = IsSimpleBooleanExpression(expressionToCheck, semanticModel, cancellationToken);
 					return result;
