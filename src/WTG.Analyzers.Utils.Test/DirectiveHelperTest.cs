@@ -71,7 +71,7 @@ namespace NS
 		}
 
 		SyntaxTree tree;
-		IReadOnlyDictionary<string, SyntaxTrivia> trivia;
+		Dictionary<string, SyntaxTrivia> trivia;
 
 		#endregion
 	}

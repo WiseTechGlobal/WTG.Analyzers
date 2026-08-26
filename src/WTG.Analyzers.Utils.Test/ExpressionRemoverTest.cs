@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -272,8 +273,12 @@ namespace WTG.Analyzers.Utils.Test
 
 			if (reformat)
 			{
-				using var workspace = ModelUtils.CreateWorkspace();
-				node = Formatter.Format(node, Formatter.Annotation, workspace);
+				var project = ModelUtils.CreateProject(string.Empty);
+				var document = project.Documents.First();
+				document = document.WithSyntaxRoot(node);
+
+				document = Formatter.FormatAsync(document, Formatter.Annotation).GetAwaiter().GetResult();
+				node = document.GetSyntaxRootAsync().GetAwaiter().GetResult()!;
 			}
 
 			return node.ToString();

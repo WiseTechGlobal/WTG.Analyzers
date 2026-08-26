@@ -53,7 +53,7 @@ namespace WTG.Analyzers
 			return count - 1;
 		}
 
-		static long AsLong(object value)
+		static long AsLong(object? value)
 		{
 			if (value == null)
 			{

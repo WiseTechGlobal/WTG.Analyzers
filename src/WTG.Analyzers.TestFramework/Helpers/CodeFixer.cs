@@ -266,7 +266,9 @@ namespace WTG.Analyzers.TestFramework
 				throw new NotSupportedException("Cannot format a document with no syntax tree.");
 			}
 
-			return Formatter.Format(root, Formatter.Annotation, document.Project.Solution.Workspace);
+			var formattedDoc = await Formatter.FormatAsync(document, Formatter.Annotation).ConfigureAwait(false);
+			return await formattedDoc.GetSyntaxRootAsync().ConfigureAwait(false)
+				?? throw new NotSupportedException("GetSyntaxRootAsync should not return null for a C# document.");
 		}
 
 		sealed class DummyFixAllDiagnosticProvider : FixAllContext.DiagnosticProvider

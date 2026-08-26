@@ -19,7 +19,7 @@ namespace WTG.Analyzers.Utils
 			return constant.HasValue && IsZeroLiteral(constant.Value);
 		}
 
-		static bool IsZeroLiteral(object value)
+		static bool IsZeroLiteral(object? value)
 		{
 			return value switch
 			{

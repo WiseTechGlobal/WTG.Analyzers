@@ -20,7 +20,7 @@ namespace WTG.Analyzers
 		{
 		}
 
-		public override Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
+		public override Task<CodeAction?> GetFixAsync(FixAllContext fixAllContext)
 		{
 			if (fixAllContext.CodeActionEquivalenceKey != VarCodeFixProvider.ChangeToOutVarEquivalenceKey)
 			{

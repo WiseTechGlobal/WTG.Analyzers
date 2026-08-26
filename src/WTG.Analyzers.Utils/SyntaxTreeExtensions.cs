@@ -33,7 +33,7 @@ namespace WTG.Analyzers.Utils
 
 			foreach (var trivia in root.DescendantTrivia(NotMembers))
 			{
-				if (trivia.Kind() == SyntaxKind.SingleLineCommentTrivia &&
+				if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) &&
 					IsGeneratedCommentMarkerRegex.IsMatch(trivia.ToString()))
 				{
 					return true;
