@@ -168,8 +168,33 @@ namespace WTG.Analyzers
 						}
 					}
 
-					var proposedSyntax = invoke.ReplaceNode(type, SyntaxFactory.IdentifierName("var").WithTriviaFrom(type));
-					var symbol = context.SemanticModel.GetSpeculativeSymbolInfo(invoke.SpanStart, proposedSyntax, SpeculativeBindingOption.BindAsExpression).Symbol;
+					var conditionalAccess = invoke.FirstAncestorOrSelf<ConditionalAccessExpressionSyntax>();
+
+					ExpressionSyntax speculativeExpression;
+					int speculativePosition;
+
+					if (conditionalAccess != null)
+					{
+						// For conditional access (e.g. obj?.Method(out Type x) or obj?.Inner?.Method(out Type x)),
+						// the invocation node alone does not have enough context for speculative binding (NRE).
+						// Walk up through nested conditional access expressions to find the outermost one,
+						// then flatten to a non-conditional expression for speculative binding.
+						while (conditionalAccess.Parent is ConditionalAccessExpressionSyntax outer)
+						{
+							conditionalAccess = outer;
+						}
+
+						var receiverIsNullableValueType = IsNullableValueType(context.SemanticModel, conditionalAccess.Expression);
+						speculativeExpression = FlattenConditionalAccess(conditionalAccess.ReplaceNode(type, SyntaxFactory.IdentifierName("var").WithTriviaFrom(type)), receiverIsNullableValueType);
+						speculativePosition = conditionalAccess.SpanStart;
+					}
+					else
+					{
+						speculativeExpression = invoke.ReplaceNode(type, SyntaxFactory.IdentifierName("var").WithTriviaFrom(type));
+						speculativePosition = invoke.SpanStart;
+					}
+
+					var symbol = context.SemanticModel.GetSpeculativeSymbolInfo(speculativePosition, speculativeExpression, SpeculativeBindingOption.BindAsExpression).Symbol;
 
 					if (SymbolEqualityComparer.Default.Equals(knownMethod, symbol))
 					{
@@ -256,6 +281,57 @@ namespace WTG.Analyzers
 		}
 
 		static bool TypeEquals(ITypeSymbol? x, ITypeSymbol? y) => ReferenceEquals(x, y) || (x != null && SymbolEqualityComparer.Default.Equals(x, y));
+
+		internal static ExpressionSyntax FlattenConditionalAccess(ExpressionSyntax expression, bool receiverIsNullableValueType = false)
+		{
+			if (expression is ConditionalAccessExpressionSyntax cae)
+			{
+				var left = cae.Expression;
+
+				if (receiverIsNullableValueType)
+				{
+					left = SyntaxFactory.MemberAccessExpression(
+						SyntaxKind.SimpleMemberAccessExpression,
+						left,
+						SyntaxFactory.IdentifierName("Value"));
+				}
+
+				return RewriteWhenNotNull(left, cae.WhenNotNull);
+			}
+
+			return expression;
+		}
+
+		internal static bool IsNullableValueType(SemanticModel model, ExpressionSyntax expression)
+		{
+			var typeInfo = model.GetTypeInfo(expression);
+			return typeInfo.Type is INamedTypeSymbol namedType
+				&& namedType.IsValueType
+				&& namedType.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T;
+		}
+
+		static ExpressionSyntax RewriteWhenNotNull(ExpressionSyntax left, ExpressionSyntax whenNotNull)
+		{
+			switch (whenNotNull)
+			{
+				case ConditionalAccessExpressionSyntax nestedCae:
+					var intermediateAccess = RewriteWhenNotNull(left, nestedCae.Expression);
+					return RewriteWhenNotNull(intermediateAccess, nestedCae.WhenNotNull);
+
+				case InvocationExpressionSyntax inv:
+					return inv.WithExpression(RewriteWhenNotNull(left, inv.Expression));
+
+				case MemberBindingExpressionSyntax mb:
+					return SyntaxFactory.MemberAccessExpression(
+						SyntaxKind.SimpleMemberAccessExpression, left, mb.Name);
+
+				case MemberAccessExpressionSyntax ma:
+					return ma.WithExpression(RewriteWhenNotNull(left, ma.Expression));
+
+				default:
+					return whenNotNull;
+			}
+		}
 
 		sealed class Visitor : CSharpSyntaxVisitor<VariableDeclarationSyntax?>
 		{
