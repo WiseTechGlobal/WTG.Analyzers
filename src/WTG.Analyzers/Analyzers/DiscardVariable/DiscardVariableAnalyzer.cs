@@ -87,10 +87,33 @@ namespace WTG.Analyzers
 		{
 			var identifier = node.Identifier;
 
-			if (identifier.Text == "_")
+			if (identifier.Text == "_" && !IsLambdaDiscard(node))
 			{
 				context.ReportDiagnostic(Rules.CreateVariableCouldBeConfusedWithDiscardDiagnostic(identifier.GetLocation()));
 			}
+		}
+
+		static bool IsLambdaDiscard(ParameterSyntax node)
+		{
+			// From C# 9, when a lambda or anonymous method has two or more parameters
+			// named '_', they are all genuine discards rather than confusable variables.
+			// A single '_' parameter remains a real parameter for backwards compatibility.
+			if (node.Parent is ParameterListSyntax list &&
+				(list.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression) ||
+				list.Parent.IsKind(SyntaxKind.AnonymousMethodExpression)))
+			{
+				var count = 0;
+
+				foreach (var parameter in list.Parameters)
+				{
+					if (parameter.Identifier.Text == "_" && ++count > 1)
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
 		}
 
 		static void Analyze(SyntaxNodeAnalysisContext context, VariableDeclaratorSyntax node)
