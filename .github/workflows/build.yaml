@@ -22,7 +22,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
 
     - name: Build WTG.Analyzers
       run: dotnet build src --configuration ${{ matrix.configuration }}
@@ -47,7 +47,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
 
     - name: Build NuGet Package
       run: dotnet pack src -p:CommitID=${{ github.sha }}
