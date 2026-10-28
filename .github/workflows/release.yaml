@@ -21,7 +21,7 @@ jobs:
         script: |
           return context.payload.ref.replace(/^refs\/tags\//, '');
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
