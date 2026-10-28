@@ -21,7 +21,7 @@ jobs:
         script: |
           return context.payload.ref.replace(/^refs\/tags\//, '');
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v6
@@ -30,19 +30,19 @@ jobs:
       run: dotnet pack src --configuration Release /p:CommitID=${{ github.sha }} /p:TagVersion=${{ steps.tag_name.outputs.result }}
 
     - name: Upload WTG.Analyzers nupkg
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: WTG.Analyzers.${{ steps.tag_name.outputs.result }}.nupkg
         path: 'bin/WTG.Analyzers.${{ steps.tag_name.outputs.result }}.nupkg'
 
     - name: Upload WTG.Analyzers.Utils nupkg
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: WTG.Analyzers.Utils.${{ steps.tag_name.outputs.result }}.nupkg
         path: 'bin/WTG.Analyzers.Utils.${{ steps.tag_name.outputs.result }}.nupkg'
 
     - name: Upload WTG.Analyzers.TestFramework nupkg
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: WTG.Analyzers.TestFramework.${{ steps.tag_name.outputs.result }}.nupkg
         path: 'bin/WTG.Analyzers.TestFramework.${{ steps.tag_name.outputs.result }}.nupkg'

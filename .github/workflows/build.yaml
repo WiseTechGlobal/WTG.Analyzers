@@ -19,7 +19,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v6
@@ -44,7 +44,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v6
@@ -53,7 +53,7 @@ jobs:
       run: dotnet pack src -p:CommitID=${{ github.sha }}
 
     - name: Upload NuGet Package
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: nuget-packages
         path: 'Bin/*.nupkg'
